@@ -1,42 +1,290 @@
-import { NavLink } from 'react-router-dom'
+import { useState } from 'react'
+import { NavLink, useLocation } from 'react-router-dom'
 import {
-  ShoppingBag, Truck, Globe, User,
-  BarChart3, Wallet, Command, Building2,
-  ClipboardCheck, Users, Brain, Code2, Shield, LogOut
+  Command, ShoppingBag, BarChart3, Building2, ClipboardCheck,
+  Truck, Wallet, Globe, Users, Brain, Code2, Shield, User,
+  LogOut, Search as SearchIcon, ChevronDown, Bell,
 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
 import { getAllowedModules, type OSModuleId } from '@/config/permissions'
+
+/* ======================= Types ======================= */
 
 interface NavItem {
   to: string
   label: string
   icon: typeof Command
   moduleId: OSModuleId
-  layer?: number
   badge?: number
 }
 
-const allNavItems: NavItem[] = [
-  { to: '/dashboard', label: 'Command Center', icon: Command, moduleId: 'dashboard', badge: 6 },
-  { to: '/marketplace', label: 'Trade Engine', icon: ShoppingBag, moduleId: 'trade-engine', layer: 2, badge: 7 },
-  { to: '/market-intel', label: 'Market Intel', icon: BarChart3, moduleId: 'market-intel', layer: 6 },
-  { to: '/business', label: 'Business Hub', icon: Building2, moduleId: 'business', layer: 7 },
-  { to: '/procurement', label: 'Procurement', icon: ClipboardCheck, moduleId: 'procurement', layer: 2 },
-  { to: '/logistics', label: 'Logistics Hub', icon: Truck, moduleId: 'logistics', layer: 3, badge: 2 },
-  { to: '/finance', label: 'Finance Hub', icon: Wallet, moduleId: 'finance', layer: 5 },
-  { to: '/exports', label: 'Export Hub', icon: Globe, moduleId: 'export', layer: 2, badge: 4 },
-  { to: '/cooperative', label: 'Cooperative', icon: Users, moduleId: 'cooperative', layer: 1 },
-  { to: '/ai', label: 'AI Hub', icon: Brain, moduleId: 'ai', layer: 9 },
-  { to: '/developer', label: 'Developer', icon: Code2, moduleId: 'developer', layer: 8 },
-  { to: '/admin', label: 'Admin', icon: Shield, moduleId: 'admin', layer: 1 },
-  { to: '/profile', label: 'Profile', icon: User, moduleId: 'profile' },
-]
+interface MenuItemT {
+  icon?: React.ReactNode
+  label: string
+  hasDropdown?: boolean
+  children?: MenuItemT[]
+}
+
+interface MenuSectionT {
+  title: string
+  items: MenuItemT[]
+}
+
+interface ModuleContent {
+  title: string
+  sections: MenuSectionT[]
+}
+
+/* ======================= Module Content Map ======================= */
+
+function getModuleContent(moduleId: string): ModuleContent {
+  const map: Record<string, ModuleContent> = {
+    dashboard: {
+      title: 'Command Center',
+      sections: [
+        { title: 'Overview', items: [{ icon: <Command size={16} className="text-neutral-50" />, label: 'System Status' }, { icon: <BarChart3 size={16} className="text-neutral-50" />, label: 'Quick Stats' }] },
+        { title: 'Alerts', items: [{ icon: <Bell size={16} className="text-neutral-50" />, label: 'Notifications', hasDropdown: true, children: [{ label: 'Market price alerts' }, { label: 'System updates' }] }] },
+      ],
+    },
+    'trade-engine': {
+      title: 'Trade Engine',
+      sections: [
+        { title: 'Trading', items: [{ icon: <ShoppingBag size={16} className="text-neutral-50" />, label: 'Active Orders' }, { icon: <Globe size={16} className="text-neutral-50" />, label: 'Market Summary' }] },
+        { title: 'History', items: [{ icon: <ClipboardCheck size={16} className="text-neutral-50" />, label: 'Trade History' }, { icon: <BarChart3 size={16} className="text-neutral-50" />, label: 'Performance' }] },
+      ],
+    },
+    'market-intel': {
+      title: 'Market Intel',
+      sections: [
+        { title: 'Analytics', items: [{ icon: <BarChart3 size={16} className="text-neutral-50" />, label: 'Price Trends' }, { icon: <Globe size={16} className="text-neutral-50" />, label: 'Regional Data' }] },
+        { title: 'Reports', items: [{ icon: <ClipboardCheck size={16} className="text-neutral-50" />, label: 'Forecasts', hasDropdown: true, children: [{ label: 'Weekly outlook' }, { label: 'Monthly report' }] }] },
+      ],
+    },
+    business: {
+      title: 'Business Hub',
+      sections: [
+        { title: 'CRM', items: [{ icon: <Users size={16} className="text-neutral-50" />, label: 'Contacts' }, { icon: <Building2 size={16} className="text-neutral-50" />, label: 'Accounts' }] },
+        { title: 'Operations', items: [{ icon: <ClipboardCheck size={16} className="text-neutral-50" />, label: 'Invoices' }, { icon: <Wallet size={16} className="text-neutral-50" />, label: 'Expenses' }] },
+      ],
+    },
+    procurement: {
+      title: 'Procurement',
+      sections: [
+        { title: 'Sourcing', items: [{ icon: <ShoppingBag size={16} className="text-neutral-50" />, label: 'Vendors' }, { icon: <ClipboardCheck size={16} className="text-neutral-50" />, label: 'RFQs' }] },
+        { title: 'Orders', items: [{ icon: <Truck size={16} className="text-neutral-50" />, label: 'Purchase Orders' }, { icon: <Globe size={16} className="text-neutral-50" />, label: 'Deliveries' }] },
+      ],
+    },
+    logistics: {
+      title: 'Logistics Hub',
+      sections: [
+        { title: 'Fleet', items: [{ icon: <Truck size={16} className="text-neutral-50" />, label: 'Vehicles' }, { icon: <Globe size={16} className="text-neutral-50" />, label: 'Routes' }] },
+        { title: 'Tracking', items: [{ icon: <ClipboardCheck size={16} className="text-neutral-50" />, label: 'Active Shipments' }, { icon: <Bell size={16} className="text-neutral-50" />, label: 'Alerts' }] },
+      ],
+    },
+    finance: {
+      title: 'Finance Hub',
+      sections: [
+        { title: 'Accounts', items: [{ icon: <Wallet size={16} className="text-neutral-50" />, label: 'Wallets' }, { icon: <BarChart3 size={16} className="text-neutral-50" />, label: 'Transactions' }] },
+        { title: 'Services', items: [{ icon: <Shield size={16} className="text-neutral-50" />, label: 'Loans' }, { icon: <Globe size={16} className="text-neutral-50" />, label: 'Insurance' }] },
+      ],
+    },
+    export: {
+      title: 'Export Hub',
+      sections: [
+        { title: 'Documentation', items: [{ icon: <ClipboardCheck size={16} className="text-neutral-50" />, label: 'Certificates' }, { icon: <Globe size={16} className="text-neutral-50" />, label: 'Compliance' }] },
+        { title: 'Shipping', items: [{ icon: <Truck size={16} className="text-neutral-50" />, label: 'Shipments' }, { icon: <BarChart3 size={16} className="text-neutral-50" />, label: 'Analytics' }] },
+      ],
+    },
+    cooperative: {
+      title: 'Cooperative',
+      sections: [
+        { title: 'Members', items: [{ icon: <Users size={16} className="text-neutral-50" />, label: 'Directory' }, { icon: <Building2 size={16} className="text-neutral-50" />, label: 'Groups' }] },
+        { title: 'Governance', items: [{ icon: <ClipboardCheck size={16} className="text-neutral-50" />, label: 'Policies' }, { icon: <Shield size={16} className="text-neutral-50" />, label: 'Voting' }] },
+      ],
+    },
+    ai: {
+      title: 'AI Hub',
+      sections: [
+        { title: 'Models', items: [{ icon: <Brain size={16} className="text-neutral-50" />, label: 'Active Models' }, { icon: <BarChart3 size={16} className="text-neutral-50" />, label: 'Performance' }] },
+        { title: 'Data', items: [{ icon: <ClipboardCheck size={16} className="text-neutral-50" />, label: 'Datasets' }, { icon: <Globe size={16} className="text-neutral-50" />, label: 'Predictions' }] },
+      ],
+    },
+    developer: {
+      title: 'Developer',
+      sections: [
+        { title: 'API', items: [{ icon: <Code2 size={16} className="text-neutral-50" />, label: 'Endpoints' }, { icon: <ClipboardCheck size={16} className="text-neutral-50" />, label: 'Documentation' }] },
+        { title: 'Tools', items: [{ icon: <Command size={16} className="text-neutral-50" />, label: 'Console' }, { icon: <Shield size={16} className="text-neutral-50" />, label: 'Auth' }] },
+      ],
+    },
+    admin: {
+      title: 'Administration',
+      sections: [
+        { title: 'Users', items: [{ icon: <Users size={16} className="text-neutral-50" />, label: 'User Management' }, { icon: <Shield size={16} className="text-neutral-50" />, label: 'Roles' }] },
+        { title: 'System', items: [{ icon: <Command size={16} className="text-neutral-50" />, label: 'Settings' }, { icon: <BarChart3 size={16} className="text-neutral-50" />, label: 'Audit Log' }] },
+      ],
+    },
+    profile: {
+      title: 'Profile',
+      sections: [
+        { title: 'Account', items: [{ icon: <User size={16} className="text-neutral-50" />, label: 'Personal Info' }, { icon: <Shield size={16} className="text-neutral-50" />, label: 'Security' }] },
+        { title: 'Preferences', items: [{ icon: <Bell size={16} className="text-neutral-50" />, label: 'Notifications' }, { icon: <Command size={16} className="text-neutral-50" />, label: 'Theme' }] },
+      ],
+    },
+  }
+  return map[moduleId] || map.dashboard
+}
+
+/* ======================= SVG Logo ======================= */
+
+function AduanefieLogo() {
+  return (
+    <div className="size-7 flex items-center justify-center">
+      <svg viewBox="0 0 24 24" fill="none" className="size-full">
+        <rect x="2" y="2" width="20" height="20" rx="4" stroke="#FAFAFA" strokeWidth="1.5" />
+        <path d="M7 12h10M12 7v10" stroke="#FAFAFA" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    </div>
+  )
+}
+
+/* ======================= Components ======================= */
+
+function IconNavButton({ children, isActive = false, onClick }: { children: React.ReactNode; isActive?: boolean; onClick?: () => void }) {
+  return (
+    <button
+      type="button"
+      className={`flex items-center justify-center rounded-lg size-10 min-w-10 transition-colors duration-300 ${
+        isActive ? 'bg-neutral-800 text-neutral-50' : 'hover:bg-neutral-800 text-neutral-400 hover:text-neutral-300'
+      }`}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  )
+}
+
+function AvatarCircle({ initials }: { initials: string }) {
+  return (
+    <div className="relative rounded-full shrink-0 size-8 bg-neutral-700 flex items-center justify-center">
+      <span className="text-xs font-semibold text-neutral-50">{initials}</span>
+      <div aria-hidden="true" className="absolute inset-0 rounded-full border border-neutral-600 pointer-events-none" />
+    </div>
+  )
+}
+
+function SectionTitle({ title, onToggleCollapse, isCollapsed }: { title: string; onToggleCollapse: () => void; isCollapsed: boolean }) {
+  if (isCollapsed) {
+    return (
+      <div className="w-full flex justify-center">
+        <button type="button" onClick={onToggleCollapse} className="flex items-center justify-center rounded-lg size-10 transition-colors hover:bg-neutral-800 text-neutral-400" aria-label="Expand sidebar">
+          <ChevronDown className="size-4 rotate-180" />
+        </button>
+      </div>
+    )
+  }
+  return (
+    <div className="w-full">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center h-10 px-2">
+          <span className="text-lg font-semibold text-neutral-50">{title}</span>
+        </div>
+        <button type="button" onClick={onToggleCollapse} className="flex items-center justify-center rounded-lg size-10 transition-colors hover:bg-neutral-800 text-neutral-400" aria-label="Collapse sidebar">
+          <ChevronDown className="size-4 -rotate-90" />
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function MenuItem({ item, isExpanded, onToggle, isCollapsed }: { item: MenuItemT; isExpanded?: boolean; onToggle?: () => void; isCollapsed?: boolean }) {
+  const handleClick = () => {
+    if (item.hasDropdown && onToggle) onToggle()
+  }
+
+  return (
+    <div className={`relative shrink-0 w-full`}>
+      <div
+        className={`rounded-lg cursor-pointer transition-colors flex items-center relative hover:bg-neutral-800 ${
+          isCollapsed ? 'w-10 min-w-10 h-10 justify-center mx-auto' : 'w-full h-10 px-3'
+        }`}
+        onClick={handleClick}
+        title={isCollapsed ? item.label : undefined}
+      >
+        {item.icon && <div className="flex items-center justify-center shrink-0">{item.icon}</div>}
+        <div className={`flex-1 overflow-hidden ${isCollapsed ? 'hidden' : 'ml-3'}`}>
+          <span className="text-sm text-neutral-50 leading-5 truncate block">{item.label}</span>
+        </div>
+        {item.hasDropdown && !isCollapsed && (
+          <div className="ml-2 shrink-0">
+            <ChevronDown className={`size-4 text-neutral-50 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
+function SubMenuItem({ item }: { item: MenuItemT }) {
+  return (
+    <div className="pl-9 pr-1 py-px">
+      <div className="h-9 w-full rounded-lg cursor-pointer transition-colors hover:bg-neutral-800 flex items-center px-3">
+        <span className="text-sm text-neutral-300 truncate">{item.label}</span>
+      </div>
+    </div>
+  )
+}
+
+function MenuSection({ section, expandedItems, onToggleExpanded, isCollapsed }: { section: MenuSectionT; expandedItems: Set<string>; onToggleExpanded: (key: string) => void; isCollapsed?: boolean }) {
+  return (
+    <div className="flex flex-col w-full">
+      {!isCollapsed && (
+        <div className="flex items-center h-8 px-3">
+          <span className="text-xs text-neutral-400 font-medium uppercase tracking-wider">{section.title}</span>
+        </div>
+      )}
+      {section.items.map((item, index) => {
+        const itemKey = `${section.title}-${index}`
+        const isExpanded = expandedItems.has(itemKey)
+        return (
+          <div key={itemKey} className="w-full flex flex-col">
+            <MenuItem item={item} isExpanded={isExpanded} onToggle={() => onToggleExpanded(itemKey)} isCollapsed={isCollapsed} />
+            {isExpanded && item.children && !isCollapsed && (
+              <div className="flex flex-col mb-1">
+                {item.children.map((child, ci) => (
+                  <SubMenuItem key={ci} item={child} />
+                ))}
+              </div>
+            )}
+          </div>
+        )
+      })}
+    </div>
+  )
+}
 
 const roleLabels: Record<string, string> = {
   admin: 'Administrator', farmer: 'Farmer', buyer: 'Buyer',
   supplier: 'Supplier', logistics: 'Logistics', viewer: 'Viewer',
   supervisor: 'Supervisor', trader: 'Trader',
 }
+
+/* ======================= Main Sidebar ======================= */
+
+const allNavItems: NavItem[] = [
+  { to: '/dashboard', label: 'Command Center', icon: Command, moduleId: 'dashboard' },
+  { to: '/marketplace', label: 'Trade Engine', icon: ShoppingBag, moduleId: 'trade-engine' },
+  { to: '/market-intel', label: 'Market Intel', icon: BarChart3, moduleId: 'market-intel' },
+  { to: '/business', label: 'Business Hub', icon: Building2, moduleId: 'business' },
+  { to: '/procurement', label: 'Procurement', icon: ClipboardCheck, moduleId: 'procurement' },
+  { to: '/logistics', label: 'Logistics Hub', icon: Truck, moduleId: 'logistics' },
+  { to: '/finance', label: 'Finance Hub', icon: Wallet, moduleId: 'finance' },
+  { to: '/exports', label: 'Export Hub', icon: Globe, moduleId: 'export' },
+  { to: '/cooperative', label: 'Cooperative', icon: Users, moduleId: 'cooperative' },
+  { to: '/ai', label: 'AI Hub', icon: Brain, moduleId: 'ai' },
+  { to: '/developer', label: 'Developer', icon: Code2, moduleId: 'developer' },
+  { to: '/admin', label: 'Admin', icon: Shield, moduleId: 'admin' },
+  { to: '/profile', label: 'Profile', icon: User, moduleId: 'profile' },
+]
 
 interface SidebarProps {
   onNav?: () => void
@@ -45,67 +293,110 @@ interface SidebarProps {
 
 export function Sidebar({ onNav, className = '' }: SidebarProps) {
   const { user, logout } = useAuth()
+  const location = useLocation()
 
   const allowedModules = user ? getAllowedModules(user.role) : new Set<OSModuleId>()
   const navItems = allNavItems.filter(item => allowedModules.has(item.moduleId))
+
+  const currentModuleId = navItems.find(item => location.pathname === item.to || location.pathname.startsWith(item.to + '/'))?.moduleId || navItems[0]?.moduleId || 'dashboard'
+
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
+  const [isCollapsed, setIsCollapsed] = useState(false)
+
+  const toggleExpanded = (itemKey: string) => {
+    setExpandedItems(prev => {
+      const next = new Set(prev)
+      if (next.has(itemKey)) next.delete(itemKey)
+      else next.add(itemKey)
+      return next
+    })
+  }
 
   const initials = user?.name
     ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
     : '??'
 
+  const content = getModuleContent(currentModuleId)
+
   return (
-    <aside className={`w-56 border-r border-border bg-surface flex flex-col shrink-0 ${className}`}>
-      <div className="h-14 flex items-center gap-2.5 px-4 border-b border-border">
-        <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center shrink-0">
-          <Command className="w-4 h-4 text-cream" />
+    <div className={`flex shrink-0 ${className}`}>
+      {/* Left icon nav rail */}
+      <aside className="bg-black flex flex-col gap-2 items-center py-4 w-16 border-r border-neutral-800 shrink-0">
+        <div className="mb-2 size-10 flex items-center justify-center">
+          <AduanefieLogo />
         </div>
-        <div className="min-w-0">
-          <p className="text-sm font-bold text-text-primary leading-tight">Aduanefie</p>
-          <p className="text-[9px] text-text-secondary font-medium uppercase tracking-wider">AgriOS</p>
-        </div>
-      </div>
-
-      <nav className="flex-1 py-2 px-2 space-y-0.5 overflow-y-auto scrollbar-thin">
-        {navItems.map((item) => (
-          <NavLink
-            key={item.to}
-            to={item.to}
-            end={item.to === '/dashboard'}
-            onClick={onNav}
-            className={({ isActive }) =>
-              `flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
-                isActive
-                  ? 'bg-primary text-white'
-                  : 'text-text-secondary hover:text-text-primary hover:bg-surface-hover'
-              }`
-            }
-          >
-            <item.icon className="w-4 h-4 shrink-0" />
-            <span className="flex-1 truncate">{item.label}</span>
-            {item.badge && (
-              <span className="text-[9px] font-mono bg-primary/10 text-primary rounded px-1 font-medium shrink-0"> {item.badge}</span>
-            )}
-            {item.layer && (
-              <span className="text-[9px] text-text-secondary font-mono shrink-0">L{item.layer}</span>
-            )}
-          </NavLink>
-        ))}
-      </nav>
-
-      <div className="p-3 border-t border-border">
-        <div className="flex items-center gap-2.5">
-          <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary shrink-0">
-            {initials}
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-medium text-text-primary truncate">{user?.name || 'User'}</p>
-            <p className="text-[10px] text-text-secondary truncate capitalize">{roleLabels[user?.role || ''] || user?.role}</p>
-          </div>
-          <button onClick={logout} className="p-1.5 rounded-md text-text-secondary hover:text-danger hover:bg-danger/10 transition-colors shrink-0" title="Sign out">
-            <LogOut className="w-4 h-4" />
+        <nav className="flex flex-col gap-2 w-full items-center overflow-y-auto flex-1 scrollbar-thin">
+          {navItems.map((item) => (
+            <NavLink key={item.to} to={item.to} end={item.to === '/dashboard'} onClick={onNav}>
+              {({ isActive }) => (
+                <IconNavButton isActive={isActive}>
+                  <item.icon className="size-4" />
+                </IconNavButton>
+              )}
+            </NavLink>
+          ))}
+        </nav>
+        <div className="flex flex-col gap-2 w-full items-center mt-auto">
+          <button onClick={logout} className="flex items-center justify-center rounded-lg size-10 transition-colors hover:bg-neutral-800 text-neutral-400 hover:text-neutral-300" title="Sign out">
+            <LogOut className="size-4" />
           </button>
+          <AvatarCircle initials={initials} />
         </div>
-      </div>
-    </aside>
+      </aside>
+
+      {/* Right detail panel */}
+      <aside className={`bg-black flex flex-col items-start py-4 transition-all duration-300 ${isCollapsed ? 'w-16 px-0' : 'w-72'}`}>
+        {!isCollapsed && (
+          <div className="flex items-center gap-2 px-3 mb-2 w-full">
+            <AduanefieLogo />
+            <div>
+              <div className="text-sm font-semibold text-neutral-50 leading-tight">Aduanefie</div>
+              <div className="text-[9px] text-neutral-400 font-medium uppercase tracking-wider">AgriOS</div>
+            </div>
+          </div>
+        )}
+
+        <SectionTitle title={content.title} onToggleCollapse={() => setIsCollapsed(s => !s)} isCollapsed={isCollapsed} />
+
+        {!isCollapsed && (
+          <div className="relative w-full px-3 mb-2">
+            <div className="bg-black h-9 relative rounded-lg flex items-center border border-neutral-800">
+              <div className="flex items-center justify-center shrink-0 px-2">
+                <SearchIcon className="size-4 text-neutral-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search..."
+                className="w-full bg-transparent border-none outline-none text-sm text-neutral-50 placeholder:text-neutral-400 leading-5 pr-2"
+              />
+            </div>
+          </div>
+        )}
+
+        <div className={`flex flex-col w-full overflow-y-auto flex-1 scrollbar-thin ${isCollapsed ? 'gap-2 items-center' : 'gap-1'}`}>
+          {content.sections.map((section, index) => (
+            <MenuSection
+              key={`${currentModuleId}-${index}`}
+              section={section}
+              expandedItems={expandedItems}
+              onToggleExpanded={toggleExpanded}
+              isCollapsed={isCollapsed}
+            />
+          ))}
+        </div>
+
+        {!isCollapsed && (
+          <div className="w-full mt-auto pt-3 px-3 border-t border-neutral-800">
+            <div className="flex items-center gap-2 py-2">
+              <AvatarCircle initials={initials} />
+              <div className="min-w-0 flex-1">
+                <div className="text-sm text-neutral-50 truncate">{user?.name || 'User'}</div>
+                <div className="text-[10px] text-neutral-400 truncate capitalize">{roleLabels[user?.role || ''] || user?.role}</div>
+              </div>
+            </div>
+          </div>
+        )}
+      </aside>
+    </div>
   )
 }

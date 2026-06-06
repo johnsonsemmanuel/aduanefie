@@ -18,6 +18,7 @@ import { DeveloperHub } from '@/pages/DeveloperHub'
 import { Administration } from '@/pages/Administration'
 import { Landing } from '@/pages/Landing'
 import { SignInPage } from '@/pages/SignInPage'
+import { SignUpPage } from '@/pages/SignUpPage'
 import { NotFound } from '@/pages/NotFound'
 
 function ProtectedShell({ children }: { children: React.ReactNode }) {
@@ -31,6 +32,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<SignInPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
           <Route path="/dashboard" element={<ProtectedShell><CommandCenter /></ProtectedShell>} />
           <Route path="/marketplace" element={<ProtectedShell><Marketplace /></ProtectedShell>} />
           <Route path="/trade-desk" element={<ProtectedShell><TradeDesk /></ProtectedShell>} />
