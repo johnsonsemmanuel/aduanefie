@@ -1,4 +1,6 @@
-import { Star, ShieldCheck, MapPin, Award, Package, TrendingUp, Truck } from 'lucide-react'
+import { Star, ShieldCheck, MapPin, Award, Package, TrendingUp, Truck, LogOut } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/context/AuthContext'
 import { Card, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Chip, GradeChip } from '@/components/ui/Chip'
 import { Button } from '@/components/ui/Button'
@@ -13,16 +15,26 @@ const stats = [
 ]
 
 export function Profile() {
+  const { user, logout } = useAuth()
+  const navigate = useNavigate()
+  const displayName = user?.name || currentUser.name
+  const initials = displayName.split(' ').map(n => n[0]).join('').slice(0, 2)
+
+  const handleLogout = () => {
+    logout()
+    navigate('/')
+  }
+
   return (
-    <div className="max-w-3xl mx-auto space-y-4">
+    <div className="space-y-4">
       <Card>
         <div className="flex items-start gap-3 sm:gap-4">
           <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary shrink-0">
-            {currentUser.name.split(' ').map(n => n[0]).join('')}
+            {initials}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-0.5">
-              <h2 className="text-base font-bold text-text-primary truncate">{currentUser.name}</h2>
+              <h2 className="text-base font-bold text-text-primary truncate">{displayName}</h2>
               {currentUser.verified && <ShieldCheck className="w-4 h-4 text-success shrink-0" />}
             </div>
             <div className="flex flex-wrap items-center gap-2 text-xs text-text-secondary mb-2">
@@ -35,6 +47,9 @@ export function Profile() {
                 {currentUser.rating}
               </span>
               <Chip variant="success" size="sm">Verified Trader</Chip>
+              <button onClick={handleLogout} className="flex items-center gap-1 px-2 py-1 rounded-md text-danger hover:bg-danger/10 transition-colors text-[10px] font-medium ml-auto">
+                <LogOut className="w-3 h-3" /> Sign Out
+              </button>
             </div>
             <p className="text-xs text-text-secondary">
               Member since January 2023 · Farmer and agricultural commodity trader specializing in cocoa and shea butter.

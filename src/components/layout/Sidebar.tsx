@@ -1,9 +1,10 @@
 import { NavLink } from 'react-router-dom'
 import {
   ShoppingBag, Truck, Globe, User,
-  Bell, BarChart3, Wallet, Command, Building2,
-  ClipboardCheck, Users, Brain, Code2, Shield
+  BarChart3, Wallet, Command, Building2,
+  ClipboardCheck, Users, Brain, Code2, Shield, LogOut
 } from 'lucide-react'
+import { useAuth } from '@/context/AuthContext'
 
 interface NavItem {
   to: string
@@ -29,12 +30,24 @@ const navItems: NavItem[] = [
   { to: '/profile', label: 'Profile', icon: User },
 ]
 
+const roleLabels: Record<string, string> = {
+  admin: 'Administrator', farmer: 'Farmer', buyer: 'Buyer',
+  supplier: 'Supplier', logistics: 'Logistics', viewer: 'Viewer',
+  supervisor: 'Supervisor', trader: 'Trader',
+}
+
 interface SidebarProps {
   onNav?: () => void
   className?: string
 }
 
 export function Sidebar({ onNav, className = '' }: SidebarProps) {
+  const { user, logout } = useAuth()
+
+  const initials = user?.name
+    ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+    : '??'
+
   return (
     <aside className={`w-56 border-r border-border bg-surface flex flex-col shrink-0 ${className}`}>
       <div className="h-14 flex items-center gap-2.5 px-4 border-b border-border">
@@ -77,13 +90,15 @@ export function Sidebar({ onNav, className = '' }: SidebarProps) {
       <div className="p-3 border-t border-border">
         <div className="flex items-center gap-2.5">
           <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary shrink-0">
-            EJ
+            {initials}
           </div>
-          <div className="min-w-0">
-            <p className="text-xs font-medium text-text-primary truncate">Emmanuel</p>
-            <p className="text-[10px] text-text-secondary truncate">Farmer · Kumasi, GH</p>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-medium text-text-primary truncate">{user?.name || 'User'}</p>
+            <p className="text-[10px] text-text-secondary truncate capitalize">{roleLabels[user?.role || ''] || user?.role}</p>
           </div>
-          <Bell className="w-4 h-4 text-text-secondary shrink-0 ml-auto" />
+          <button onClick={logout} className="p-1.5 rounded-md text-text-secondary hover:text-danger hover:bg-danger/10 transition-colors shrink-0" title="Sign out">
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </aside>

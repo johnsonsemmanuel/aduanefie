@@ -660,6 +660,9 @@ export interface DeveloperApp {
   status: 'active' | 'inactive'
 }
 
+// Auth types
+export type AppUserRole = 'admin' | 'supervisor' | 'trader' | 'viewer' | 'farmer' | 'buyer' | 'supplier' | 'logistics'
+
 // Admin types
 export type UserRole = 'admin' | 'supervisor' | 'trader' | 'viewer'
 

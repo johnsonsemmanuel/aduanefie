@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { AuthProvider } from '@/context/AuthContext'
+import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { Shell } from '@/components/layout/Shell'
 import { CommandCenter } from '@/pages/CommandCenter'
 import { MarketIntel } from '@/pages/MarketIntel'
@@ -15,30 +17,38 @@ import { AIHub } from '@/pages/AIHub'
 import { DeveloperHub } from '@/pages/DeveloperHub'
 import { Administration } from '@/pages/Administration'
 import { Landing } from '@/pages/Landing'
+import { Login } from '@/pages/Login'
 import { NotFound } from '@/pages/NotFound'
+
+function ProtectedShell({ children }: { children: React.ReactNode }) {
+  return <ProtectedRoute><Shell>{children}</Shell></ProtectedRoute>
+}
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Landing />} />
-        <Route path="/dashboard" element={<Shell><CommandCenter /></Shell>} />
-        <Route path="/marketplace" element={<Shell><Marketplace /></Shell>} />
-        <Route path="/trade-desk" element={<Shell><TradeDesk /></Shell>} />
-        <Route path="/logistics" element={<Shell><Logistics /></Shell>} />
-        <Route path="/exports" element={<Shell><Exports /></Shell>} />
-        <Route path="/profile" element={<Shell><Profile /></Shell>} />
-        <Route path="/more" element={<Shell><Profile /></Shell>} />
-        <Route path="/market-intel" element={<Shell><MarketIntel /></Shell>} />
-        <Route path="/finance" element={<Shell><FinanceHub /></Shell>} />
-        <Route path="/cooperative" element={<Shell><CooperativeHub /></Shell>} />
-        <Route path="/ai" element={<Shell><AIHub /></Shell>} />
-        <Route path="/procurement" element={<Shell><ProcurementHub /></Shell>} />
-        <Route path="/business" element={<Shell><BusinessHub /></Shell>} />
-        <Route path="/developer" element={<Shell><DeveloperHub /></Shell>} />
-        <Route path="/admin" element={<Shell><Administration /></Shell>} />
-        <Route path="*" element={<Shell><NotFound /></Shell>} />
-      </Routes>
+      <AuthProvider>
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/dashboard" element={<ProtectedShell><CommandCenter /></ProtectedShell>} />
+          <Route path="/marketplace" element={<ProtectedShell><Marketplace /></ProtectedShell>} />
+          <Route path="/trade-desk" element={<ProtectedShell><TradeDesk /></ProtectedShell>} />
+          <Route path="/logistics" element={<ProtectedShell><Logistics /></ProtectedShell>} />
+          <Route path="/exports" element={<ProtectedShell><Exports /></ProtectedShell>} />
+          <Route path="/profile" element={<ProtectedShell><Profile /></ProtectedShell>} />
+          <Route path="/more" element={<ProtectedShell><Profile /></ProtectedShell>} />
+          <Route path="/market-intel" element={<ProtectedShell><MarketIntel /></ProtectedShell>} />
+          <Route path="/finance" element={<ProtectedShell><FinanceHub /></ProtectedShell>} />
+          <Route path="/cooperative" element={<ProtectedShell><CooperativeHub /></ProtectedShell>} />
+          <Route path="/ai" element={<ProtectedShell><AIHub /></ProtectedShell>} />
+          <Route path="/procurement" element={<ProtectedShell><ProcurementHub /></ProtectedShell>} />
+          <Route path="/business" element={<ProtectedShell><BusinessHub /></ProtectedShell>} />
+          <Route path="/developer" element={<ProtectedShell><DeveloperHub /></ProtectedShell>} />
+          <Route path="/admin" element={<ProtectedShell><Administration /></ProtectedShell>} />
+          <Route path="*" element={<ProtectedShell><NotFound /></ProtectedShell>} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   )
 }

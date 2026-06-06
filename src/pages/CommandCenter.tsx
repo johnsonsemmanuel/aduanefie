@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/context/AuthContext'
 import { agriModules, systemMetrics, marketTicker, systemEvents } from '@/data/agrios'
 import type { OSModule, MarketTicker, SystemEvent } from '@/types'
 
@@ -22,6 +23,7 @@ function ModuleIcon({ mod, size = 'w-5 h-5' }: { mod: OSModule; size?: string })
 
 export function CommandCenter() {
   const navigate = useNavigate()
+  const { user } = useAuth()
 
   const greeting = (() => {
     const h = new Date().getHours()
@@ -62,7 +64,7 @@ export function CommandCenter() {
       {/* Header */}
       <div className="flex items-baseline justify-between">
         <div>
-          <h1 className="text-lg font-bold text-text-primary">{greeting}, Emmanuel</h1>
+          <h1 className="text-lg font-bold text-text-primary">{greeting}, {user?.name?.split(' ')[0] || 'User'}</h1>
           <p className="text-xs text-text-secondary">AgriOS v2.4.1 · {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</p>
         </div>
         <div className="hidden sm:flex items-center gap-2">

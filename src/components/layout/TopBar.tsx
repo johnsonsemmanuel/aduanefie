@@ -1,10 +1,15 @@
 import { Bell, Search, TrendingUp } from 'lucide-react'
+import { useAuth } from '@/context/AuthContext'
 
 interface TopBarProps {
   onMenuToggle: () => void
 }
 
 export function TopBar({ onMenuToggle }: TopBarProps) {
+  const { user } = useAuth()
+  const initials = user?.name
+    ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+    : '??'
 
   return (
     <header className="h-14 border-b border-border bg-surface flex items-center gap-3 px-3 shrink-0">
@@ -42,7 +47,7 @@ export function TopBar({ onMenuToggle }: TopBarProps) {
         </button>
 
         <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-semibold text-primary shrink-0">
-          EJ
+          {initials}
         </div>
       </div>
     </header>
