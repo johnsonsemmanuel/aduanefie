@@ -1,6 +1,6 @@
 import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
 import { PageSkeleton } from '@/components/ui/PageSkeleton'
-import { Star, ShieldCheck, MapPin, Package, TrendingUp, Truck, LogOut } from 'lucide-react'
+import { Star, ShieldCheck, MapPin, Package, TrendingUp, Truck, LogOut, Settings as SettingsIcon } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { GlassCard, GlassCardHeader, GlassCardTitle } from '@/components/ui/GlassCard'
@@ -48,7 +48,12 @@ export function Profile() {
                 <Star className="w-3 h-3 text-warning fill-warning" /> {currentUser.rating}
               </span>
               <Pill variant="success">Verified Trader</Pill>
-              <button onClick={handleLogout} className="flex items-center gap-1 px-2 py-1 rounded-md text-danger hover:bg-danger/10 transition-colors text-[10px] font-medium ml-auto">
+            </div>
+            <div className="flex items-center gap-1.5 mt-1">
+              <button onClick={() => navigate('/settings')} className="flex items-center gap-1 px-2 py-1 rounded-md text-text-secondary hover:bg-surface-hover transition-colors text-[10px] font-medium">
+                <SettingsIcon className="w-3 h-3" /> Settings
+              </button>
+              <button onClick={handleLogout} className="flex items-center gap-1 px-2 py-1 rounded-md text-danger hover:bg-danger/10 transition-colors text-[10px] font-medium">
                 <LogOut className="w-3 h-3" /> Sign Out
               </button>
             </div>

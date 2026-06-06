@@ -16,8 +16,9 @@ const pathToModule: Record<string, OSModuleId> = {
   '/ai': 'ai',
   '/developer': 'developer',
   '/admin': 'admin',
+  '/messages': 'messaging',
+  '/calendar': 'calendar',
   '/profile': 'profile',
-  '/more': 'profile',
 }
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {

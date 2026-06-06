@@ -1,4 +1,5 @@
 import { Bell, Search } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 
 interface TopBarProps {
@@ -6,6 +7,7 @@ interface TopBarProps {
 }
 
 export function TopBar({ onMenuToggle }: TopBarProps) {
+  const navigate = useNavigate()
   const { user } = useAuth()
   const initials = user?.name
     ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
@@ -39,7 +41,7 @@ export function TopBar({ onMenuToggle }: TopBarProps) {
       </div>
 
       <div className="flex items-center gap-1">
-        <button className="relative w-8 h-8 flex items-center justify-center rounded-lg hover:bg-neutral-800 text-neutral-400">
+        <button onClick={() => navigate('/notifications')} className="relative w-8 h-8 flex items-center justify-center rounded-lg hover:bg-neutral-800 text-neutral-400">
           <Bell className="w-4 h-4" />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500" />
         </button>

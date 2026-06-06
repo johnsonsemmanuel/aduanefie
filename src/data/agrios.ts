@@ -12,6 +12,8 @@ export const agriModules: OSModule[] = [
   { id: 'business', name: 'Business Hub', description: 'CRM, projects, tasks, accounting', icon: 'Building2', color: '#2E7D32', path: '/business', layer: 7, status: 'active' },
   { id: 'developer', name: 'Developer Hub', description: 'APIs, webhooks, plugins, SDKs', icon: 'Code2', color: '#2980B9', path: '/developer', layer: 8, status: 'beta' },
   { id: 'admin', name: 'Administration', description: 'Users, permissions, system config', icon: 'Shield', color: '#D32F2F', path: '/admin', layer: 1, status: 'active' },
+  { id: 'messaging', name: 'Messages', description: 'Inbox, trade negotiations, team chat', icon: 'Mail', color: '#0288D1', path: '/messages', badge: 5, layer: 1, status: 'active' },
+  { id: 'calendar', name: 'Calendar', description: 'Planting seasons, harvest windows, farm events', icon: 'CalendarDays', color: '#F59E0B', path: '/calendar', layer: 1, status: 'active' },
 ]
 
 export const systemStatuses: SystemStatus[] = [

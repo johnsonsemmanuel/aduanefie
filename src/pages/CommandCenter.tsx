@@ -12,12 +12,12 @@ import {
   TrendingUp, BarChart3, Truck, Wallet, Warehouse, Users,
   Globe, Brain, ClipboardCheck, Building2, Code2, Shield,
   ArrowUp, ArrowDown, Activity, Bell, Zap,
-  Database, Cloud, RefreshCw, LayoutDashboard, Grid3X3,
+  Database, Cloud, RefreshCw, LayoutDashboard, Grid3X3, Mail, CalendarDays,
 } from 'lucide-react'
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   TrendingUp, BarChart3, Truck, Wallet, Warehouse, Users,
-  Globe, Brain, ClipboardCheck, Building2, Code2, Shield,
+  Globe, Brain, ClipboardCheck, Building2, Code2, Shield, Mail, CalendarDays,
 }
 
 function ModuleIcon({ mod, size = 'w-5 h-5' }: { mod: OSModule; size?: string }) {

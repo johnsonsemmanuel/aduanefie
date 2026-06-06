@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import {
   Command, ShoppingBag, BarChart3, Building2, ClipboardCheck,
-  Truck, Wallet, Globe, Users, Brain, Code2, Shield, User,
+  Truck, Wallet, Globe, Users, Brain, Code2, Shield, User, Mail, CalendarDays,
   LogOut, Search as SearchIcon, ChevronDown,
 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
@@ -74,6 +74,14 @@ function getModuleContent(moduleId: string): ModuleContent {
       title: 'Administration',
       sections: ['User Management', 'Roles', 'System Settings', 'Audit Log'],
     },
+    messaging: {
+      title: 'Messages',
+      sections: ['Inbox', 'Sent', 'Trade Negotiations', 'Support Tickets', 'Archive'],
+    },
+    calendar: {
+      title: 'Calendar',
+      sections: ['Monthly View', 'Planting Season', 'Harvest Windows', 'Deliveries', 'Events'],
+    },
     profile: {
       title: 'Profile',
       sections: ['Personal Info', 'Account', 'Notifications', 'Security'],
@@ -139,6 +147,8 @@ const allNavItems: NavItem[] = [
   { to: '/ai', label: 'AI Hub', icon: Brain, moduleId: 'ai' },
   { to: '/developer', label: 'Developer', icon: Code2, moduleId: 'developer' },
   { to: '/admin', label: 'Admin', icon: Shield, moduleId: 'admin' },
+  { to: '/messages', label: 'Messages', icon: Mail, moduleId: 'messaging' },
+  { to: '/calendar', label: 'Calendar', icon: CalendarDays, moduleId: 'calendar' },
   { to: '/profile', label: 'Profile', icon: User, moduleId: 'profile' },
 ]
 

@@ -15,6 +15,11 @@ import { TradeDesk } from '@/pages/TradeDesk'
 import { Logistics } from '@/pages/Logistics'
 import { Exports } from '@/pages/Exports'
 import { Profile } from '@/pages/Profile'
+import { Messages } from '@/pages/Messages'
+import { Notifications } from '@/pages/Notifications'
+import { Settings } from '@/pages/Settings'
+import { AgriculturalCalendar } from '@/pages/AgriculturalCalendar'
+import { Help } from '@/pages/Help'
 import { ProcurementHub } from '@/pages/ProcurementHub'
 import { CooperativeHub } from '@/pages/CooperativeHub'
 import { AIHub } from '@/pages/AIHub'
@@ -55,7 +60,11 @@ function App() {
           <Route path="/logistics" element={<ProtectedShell><Logistics /></ProtectedShell>} />
           <Route path="/exports" element={<ProtectedShell><Exports /></ProtectedShell>} />
           <Route path="/profile" element={<ProtectedShell><Profile /></ProtectedShell>} />
-          <Route path="/more" element={<ProtectedShell><Profile /></ProtectedShell>} />
+          <Route path="/messages" element={<ProtectedShell><Messages /></ProtectedShell>} />
+          <Route path="/notifications" element={<ProtectedShell><Notifications /></ProtectedShell>} />
+          <Route path="/settings" element={<ProtectedShell><Settings /></ProtectedShell>} />
+          <Route path="/calendar" element={<ProtectedShell><AgriculturalCalendar /></ProtectedShell>} />
+          <Route path="/help" element={<ProtectedShell><Help /></ProtectedShell>} />
           <Route path="/market-intel" element={<ProtectedShell><MarketIntel /></ProtectedShell>} />
           <Route path="/finance" element={<ProtectedShell><FinanceHub /></ProtectedShell>} />
           <Route path="/cooperative" element={<ProtectedShell><CooperativeHub /></ProtectedShell>} />

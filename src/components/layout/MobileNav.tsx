@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, ShoppingBag, BarChart3, Building2, ClipboardCheck,
-  Truck, Wallet, Globe, Users, Brain, Code2, Shield, User, Grid,
+  Truck, Wallet, Globe, Users, Brain, Code2, Shield, User, Grid, Mail, CalendarDays,
   X,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -30,6 +30,8 @@ const allMobileNavItems: MobileNavItem[] = [
   { to: '/ai', label: 'AI', icon: Brain, moduleId: 'ai' },
   { to: '/developer', label: 'Dev', icon: Code2, moduleId: 'developer' },
   { to: '/admin', label: 'Admin', icon: Shield, moduleId: 'admin' },
+  { to: '/messages', label: 'Messages', icon: Mail, moduleId: 'messaging' },
+  { to: '/calendar', label: 'Calendar', icon: CalendarDays, moduleId: 'calendar' },
   { to: '/profile', label: 'Profile', icon: User, moduleId: 'profile' },
 ]
 

@@ -205,7 +205,7 @@ export interface WatchlistItem {
 export type OSModuleId =
   | 'trade-engine' | 'market-intel' | 'logistics' | 'finance'
   | 'cooperative' | 'export' | 'ai' | 'admin'
-  | 'procurement' | 'business' | 'developer' | 'dashboard'
+  | 'procurement' | 'business' | 'developer' | 'dashboard' | 'messaging' | 'calendar'
 
 export interface OSModule {
   id: OSModuleId
@@ -658,6 +658,66 @@ export interface DeveloperApp {
   apiKeys: number
   lastActive: string
   status: 'active' | 'inactive'
+}
+
+// Agricultural Calendar types
+export type AgEventCategory = 'planting' | 'harvest' | 'delivery' | 'maintenance' | 'meeting' | 'market' | 'weather'
+
+export interface AgCalendarEvent {
+  id: string
+  title: string
+  description: string
+  date: string
+  endDate?: string
+  category: AgEventCategory
+  commodity?: string
+  region?: string
+  allDay?: boolean
+}
+
+// Notification types
+export type NotificationCategory = 'trade' | 'payment' | 'logistics' | 'system' | 'market' | 'social' | 'approval'
+
+export interface Notification {
+  id: string
+  type: NotificationCategory
+  title: string
+  message: string
+  timestamp: string
+  read: boolean
+  actionable?: boolean
+  actionLabel?: string
+  actionPath?: string
+  relatedId?: string
+}
+
+// Messaging types
+export interface MessageAttachment {
+  name: string
+  url: string
+  size: string
+}
+
+export interface Message {
+  id: string
+  threadId: string
+  sender: string
+  senderRole: string
+  content: string
+  timestamp: string
+  attachments?: MessageAttachment[]
+}
+
+export type MessageCategory = 'trade' | 'contract' | 'support' | 'cooperative' | 'general'
+
+export interface MessageThread {
+  id: string
+  subject: string
+  participants: { name: string; role: string; avatar?: string }[]
+  lastMessage: Message
+  unreadCount: number
+  category: MessageCategory
+  relatedTo?: { type: string; id: string; label: string }
 }
 
 // Auth types
