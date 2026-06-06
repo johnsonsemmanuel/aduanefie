@@ -7,8 +7,10 @@ import { useToast } from '@/context/ToastContext'
 import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
 import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import { useAuth } from '@/context/AuthContext'
+import { Button } from '@/components/ui/Button'
+import { PageShell, type PageTab } from '@/components/layout/PageShell'
 
-const tabs = [
+const tabs: PageTab[] = [
   { id: 'account', label: 'Account', icon: User },
   { id: 'security', label: 'Security', icon: Shield },
   { id: 'notifications', label: 'Notifications', icon: Bell },
@@ -97,29 +99,12 @@ export function Settings() {
   }
 
   return (
-    <div className="space-y-4 min-w-0">
-      <div>
-        <h1 className="text-lg font-bold text-text-primary">Settings</h1>
-        <p className="text-xs text-text-secondary">Manage your account, security, and preferences</p>
-      </div>
-
-      {/* Tab bar */}
-      <div className="flex gap-1 overflow-x-auto scrollbar-thin pb-1">
-        {tabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-medium whitespace-nowrap transition-colors ${
-              activeTab === tab.id
-                ? 'bg-primary text-white'
-                : 'text-text-secondary hover:bg-surface-hover'
-            }`}
-          >
-            <tab.icon className="w-3.5 h-3.5" />
-            {tab.label}
-          </button>
-        ))}
-      </div>
+    <PageShell tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
+      <div className="space-y-4 min-w-0">
+          <div>
+            <h1 className="text-lg font-bold text-text-primary">Settings</h1>
+            <p className="text-xs text-text-secondary">Manage your account, security, and preferences</p>
+          </div>
 
       {/* Account */}
       {activeTab === 'account' && (
@@ -134,12 +119,9 @@ export function Settings() {
             <InputRow label="Location" value={location} onChange={setLocation} />
           </div>
           <div className="mt-4 flex justify-end">
-            <button
-              onClick={() => handleSave('Account')}
-              className="px-4 py-2 rounded-full bg-primary text-white text-xs font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
-            >
+            <Button onClick={() => handleSave('Account')} variant="primary" size="sm">
               <Save className="w-3.5 h-3.5" /> Save Changes
-            </button>
+            </Button>
           </div>
         </GlassCard>
       )}
@@ -156,12 +138,9 @@ export function Settings() {
               <InputRow label="New Password" value={newPassword} onChange={setNewPassword} type="password" placeholder="Enter new password" />
             </div>
             <div className="mt-4 flex justify-end">
-              <button
-                onClick={() => handleSave('Password')}
-                className="px-4 py-2 rounded-full bg-primary text-white text-xs font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
-              >
+              <Button onClick={() => handleSave('Password')} variant="primary" size="sm">
                 <Save className="w-3.5 h-3.5" /> Update Password
-              </button>
+              </Button>
             </div>
           </GlassCard>
 
@@ -176,12 +155,9 @@ export function Settings() {
               onChange={setTwoFactor}
             />
             <div className="mt-2 flex justify-end">
-              <button
-                onClick={() => handleSave('Security')}
-                className="px-4 py-2 rounded-full bg-primary text-white text-xs font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
-              >
+              <Button onClick={() => handleSave('Security')} variant="primary" size="sm">
                 <Save className="w-3.5 h-3.5" /> Save
-              </button>
+              </Button>
             </div>
           </GlassCard>
 
@@ -214,12 +190,9 @@ export function Settings() {
           <ToggleRow label="Price Alerts" description="Price movements, target prices, market changes" checked={priceAlerts} onChange={setPriceAlerts} />
           <ToggleRow label="Marketing & Updates" description="Product updates, tips, promotions" checked={marketingEmails} onChange={setMarketingEmails} />
           <div className="mt-4 flex justify-end">
-            <button
-              onClick={() => handleSave('Notification')}
-              className="px-4 py-2 rounded-full bg-primary text-white text-xs font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
-            >
+            <Button onClick={() => handleSave('Notification')} variant="primary" size="sm">
               <Save className="w-3.5 h-3.5" /> Save Preferences
-            </button>
+            </Button>
           </div>
         </GlassCard>
       )}
@@ -235,15 +208,14 @@ export function Settings() {
             <label className="text-xs text-text-secondary font-medium min-w-[120px]">Theme</label>
             <div className="flex gap-1">
               {['dark', 'light', 'system'].map(t => (
-                <button
+                <Button
                   key={t}
                   onClick={() => setTheme(t)}
-                  className={`px-3 py-1.5 rounded-full text-[10px] font-semibold transition-colors capitalize ${
-                    theme === t ? 'bg-primary text-white' : 'bg-surface-active text-text-secondary hover:bg-surface-hover'
-                  }`}
+                  variant={theme === t ? 'primary' : 'ghost'}
+                  size="sm"
                 >
                   {t}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -252,15 +224,14 @@ export function Settings() {
             <label className="text-xs text-text-secondary font-medium min-w-[120px]">Currency</label>
             <div className="flex gap-1">
               {['USD', 'EUR', 'GHS', 'NGN', 'KES'].map(c => (
-                <button
+                <Button
                   key={c}
                   onClick={() => setCurrency(c)}
-                  className={`px-3 py-1.5 rounded-full text-[10px] font-semibold transition-colors ${
-                    currency === c ? 'bg-primary text-white' : 'bg-surface-active text-text-secondary hover:bg-surface-hover'
-                  }`}
+                  variant={currency === c ? 'primary' : 'ghost'}
+                  size="sm"
                 >
                   {c}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -268,28 +239,25 @@ export function Settings() {
             <label className="text-xs text-text-secondary font-medium min-w-[120px]">Weight Unit</label>
             <div className="flex gap-1">
               {['tonne', 'kg', 'lb'].map(u => (
-                <button
+                <Button
                   key={u}
                   onClick={() => setWeightUnit(u)}
-                  className={`px-3 py-1.5 rounded-full text-[10px] font-semibold transition-colors capitalize ${
-                    weightUnit === u ? 'bg-primary text-white' : 'bg-surface-active text-text-secondary hover:bg-surface-hover'
-                  }`}
+                  variant={weightUnit === u ? 'primary' : 'ghost'}
+                  size="sm"
                 >
                   {u}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
           <div className="mt-4 flex justify-end">
-            <button
-              onClick={() => handleSave('Preferences')}
-              className="px-4 py-2 rounded-full bg-primary text-white text-xs font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
-            >
+            <Button onClick={() => handleSave('Preferences')} variant="primary" size="sm">
               <Save className="w-3.5 h-3.5" /> Save Preferences
-            </button>
+            </Button>
           </div>
         </GlassCard>
       )}
     </div>
+    </PageShell>
   )
 }

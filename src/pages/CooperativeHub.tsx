@@ -7,6 +7,7 @@ import {
 import { PageShell } from '@/components/layout/PageShell'
 import { GlassCard, GlassCardHeader, GlassCardTitle } from '@/components/ui/GlassCard'
 import { StatusPill, Pill } from '@/components/ui/Pill'
+import { Button } from '@/components/ui/Button'
 import { cooperatives, cooperativeMembers } from '@/data/cooperative'
 import type { Cooperative, CooperativeMember } from '@/types'
 
@@ -32,9 +33,9 @@ export function CooperativeHub() {
             <p className="text-xs text-text-secondary">Farmer groups, collective trading, and shared resources</p>
           </div>
           <div className="hidden sm:flex items-center gap-2">
-            <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+            <Button variant="primary" size="sm" className="rounded-full">
               <Plus className="w-3.5 h-3.5" /> New Cooperative
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -130,10 +131,12 @@ function MembersTab() {
       <GlassCardHeader className="px-4 pt-4">
         <GlassCardTitle>Cooperative Members</GlassCardTitle>
         <div className="flex gap-1">
-          <button
+          <Button
             onClick={() => setSelectedCoop('all')}
-            className={`px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors ${selectedCoop === 'all' ? 'bg-primary text-white' : 'bg-surface-active text-text-secondary'}`}
-          >All</button>
+            variant={selectedCoop === 'all' ? 'primary' : 'secondary'}
+            size="sm"
+            className="rounded-full"
+          >All</Button>
         </div>
       </GlassCardHeader>
       <div className="divide-y divide-border">

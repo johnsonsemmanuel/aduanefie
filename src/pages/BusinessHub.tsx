@@ -3,6 +3,7 @@ import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
 import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import { Modal } from '@/components/ui/Modal'
 import { useToast } from '@/context/ToastContext'
+import { Button } from '@/components/ui/Button'
 import {
   Building2, Users, Target, ClipboardCheck, Receipt, TrendingUp,
   CheckCircle, Clock, AlertTriangle, Plus, UserPlus, ListTodo, Briefcase
@@ -39,12 +40,12 @@ export function BusinessHub() {
             <p className="text-xs text-text-secondary">CRM, projects, tasks, and accounting</p>
           </div>
           <div className="hidden sm:flex items-center gap-2">
-            <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+            <Button variant="primary" size="sm">
               <UserPlus className="w-3.5 h-3.5" /> Add Contact
-            </button>
-            <button onClick={() => setModalOpen('deal')} className="px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-surface-hover transition-colors">
+            </Button>
+            <Button variant="secondary" size="sm" onClick={() => setModalOpen('deal')}>
               <Plus className="w-3.5 h-3.5" /> New Deal
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -93,7 +94,7 @@ export function BusinessHub() {
               <option>Proposal</option>
               <option>Negotiation</option>
             </select>
-            <button type="submit" className="w-full px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold">Create Deal</button>
+            <Button type="submit" variant="primary" size="sm" fullWidth>Create Deal</Button>
           </form>
         </Modal>
 
@@ -108,7 +109,7 @@ export function BusinessHub() {
               <option>High</option>
               <option>Urgent</option>
             </select>
-            <button type="submit" className="w-full px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold">Create Task</button>
+            <Button type="submit" variant="primary" size="sm" fullWidth>Create Task</Button>
           </form>
         </Modal>
       </div>
@@ -206,15 +207,14 @@ function CRMTab() {
           <GlassCardTitle>Deals</GlassCardTitle>
           <div className="flex gap-1">
             {['all', 'lead', 'qualified', 'proposal', 'negotiation', 'closed_won'].map((s) => (
-              <button
-                key={s}
-                onClick={() => setDealFilter(s as DealStage | 'all')}
-                className={`px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors ${
-                  dealFilter === s ? 'bg-primary text-white' : 'bg-surface-active text-text-secondary hover:bg-surface-hover'
-                }`}
-              >
-                {s === 'all' ? 'All' : stageLabels[s]}
-              </button>
+            <Button
+              key={s}
+              variant={dealFilter === s ? 'primary' : 'secondary'}
+              size="sm"
+              onClick={() => setDealFilter(s as DealStage | 'all')}
+            >
+              {s === 'all' ? 'All' : stageLabels[s]}
+            </Button>
             ))}
           </div>
         </GlassCardHeader>
@@ -238,21 +238,20 @@ function TasksTab({ onNewTask }: { onNewTask?: () => void }) {
       <GlassCardHeader className="px-4 pt-4">
         <div className="flex items-center justify-between w-full">
           <GlassCardTitle>All Tasks</GlassCardTitle>
-          <button onClick={onNewTask} className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+          <Button onClick={onNewTask} variant="primary" size="sm">
             <Plus className="w-3.5 h-3.5" /> New Task
-          </button>
+          </Button>
         </div>
         <div className="flex gap-1">
           {['all', 'todo', 'in_progress', 'review', 'done'].map((s) => (
-            <button
+            <Button
               key={s}
+              variant={taskFilter === s ? 'primary' : 'secondary'}
+              size="sm"
               onClick={() => setTaskFilter(s as TaskStatus | 'all')}
-              className={`px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors ${
-                taskFilter === s ? 'bg-primary text-white' : 'bg-surface-active text-text-secondary hover:bg-surface-hover'
-              }`}
             >
               {s === 'all' ? 'All' : taskStatusLabels[s]}
-            </button>
+            </Button>
           ))}
         </div>
       </GlassCardHeader>
@@ -282,9 +281,9 @@ function AccountingTab() {
   return (
     <div className="space-y-3">
       <div className="flex justify-end">
-        <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+        <Button variant="primary" size="sm">
           <Plus className="w-3.5 h-3.5" /> New Invoice
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -306,15 +305,14 @@ function AccountingTab() {
           <GlassCardTitle>Invoices</GlassCardTitle>
           <div className="flex gap-1">
             {['all', 'paid', 'sent', 'overdue', 'draft'].map((s) => (
-              <button
-                key={s}
-                onClick={() => setInvFilter(s as typeof invFilter)}
-                className={`px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors ${
-                  invFilter === s ? 'bg-primary text-white' : 'bg-surface-active text-text-secondary hover:bg-surface-hover'
-                }`}
-              >
-                {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
-              </button>
+            <Button
+              key={s}
+              variant={invFilter === s ? 'primary' : 'secondary'}
+              size="sm"
+              onClick={() => setInvFilter(s as typeof invFilter)}
+            >
+              {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
+            </Button>
             ))}
           </div>
         </GlassCardHeader>

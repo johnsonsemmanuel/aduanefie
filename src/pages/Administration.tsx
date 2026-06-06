@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Button } from '@/components/ui/Button'
 import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
 import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import { Modal } from '@/components/ui/Modal'
@@ -34,9 +35,9 @@ export function Administration() {
             <p className="text-xs text-text-secondary">User management, permissions, and system configuration</p>
           </div>
           <div className="hidden sm:flex items-center gap-2">
-            <button onClick={() => setModalOpen('invite')} className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+            <Button variant="primary" size="sm" onClick={() => setModalOpen('invite')}>
               <UserPlus className="w-3.5 h-3.5" /> Invite User
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -129,7 +130,7 @@ export function Administration() {
               <option>Trader</option>
               <option>Viewer</option>
             </select>
-            <button type="submit" className="w-full px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold">Invite User</button>
+            <Button variant="primary" size="sm" fullWidth type="submit">Invite User</Button>
           </form>
         </Modal>
       </div>
@@ -159,9 +160,8 @@ function UsersTab() {
         <GlassCardTitle>All Users</GlassCardTitle>
         <div className="flex gap-1">
           {['all', 'admin', 'supervisor', 'trader', 'viewer'].map((r) => (
-            <button key={r} onClick={() => setRoleFilter(r)}
-              className={`px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors ${roleFilter === r ? 'bg-primary text-white' : 'bg-surface-active text-text-secondary hover:bg-surface-hover'}`}
-            >{r === 'all' ? 'All' : r.charAt(0).toUpperCase() + r.slice(1)}</button>
+            <Button key={r} onClick={() => setRoleFilter(r)} variant={roleFilter === r ? 'primary' : 'secondary'} size="sm"
+            >{r === 'all' ? 'All' : r.charAt(0).toUpperCase() + r.slice(1)}</Button>
           ))}
         </div>
       </GlassCardHeader>
@@ -207,9 +207,8 @@ function SettingsTab() {
         <GlassCardTitle>System Settings</GlassCardTitle>
         <div className="flex gap-1">
           {categories.map((c) => (
-            <button key={c} onClick={() => setCatFilter(c)}
-              className={`px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors ${catFilter === c ? 'bg-primary text-white' : 'bg-surface-active text-text-secondary hover:bg-surface-hover'}`}
-            >{c === 'all' ? 'All' : c.charAt(0).toUpperCase() + c.slice(1)}</button>
+            <Button key={c} onClick={() => setCatFilter(c)} variant={catFilter === c ? 'primary' : 'secondary'} size="sm"
+            >{c === 'all' ? 'All' : c.charAt(0).toUpperCase() + c.slice(1)}</Button>
           ))}
         </div>
       </GlassCardHeader>

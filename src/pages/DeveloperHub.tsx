@@ -9,6 +9,7 @@ import { GlassCard, GlassCardHeader, GlassCardTitle } from '@/components/ui/Glas
 import { StatusPill } from '@/components/ui/Pill'
 import { apiEndpoints, apiKeys, developerApps } from '@/data/developer'
 import type { APIEndpoint, APIKey, DeveloperApp } from '@/types'
+import { Button } from '@/components/ui/Button'
 
 export function DeveloperHub() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -33,12 +34,12 @@ export function DeveloperHub() {
             <p className="text-xs text-text-secondary">API documentation, keys, webhooks, and app management</p>
           </div>
           <div className="hidden sm:flex items-center gap-2">
-            <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+            <Button variant="primary" size="sm" className="rounded-full">
               <Plus className="w-3.5 h-3.5" /> New API Key
-            </button>
-            <button className="px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-surface-hover transition-colors">
+            </Button>
+            <Button variant="secondary" size="sm" className="rounded-full">
               <BookOpen className="w-3.5 h-3.5" /> Docs
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -107,9 +108,13 @@ function EndpointsTab() {
         <GlassCardTitle>API Endpoints</GlassCardTitle>
         <div className="flex gap-1">
           {['all', 'GET', 'POST', 'PUT', 'DELETE'].map((m) => (
-            <button key={m} onClick={() => setMethodFilter(m)}
-              className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-medium transition-colors ${methodFilter === m ? 'bg-primary text-white' : 'bg-surface-active text-text-secondary hover:bg-surface-hover'}`}
-            >{m}</button>
+            <Button
+              key={m}
+              variant={methodFilter === m ? 'primary' : 'secondary'}
+              size="sm"
+              onClick={() => setMethodFilter(m)}
+              className="rounded-full font-mono"
+            >{m}</Button>
           ))}
         </div>
       </GlassCardHeader>

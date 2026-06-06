@@ -11,6 +11,7 @@ import { OrderTimeline } from '@/components/trade/OrderTimeline'
 import { orders, tradeMetrics, tradeOpportunities } from '@/data/mock'
 import { PriceSparkline } from '@/components/trade/MarketPriceWidget'
 import type { Order } from '@/types'
+import { Button } from '@/components/ui/Button'
 
 const orderColumns = [
   { key: 'orderNumber', header: 'Order', render: (o: Order) => <span className="text-xs font-mono font-medium">{o.orderNumber}</span> },
@@ -103,12 +104,14 @@ export function TradeDesk() {
           <GlassCard padding="none">
             <GlassCardHeader className="px-4 pt-4">
               <GlassCardTitle>Order Timeline</GlassCardTitle>
-              <button
+              <Button
                 onClick={() => setSelectedOrder(null)}
-                className="px-2 py-1 rounded-full border border-border text-[10px] text-text-secondary hover:bg-surface-hover transition-colors"
+                variant="ghost"
+                size="sm"
+                className="rounded-full"
               >
                 Close
-              </button>
+              </Button>
             </GlassCardHeader>
             <div className="px-4 pb-4">
               <div className="mb-3 pb-3 border-b border-border">

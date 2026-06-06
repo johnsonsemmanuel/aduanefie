@@ -13,6 +13,7 @@ import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
 import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import { messageThreads, threadMessages } from '@/data/messages'
 import type { MessageThread, MessageCategory } from '@/types'
+import { Button, IconButton } from '@/components/ui/Button'
 
 const categoryIcons: Record<MessageCategory, typeof ShoppingBag> = {
   trade: ShoppingBag,
@@ -94,10 +95,12 @@ function ThreadList({
           const isActive = thread.id === activeId
           const CatIcon = categoryIcons[thread.category]
           return (
-            <button
+            <Button
               key={thread.id}
+              variant="ghost"
+              fullWidth
               onClick={() => onSelect(thread.id)}
-              className={`w-full text-left px-4 py-3 transition-colors hover:bg-surface-hover ${
+              className={`!justify-start text-left px-4 py-3 ${
                 isActive ? 'bg-surface-active' : ''
               } ${thread.unreadCount > 0 ? 'bg-primary/[0.02]' : ''}`}
             >
@@ -132,7 +135,7 @@ function ThreadList({
                   </div>
                 </div>
               </div>
-            </button>
+            </Button>
           )
         })}
         {filtered.length === 0 && (
@@ -194,9 +197,9 @@ function ChatView({
     <div className="flex flex-col h-full">
       {/* Chat header */}
       <div className="flex items-center gap-3 px-4 py-3 border-b border-border shrink-0">
-        <button onClick={onBack} className="lg:hidden w-7 h-7 flex items-center justify-center rounded-lg hover:bg-surface-hover text-text-secondary -ml-1">
+        <IconButton variant="ghost" size="sm" onClick={onBack} className="lg:hidden -ml-1">
           <ArrowLeft className="w-4 h-4" />
-        </button>
+        </IconButton>
         <ThreadAvatar name={thread.participants[0]?.name || '?'} />
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-text-primary truncate">{thread.subject}</p>
@@ -204,9 +207,9 @@ function ChatView({
             {thread.participants.map(p => p.name).join(', ')}
           </p>
         </div>
-        <button className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-surface-hover text-text-secondary">
+        <IconButton variant="ghost" size="sm">
           <MoreHorizontal className="w-4 h-4" />
-        </button>
+        </IconButton>
       </div>
 
       {/* Messages */}
@@ -262,17 +265,19 @@ function ChatView({
               onChange={e => setInput(e.target.value)}
               className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:border-neutral-500"
             />
-            <button type="button" className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 flex items-center justify-center rounded-full hover:bg-surface-hover text-text-secondary">
+            <IconButton variant="ghost" size="sm" type="button" className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full">
               <Paperclip className="w-3.5 h-3.5" />
-            </button>
+            </IconButton>
           </div>
-          <button
+          <Button
+            variant="primary"
+            size="sm"
             type="submit"
             disabled={!input.trim()}
-            className="size-10 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90 transition-colors disabled:opacity-40 shrink-0"
+            className="rounded-full size-10 !p-0 shrink-0"
           >
             <Send className="w-4 h-4" />
-          </button>
+          </Button>
         </div>
       </form>
     </div>
@@ -324,12 +329,14 @@ export function Messages() {
             <h1 className="text-lg font-bold text-text-primary">Messages</h1>
             <p className="text-xs text-text-secondary">{messageThreads.reduce((s, t) => s + t.unreadCount, 0)} unread · {messageThreads.length} threads</p>
           </div>
-          <button
+          <Button
+            variant="primary"
+            size="sm"
             onClick={() => setComposeOpen(true)}
-            className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
+            className="rounded-full"
           >
             <MessageSquare className="w-3 h-3" /> Compose
-          </button>
+          </Button>
         </div>
 
         {/* Desktop: two-column layout */}
@@ -354,18 +361,16 @@ export function Messages() {
               </div>
               <div className="flex gap-1 px-2 pb-2 overflow-x-auto scrollbar-thin">
                 {filterTabs.map(tab => (
-                  <button
+                  <Button
                     key={tab.id}
+                    variant={filter === tab.id ? 'primary' : 'secondary'}
+                    size="sm"
                     onClick={() => setFilter(tab.id)}
-                    className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-medium whitespace-nowrap transition-colors ${
-                      filter === tab.id
-                        ? 'bg-primary text-white'
-                        : 'text-text-secondary hover:bg-surface-hover'
-                    }`}
+                    className="rounded-full whitespace-nowrap"
                   >
                     <tab.icon className="w-3 h-3" />
                     {tab.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -420,13 +425,13 @@ export function Messages() {
             className="w-full px-4 py-3 rounded-xl border border-border bg-bg text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:border-neutral-500 resize-none"
           />
           <div className="flex justify-end gap-2">
-            <button type="button" onClick={() => setComposeOpen(false)} className="px-4 py-2 rounded-full border border-border text-text-secondary text-sm hover:bg-surface-hover transition-colors">
+            <Button variant="secondary" size="sm" type="button" onClick={() => setComposeOpen(false)} className="rounded-full">
               Cancel
-            </button>
-            <button type="submit" className="px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors">
+            </Button>
+            <Button variant="primary" size="sm" type="submit" className="rounded-full">
               <Send className="w-3.5 h-3.5 inline mr-1.5 -mt-0.5" />
               Send Message
-            </button>
+            </Button>
           </div>
         </form>
       </Modal>

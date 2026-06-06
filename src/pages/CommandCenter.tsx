@@ -7,6 +7,7 @@ import type { OSModule, MarketTicker, SystemEvent } from '@/types'
 import { PageShell } from '@/components/layout/PageShell'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { Pill } from '@/components/ui/Pill'
+import { Button } from '@/components/ui/Button'
 
 import {
   TrendingUp, BarChart3, Truck, Wallet, Warehouse, Users,
@@ -123,9 +124,11 @@ export function CommandCenter() {
             <SectionHeader title="AgriOS Modules" icon={Grid3X3} />
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
               {visibleModules.map((mod) => (
-                <button
+                <Button
                   key={mod.id}
                   onClick={() => mod.status !== 'coming-soon' && navigate(mod.path)}
+                  variant="primary"
+                  size="sm"
                   className="group relative flex flex-col items-start gap-2 p-3 rounded-lg border border-border bg-surface hover:bg-surface-hover active:bg-surface-active transition-all text-left"
                 >
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: `${mod.color}12` }}>

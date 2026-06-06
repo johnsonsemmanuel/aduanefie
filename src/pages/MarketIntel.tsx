@@ -8,6 +8,7 @@ import { TickerTape, TopMoversBar } from '@/components/trade/TickerTape'
 import { PriceChart } from '@/components/trade/PriceChart'
 import { WeatherWidget } from '@/components/trade/WeatherWidget'
 import { DemandAnalytics } from '@/components/trade/DemandAnalytics'
+import { Button } from '@/components/ui/Button'
 import {
   marketTicker, commodityDetails, weatherZones, demandData, marketReports,
   topMovers, marketOverviewData
@@ -95,17 +96,15 @@ export function MarketIntel() {
                   </div>
                   <div className="flex gap-1.5 mt-2">
                     {commodityDetails.map((c) => (
-                      <button
+                      <Button
                         key={c.id}
                         onClick={() => setSelectedCommodity(c)}
-                        className={`px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors ${
-                          selectedCommodity.id === c.id
-                            ? 'bg-primary text-white'
-                            : 'bg-surface-active text-text-secondary hover:bg-surface-hover'
-                        }`}
+                        variant={selectedCommodity.id === c.id ? 'primary' : 'secondary'}
+                        size="sm"
+                        className="rounded-full"
                       >
                         {c.name.split(' ')[0]}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
@@ -152,17 +151,15 @@ export function MarketIntel() {
             </GlassCardHeader>
             <div className="flex gap-2 mb-3 flex-wrap">
               {commodityDetails.map((c) => (
-                <button
+                <Button
                   key={c.id}
                   onClick={() => setSelectedCommodity(c)}
-                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                    selectedCommodity.id === c.id
-                      ? 'bg-primary text-white'
-                      : 'bg-surface-active text-text-secondary hover:bg-surface-hover'
-                  }`}
+                  variant={selectedCommodity.id === c.id ? 'primary' : 'secondary'}
+                  size="sm"
+                  className="rounded-full"
                 >
                   {c.name}
-                </button>
+                </Button>
               ))}
             </div>
             <PriceChart data={selectedCommodity.priceHistory} width={700} height={240} color={selectedCommodity.change >= 0 ? '#2E7D32' : '#D32F2F'} />

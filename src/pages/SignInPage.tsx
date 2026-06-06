@@ -207,14 +207,17 @@ function ShaderMaterial({
   const { size } = useThree()
   const ref = useRef<THREE.Mesh>(null)
 
-  useFrame(({ clock }) => {
+  const timerRef = useRef(new THREE.Timer())
+
+  useFrame(() => {
     if (!ref.current) return
     const mesh = ref.current
     const mat = mesh.material as THREE.ShaderMaterial | undefined
     if (!mat || !mat.uniforms) return
     const timeLocation = mat.uniforms.u_time
     if (!timeLocation) return
-    timeLocation.value = clock.getElapsedTime()
+    timerRef.current.update()
+    timeLocation.value = timerRef.current.getElapsed()
   })
 
   const getUniforms = () => {
@@ -332,16 +335,21 @@ function Shader({ source, uniforms }: ShaderProps) {
   if (!webglSupported) return <ShaderFallback />
 
   return (
-    <Canvas
-      className="absolute inset-0 h-full w-full"
-      onCreated={({ gl }) => {
-        gl.render()
-      }}
-    >
-      <ErrorBoundary fallback={<ShaderFallback />}>
+    <ErrorBoundary fallback={<ShaderFallback />}>
+      <Canvas
+        className="absolute inset-0 h-full w-full"
+        onCreated={({ gl }) => {
+          gl.domElement.addEventListener('webglcontextlost', (e: Event) => {
+            e.preventDefault()
+          })
+          gl.domElement.addEventListener('webglcontextrestored', () => {
+            gl.render()
+          })
+        }}
+      >
         <ShaderMaterial source={source} uniforms={uniforms} />
-      </ErrorBoundary>
-    </Canvas>
+      </Canvas>
+    </ErrorBoundary>
   )
 }
 

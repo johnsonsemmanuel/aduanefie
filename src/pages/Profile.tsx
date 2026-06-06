@@ -1,9 +1,11 @@
+import { Button } from '@/components/ui/Button'
 import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
 import { PageSkeleton } from '@/components/ui/PageSkeleton'
-import { Star, ShieldCheck, MapPin, Package, TrendingUp, Truck, LogOut, Settings as SettingsIcon } from 'lucide-react'
+import { Star, ShieldCheck, MapPin, Package, TrendingUp, Truck, LogOut, Settings as SettingsIcon, User } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { GlassCard, GlassCardHeader, GlassCardTitle } from '@/components/ui/GlassCard'
+import { PageShell, type PageTab } from '@/components/layout/PageShell'
 import { Pill } from '@/components/ui/Pill'
 import { Input, Select } from '@/components/ui/Input'
 import { currentUser } from '@/data/mock'
@@ -28,8 +30,11 @@ export function Profile() {
     navigate('/')
   }
 
+  const tabs: PageTab[] = [{ id: 'profile', icon: User, label: 'Profile' }]
+
   return (
-    <div className="space-y-4">
+    <PageShell tabs={tabs} activeTab="profile" onTabChange={() => {}}>
+      <div className="space-y-4">
       <GlassCard>
         <div className="flex items-start gap-3 sm:gap-4">
           <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary shrink-0">
@@ -50,20 +55,20 @@ export function Profile() {
               <Pill variant="success">Verified Trader</Pill>
             </div>
             <div className="flex items-center gap-1.5 mt-1">
-              <button onClick={() => navigate('/settings')} className="flex items-center gap-1 px-2 py-1 rounded-md text-text-secondary hover:bg-surface-hover transition-colors text-[10px] font-medium">
+              <Button variant="ghost" size="sm" onClick={() => navigate('/settings')}>
                 <SettingsIcon className="w-3 h-3" /> Settings
-              </button>
-              <button onClick={handleLogout} className="flex items-center gap-1 px-2 py-1 rounded-md text-danger hover:bg-danger/10 transition-colors text-[10px] font-medium">
+              </Button>
+              <Button variant="danger" size="sm" onClick={handleLogout}>
                 <LogOut className="w-3 h-3" /> Sign Out
-              </button>
+              </Button>
             </div>
             <p className="text-xs text-text-secondary">
               Member since January 2023 · Farmer and agricultural commodity trader specializing in cocoa and shea butter.
             </p>
           </div>
-          <button className="px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold hover:bg-surface-hover transition-colors">
+          <Button variant="secondary" size="sm">
             Edit Profile
-          </button>
+          </Button>
         </div>
       </GlassCard>
 
@@ -101,16 +106,16 @@ export function Profile() {
                 { value: 'buyer', label: 'Buyer' }, { value: 'supplier', label: 'Supplier' },
               ]}
             />
-            <button className="w-full px-4 py-2 rounded-full bg-primary text-white text-xs font-semibold hover:bg-primary/90 transition-colors">
+            <Button variant="primary" size="sm" fullWidth>
               Save Changes
-            </button>
+            </Button>
           </div>
         </GlassCard>
 
         <GlassCard>
           <GlassCardHeader>
             <GlassCardTitle>Commodities</GlassCardTitle>
-            <button className="px-2 py-1 rounded-full border border-border text-[10px] text-text-secondary hover:bg-surface-hover transition-colors">Manage</button>
+            <Button variant="secondary" size="sm">Manage</Button>
           </GlassCardHeader>
           <div className="space-y-2">
             {['Premium Cocoa Beans', 'Shea Butter (Unrefined)', 'Cashew Nuts'].map((c) => (
@@ -122,9 +127,9 @@ export function Profile() {
                 <Pill variant="premium">Premium</Pill>
               </div>
             ))}
-            <button className="w-full px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold hover:bg-surface-hover transition-colors">
+            <Button variant="secondary" size="sm" fullWidth>
               + Add Commodity
-            </button>
+            </Button>
           </div>
         </GlassCard>
       </div>
@@ -139,6 +144,7 @@ export function Profile() {
           ))}
         </div>
       </GlassCard>
-    </div>
+      </div>
+    </PageShell>
   )
 }

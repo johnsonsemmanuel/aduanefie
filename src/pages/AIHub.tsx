@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Button } from '@/components/ui/Button'
 import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
 import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import {
@@ -72,9 +73,9 @@ export function AIHub() {
                 placeholder="Ask about markets, prices, or farming advice..."
                 className="flex-1 bg-bg border border-border rounded-full px-3 py-2 text-xs text-text-primary placeholder:text-text-secondary outline-none focus:border-primary transition-colors"
               />
-              <button onClick={handleSend} className="w-8 h-8 rounded-full bg-primary flex items-center justify-center shrink-0 hover:bg-primary/90 transition-colors">
+              <Button variant="primary" size="sm" onClick={handleSend}>
                 <Send className="w-4 h-4 text-white" />
-              </button>
+              </Button>
             </div>
           </GlassCard>
         )}
@@ -95,13 +96,14 @@ function InsightsTab() {
     <>
       <div className="flex gap-1 flex-wrap">
         {categories.map((c) => (
-          <button
+          <Button
             key={c}
             onClick={() => setCatFilter(c)}
-            className={`px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors ${catFilter === c ? 'bg-primary text-white' : 'bg-surface-active text-text-secondary hover:bg-surface-hover'}`}
+            variant={catFilter === c ? 'primary' : 'secondary'}
+            size="sm"
           >
             {c === 'all' ? 'All' : c.charAt(0).toUpperCase() + c.slice(1)}
-          </button>
+          </Button>
         ))}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">

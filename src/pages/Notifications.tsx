@@ -10,6 +10,8 @@ import { useToast } from '@/context/ToastContext'
 import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
 import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import { notifications as allNotifications } from '@/data/notifications'
+import { Button } from '@/components/ui/Button'
+import { PageShell, type PageTab } from '@/components/layout/PageShell'
 import type { Notification, NotificationCategory } from '@/types'
 
 const typeIcons: Record<NotificationCategory, typeof Bell> = {
@@ -37,15 +39,15 @@ const typeLabels: Record<NotificationCategory, string> = {
   system: 'System', market: 'Market Intel', social: 'Social', approval: 'Approval',
 }
 
-const filterTabs = [
-  { id: 'all' as const, label: 'All' },
-  { id: 'unread' as const, label: 'Unread' },
-  { id: 'trade' as const, label: 'Trade' },
-  { id: 'payment' as const, label: 'Payments' },
-  { id: 'logistics' as const, label: 'Logistics' },
-  { id: 'system' as const, label: 'System' },
-  { id: 'market' as const, label: 'Market' },
-  { id: 'approval' as const, label: 'Approvals' },
+const pageTabs: PageTab[] = [
+  { id: 'all', label: 'All', icon: Bell },
+  { id: 'unread', label: 'Unread', icon: CheckCheck },
+  { id: 'trade', label: 'Trade', icon: ShoppingBag },
+  { id: 'payment', label: 'Payments', icon: Wallet },
+  { id: 'logistics', label: 'Logistics', icon: Truck },
+  { id: 'system', label: 'System', icon: Shield },
+  { id: 'market', label: 'Market', icon: TrendingUp },
+  { id: 'approval', label: 'Approvals', icon: FileCheck },
 ]
 
 function formatNotificationDate(timestamp: string): string {
@@ -91,9 +93,10 @@ export function Notifications() {
   }
 
   return (
-    <div className="space-y-4 min-w-0">
-      {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-2">
+    <PageShell tabs={pageTabs} activeTab={filter} onTabChange={(tab) => setFilter(tab as typeof filter)}>
+      <div className="space-y-4 min-w-0">
+        {/* Header */}
+        <div className="flex items-center justify-between flex-wrap gap-2">
         <div>
           <h1 className="text-lg font-bold text-text-primary">Notifications</h1>
           <p className="text-xs text-text-secondary">
@@ -102,36 +105,18 @@ export function Notifications() {
         </div>
         <div className="flex items-center gap-2">
           {unreadCount > 0 && (
-            <button onClick={markAllRead} className="px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold inline-flex items-center gap-1 hover:bg-surface-hover transition-colors">
+            <Button onClick={markAllRead} variant="secondary" size="sm">
               <CheckCheck className="w-3 h-3" /> Mark All Read
-            </button>
+            </Button>
           )}
           {notifications.length > 0 && (
-            <button onClick={clearAll} className="px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold inline-flex items-center gap-1 hover:bg-surface-hover transition-colors">
+            <Button onClick={clearAll} variant="secondary" size="sm">
               <X className="w-3 h-3" /> Clear All
-            </button>
+            </Button>
           )}
         </div>
       </div>
 
-      {/* Filter tabs */}
-      <div className="flex gap-1 overflow-x-auto scrollbar-thin pb-1">
-        {filterTabs.map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setFilter(tab.id as typeof filter)}
-            className={`px-3 py-1.5 rounded-full text-[10px] font-medium whitespace-nowrap transition-colors ${
-              filter === tab.id
-                ? 'bg-primary text-white'
-                : 'text-text-secondary hover:bg-surface-hover'
-            }`}
-          >
-            {tab.label === 'Unread' && unreadCount > 0
-              ? `Unread (${unreadCount})`
-              : tab.label}
-          </button>
-        ))}
-      </div>
 
       {/* Notification list */}
       <GlassCard padding="none">
@@ -173,20 +158,20 @@ export function Notifications() {
                           {typeLabels[n.type]}
                         </Pill>
                         {n.actionable && n.actionLabel && (
-                          <button
+                          <Button
                             onClick={() => { markRead(n.id); if (n.actionPath) navigate(n.actionPath) }}
-                            className="text-[10px] font-medium text-primary inline-flex items-center gap-0.5 hover:underline"
+                            variant="ghost" size="sm"
                           >
                             {n.actionLabel} <ArrowRight className="w-2.5 h-2.5" />
-                          </button>
+                          </Button>
                         )}
                         {!n.read && !n.actionable && (
-                          <button
+                          <Button
                             onClick={() => markRead(n.id)}
-                            className="text-[10px] text-text-secondary hover:text-text-primary font-medium"
+                            variant="ghost" size="sm"
                           >
                             Mark read
-                          </button>
+                          </Button>
                         )}
                       </div>
                     </div>
@@ -198,5 +183,6 @@ export function Notifications() {
         )}
       </GlassCard>
     </div>
+    </PageShell>
   )
 }

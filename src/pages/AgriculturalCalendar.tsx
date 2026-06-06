@@ -2,11 +2,13 @@ import { useState } from 'react'
 import {
   CalendarDays, ChevronLeft, ChevronRight, Sprout, Wheat,
   Truck, Wrench, Users, ShoppingBag, CloudSun, MapPin,
-  Plus, List, Grid,
+  Plus, List, ClipboardList,
 } from 'lucide-react'
 import { GlassCard } from '@/components/ui/GlassCard'
 import { Pill } from '@/components/ui/Pill'
 import { Modal } from '@/components/ui/Modal'
+import { Button } from '@/components/ui/Button'
+import { PageShell, type PageTab } from '@/components/layout/PageShell'
 import { useToast } from '@/context/ToastContext'
 import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
 import { PageSkeleton } from '@/components/ui/PageSkeleton'
@@ -86,14 +88,16 @@ function CalendarGrid({
                 const cfg = categoryConfig[e.category]
                 const Icon = cfg.icon
                 return (
-                  <button
+                  <Button
                     key={e.id}
                     onClick={eve => { eve.stopPropagation(); onEventClick(e) }}
+                    variant="ghost"
+                    size="sm"
                     className={`w-full flex items-center gap-1 px-1 py-0.5 rounded text-[8px] font-medium truncate leading-tight ${cfg.color}`}
                   >
                     <Icon className="w-2.5 h-2.5 shrink-0" />
                     <span className="truncate">{e.title}</span>
-                  </button>
+                  </Button>
                 )
               })}
               {dayEvents.length > maxShow && (
@@ -132,10 +136,12 @@ function EventList({
         const cfg = categoryConfig[e.category]
         const Icon = cfg.icon
         return (
-          <button
+          <Button
             key={e.id}
             onClick={() => onEventClick(e)}
-            className="w-full text-left px-4 py-2.5 hover:bg-surface-hover transition-colors flex items-start gap-3"
+            variant="ghost"
+            size="sm"
+            className="w-full text-left px-4 py-2.5 flex items-start gap-3"
           >
             <div className={`size-8 rounded-lg flex items-center justify-center shrink-0 ${cfg.color}`}>
               <Icon className="w-4 h-4" />
@@ -158,7 +164,7 @@ function EventList({
               </div>
             </div>
             <Pill className={`text-[9px] shrink-0 ${cfg.color}`}>{cfg.label}</Pill>
-          </button>
+          </Button>
         )
       })}
     </div>
@@ -175,18 +181,24 @@ const categoryFilters = [
   { id: 'weather' as const, label: 'Weather', icon: CloudSun },
 ]
 
+const tabs: PageTab[] = [
+  { id: 'overview', icon: CalendarDays, label: 'Overview' },
+  { id: 'planner', icon: List, label: 'Planner' },
+  { id: 'tasks', icon: ClipboardList, label: 'Tasks' },
+]
+
 export function AgriculturalCalendar() {
   const now = new Date()
   const [year, setYear] = useState(now.getFullYear())
   const [month, setMonth] = useState(now.getMonth())
-  const [view, setView] = useState<'calendar' | 'list'>('calendar')
+  const [activeTab, setActiveTab] = useState('overview')
   const [filter, setFilter] = useState<AgEventCategory | 'all'>('all')
   const [selectedEvent, setSelectedEvent] = useState<AgCalendarEvent | null>(null)
   const [addOpen, setAddOpen] = useState(false)
   const { addToast } = useToast()
   const loading = useSimulatedLoading(500)
 
-  if (loading) return <div className="p-4"><PageSkeleton type="list" /></div>
+  if (loading) return <PageShell tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}><div className="p-4"><PageSkeleton type="list" /></div></PageShell>
 
   const filteredEvents = filter === 'all'
     ? calendarEvents
@@ -205,141 +217,137 @@ export function AgriculturalCalendar() {
   }
 
   return (
-    <div className="space-y-4 min-w-0">
-      {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-2">
-        <div>
-          <h1 className="text-lg font-bold text-text-primary">Agricultural Calendar</h1>
-          <p className="text-xs text-text-secondary">Planting seasons, harvest windows, deliveries, and key agri events</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setAddOpen(true)}
-            className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors"
-          >
-            <Plus className="w-3 h-3" /> Add Event
-          </button>
-          <div className="flex rounded-full border border-border overflow-hidden">
-            <button
-              onClick={() => setView('calendar')}
-              className={`px-2.5 py-1.5 text-[10px] font-medium transition-colors ${view === 'calendar' ? 'bg-primary text-white' : 'text-text-secondary hover:bg-surface-hover'}`}
-            >
-              <Grid className="w-3 h-3" />
-            </button>
-            <button
-              onClick={() => setView('list')}
-              className={`px-2.5 py-1.5 text-[10px] font-medium transition-colors ${view === 'list' ? 'bg-primary text-white' : 'text-text-secondary hover:bg-surface-hover'}`}
-            >
-              <List className="w-3 h-3" />
-            </button>
+    <PageShell tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
+      <div className="space-y-4 min-w-0">
+        {/* Header */}
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div>
+            <h1 className="text-lg font-bold text-text-primary">Agricultural Calendar</h1>
+            <p className="text-xs text-text-secondary">Planting seasons, harvest windows, deliveries, and key agri events</p>
           </div>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div className="flex gap-1 overflow-x-auto scrollbar-thin pb-1">
-        {categoryFilters.map(cf => (
-          <button
-            key={cf.id}
-            onClick={() => setFilter(cf.id)}
-            className={`flex items-center gap-1 px-3 py-1.5 rounded-full text-[10px] font-medium whitespace-nowrap transition-colors ${
-              filter === cf.id ? 'bg-primary text-white' : 'text-text-secondary hover:bg-surface-hover'
-            }`}
-          >
-            <cf.icon className="w-3 h-3" />
-            {cf.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Calendar view */}
-      {view === 'calendar' && (
-        <GlassCard padding="none">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-            <div className="flex items-center gap-2">
-              <button onClick={prevMonth} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-surface-hover text-text-secondary">
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <h2 className="text-sm font-semibold text-text-primary">{monthNames[month]} {year}</h2>
-              <button onClick={nextMonth} className="w-7 h-7 flex items-center justify-center rounded-lg hover:bg-surface-hover text-text-secondary">
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-            <button onClick={goToday} className="px-3 py-1 rounded-full border border-border text-[10px] font-medium text-text-secondary hover:bg-surface-hover transition-colors">
-              Today
-            </button>
-          </div>
-          <CalendarGrid year={year} month={month} events={filteredEvents} onEventClick={setSelectedEvent} onDateClick={() => {}} />
-        </GlassCard>
-      )}
-
-      {/* List view */}
-      {view === 'list' && (
-        <GlassCard padding="none">
-          <EventList events={filteredEvents} filter={filter} onEventClick={setSelectedEvent} />
-        </GlassCard>
-      )}
-
-      {/* Event detail modal */}
-      <Modal open={!!selectedEvent} onClose={() => setSelectedEvent(null)} title={selectedEvent?.title || 'Event'} size="sm">
-        {selectedEvent && (
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Pill className={categoryConfig[selectedEvent.category].color}>
-                {categoryConfig[selectedEvent.category].label}
-              </Pill>
-              {selectedEvent.commodity && <Pill>{selectedEvent.commodity}</Pill>}
-            </div>
-            <p className="text-sm text-text-primary">{selectedEvent.description}</p>
-            <div className="text-[11px] text-text-secondary space-y-1">
-              <p className="flex items-center gap-1.5">
-                <CalendarDays className="w-3.5 h-3.5" />
-                {selectedEvent.endDate
-                  ? `${selectedEvent.date} – ${selectedEvent.endDate}`
-                  : selectedEvent.date}
-              </p>
-              {selectedEvent.region && (
-                <p className="flex items-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5" /> {selectedEvent.region}
-                </p>
-              )}
-            </div>
-          </div>
-        )}
-      </Modal>
-
-      {/* Add event modal */}
-      <Modal open={addOpen} onClose={() => setAddOpen(false)} title="New Event" size="sm">
-        <form onSubmit={e => { e.preventDefault(); addToast('Event added to calendar', 'success'); setAddOpen(false) }} className="space-y-3">
-          <input
-            type="text" placeholder="Event title" required
-            className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:border-neutral-500"
-          />
-          <textarea
-            placeholder="Description" rows={3}
-            className="w-full px-4 py-3 rounded-xl border border-border bg-bg text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:border-neutral-500 resize-none"
-          />
           <div className="flex items-center gap-2">
-            <input type="date" className="flex-1 px-4 py-2.5 rounded-full border border-border bg-bg text-sm text-text-primary focus:outline-none focus:border-neutral-500" />
-            <input type="date" className="flex-1 px-4 py-2.5 rounded-full border border-border bg-bg text-sm text-text-primary focus:outline-none focus:border-neutral-500" placeholder="End date" />
+            <Button onClick={() => setAddOpen(true)} variant="primary" size="sm" className="rounded-full">
+              <Plus className="w-3 h-3" /> Add Event
+            </Button>
           </div>
-          <div className="flex gap-2">
-            {(['planting', 'harvest', 'delivery', 'meeting', 'market', 'weather', 'maintenance'] as const).map(cat => (
-              <button
-                key={cat}
-                type="button"
-                className={`px-2.5 py-1 rounded-full text-[10px] font-medium capitalize border transition-colors ${cat === 'planting' ? 'border-primary/30 bg-primary/5 text-primary' : 'border-border text-text-secondary'}`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-          <div className="flex justify-end gap-2 pt-2">
-            <button type="button" onClick={() => setAddOpen(false)} className="px-4 py-2 rounded-full border border-border text-text-secondary text-sm hover:bg-surface-hover transition-colors">Cancel</button>
-            <button type="submit" className="px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors">Add Event</button>
-          </div>
-        </form>
-      </Modal>
-    </div>
+        </div>
+
+        {/* Filters */}
+        <div className="flex gap-1 overflow-x-auto scrollbar-thin pb-1">
+          {categoryFilters.map(cf => (
+            <Button
+              key={cf.id}
+              onClick={() => setFilter(cf.id)}
+              variant={filter === cf.id ? 'primary' : 'ghost'}
+              size="sm"
+              className="rounded-full"
+            >
+              <cf.icon className="w-3 h-3" />
+              {cf.label}
+            </Button>
+          ))}
+        </div>
+
+        {/* Overview */}
+        {activeTab === 'overview' && (
+          <GlassCard padding="none">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-border">
+              <div className="flex items-center gap-2">
+                <Button onClick={prevMonth} variant="ghost" size="sm" className="w-7 h-7 p-0">
+                  <ChevronLeft className="w-4 h-4" />
+                </Button>
+                <h2 className="text-sm font-semibold text-text-primary">{monthNames[month]} {year}</h2>
+                <Button onClick={nextMonth} variant="ghost" size="sm" className="w-7 h-7 p-0">
+                  <ChevronRight className="w-4 h-4" />
+                </Button>
+              </div>
+              <Button onClick={goToday} variant="secondary" size="sm" className="rounded-full">
+                Today
+              </Button>
+            </div>
+            <CalendarGrid year={year} month={month} events={filteredEvents} onEventClick={setSelectedEvent} onDateClick={() => {}} />
+          </GlassCard>
+        )}
+
+        {/* Planner */}
+        {activeTab === 'planner' && (
+          <GlassCard padding="none">
+            <EventList events={filteredEvents} filter={filter} onEventClick={setSelectedEvent} />
+          </GlassCard>
+        )}
+
+        {/* Tasks */}
+        {activeTab === 'tasks' && (
+          <GlassCard padding="none">
+            <EventList events={filteredEvents} filter={filter} onEventClick={setSelectedEvent} />
+          </GlassCard>
+        )}
+
+        {/* Event detail modal */}
+        <Modal open={!!selectedEvent} onClose={() => setSelectedEvent(null)} title={selectedEvent?.title || 'Event'} size="sm">
+          {selectedEvent && (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <Pill className={categoryConfig[selectedEvent.category].color}>
+                  {categoryConfig[selectedEvent.category].label}
+                </Pill>
+                {selectedEvent.commodity && <Pill>{selectedEvent.commodity}</Pill>}
+              </div>
+              <p className="text-sm text-text-primary">{selectedEvent.description}</p>
+              <div className="text-[11px] text-text-secondary space-y-1">
+                <p className="flex items-center gap-1.5">
+                  <CalendarDays className="w-3.5 h-3.5" />
+                  {selectedEvent.endDate
+                    ? `${selectedEvent.date} – ${selectedEvent.endDate}`
+                    : selectedEvent.date}
+                </p>
+                {selectedEvent.region && (
+                  <p className="flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5" /> {selectedEvent.region}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+        </Modal>
+
+        {/* Add event modal */}
+        <Modal open={addOpen} onClose={() => setAddOpen(false)} title="New Event" size="sm">
+          <form onSubmit={e => { e.preventDefault(); addToast('Event added to calendar', 'success'); setAddOpen(false) }} className="space-y-3">
+            <input
+              type="text" placeholder="Event title" required
+              className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:border-neutral-500"
+            />
+            <textarea
+              placeholder="Description" rows={3}
+              className="w-full px-4 py-3 rounded-xl border border-border bg-bg text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:border-neutral-500 resize-none"
+            />
+            <div className="flex items-center gap-2">
+              <input type="date" className="flex-1 px-4 py-2.5 rounded-full border border-border bg-bg text-sm text-text-primary focus:outline-none focus:border-neutral-500" />
+              <input type="date" className="flex-1 px-4 py-2.5 rounded-full border border-border bg-bg text-sm text-text-primary focus:outline-none focus:border-neutral-500" placeholder="End date" />
+            </div>
+            <div className="flex gap-2">
+              {(['planting', 'harvest', 'delivery', 'meeting', 'market', 'weather', 'maintenance'] as const).map(cat => (
+                <Button
+                  key={cat}
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className={`rounded-full capitalize border ${
+                    cat === 'planting' ? 'border-primary/30 bg-primary/5 text-primary' : 'border-border text-text-secondary'
+                  }`}
+                >
+                  {cat}
+                </Button>
+              ))}
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" onClick={() => setAddOpen(false)} variant="secondary" size="md" className="rounded-full">Cancel</Button>
+              <Button type="submit" variant="primary" size="md" className="rounded-full">Add Event</Button>
+            </div>
+          </form>
+        </Modal>
+      </div>
+    </PageShell>
   )
 }

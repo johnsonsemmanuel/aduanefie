@@ -10,6 +10,7 @@ import { GlassCard, GlassCardHeader, GlassCardTitle } from '@/components/ui/Glas
 import { StatusPill } from '@/components/ui/Pill'
 import { vendors, rfqs, purchaseOrders, contracts } from '@/data/procurement'
 import type { RFQ, PurchaseOrder } from '@/types'
+import { Button } from '@/components/ui/Button'
 
 export function ProcurementHub() {
   const [activeTab, setActiveTab] = useState('overview')
@@ -34,12 +35,12 @@ export function ProcurementHub() {
             <p className="text-xs text-text-secondary">Sourcing, vendor management, RFQs, and purchase orders</p>
           </div>
           <div className="hidden sm:flex items-center gap-2">
-            <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+            <Button variant="primary" size="sm" className="rounded-full">
               <Plus className="w-3.5 h-3.5" /> New RFQ
-            </button>
-            <button className="px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-surface-hover transition-colors">
+            </Button>
+            <Button variant="secondary" size="sm" className="rounded-full">
               <Plus className="w-3.5 h-3.5" /> Add Vendor
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -134,13 +135,15 @@ function VendorsTab() {
         <GlassCardTitle>All Vendors</GlassCardTitle>
         <div className="flex gap-1">
           {['all', 'active', 'inactive', 'pending'].map((s) => (
-            <button
+            <Button
               key={s}
+              variant={filter === s ? 'primary' : 'secondary'}
+              size="sm"
               onClick={() => setFilter(s)}
-              className={`px-2 py-0.5 rounded-full text-[9px] font-medium transition-colors ${filter === s ? 'bg-primary text-white' : 'bg-surface-active text-text-secondary hover:bg-surface-hover'}`}
+              className="rounded-full"
             >
               {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
-            </button>
+            </Button>
           ))}
         </div>
       </GlassCardHeader>
@@ -174,13 +177,15 @@ function RFQsTab() {
         <GlassCardTitle>RFQs</GlassCardTitle>
         <div className="flex gap-1">
           {['all', 'open', 'under_review', 'awarded', 'draft'].map((s) => (
-            <button
+            <Button
               key={s}
+              variant={filter === s ? 'primary' : 'secondary'}
+              size="sm"
               onClick={() => setFilter(s)}
-              className={`px-2 py-0.5 rounded-full text-[9px] font-medium transition-colors ${filter === s ? 'bg-primary text-white' : 'bg-surface-active text-text-secondary hover:bg-surface-hover'}`}
+              className="rounded-full"
             >
               {s.replace('_', ' ').charAt(0).toUpperCase() + s.replace('_', ' ').slice(1)}
-            </button>
+            </Button>
           ))}
         </div>
       </GlassCardHeader>
@@ -200,13 +205,15 @@ function OrdersTab() {
         <GlassCardTitle>Purchase Orders</GlassCardTitle>
         <div className="flex gap-1">
           {['all', 'draft', 'sent', 'confirmed', 'in_transit', 'delivered'].map((s) => (
-            <button
+            <Button
               key={s}
+              variant={filter === s ? 'primary' : 'secondary'}
+              size="sm"
               onClick={() => setFilter(s)}
-              className={`px-2 py-0.5 rounded-full text-[9px] font-medium transition-colors ${filter === s ? 'bg-primary text-white' : 'bg-surface-active text-text-secondary hover:bg-surface-hover'}`}
+              className="rounded-full"
             >
               {s === 'all' ? 'All' : s.replace('_', ' ').charAt(0).toUpperCase() + s.replace('_', ' ').slice(1)}
-            </button>
+            </Button>
           ))}
         </div>
       </GlassCardHeader>
