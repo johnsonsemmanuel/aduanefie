@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Shell } from '@/components/layout/Shell'
 import { CommandCenter } from '@/pages/CommandCenter'
+import { MarketIntel } from '@/pages/MarketIntel'
 import { Marketplace } from '@/pages/Marketplace'
 import { TradeDesk } from '@/pages/TradeDesk'
 import { Logistics } from '@/pages/Logistics'
@@ -31,7 +32,7 @@ function App() {
         <Route path="/exports" element={<Shell><Exports /></Shell>} />
         <Route path="/profile" element={<Shell><Profile /></Shell>} />
         <Route path="/more" element={<Shell><Profile /></Shell>} />
-        <Route path="/market-intel" element={<Shell><Placeholder title="Market Intelligence" /></Shell>} />
+        <Route path="/market-intel" element={<Shell><MarketIntel /></Shell>} />
         <Route path="/finance" element={<Shell><Placeholder title="Finance Hub" /></Shell>} />
         <Route path="/cooperative" element={<Shell><Placeholder title="Cooperative Hub" /></Shell>} />
         <Route path="/ai" element={<Shell><Placeholder title="AI Hub" /></Shell>} />

@@ -15,7 +15,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { to: '/', label: 'Command Center', icon: Command, badge: 6 },
   { to: '/marketplace', label: 'Trade Engine', icon: ShoppingBag, layer: 2, badge: 7 },
-  { to: '/market-intel', label: 'Market Intel', icon: BarChart3, layer: 6, badge: 3 },
+  { to: '/market-intel', label: 'Market Intel', icon: BarChart3, layer: 6 },
   { to: '/logistics', label: 'Logistics Hub', icon: Truck, layer: 3, badge: 2 },
   { to: '/finance', label: 'Finance Hub', icon: Wallet, layer: 5 },
   { to: '/exports', label: 'Export Hub', icon: Globe, layer: 2, badge: 4 },

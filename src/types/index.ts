@@ -264,3 +264,76 @@ export interface CommandCenterData {
   activeUsers: number
   lastSync: string
 }
+
+// Market Intelligence types
+export interface PriceHistory {
+  date: string
+  price: number
+  volume: number
+}
+
+export interface CommodityDetail {
+  id: string
+  name: string
+  category: string
+  currentPrice: number
+  open: number
+  high: number
+  low: number
+  change: number
+  changePercent: number
+  volume: number
+  unit: string
+  priceHistory: PriceHistory[]
+  rsi: number
+  ma50: number
+  ma200: number
+  support: number
+  resistance: number
+  trend: 'up' | 'down' | 'sideways'
+  volatility: 'low' | 'medium' | 'high'
+}
+
+export interface WeatherZone {
+  id: string
+  region: string
+  country: string
+  temperature: number
+  condition: 'sunny' | 'cloudy' | 'rainy' | 'stormy' | 'dry'
+  humidity: number
+  rainfall: number
+  forecast: { day: string; condition: string; temp: number; rainfall: number }[]
+  alert?: { type: string; message: string; severity: 'info' | 'warning' | 'critical' }
+  impact: 'positive' | 'negative' | 'neutral'
+}
+
+export interface DemandData {
+  commodity: string
+  buyerCount: number
+  totalDemand: number
+  unit: string
+  fillRate: number
+  urgency: 'low' | 'medium' | 'high'
+  topBuyers: { name: string; volume: number }[]
+}
+
+export interface MarketReport {
+  id: string
+  title: string
+  summary: string
+  category: 'price-analysis' | 'weather' | 'trade-flow' | 'policy' | 'seasonal'
+  date: string
+  readTime: string
+  author: string
+  keyPoints: string[]
+  impact: 'positive' | 'negative' | 'neutral'
+}
+
+export interface MarketIntelData {
+  commodities: CommodityDetail[]
+  weather: WeatherZone[]
+  demand: DemandData[]
+  reports: MarketReport[]
+  topMovers: { commodity: string; change: number; changePercent: number; trend: 'up' | 'down' }[]
+  marketOverview: { label: string; value: string; change: string; trend: 'up' | 'down' }[]
+}
