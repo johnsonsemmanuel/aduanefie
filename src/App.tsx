@@ -27,7 +27,7 @@ function ProtectedShell({ children }: { children: React.ReactNode }) {
 
 function EntryPoint() {
   const navigate = useNavigate()
-  return <Preloader onComplete={() => navigate('/login', { replace: true })} words={['Welcome to AgriOS — Aduanefie Trade Engine']} holdDuration={2500} />
+  return <Preloader onComplete={() => navigate('/login', { replace: true })} words={['Welcome to Aduanefie']} holdDuration={2600} />
 }
 
 function App() {

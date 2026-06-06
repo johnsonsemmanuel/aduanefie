@@ -5,7 +5,6 @@ export const agriModules: OSModule[] = [
   { id: 'market-intel', name: 'Market Intel', description: 'Prices, trends, forecasts, weather intelligence', icon: 'BarChart3', color: '#2980B9', path: '/market-intel', badge: 3, layer: 6, status: 'active' },
   { id: 'logistics', name: 'Logistics Hub', description: 'Transport, fleet, delivery tracking', icon: 'Truck', color: '#F57C00', path: '/logistics', badge: 2, layer: 3, status: 'active' },
   { id: 'finance', name: 'Finance Hub', description: 'Wallets, payments, loans, trade finance', icon: 'Wallet', color: '#8E44AD', path: '/finance', layer: 5, status: 'active' },
-  { id: 'storage', name: 'Storage Hub', description: 'Warehouses, cold rooms, inventory', icon: 'Warehouse', color: '#D4A853', path: '/logistics', layer: 4, status: 'active' },
   { id: 'cooperative', name: 'Cooperative Hub', description: 'Groups, shared resources, collective trading', icon: 'Users', color: '#C0392B', path: '/cooperative', layer: 1, status: 'beta' },
   { id: 'export', name: 'Export Hub', description: 'Export docs, compliance, international trade', icon: 'Globe', color: '#27AE60', path: '/exports', badge: 4, layer: 2, status: 'active' },
   { id: 'ai', name: 'AI Hub', description: 'Trade assistant, farm advisor, analytics', icon: 'Brain', color: '#3B2A1E', path: '/ai', layer: 9, status: 'beta' },
@@ -48,7 +47,7 @@ export const systemEvents: SystemEvent[] = [
   { id: 'se3', module: 'logistics', message: 'Truck TAF-2026-001 arrived at Tema Port', timestamp: '2026-06-06T09:45:00Z', severity: 'info', actionLabel: 'Track' },
   { id: 'se4', module: 'market-intel', message: 'Weather alert: Heavy rainfall expected in Zambia region', timestamp: '2026-06-06T08:30:00Z', severity: 'warning', actionLabel: 'View Intel' },
   { id: 'se5', module: 'trade-engine', message: 'Buyer request #BR-004 received 3 new supplier responses', timestamp: '2026-06-06T08:00:00Z', severity: 'info', actionLabel: 'Review' },
-  { id: 'se6', module: 'storage', message: 'Warehouse W-001 at 85% capacity - Kumasi Central', timestamp: '2026-06-06T07:30:00Z', severity: 'warning', actionLabel: 'View Warehouse' },
+  { id: 'se6', module: 'logistics', message: 'Warehouse W-001 at 85% capacity - Kumasi Central', timestamp: '2026-06-06T07:30:00Z', severity: 'warning', actionLabel: 'View Warehouse' },
   { id: 'se7', module: 'export', message: 'Export docs approved for EO-2026-003 to Rotterdam', timestamp: '2026-06-06T06:45:00Z', severity: 'success', actionLabel: 'View Docs' },
   { id: 'se8', module: 'ai', message: 'AI Trade Assistant: 3 new recommendations available', timestamp: '2026-06-06T06:00:00Z', severity: 'info', actionLabel: 'View Insights' },
 ]

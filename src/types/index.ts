@@ -204,8 +204,8 @@ export interface WatchlistItem {
 // AgriOS-specific types
 export type OSModuleId =
   | 'trade-engine' | 'market-intel' | 'logistics' | 'finance'
-  | 'storage' | 'cooperative' | 'export' | 'ai' | 'admin'
-  | 'procurement' | 'business' | 'developer'
+  | 'cooperative' | 'export' | 'ai' | 'admin'
+  | 'procurement' | 'business' | 'developer' | 'dashboard'
 
 export interface OSModule {
   id: OSModuleId

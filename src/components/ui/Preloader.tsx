@@ -60,11 +60,10 @@ export function Preloader({ onComplete, words: customWords, holdDuration }: Prel
         <>
           <motion.p
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.75 }}
+            animate={{ opacity: 1 }}
             transition={{ duration: 1, delay: 0.2 }}
-            className="flex items-center text-white text-4xl md:text-5xl lg:text-6xl absolute z-10 font-medium"
+            className="text-white text-[2.5rem] sm:text-5xl lg:text-6xl absolute z-10 font-bold leading-[1.1] tracking-tight"
           >
-            <span className="block w-2.5 h-2.5 bg-white rounded-full mr-2.5" />
             {words[index]}
           </motion.p>
           <svg className="absolute top-0 w-full h-[calc(100%+300px)]">
