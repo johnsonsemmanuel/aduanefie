@@ -5,16 +5,16 @@
   --color-primary-light: #5A4231;
   --color-primary-dark: #2A1D14;
   --color-cream: #FFEFD5;
-  --color-bg: #F9F5EE;
-  --color-text-primary: #1E1E1E;
-  --color-text-secondary: #666666;
-  --color-success: #2E7D32;
-  --color-warning: #F57C00;
-  --color-danger: #D32F2F;
-  --color-border: #E5DFD6;
-  --color-surface: #FFFFFF;
-  --color-surface-hover: #F5F0E8;
-  --color-surface-active: #EDE7DB;
+  --color-bg: #0A0A0A;
+  --color-text-primary: #FAFAFA;
+  --color-text-secondary: #A0A0A0;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-danger: #EF4444;
+  --color-border: #262626;
+  --color-surface: #111111;
+  --color-surface-hover: #1A1A1A;
+  --color-surface-active: #222222;
   --color-commodity-grains: #D4A853;
   --color-commodity-livestock: #C0392B;
   --color-commodity-produce: #27AE60;
@@ -54,12 +54,12 @@
   }
 
   ::selection {
-    background: var(--color-primary);
-    color: white;
+    background: var(--color-cream);
+    color: var(--color-primary);
   }
 
   :focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--color-cream);
     outline-offset: 2px;
   }
 
