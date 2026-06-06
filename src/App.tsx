@@ -17,7 +17,7 @@ import { AIHub } from '@/pages/AIHub'
 import { DeveloperHub } from '@/pages/DeveloperHub'
 import { Administration } from '@/pages/Administration'
 import { Landing } from '@/pages/Landing'
-import { Login } from '@/pages/Login'
+import { SignInPage } from '@/pages/SignInPage'
 import { NotFound } from '@/pages/NotFound'
 
 function ProtectedShell({ children }: { children: React.ReactNode }) {
@@ -30,7 +30,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/login" element={<SignInPage />} />
           <Route path="/dashboard" element={<ProtectedShell><CommandCenter /></ProtectedShell>} />
           <Route path="/marketplace" element={<ProtectedShell><Marketplace /></ProtectedShell>} />
           <Route path="/trade-desk" element={<ProtectedShell><TradeDesk /></ProtectedShell>} />

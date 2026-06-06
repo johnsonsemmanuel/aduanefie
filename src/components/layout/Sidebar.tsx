@@ -5,29 +5,31 @@ import {
   ClipboardCheck, Users, Brain, Code2, Shield, LogOut
 } from 'lucide-react'
 import { useAuth } from '@/context/AuthContext'
+import { getAllowedModules, type OSModuleId } from '@/config/permissions'
 
 interface NavItem {
   to: string
   label: string
   icon: typeof Command
+  moduleId: OSModuleId
   layer?: number
   badge?: number
 }
 
-const navItems: NavItem[] = [
-  { to: '/dashboard', label: 'Command Center', icon: Command, badge: 6 },
-  { to: '/marketplace', label: 'Trade Engine', icon: ShoppingBag, layer: 2, badge: 7 },
-  { to: '/market-intel', label: 'Market Intel', icon: BarChart3, layer: 6 },
-  { to: '/business', label: 'Business Hub', icon: Building2, layer: 7 },
-  { to: '/procurement', label: 'Procurement', icon: ClipboardCheck, layer: 2 },
-  { to: '/logistics', label: 'Logistics Hub', icon: Truck, layer: 3, badge: 2 },
-  { to: '/finance', label: 'Finance Hub', icon: Wallet, layer: 5 },
-  { to: '/exports', label: 'Export Hub', icon: Globe, layer: 2, badge: 4 },
-  { to: '/cooperative', label: 'Cooperative', icon: Users, layer: 1 },
-  { to: '/ai', label: 'AI Hub', icon: Brain, layer: 9 },
-  { to: '/developer', label: 'Developer', icon: Code2, layer: 8 },
-  { to: '/admin', label: 'Admin', icon: Shield, layer: 1 },
-  { to: '/profile', label: 'Profile', icon: User },
+const allNavItems: NavItem[] = [
+  { to: '/dashboard', label: 'Command Center', icon: Command, moduleId: 'dashboard', badge: 6 },
+  { to: '/marketplace', label: 'Trade Engine', icon: ShoppingBag, moduleId: 'trade-engine', layer: 2, badge: 7 },
+  { to: '/market-intel', label: 'Market Intel', icon: BarChart3, moduleId: 'market-intel', layer: 6 },
+  { to: '/business', label: 'Business Hub', icon: Building2, moduleId: 'business', layer: 7 },
+  { to: '/procurement', label: 'Procurement', icon: ClipboardCheck, moduleId: 'procurement', layer: 2 },
+  { to: '/logistics', label: 'Logistics Hub', icon: Truck, moduleId: 'logistics', layer: 3, badge: 2 },
+  { to: '/finance', label: 'Finance Hub', icon: Wallet, moduleId: 'finance', layer: 5 },
+  { to: '/exports', label: 'Export Hub', icon: Globe, moduleId: 'export', layer: 2, badge: 4 },
+  { to: '/cooperative', label: 'Cooperative', icon: Users, moduleId: 'cooperative', layer: 1 },
+  { to: '/ai', label: 'AI Hub', icon: Brain, moduleId: 'ai', layer: 9 },
+  { to: '/developer', label: 'Developer', icon: Code2, moduleId: 'developer', layer: 8 },
+  { to: '/admin', label: 'Admin', icon: Shield, moduleId: 'admin', layer: 1 },
+  { to: '/profile', label: 'Profile', icon: User, moduleId: 'profile' },
 ]
 
 const roleLabels: Record<string, string> = {
@@ -43,6 +45,9 @@ interface SidebarProps {
 
 export function Sidebar({ onNav, className = '' }: SidebarProps) {
   const { user, logout } = useAuth()
+
+  const allowedModules = user ? getAllowedModules(user.role) : new Set<OSModuleId>()
+  const navItems = allNavItems.filter(item => allowedModules.has(item.moduleId))
 
   const initials = user?.name
     ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()

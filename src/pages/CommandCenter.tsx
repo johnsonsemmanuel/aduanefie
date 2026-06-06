@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
+import { getAllowedModules, type OSModuleId } from '@/config/permissions'
 import { agriModules, systemMetrics, marketTicker, systemEvents } from '@/data/agrios'
 import type { OSModule, MarketTicker, SystemEvent } from '@/types'
 
@@ -24,6 +25,9 @@ function ModuleIcon({ mod, size = 'w-5 h-5' }: { mod: OSModule; size?: string })
 export function CommandCenter() {
   const navigate = useNavigate()
   const { user } = useAuth()
+
+  const allowedModules = user ? getAllowedModules(user.role) : new Set<OSModuleId>()
+  const visibleModules = agriModules.filter(m => allowedModules.has(m.id as OSModuleId))
 
   const greeting = (() => {
     const h = new Date().getHours()
@@ -98,10 +102,10 @@ export function CommandCenter() {
       <div>
         <div className="flex items-center justify-between mb-2.5">
           <h2 className="text-xs font-semibold text-text-primary uppercase tracking-wider">AgriOS Modules</h2>
-          <span className="text-[10px] text-text-secondary">{agriModules.filter(m => m.status === 'active').length} active · {agriModules.filter(m => m.status === 'beta').length} beta</span>
+          <span className="text-[10px] text-text-secondary">{visibleModules.filter(m => m.status === 'active').length} active · {visibleModules.filter(m => m.status === 'beta').length} beta</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
-          {agriModules.map((mod) => (
+          {visibleModules.map((mod) => (
             <button
               key={mod.id}
               onClick={() => mod.status !== 'coming-soon' && navigate(mod.path)}
@@ -148,7 +152,7 @@ export function CommandCenter() {
             <Bell className="w-3.5 h-3.5 text-text-secondary" />
           </div>
           <div className="divide-y divide-border">
-            {systemEvents.slice(0, 6).map((event) => (
+            {systemEvents.filter(e => allowedModules.has(e.module as OSModuleId)).slice(0, 6).map((event) => (
               <EventRow key={event.id} event={event} onClick={() => {}} />
             ))}
           </div>
