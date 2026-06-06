@@ -535,3 +535,148 @@ export interface BusinessDashboard {
   upcomingTasks: Task[]
   invoicingSummary: { sent: number; paid: number; overdue: number; total: number }
 }
+
+// Procurement Hub types
+export type RFQStatus = 'draft' | 'open' | 'under_review' | 'awarded' | 'cancelled'
+export type VendorStatus = 'active' | 'inactive' | 'blacklisted' | 'pending'
+export type PurchaseOrderStatus = 'draft' | 'sent' | 'confirmed' | 'in_transit' | 'delivered' | 'cancelled'
+
+export interface Vendor {
+  id: string
+  name: string
+  contactPerson: string
+  email: string
+  phone: string
+  category: string
+  rating: number
+  totalOrders: number
+  status: VendorStatus
+  location: string
+  joinedDate: string
+  commodities: string[]
+}
+
+export interface RFQ {
+  id: string
+  title: string
+  description: string
+  status: RFQStatus
+  issueDate: string
+  closeDate: string
+  responses: number
+  budget: number
+  category: string
+}
+
+export interface PurchaseOrder {
+  id: string
+  poNumber: string
+  vendor: string
+  commodity: string
+  quantity: number
+  unit: string
+  total: number
+  status: PurchaseOrderStatus
+  orderDate: string
+  deliveryDate: string
+}
+
+export interface Contract {
+  id: string
+  title: string
+  vendor: string
+  value: number
+  startDate: string
+  endDate: string
+  status: 'active' | 'completed' | 'terminated' | 'pending'
+}
+
+// Cooperative Hub types
+export type CooperativeRole = 'chairman' | 'secretary' | 'treasurer' | 'member'
+
+export interface Cooperative {
+  id: string
+  name: string
+  location: string
+  memberCount: number
+  totalProduce: number
+  commodities: string[]
+  foundedDate: string
+  status: 'active' | 'inactive'
+}
+
+export interface CooperativeMember {
+  id: string
+  name: string
+  role: CooperativeRole
+  joinedDate: string
+  contribution: number
+  produceVolume: number
+}
+
+// AI Hub types
+export interface AIRecommendation {
+  id: string
+  category: 'trade' | 'planting' | 'harvest' | 'pricing' | 'weather' | 'risk'
+  title: string
+  description: string
+  confidence: number
+  impact: 'high' | 'medium' | 'low'
+  timestamp: string
+}
+
+export interface AIChatMessage {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  timestamp: string
+}
+
+// Developer Hub types
+export interface APIEndpoint {
+  path: string
+  method: 'GET' | 'POST' | 'PUT' | 'DELETE'
+  description: string
+  auth: boolean
+  rateLimit: string
+}
+
+export interface APIKey {
+  id: string
+  name: string
+  key: string
+  permissions: string[]
+  created: string
+  lastUsed: string
+  status: 'active' | 'revoked'
+}
+
+export interface DeveloperApp {
+  id: string
+  name: string
+  description: string
+  apiKeys: number
+  lastActive: string
+  status: 'active' | 'inactive'
+}
+
+// Admin types
+export type UserRole = 'admin' | 'supervisor' | 'trader' | 'viewer'
+
+export interface AdminUser {
+  id: string
+  name: string
+  email: string
+  role: UserRole
+  status: 'active' | 'suspended' | 'pending'
+  lastActive: string
+  modules: string[]
+}
+
+export interface SystemSetting {
+  id: string
+  key: string
+  value: string
+  category: 'general' | 'security' | 'trading' | 'notifications' | 'integrations'
+  description: string
+}

@@ -1,7 +1,8 @@
 import { NavLink } from 'react-router-dom'
 import {
   ShoppingBag, Truck, Globe, User,
-  Bell, BarChart3, Wallet, Command, Building2
+  Bell, BarChart3, Wallet, Command, Building2,
+  ClipboardCheck, Users, Brain, Code2, Shield
 } from 'lucide-react'
 
 interface NavItem {
@@ -17,9 +18,14 @@ const navItems: NavItem[] = [
   { to: '/marketplace', label: 'Trade Engine', icon: ShoppingBag, layer: 2, badge: 7 },
   { to: '/market-intel', label: 'Market Intel', icon: BarChart3, layer: 6 },
   { to: '/business', label: 'Business Hub', icon: Building2, layer: 7 },
+  { to: '/procurement', label: 'Procurement', icon: ClipboardCheck, layer: 2 },
   { to: '/logistics', label: 'Logistics Hub', icon: Truck, layer: 3, badge: 2 },
   { to: '/finance', label: 'Finance Hub', icon: Wallet, layer: 5 },
   { to: '/exports', label: 'Export Hub', icon: Globe, layer: 2, badge: 4 },
+  { to: '/cooperative', label: 'Cooperative', icon: Users, layer: 1 },
+  { to: '/ai', label: 'AI Hub', icon: Brain, layer: 9 },
+  { to: '/developer', label: 'Developer', icon: Code2, layer: 8 },
+  { to: '/admin', label: 'Admin', icon: Shield, layer: 1 },
   { to: '/profile', label: 'Profile', icon: User },
 ]
 
