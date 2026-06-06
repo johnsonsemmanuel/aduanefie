@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import {
   Code2, Key, Globe, BookOpen, Terminal, Plus
 } from 'lucide-react'
@@ -10,6 +12,8 @@ import type { APIEndpoint, APIKey, DeveloperApp } from '@/types'
 
 export function DeveloperHub() {
   const [activeTab, setActiveTab] = useState('overview')
+  const loading = useSimulatedLoading(500)
+  if (loading) return <PageShell tabs={[{ id: 'overview', icon: Code2, label: 'Overview' }, { id: 'endpoints', icon: Terminal, label: 'API' }, { id: 'keys', icon: Key, label: 'API Keys' }, { id: 'apps', icon: Globe, label: 'Apps' }]} activeTab={activeTab} onTabChange={setActiveTab}><PageSkeleton type="dashboard" /></PageShell>
 
   return (
     <PageShell

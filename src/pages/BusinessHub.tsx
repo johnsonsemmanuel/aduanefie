@@ -1,4 +1,8 @@
 import { useState } from 'react'
+import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
+import { Modal } from '@/components/ui/Modal'
+import { useToast } from '@/context/ToastContext'
 import {
   Building2, Users, Target, ClipboardCheck, Receipt, TrendingUp,
   CheckCircle, Clock, AlertTriangle, Plus, UserPlus, ListTodo, Briefcase
@@ -11,6 +15,10 @@ import type { Deal, Task, Project, Invoice, DealStage, TaskStatus } from '@/type
 
 export function BusinessHub() {
   const [activeTab, setActiveTab] = useState('overview')
+  const [modalOpen, setModalOpen] = useState<'deal' | 'task' | null>(null)
+  const { addToast } = useToast()
+  const loading = useSimulatedLoading(500)
+  if (loading) return <PageShell tabs={[{ id: 'overview', icon: Building2, label: 'Overview' }, { id: 'crm', icon: Users, label: 'CRM' }, { id: 'tasks', icon: ListTodo, label: 'Tasks' }, { id: 'projects', icon: Briefcase, label: 'Projects' }, { id: 'accounting', icon: Receipt, label: 'Accounting' }]} activeTab={activeTab} onTabChange={setActiveTab}><PageSkeleton type="dashboard" /></PageShell>
 
   return (
     <PageShell
@@ -34,7 +42,7 @@ export function BusinessHub() {
             <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
               <UserPlus className="w-3.5 h-3.5" /> Add Contact
             </button>
-            <button className="px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-surface-hover transition-colors">
+            <button onClick={() => setModalOpen('deal')} className="px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-surface-hover transition-colors">
               <Plus className="w-3.5 h-3.5" /> New Deal
             </button>
           </div>
@@ -69,9 +77,40 @@ export function BusinessHub() {
 
         {activeTab === 'overview' && <OverviewTab />}
         {activeTab === 'crm' && <CRMTab />}
-        {activeTab === 'tasks' && <TasksTab />}
+        {activeTab === 'tasks' && <TasksTab onNewTask={() => setModalOpen('task')} />}
         {activeTab === 'projects' && <ProjectsTab />}
         {activeTab === 'accounting' && <AccountingTab />}
+
+        <Modal open={modalOpen === 'deal'} onClose={() => setModalOpen(null)} title="New Deal" size="sm">
+          <form onSubmit={(e) => { e.preventDefault(); addToast('Deal created successfully', 'success'); setModalOpen(null); }} className="space-y-3">
+            <input type="text" placeholder="Deal Title" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <input type="text" placeholder="Contact Name" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <input type="number" placeholder="Value" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <select className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm focus:outline-none focus:border-neutral-500">
+              <option>Select stage</option>
+              <option>Lead</option>
+              <option>Qualified</option>
+              <option>Proposal</option>
+              <option>Negotiation</option>
+            </select>
+            <button type="submit" className="w-full px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold">Create Deal</button>
+          </form>
+        </Modal>
+
+        <Modal open={modalOpen === 'task'} onClose={() => setModalOpen(null)} title="New Task" size="sm">
+          <form onSubmit={(e) => { e.preventDefault(); addToast('Task created successfully', 'success'); setModalOpen(null); }} className="space-y-3">
+            <input type="text" placeholder="Task Title" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <input type="text" placeholder="Description" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <select className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm focus:outline-none focus:border-neutral-500">
+              <option>Select priority</option>
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+              <option>Urgent</option>
+            </select>
+            <button type="submit" className="w-full px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold">Create Task</button>
+          </form>
+        </Modal>
       </div>
     </PageShell>
   )
@@ -189,7 +228,7 @@ function CRMTab() {
   )
 }
 
-function TasksTab() {
+function TasksTab({ onNewTask }: { onNewTask?: () => void }) {
   const [taskFilter, setTaskFilter] = useState<TaskStatus | 'all'>('all')
   const taskStatusLabels: Record<string, string> = { todo: 'To Do', in_progress: 'In Progress', review: 'Review', done: 'Done' }
   const filtered = taskFilter === 'all' ? tasks : tasks.filter(t => t.status === taskFilter)
@@ -197,7 +236,12 @@ function TasksTab() {
   return (
     <GlassCard padding="none">
       <GlassCardHeader className="px-4 pt-4">
-        <GlassCardTitle>All Tasks</GlassCardTitle>
+        <div className="flex items-center justify-between w-full">
+          <GlassCardTitle>All Tasks</GlassCardTitle>
+          <button onClick={onNewTask} className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+            <Plus className="w-3.5 h-3.5" /> New Task
+          </button>
+        </div>
         <div className="flex gap-1">
           {['all', 'todo', 'in_progress', 'review', 'done'].map((s) => (
             <button

@@ -1,4 +1,8 @@
 import { useState } from 'react'
+import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
+import { Modal } from '@/components/ui/Modal'
+import { useToast } from '@/context/ToastContext'
 import {
   Shield, Users, Settings, Activity, UserPlus,
   Lock, Bell, Globe, Server
@@ -16,6 +20,10 @@ const tabs = [
 
 export function Administration() {
   const [activeTab, setActiveTab] = useState('overview')
+  const [modalOpen, setModalOpen] = useState<'invite' | null>(null)
+  const { addToast } = useToast()
+  const loading = useSimulatedLoading(500)
+  if (loading) return <PageShell tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}><PageSkeleton type="dashboard" /></PageShell>
 
   return (
     <PageShell tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
@@ -26,7 +34,7 @@ export function Administration() {
             <p className="text-xs text-text-secondary">User management, permissions, and system configuration</p>
           </div>
           <div className="hidden sm:flex items-center gap-2">
-            <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+            <button onClick={() => setModalOpen('invite')} className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
               <UserPlus className="w-3.5 h-3.5" /> Invite User
             </button>
           </div>
@@ -109,6 +117,21 @@ export function Administration() {
         )}
         {activeTab === 'users' && <UsersTab />}
         {activeTab === 'settings' && <SettingsTab />}
+
+        <Modal open={modalOpen === 'invite'} onClose={() => setModalOpen(null)} title="Invite User" size="sm">
+          <form onSubmit={(e) => { e.preventDefault(); addToast('User invited successfully', 'success'); setModalOpen(null); }} className="space-y-3">
+            <input type="text" placeholder="Full Name" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <input type="email" placeholder="Email Address" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <select className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm focus:outline-none focus:border-neutral-500">
+              <option>Select role</option>
+              <option>Admin</option>
+              <option>Supervisor</option>
+              <option>Trader</option>
+              <option>Viewer</option>
+            </select>
+            <button type="submit" className="w-full px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold">Invite User</button>
+          </form>
+        </Modal>
       </div>
     </PageShell>
   )

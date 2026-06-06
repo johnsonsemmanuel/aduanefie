@@ -1,3 +1,5 @@
+import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import { Star, ShieldCheck, MapPin, Package, TrendingUp, Truck, LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
@@ -14,6 +16,8 @@ const stats = [
 ]
 
 export function Profile() {
+  const loading = useSimulatedLoading(500)
+  if (loading) return <div className="p-4"><PageSkeleton type="form" /></div>
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const displayName = user?.name || currentUser.name

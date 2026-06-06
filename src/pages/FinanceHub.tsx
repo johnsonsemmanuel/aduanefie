@@ -1,4 +1,8 @@
 import { useState } from 'react'
+import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
+import { Modal } from '@/components/ui/Modal'
+import { useToast } from '@/context/ToastContext'
 import {
   Wallet, ArrowUpRight, ArrowDownLeft, TrendingUp, Landmark,
   ShieldCheck, Clock, Plus, Send, FileText, List,
@@ -13,6 +17,10 @@ import type { Transaction, Loan, InsurancePolicy, TradeFinanceFacility } from '@
 export function FinanceHub() {
   const [activeTab, setActiveTab] = useState('overview')
   const [showWallet, setShowWallet] = useState(false)
+  const [modalOpen, setModalOpen] = useState<'fund' | 'send' | 'loan' | 'policy' | 'facility' | null>(null)
+  const { addToast } = useToast()
+  const loading = useSimulatedLoading(500)
+  if (loading) return <PageShell tabs={[{ id: 'overview', icon: BarChart3, label: 'Overview' }, { id: 'transactions', icon: List, label: 'Transactions' }, { id: 'loans', icon: Landmark, label: 'Loans' }, { id: 'insurance', icon: ShieldCheck, label: 'Insurance' }, { id: 'trade-finance', icon: FileText, label: 'Trade Finance' }]} activeTab={activeTab} onTabChange={setActiveTab}><PageSkeleton type="dashboard" /></PageShell>
 
   return (
     <PageShell
@@ -34,10 +42,10 @@ export function FinanceHub() {
             <p className="text-xs text-text-secondary">Digital wallet, payments, trade finance, loans & insurance</p>
           </div>
           <div className="hidden sm:flex items-center gap-2">
-            <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+            <button onClick={() => setModalOpen('fund')} className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
               <Plus className="w-3 h-3" /> Fund Wallet
             </button>
-            <button className="px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-surface-hover transition-colors">
+            <button onClick={() => setModalOpen('send')} className="px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-surface-hover transition-colors">
               <Send className="w-3 h-3" /> Send
             </button>
           </div>
@@ -63,10 +71,10 @@ export function FinanceHub() {
               <span>Reserved: ${wallet.reservedBalance.toLocaleString()}</span>
             </div>
             <div className="mt-2 pt-2 border-t border-border flex gap-2">
-              <button className="flex-1 px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold inline-flex items-center justify-center gap-1 hover:bg-surface-hover transition-colors">
+              <button onClick={() => setModalOpen('fund')} className="flex-1 px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold inline-flex items-center justify-center gap-1 hover:bg-surface-hover transition-colors">
                 <Plus className="w-3 h-3" /> Top Up
               </button>
-              <button className="flex-1 px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center justify-center gap-1 hover:bg-primary/90 transition-colors">
+              <button onClick={() => setModalOpen('send')} className="flex-1 px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center justify-center gap-1 hover:bg-primary/90 transition-colors">
                 <Send className="w-3 h-3" /> Send
               </button>
             </div>
@@ -92,9 +100,67 @@ export function FinanceHub() {
 
         {activeTab === 'overview' && <OverviewTab />}
         {activeTab === 'transactions' && <TransactionsTab />}
-        {activeTab === 'loans' && <LoansTab />}
-        {activeTab === 'insurance' && <InsuranceTab />}
-        {activeTab === 'trade-finance' && <TradeFinanceTab />}
+        {activeTab === 'loans' && <LoansTab onApply={() => setModalOpen('loan')} />}
+        {activeTab === 'insurance' && <InsuranceTab onNewPolicy={() => setModalOpen('policy')} />}
+        {activeTab === 'trade-finance' && <TradeFinanceTab onNewFacility={() => setModalOpen('facility')} />}
+
+        <Modal open={modalOpen === 'fund'} onClose={() => setModalOpen(null)} title="Fund Wallet" size="sm">
+          <form onSubmit={(e) => { e.preventDefault(); addToast('Wallet funded successfully', 'success'); setModalOpen(null); }} className="space-y-3">
+            <input type="number" placeholder="Amount" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <button type="submit" className="w-full px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold">Confirm</button>
+          </form>
+        </Modal>
+
+        <Modal open={modalOpen === 'send'} onClose={() => setModalOpen(null)} title="Send Money" size="sm">
+          <form onSubmit={(e) => { e.preventDefault(); addToast('Payment sent successfully', 'success'); setModalOpen(null); }} className="space-y-3">
+            <input type="text" placeholder="Recipient" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <input type="number" placeholder="Amount" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <button type="submit" className="w-full px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold">Send</button>
+          </form>
+        </Modal>
+
+        <Modal open={modalOpen === 'loan'} onClose={() => setModalOpen(null)} title="Apply for Loan" size="sm">
+          <form onSubmit={(e) => { e.preventDefault(); addToast('Loan application submitted', 'success'); setModalOpen(null); }} className="space-y-3">
+            <select className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm focus:outline-none focus:border-neutral-500">
+              <option>Select type</option>
+              <option>Equipment</option>
+              <option>Working Capital</option>
+              <option>Harvest</option>
+            </select>
+            <input type="number" placeholder="Amount" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <input type="text" placeholder="Purpose" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <button type="submit" className="w-full px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold">Submit Application</button>
+          </form>
+        </Modal>
+
+        <Modal open={modalOpen === 'policy'} onClose={() => setModalOpen(null)} title="New Insurance Policy" size="sm">
+          <form onSubmit={(e) => { e.preventDefault(); addToast('Insurance policy created', 'success'); setModalOpen(null); }} className="space-y-3">
+            <select className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm focus:outline-none focus:border-neutral-500">
+              <option>Select policy type</option>
+              <option>Crop</option>
+              <option>Livestock</option>
+              <option>Equipment</option>
+              <option>Transport</option>
+            </select>
+            <input type="number" placeholder="Coverage Amount" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <input type="text" placeholder="Description" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <button type="submit" className="w-full px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold">Create Policy</button>
+          </form>
+        </Modal>
+
+        <Modal open={modalOpen === 'facility'} onClose={() => setModalOpen(null)} title="New Trade Finance Facility" size="sm">
+          <form onSubmit={(e) => { e.preventDefault(); addToast('Trade finance facility created', 'success'); setModalOpen(null); }} className="space-y-3">
+            <select className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm focus:outline-none focus:border-neutral-500">
+              <option>Select facility type</option>
+              <option>Letter of Credit</option>
+              <option>Invoice Financing</option>
+              <option>Supply Chain Finance</option>
+            </select>
+            <input type="number" placeholder="Amount" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <input type="text" placeholder="Commodity" className="w-full px-4 py-2.5 rounded-full border border-border bg-bg text-text-primary text-sm placeholder:text-text-secondary focus:outline-none focus:border-neutral-500" />
+            <button type="submit" className="w-full px-4 py-2 rounded-full bg-primary text-white text-sm font-semibold">Create Facility</button>
+          </form>
+        </Modal>
       </div>
     </PageShell>
   )
@@ -222,11 +288,11 @@ function TransactionsTab() {
   )
 }
 
-function LoansTab() {
+function LoansTab({ onApply }: { onApply?: () => void }) {
   return (
     <div className="space-y-3">
       <div className="flex justify-end">
-        <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+        <button onClick={onApply} className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
           <Plus className="w-3.5 h-3.5" /> Apply for Loan
         </button>
       </div>
@@ -237,11 +303,11 @@ function LoansTab() {
   )
 }
 
-function InsuranceTab() {
+function InsuranceTab({ onNewPolicy }: { onNewPolicy?: () => void }) {
   return (
     <div className="space-y-3">
       <div className="flex justify-end">
-        <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+        <button onClick={onNewPolicy} className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
           <Plus className="w-3.5 h-3.5" /> New Policy
         </button>
       </div>
@@ -252,11 +318,11 @@ function InsuranceTab() {
   )
 }
 
-function TradeFinanceTab() {
+function TradeFinanceTab({ onNewFacility }: { onNewFacility?: () => void }) {
   return (
     <div className="space-y-3">
       <div className="flex justify-end">
-        <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+        <button onClick={onNewFacility} className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
           <Plus className="w-3.5 h-3.5" /> New Facility
         </button>
       </div>

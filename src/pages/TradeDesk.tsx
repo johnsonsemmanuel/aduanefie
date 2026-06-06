@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import { TrendingUp, CheckCircle, Clock, ShoppingCart } from 'lucide-react'
 import { PageShell } from '@/components/layout/PageShell'
 import { GlassCard, GlassCardHeader, GlassCardTitle } from '@/components/ui/GlassCard'
@@ -23,6 +25,8 @@ const orderColumns = [
 export function TradeDesk() {
   const [activeTab, setActiveTab] = useState('active')
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
+  const loading = useSimulatedLoading(500)
+  if (loading) return <PageShell tabs={[{ id: 'active', icon: Clock, label: 'Active' }, { id: 'all', icon: ShoppingCart, label: 'All' }, { id: 'completed', icon: CheckCircle, label: 'Completed' }, { id: 'opportunities', icon: TrendingUp, label: 'Trades' }]} activeTab={activeTab} onTabChange={setActiveTab}><PageSkeleton type="dashboard" /></PageShell>
 
   const filterOrders = (): Order[] => {
     switch (activeTab) {

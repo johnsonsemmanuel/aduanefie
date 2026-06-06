@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import { MapPin, Package, Truck, Warehouse } from 'lucide-react'
 import { PageShell } from '@/components/layout/PageShell'
 import { GlassCard } from '@/components/ui/GlassCard'
@@ -8,6 +10,8 @@ import { logistics, warehouses } from '@/data/mock'
 
 export function Logistics() {
   const [activeTab, setActiveTab] = useState('shipments')
+  const loading = useSimulatedLoading(500)
+  if (loading) return <PageShell tabs={[{ id: 'shipments', icon: Package, label: 'Shipments' }, { id: 'warehouses', icon: Warehouse, label: 'Warehouses' }, { id: 'tracking', icon: MapPin, label: 'Tracking' }]} activeTab={activeTab} onTabChange={setActiveTab}><PageSkeleton type="grid" /></PageShell>
 
   return (
     <PageShell

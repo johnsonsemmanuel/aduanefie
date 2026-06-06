@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import { Globe, Award, TrendingUp, Package, CheckCircle } from 'lucide-react'
 import { PageShell } from '@/components/layout/PageShell'
 import { GlassCard } from '@/components/ui/GlassCard'
@@ -21,6 +23,8 @@ const exportColumns = [
 
 export function Exports() {
   const [activeTab, setActiveTab] = useState('opportunities')
+  const loading = useSimulatedLoading(500)
+  if (loading) return <PageShell tabs={[{ id: 'opportunities', icon: Globe, label: 'Opportunities' }, { id: 'active', icon: Package, label: 'Active' }, { id: 'completed', icon: CheckCircle, label: 'Completed' }]} activeTab={activeTab} onTabChange={setActiveTab}><PageSkeleton type="grid" /></PageShell>
 
   return (
     <PageShell

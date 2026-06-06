@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import { BarChart3, TrendingUp, Cloud, Users, FileText, ArrowUp, ArrowDown, Activity } from 'lucide-react'
 import { PageShell } from '@/components/layout/PageShell'
 import { GlassCard, GlassCardHeader, GlassCardTitle } from '@/components/ui/GlassCard'
@@ -15,6 +17,8 @@ import type { CommodityDetail } from '@/types'
 export function MarketIntel() {
   const [activeTab, setActiveTab] = useState('overview')
   const [selectedCommodity, setSelectedCommodity] = useState<CommodityDetail>(commodityDetails[0])
+  const loading = useSimulatedLoading(500)
+  if (loading) return <PageShell tabs={[{ id: 'overview', icon: BarChart3, label: 'Overview' }, { id: 'prices', icon: TrendingUp, label: 'Prices' }, { id: 'weather', icon: Cloud, label: 'Weather' }, { id: 'demand', icon: Users, label: 'Demand' }, { id: 'reports', icon: FileText, label: 'Reports' }]} activeTab={activeTab} onTabChange={setActiveTab}><PageSkeleton type="dashboard" /></PageShell>
 
   return (
     <PageShell

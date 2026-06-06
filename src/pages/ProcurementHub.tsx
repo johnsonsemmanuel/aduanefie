@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import {
   ClipboardCheck, Users, FileText, ShoppingCart, Plus,
   Star, BarChart3,
@@ -11,6 +13,8 @@ import type { RFQ, PurchaseOrder } from '@/types'
 
 export function ProcurementHub() {
   const [activeTab, setActiveTab] = useState('overview')
+  const loading = useSimulatedLoading(500)
+  if (loading) return <PageShell tabs={[{ id: 'overview', icon: BarChart3, label: 'Overview' }, { id: 'vendors', icon: Users, label: 'Vendors' }, { id: 'rfqs', icon: FileText, label: 'RFQs' }, { id: 'orders', icon: ShoppingCart, label: 'Orders' }]} activeTab={activeTab} onTabChange={setActiveTab}><PageSkeleton type="dashboard" /></PageShell>
 
   return (
     <PageShell

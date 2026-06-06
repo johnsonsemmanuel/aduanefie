@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import {
   Users, MapPin, Award, TrendingUp, Plus, BarChart3
 } from 'lucide-react'
@@ -10,6 +12,8 @@ import type { Cooperative, CooperativeMember } from '@/types'
 
 export function CooperativeHub() {
   const [activeTab, setActiveTab] = useState('overview')
+  const loading = useSimulatedLoading(500)
+  if (loading) return <PageShell tabs={[{ id: 'overview', icon: BarChart3, label: 'Overview' }, { id: 'cooperatives', icon: Award, label: 'Co-ops' }, { id: 'members', icon: Users, label: 'Members' }]} activeTab={activeTab} onTabChange={setActiveTab}><PageSkeleton type="dashboard" /></PageShell>
 
   return (
     <PageShell

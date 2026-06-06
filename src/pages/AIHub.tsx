@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import {
   Brain, MessageCircle, Lightbulb, TrendingUp, Cloud,
   AlertTriangle, Send, Sparkles, Target, BarChart3
@@ -12,6 +14,8 @@ export function AIHub() {
   const [activeTab, setActiveTab] = useState('assistant')
   const [messages, setMessages] = useState(aiChatMessages)
   const [input, setInput] = useState('')
+  const loading = useSimulatedLoading(500)
+  if (loading) return <PageShell tabs={[{ id: 'assistant', icon: MessageCircle, label: 'Assistant' }, { id: 'insights', icon: Lightbulb, label: 'Insights' }]} activeTab={activeTab} onTabChange={setActiveTab}><PageSkeleton type="list" /></PageShell>
 
   const handleSend = () => {
     if (!input.trim()) return

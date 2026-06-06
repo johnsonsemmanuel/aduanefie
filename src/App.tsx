@@ -1,5 +1,8 @@
 import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import { AuthProvider } from '@/context/AuthContext'
+import { ToastProvider } from '@/context/ToastContext'
+import { Toaster } from '@/components/ui/Toast'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { Preloader } from '@/components/ui/Preloader'
 import { Shell } from '@/components/layout/Shell'
@@ -22,7 +25,13 @@ import { SignUpPage } from '@/pages/SignUpPage'
 import { NotFound } from '@/pages/NotFound'
 
 function ProtectedShell({ children }: { children: React.ReactNode }) {
-  return <ProtectedRoute><Shell>{children}</Shell></ProtectedRoute>
+  return (
+    <ProtectedRoute>
+      <ErrorBoundary>
+        <Shell>{children}</Shell>
+      </ErrorBoundary>
+    </ProtectedRoute>
+  )
 }
 
 function EntryPoint() {
@@ -34,6 +43,8 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        <ToastProvider>
+          <Toaster />
         <Routes>
           <Route path="/" element={<EntryPoint />} />
           <Route path="/login" element={<SignInPage />} />
@@ -55,6 +66,7 @@ function App() {
           <Route path="/admin" element={<ProtectedShell><Administration /></ProtectedShell>} />
           <Route path="*" element={<ProtectedShell><NotFound /></ProtectedShell>} />
         </Routes>
+        </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
   )

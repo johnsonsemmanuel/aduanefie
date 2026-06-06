@@ -421,12 +421,16 @@ export function SignInPage() {
   const [initialCanvasVisible, setInitialCanvasVisible] = useState(true)
   const [reverseCanvasVisible, setReverseCanvasVisible] = useState(false)
   const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     if (!email.trim()) return
+    setSubmitting(true)
+    await new Promise(r => setTimeout(r, 600))
     const user = login(email.trim())
+    setSubmitting(false)
     if (user) {
       setStep('code')
     } else {
@@ -453,10 +457,12 @@ export function SignInPage() {
       if (index === 5 && value) {
         const isComplete = newCode.every(d => d.length === 1)
         if (isComplete) {
+          setSubmitting(true)
           setReverseCanvasVisible(true)
           setTimeout(() => setInitialCanvasVisible(false), 50)
           setTimeout(() => {
             setStep('success')
+            setSubmitting(false)
             setTimeout(() => {
               const redirect = searchParams.get('redirect') || '/dashboard'
               navigate(redirect, { replace: true })
@@ -554,17 +560,26 @@ export function SignInPage() {
                             placeholder="info@gmail.com"
                             value={email}
                             onChange={e => { setEmail(e.target.value); setError('') }}
-                            className="w-full backdrop-blur-[1px] text-white border border-white/10 rounded-full py-3 px-4 focus:outline-none focus:border focus:border-white/30 text-center"
+                            disabled={submitting}
+                            className="w-full backdrop-blur-[1px] text-white border border-white/10 rounded-full py-3 px-4 focus:outline-none focus:border focus:border-white/30 text-center disabled:opacity-50"
                             required
                           />
                           <button
                             type="submit"
-                            className="absolute right-1.5 top-1.5 text-white w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors group overflow-hidden"
+                            disabled={submitting}
+                            className="absolute right-1.5 top-1.5 text-white w-9 h-9 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors group overflow-hidden disabled:opacity-50"
                           >
-                            <span className="relative w-full h-full block overflow-hidden">
-                              <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:translate-x-full">→</span>
-                              <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 -translate-x-full group-hover:translate-x-0">→</span>
-                            </span>
+                            {submitting ? (
+                              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                              </svg>
+                            ) : (
+                              <span className="relative w-full h-full block overflow-hidden">
+                                <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 group-hover:translate-x-full">→</span>
+                                <span className="absolute inset-0 flex items-center justify-center transition-transform duration-300 -translate-x-full group-hover:translate-x-0">→</span>
+                              </span>
+                            )}
                           </button>
                         </div>
                       </form>
@@ -587,7 +602,8 @@ export function SignInPage() {
                           <button
                             key={d.email}
                             onClick={() => { setEmail(d.email); setError('') }}
-                            className={`px-2.5 py-1 rounded-full border text-[10px] transition-colors ${
+                            disabled={submitting}
+                            className={`px-2.5 py-1 rounded-full border text-[10px] transition-colors disabled:opacity-50 ${
                               email === d.email
                                 ? 'border-white/40 bg-white/10 text-white font-medium'
                                 : 'border-white/10 bg-white/5 text-white/50 hover:bg-white/10 hover:border-white/20'
@@ -679,9 +695,16 @@ export function SignInPage() {
                             ? 'bg-white text-black border-transparent hover:bg-white/90 cursor-pointer'
                             : 'bg-[#111] text-white/50 border-white/10 cursor-not-allowed'
                         }`}
-                        disabled={!code.every(d => d !== '')}
+                        disabled={!code.every(d => d !== '') || submitting}
                       >
-                        Continue
+                        {submitting ? (
+                          <svg className="w-4 h-4 animate-spin mx-auto" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                          </svg>
+                        ) : (
+                          'Continue'
+                        )}
                       </motion.button>
                     </div>
 

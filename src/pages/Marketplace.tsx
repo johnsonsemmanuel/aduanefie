@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import { ShoppingBag, TrendingUp, Users, Truck } from 'lucide-react'
 import { PageShell } from '@/components/layout/PageShell'
 import { GlassCard, GlassCardHeader, GlassCardTitle } from '@/components/ui/GlassCard'
@@ -27,6 +29,8 @@ const categoryFilters = [
 
 export function Marketplace() {
   const [activeTab, setActiveTab] = useState('commodities')
+  const loading = useSimulatedLoading(500)
+  if (loading) return <PageShell tabs={[{ id: 'commodities', icon: ShoppingBag, label: 'Commodities' }, { id: 'opportunities', icon: TrendingUp, label: 'Trades' }, { id: 'buyer-requests', icon: Users, label: 'Buyers' }, { id: 'suppliers', icon: Truck, label: 'Suppliers' }]} activeTab={activeTab} onTabChange={setActiveTab}><PageSkeleton type="grid" /></PageShell>
 
   const renderContent = () => {
     switch (activeTab) {
