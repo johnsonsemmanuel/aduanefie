@@ -25,7 +25,7 @@ export function MarketIntel() {
   const [selectedCommodity, setSelectedCommodity] = useState<CommodityDetail>(commodityDetails[0])
 
   return (
-    <div className="space-y-4 max-w-[1440px] mx-auto">
+    <div className="space-y-4">
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>

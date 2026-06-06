@@ -34,12 +34,12 @@ export function Shell({ children }: ShellProps) {
       <div className="flex-1 flex flex-col min-w-0">
         <TopBar onMenuToggle={() => setMobileSidebarOpen(true)} />
 
-        <main className="flex-1 overflow-y-auto scrollbar-thin p-3 sm:p-4 lg:p-5 pb-20 lg:pb-5">
+        <main className="flex-1 overflow-y-auto scrollbar-thin p-3 sm:p-4 lg:p-5 pb-20 lg:pb-0">
           {children}
         </main>
       </div>
 
-      {/* Mobile bottom nav */}
+      {/* Mobile bottom nav — hidden on desktop */}
       <MobileNav />
     </div>
   )

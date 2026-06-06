@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { Shell } from '@/components/layout/Shell'
 import { CommandCenter } from '@/pages/CommandCenter'
 import { MarketIntel } from '@/pages/MarketIntel'
+import { FinanceHub } from '@/pages/FinanceHub'
+import { BusinessHub } from '@/pages/BusinessHub'
 import { Marketplace } from '@/pages/Marketplace'
 import { TradeDesk } from '@/pages/TradeDesk'
 import { Logistics } from '@/pages/Logistics'
@@ -33,11 +35,11 @@ function App() {
         <Route path="/profile" element={<Shell><Profile /></Shell>} />
         <Route path="/more" element={<Shell><Profile /></Shell>} />
         <Route path="/market-intel" element={<Shell><MarketIntel /></Shell>} />
-        <Route path="/finance" element={<Shell><Placeholder title="Finance Hub" /></Shell>} />
+        <Route path="/finance" element={<Shell><FinanceHub /></Shell>} />
         <Route path="/cooperative" element={<Shell><Placeholder title="Cooperative Hub" /></Shell>} />
         <Route path="/ai" element={<Shell><Placeholder title="AI Hub" /></Shell>} />
         <Route path="/procurement" element={<Shell><Placeholder title="Procurement Hub" /></Shell>} />
-        <Route path="/business" element={<Shell><Placeholder title="Business Hub" /></Shell>} />
+        <Route path="/business" element={<Shell><BusinessHub /></Shell>} />
         <Route path="/developer" element={<Shell><Placeholder title="Developer Hub" /></Shell>} />
         <Route path="/admin" element={<Shell><Placeholder title="Administration" /></Shell>} />
         <Route path="*" element={<Shell><NotFound /></Shell>} />

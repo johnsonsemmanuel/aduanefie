@@ -31,7 +31,7 @@ export function CommandCenter() {
   })()
 
   return (
-    <div className="space-y-4 max-w-[1440px] mx-auto">
+    <div className="space-y-4">
 
       {/* System Status Bar */}
       <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-surface text-xs">

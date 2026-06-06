@@ -337,3 +337,201 @@ export interface MarketIntelData {
   topMovers: { commodity: string; change: number; changePercent: number; trend: 'up' | 'down' }[]
   marketOverview: { label: string; value: string; change: string; trend: 'up' | 'down' }[]
 }
+
+// Finance Hub types
+export type TransactionType = 'payment' | 'deposit' | 'withdrawal' | 'refund' | 'fee' | 'loan_disbursement' | 'loan_repayment' | 'insurance_payout' | 'trade_finance'
+export type TransactionStatus = 'completed' | 'pending' | 'processing' | 'failed' | 'cancelled'
+export type LoanStatus = 'active' | 'pending' | 'approved' | 'rejected' | 'completed' | 'defaulted'
+export type InsuranceStatus = 'active' | 'expired' | 'pending' | 'claimed' | 'cancelled'
+export type TradeFinanceType = 'letter_of_credit' | 'invoice_factoring' | 'supply_chain_finance' | 'purchase_order_finance'
+export type TradeFinanceStatus = 'active' | 'pending' | 'completed' | 'defaulted'
+
+export interface Wallet {
+  id: string
+  balance: number
+  currency: string
+  pendingBalance: number
+  reservedBalance: number
+  availableBalance: number
+  accountNumber: string
+  bankName: string
+  linkedBankAccount: string
+}
+
+export interface Transaction {
+  id: string
+  type: TransactionType
+  amount: number
+  currency: string
+  status: TransactionStatus
+  description: string
+  counterparty: string
+  reference: string
+  date: string
+  fee?: number
+  category: 'trade' | 'loan' | 'insurance' | 'fee' | 'deposit' | 'withdrawal'
+}
+
+export interface Loan {
+  id: string
+  type: 'crop_loan' | 'equipment_loan' | 'input_loan' | 'trade_finance' | 'emergency'
+  amount: number
+  currency: string
+  interestRate: number
+  term: number
+  termUnit: 'months' | 'years'
+  status: LoanStatus
+  disbursedDate: string
+  dueDate: string
+  repaidAmount: number
+  remainingAmount: number
+  nextPayment: string
+  nextPaymentAmount: number
+  purpose: string
+  collateral: string
+  lender: string
+}
+
+export interface InsurancePolicy {
+  id: string
+  type: 'crop' | 'livestock' | 'equipment' | 'transport' | 'weather_index'
+  policyNumber: string
+  insurer: string
+  premium: number
+  coverage: number
+  currency: string
+  status: InsuranceStatus
+  startDate: string
+  endDate: string
+  commodity?: string
+  area?: string
+  deductible: number
+  claims: InsuranceClaim[]
+}
+
+export interface InsuranceClaim {
+  id: string
+  policyId: string
+  date: string
+  amount: number
+  status: 'submitted' | 'processing' | 'approved' | 'rejected' | 'paid'
+  description: string
+  documents: string[]
+}
+
+export interface TradeFinanceFacility {
+  id: string
+  type: TradeFinanceType
+  reference: string
+  amount: number
+  currency: string
+  status: TradeFinanceStatus
+  applicant: string
+  beneficiary: string
+  issuingDate: string
+  expiryDate: string
+  commodity: string
+  quantity: number
+  documents: string[]
+  fees: number
+}
+
+export interface FinanceDashboard {
+  wallet: Wallet
+  recentTransactions: Transaction[]
+  pendingPayments: Transaction[]
+  activeLoans: Loan[]
+  activePolicies: InsurancePolicy[]
+  tradeFacilities: TradeFinanceFacility[]
+  monthlyVolume: number
+  monthlyVolumeChange: number
+  activeFacilitiesCount: number
+  loanUtilization: number
+}
+
+// Business Hub types
+export type DealStage = 'lead' | 'qualified' | 'proposal' | 'negotiation' | 'closed_won' | 'closed_lost'
+export type TaskStatus = 'todo' | 'in_progress' | 'review' | 'done'
+export type TaskPriority = 'low' | 'medium' | 'high' | 'urgent'
+export type ProjectStatus = 'planning' | 'active' | 'on_hold' | 'completed' | 'cancelled'
+export type InvoiceStatus = 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled'
+
+export interface Contact {
+  id: string
+  name: string
+  company: string
+  role: string
+  email: string
+  phone: string
+  type: 'buyer' | 'supplier' | 'partner' | 'farmer' | 'logistics' | 'other'
+  dealValue: number
+  lastContact: string
+  avatar?: string
+}
+
+export interface Deal {
+  id: string
+  title: string
+  value: number
+  stage: DealStage
+  contactId: string
+  contactName: string
+  probability: number
+  expectedClose: string
+  createdAt: string
+}
+
+export interface Task {
+  id: string
+  title: string
+  description: string
+  status: TaskStatus
+  priority: TaskPriority
+  assignee: string
+  dueDate: string
+  projectId?: string
+  relatedTo?: string
+}
+
+export interface Milestone {
+  id: string
+  title: string
+  dueDate: string
+  status: 'pending' | 'in_progress' | 'completed'
+}
+
+export interface Project {
+  id: string
+  name: string
+  description: string
+  status: ProjectStatus
+  budget: number
+  spent: number
+  startDate: string
+  endDate: string
+  milestones: Milestone[]
+  team: string[]
+}
+
+export interface Invoice {
+  id: string
+  invoiceNumber: string
+  client: string
+  amount: number
+  status: InvoiceStatus
+  dueDate: string
+  issuedDate: string
+  items: { description: string; quantity: number; rate: number; total: number }[]
+}
+
+export interface BusinessDashboard {
+  monthlyRevenue: number
+  revenueChange: number
+  activeDeals: number
+  openTasks: number
+  activeProjects: number
+  overdueInvoices: number
+  recentDeals: Deal[]
+  upcomingTasks: Task[]
+  invoicingSummary: { sent: number; paid: number; overdue: number; total: number }
+}
