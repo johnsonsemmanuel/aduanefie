@@ -200,3 +200,67 @@ export interface WatchlistItem {
   currentPrice: number
   alertEnabled: boolean
 }
+
+// AgriOS-specific types
+export type OSModuleId =
+  | 'trade-engine' | 'market-intel' | 'logistics' | 'finance'
+  | 'storage' | 'cooperative' | 'export' | 'ai' | 'admin'
+  | 'procurement' | 'business' | 'developer'
+
+export interface OSModule {
+  id: OSModuleId
+  name: string
+  description: string
+  icon: string
+  color: string
+  path: string
+  badge?: number
+  layer: number
+  status: 'active' | 'beta' | 'maintenance' | 'coming-soon'
+}
+
+export interface SystemMetric {
+  id: string
+  label: string
+  value: string
+  secondary: string
+  trend: 'up' | 'down' | 'stable'
+  color: string
+}
+
+export interface SystemEvent {
+  id: string
+  module: OSModuleId
+  message: string
+  timestamp: string
+  severity: 'info' | 'success' | 'warning' | 'critical'
+  actionLabel?: string
+}
+
+export interface SystemStatus {
+  id: string
+  label: string
+  status: 'online' | 'offline' | 'sync' | 'error'
+  value: string
+}
+
+export interface MarketTicker {
+  id: string
+  commodity: string
+  price: number
+  change: number
+  changePercent: number
+  unit: string
+  trend: 'up' | 'down'
+}
+
+export interface CommandCenterData {
+  status: SystemStatus[]
+  modules: OSModule[]
+  metrics: SystemMetric[]
+  ticker: MarketTicker[]
+  events: SystemEvent[]
+  systemUptime: string
+  activeUsers: number
+  lastSync: string
+}

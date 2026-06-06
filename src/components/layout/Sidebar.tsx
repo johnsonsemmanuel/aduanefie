@@ -1,15 +1,24 @@
 import { NavLink } from 'react-router-dom'
 import {
-  LayoutDashboard, ShoppingBag, TrendingUp, Truck, Globe, User,
-  Bell
+  ShoppingBag, Truck, Globe, User,
+  Bell, BarChart3, Wallet, Command
 } from 'lucide-react'
 
-const navItems = [
-  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/marketplace', label: 'Marketplace', icon: ShoppingBag },
-  { to: '/trade-desk', label: 'Trade Desk', icon: TrendingUp },
-  { to: '/logistics', label: 'Logistics', icon: Truck },
-  { to: '/exports', label: 'Exports', icon: Globe },
+interface NavItem {
+  to: string
+  label: string
+  icon: typeof Command
+  layer?: number
+  badge?: number
+}
+
+const navItems: NavItem[] = [
+  { to: '/', label: 'Command Center', icon: Command, badge: 6 },
+  { to: '/marketplace', label: 'Trade Engine', icon: ShoppingBag, layer: 2, badge: 7 },
+  { to: '/market-intel', label: 'Market Intel', icon: BarChart3, layer: 6, badge: 3 },
+  { to: '/logistics', label: 'Logistics Hub', icon: Truck, layer: 3, badge: 2 },
+  { to: '/finance', label: 'Finance Hub', icon: Wallet, layer: 5 },
+  { to: '/exports', label: 'Export Hub', icon: Globe, layer: 2, badge: 4 },
   { to: '/profile', label: 'Profile', icon: User },
 ]
 
@@ -23,11 +32,11 @@ export function Sidebar({ onNav, className = '' }: SidebarProps) {
     <aside className={`w-56 border-r border-border bg-surface flex flex-col shrink-0 ${className}`}>
       <div className="h-14 flex items-center gap-2.5 px-4 border-b border-border">
         <div className="w-7 h-7 rounded-md bg-primary flex items-center justify-center shrink-0">
-          <TrendingUp className="w-4 h-4 text-cream" />
+          <Command className="w-4 h-4 text-cream" />
         </div>
         <div className="min-w-0">
           <p className="text-sm font-bold text-text-primary leading-tight">Aduanefie</p>
-          <p className="text-[9px] text-text-secondary font-medium uppercase tracking-wider">Trade Engine</p>
+          <p className="text-[9px] text-text-secondary font-medium uppercase tracking-wider">AgriOS</p>
         </div>
       </div>
 
@@ -47,7 +56,13 @@ export function Sidebar({ onNav, className = '' }: SidebarProps) {
             }
           >
             <item.icon className="w-4 h-4 shrink-0" />
-            {item.label}
+            <span className="flex-1 truncate">{item.label}</span>
+            {item.badge && (
+              <span className="text-[9px] font-mono bg-primary/10 text-primary rounded px-1 font-medium shrink-0"> {item.badge}</span>
+            )}
+            {item.layer && (
+              <span className="text-[9px] text-text-secondary font-mono shrink-0">L{item.layer}</span>
+            )}
           </NavLink>
         ))}
       </nav>
@@ -59,7 +74,7 @@ export function Sidebar({ onNav, className = '' }: SidebarProps) {
           </div>
           <div className="min-w-0">
             <p className="text-xs font-medium text-text-primary truncate">Emmanuel</p>
-            <p className="text-[10px] text-text-secondary truncate">Kumasi, Ghana</p>
+            <p className="text-[10px] text-text-secondary truncate">Farmer · Kumasi, GH</p>
           </div>
           <Bell className="w-4 h-4 text-text-secondary shrink-0 ml-auto" />
         </div>
