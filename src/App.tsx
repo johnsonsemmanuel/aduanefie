@@ -1,6 +1,7 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
 import { AuthProvider } from '@/context/AuthContext'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
+import { Preloader } from '@/components/ui/Preloader'
 import { Shell } from '@/components/layout/Shell'
 import { CommandCenter } from '@/pages/CommandCenter'
 import { MarketIntel } from '@/pages/MarketIntel'
@@ -16,7 +17,6 @@ import { CooperativeHub } from '@/pages/CooperativeHub'
 import { AIHub } from '@/pages/AIHub'
 import { DeveloperHub } from '@/pages/DeveloperHub'
 import { Administration } from '@/pages/Administration'
-import { Landing } from '@/pages/Landing'
 import { SignInPage } from '@/pages/SignInPage'
 import { SignUpPage } from '@/pages/SignUpPage'
 import { NotFound } from '@/pages/NotFound'
@@ -25,12 +25,17 @@ function ProtectedShell({ children }: { children: React.ReactNode }) {
   return <ProtectedRoute><Shell>{children}</Shell></ProtectedRoute>
 }
 
+function EntryPoint() {
+  const navigate = useNavigate()
+  return <Preloader onComplete={() => navigate('/login', { replace: true })} words={['Welcome to AgriOS — Aduanefie Trade Engine']} holdDuration={2500} />
+}
+
 function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<Landing />} />
+          <Route path="/" element={<EntryPoint />} />
           <Route path="/login" element={<SignInPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/dashboard" element={<ProtectedShell><CommandCenter /></ProtectedShell>} />
