@@ -7,10 +7,9 @@ import { useNetworkStatus } from '@/hooks/useNetworkStatus'
 
 interface ShellProps {
   children: React.ReactNode
-  title?: string
 }
 
-export function Shell({ children, title }: ShellProps) {
+export function Shell({ children }: ShellProps) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
   const isOnline = useNetworkStatus()
 
@@ -33,7 +32,7 @@ export function Shell({ children, title }: ShellProps) {
 
       {/* Main content area */}
       <div className="flex-1 flex flex-col min-w-0">
-        <TopBar title={title} onMenuToggle={() => setMobileSidebarOpen(true)} />
+        <TopBar onMenuToggle={() => setMobileSidebarOpen(true)} />
 
         <main className="flex-1 overflow-y-auto scrollbar-thin p-3 sm:p-4 lg:p-5 pb-20 lg:pb-5">
           {children}

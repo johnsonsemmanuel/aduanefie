@@ -12,14 +12,14 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Shell title="Dashboard"><Dashboard /></Shell>} />
-        <Route path="/marketplace" element={<Shell title="Marketplace"><Marketplace /></Shell>} />
-        <Route path="/trade-desk" element={<Shell title="Trade Desk"><TradeDesk /></Shell>} />
-        <Route path="/logistics" element={<Shell title="Logistics"><Logistics /></Shell>} />
-        <Route path="/exports" element={<Shell title="Exports"><Exports /></Shell>} />
-        <Route path="/profile" element={<Shell title="Profile"><Profile /></Shell>} />
-        <Route path="/more" element={<Shell title="More"><Profile /></Shell>} />
-        <Route path="*" element={<Shell title="Not Found"><NotFound /></Shell>} />
+        <Route path="/" element={<Shell><Dashboard /></Shell>} />
+        <Route path="/marketplace" element={<Shell><Marketplace /></Shell>} />
+        <Route path="/trade-desk" element={<Shell><TradeDesk /></Shell>} />
+        <Route path="/logistics" element={<Shell><Logistics /></Shell>} />
+        <Route path="/exports" element={<Shell><Exports /></Shell>} />
+        <Route path="/profile" element={<Shell><Profile /></Shell>} />
+        <Route path="/more" element={<Shell><Profile /></Shell>} />
+        <Route path="*" element={<Shell><NotFound /></Shell>} />
       </Routes>
     </BrowserRouter>
   )

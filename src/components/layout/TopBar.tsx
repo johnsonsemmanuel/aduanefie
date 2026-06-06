@@ -1,12 +1,10 @@
 import { Bell, Search, TrendingUp } from 'lucide-react'
-import { useNetworkStatus } from '@/hooks/useNetworkStatus'
 
 interface TopBarProps {
   onMenuToggle: () => void
 }
 
 export function TopBar({ onMenuToggle }: TopBarProps) {
-  const isOnline = useNetworkStatus()
 
   return (
     <header className="h-14 border-b border-border bg-surface flex items-center gap-3 px-3 shrink-0">
