@@ -1,11 +1,12 @@
-import { useState, useMemo, useRef } from 'react'
+import { useState, useMemo, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useAuth } from '@/context/AuthContext'
-import { GoogleButton, ArrowButton } from '@/components/ui/Button'
+import { GoogleButton, ArrowButton, Button } from '@/components/ui/Button'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 
 type Uniforms = {
   [key: string]: { value: number[] | number[][] | number; type: string }
@@ -66,10 +67,15 @@ function DotMatrix({ colors = [[0, 0, 0]], opacities = [0.04, 0.04, 0.04, 0.04, 
 function ShaderMaterial({ source, uniforms }: { source: string; uniforms: Uniforms }) {
   const { size } = useThree()
   const ref = useRef<THREE.Mesh>(null)
-  useFrame(({ clock }) => {
+  const timerRef = useRef(new THREE.Timer())
+  useFrame(() => {
     if (!ref.current) return
-    const m = ref.current.material as THREE.ShaderMaterial
-    m.uniforms.u_time.value = clock.getElapsedTime()
+    const mat = ref.current.material as THREE.ShaderMaterial | undefined
+    if (!mat || !mat.uniforms) return
+    const t = mat.uniforms.u_time
+    if (!t) return
+    timerRef.current.update()
+    t.value = timerRef.current.getElapsed()
   })
   const preparedUniforms = useMemo(() => {
     const u: Record<string, { value: unknown; type: string }> = {}
@@ -93,8 +99,31 @@ function ShaderMaterial({ source, uniforms }: { source: string; uniforms: Unifor
   return <mesh ref={ref}><planeGeometry args={[2, 2]} /><primitive object={material} attach="material" /></mesh>
 }
 
+function ShaderFallback() {
+  return <div className="absolute inset-0 h-full w-full bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900" />
+}
+
 function Shader({ source, uniforms }: ShaderProps) {
-  return <Canvas className="absolute inset-0 h-full w-full"><ShaderMaterial source={source} uniforms={uniforms} /></Canvas>
+  const [webglSupported, setWebglSupported] = useState(true)
+  useEffect(() => {
+    try {
+      const c = document.createElement('canvas')
+      if (!c.getContext('webgl') && !c.getContext('webgl2')) setWebglSupported(false)
+    } catch { setWebglSupported(false) }
+  }, [])
+  if (!webglSupported) return <ShaderFallback />
+  return (
+    <ErrorBoundary fallback={<ShaderFallback />}>
+      <Canvas
+        className="absolute inset-0 h-full w-full"
+        onCreated={({ gl }) => {
+          gl.domElement.addEventListener('webglcontextlost', (e: Event) => e.preventDefault())
+        }}
+      >
+        <ShaderMaterial source={source} uniforms={uniforms} />
+      </Canvas>
+    </ErrorBoundary>
+  )
 }
 
 export function SignUpPage() {
@@ -193,7 +222,7 @@ export function SignUpPage() {
 
                     <p className="text-sm text-white/40">
                       Already have an account?{' '}
-                      <button onClick={() => navigate('/login')} className="text-white hover:underline">Sign in</button>
+                      <Button variant="ghost" size="sm" onClick={() => navigate('/login')} className="!text-white hover:underline">Sign in</Button>
                     </p>
 
                     <p className="text-xs text-white/40 pt-4">
