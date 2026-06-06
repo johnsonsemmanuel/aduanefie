@@ -1,9 +1,8 @@
-import { Star, ShieldCheck, MapPin, Award, Package, TrendingUp, Truck, LogOut } from 'lucide-react'
+import { Star, ShieldCheck, MapPin, Package, TrendingUp, Truck, LogOut } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
-import { Card, CardHeader, CardTitle } from '@/components/ui/Card'
-import { Chip, GradeChip } from '@/components/ui/Chip'
-import { Button } from '@/components/ui/Button'
+import { GlassCard, GlassCardHeader, GlassCardTitle } from '@/components/ui/GlassCard'
+import { Pill } from '@/components/ui/Pill'
 import { Input, Select } from '@/components/ui/Input'
 import { currentUser } from '@/data/mock'
 
@@ -27,7 +26,7 @@ export function Profile() {
 
   return (
     <div className="space-y-4">
-      <Card>
+      <GlassCard>
         <div className="flex items-start gap-3 sm:gap-4">
           <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-primary/10 flex items-center justify-center text-lg font-bold text-primary shrink-0">
             {initials}
@@ -39,14 +38,12 @@ export function Profile() {
             </div>
             <div className="flex flex-wrap items-center gap-2 text-xs text-text-secondary mb-2">
               <span className="flex items-center gap-1">
-                <MapPin className="w-3 h-3" />
-                {currentUser.location}
+                <MapPin className="w-3 h-3" /> {currentUser.location}
               </span>
               <span className="flex items-center gap-1">
-                <Star className="w-3 h-3 text-warning fill-warning" />
-                {currentUser.rating}
+                <Star className="w-3 h-3 text-warning fill-warning" /> {currentUser.rating}
               </span>
-              <Chip variant="success" size="sm">Verified Trader</Chip>
+              <Pill variant="success">Verified Trader</Pill>
               <button onClick={handleLogout} className="flex items-center gap-1 px-2 py-1 rounded-md text-danger hover:bg-danger/10 transition-colors text-[10px] font-medium ml-auto">
                 <LogOut className="w-3 h-3" /> Sign Out
               </button>
@@ -55,13 +52,15 @@ export function Profile() {
               Member since January 2023 · Farmer and agricultural commodity trader specializing in cocoa and shea butter.
             </p>
           </div>
-          <Button size="sm" variant="secondary">Edit Profile</Button>
+          <button className="px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold hover:bg-surface-hover transition-colors">
+            Edit Profile
+          </button>
         </div>
-      </Card>
+      </GlassCard>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
         {stats.map((stat) => (
-          <Card key={stat.label} padding="sm">
+          <GlassCard key={stat.label} padding="sm">
             <div className="flex items-center gap-2">
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${stat.color.replace('text', 'bg')}/10`}>
                 <stat.icon className={`w-4 h-4 ${stat.color}`} />
@@ -71,15 +70,15 @@ export function Profile() {
                 <p className="text-sm font-bold">{stat.value}</p>
               </div>
             </div>
-          </Card>
+          </GlassCard>
         ))}
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Personal Information</CardTitle>
-          </CardHeader>
+        <GlassCard>
+          <GlassCardHeader>
+            <GlassCardTitle>Personal Information</GlassCardTitle>
+          </GlassCardHeader>
           <div className="space-y-3">
             <Input label="Full Name" defaultValue={currentUser.name} />
             <Input label="Email" defaultValue="emmanuel.johnson@aduanefie.com" />
@@ -88,23 +87,22 @@ export function Profile() {
               label="Account Type"
               value={currentUser.type}
               options={[
-                { value: 'farmer', label: 'Farmer' },
-                { value: 'aggregator', label: 'Aggregator' },
-                { value: 'processor', label: 'Processor' },
-                { value: 'exporter', label: 'Exporter' },
-                { value: 'buyer', label: 'Buyer' },
-                { value: 'supplier', label: 'Supplier' },
+                { value: 'farmer', label: 'Farmer' }, { value: 'aggregator', label: 'Aggregator' },
+                { value: 'processor', label: 'Processor' }, { value: 'exporter', label: 'Exporter' },
+                { value: 'buyer', label: 'Buyer' }, { value: 'supplier', label: 'Supplier' },
               ]}
             />
-            <Button fullWidth>Save Changes</Button>
+            <button className="w-full px-4 py-2 rounded-full bg-primary text-white text-xs font-semibold hover:bg-primary/90 transition-colors">
+              Save Changes
+            </button>
           </div>
-        </Card>
+        </GlassCard>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Commodities</CardTitle>
-            <Button variant="ghost" size="sm">Manage</Button>
-          </CardHeader>
+        <GlassCard>
+          <GlassCardHeader>
+            <GlassCardTitle>Commodities</GlassCardTitle>
+            <button className="px-2 py-1 rounded-full border border-border text-[10px] text-text-secondary hover:bg-surface-hover transition-colors">Manage</button>
+          </GlassCardHeader>
           <div className="space-y-2">
             {['Premium Cocoa Beans', 'Shea Butter (Unrefined)', 'Cashew Nuts'].map((c) => (
               <div key={c} className="flex items-center justify-between py-2 px-2 rounded-lg hover:bg-surface-hover">
@@ -112,28 +110,26 @@ export function Profile() {
                   <Package className="w-4 h-4 text-primary" />
                   <span className="text-xs font-medium">{c}</span>
                 </div>
-                <GradeChip grade="Premium" />
+                <Pill variant="premium">Premium</Pill>
               </div>
             ))}
-            <Button size="sm" fullWidth variant="secondary" className="mt-2">
+            <button className="w-full px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold hover:bg-surface-hover transition-colors">
               + Add Commodity
-            </Button>
+            </button>
           </div>
-        </Card>
+        </GlassCard>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Verification & Certifications</CardTitle>
-        </CardHeader>
+      <GlassCard>
+        <GlassCardHeader>
+          <GlassCardTitle>Verification & Certifications</GlassCardTitle>
+        </GlassCardHeader>
         <div className="flex flex-wrap gap-2">
           {['Fair Trade Certified', 'Organic Producer', 'GLOBALG.A.P.', 'ISO 22000', 'Rainforest Alliance'].map((cert) => (
-            <Chip key={cert} variant="success" icon={<Award className="w-3 h-3" />}>
-              {cert}
-            </Chip>
+            <Pill key={cert} variant="success">{cert}</Pill>
           ))}
         </div>
-      </Card>
+      </GlassCard>
     </div>
   )
 }
