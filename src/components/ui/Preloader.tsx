@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 
-const words = ["Hello", "Bonjour", "Ciao", "Olà", "やあ", "Hallå", "Guten tag", "হ্যালো"]
+const defaultWords = ["Hello", "Bonjour", "Ciao", "Olà", "やあ", "Hallå", "Guten tag", "হ্যালো"]
 
 const easeOut = [0.76, 0, 0.24, 1] as const
 
@@ -12,9 +12,12 @@ const slideUp = {
 
 interface PreloaderProps {
   onComplete?: () => void
+  words?: string[]
+  holdDuration?: number
 }
 
-export function Preloader({ onComplete }: PreloaderProps) {
+export function Preloader({ onComplete, words: customWords, holdDuration }: PreloaderProps) {
+  const words = customWords || defaultWords
   const [index, setIndex] = useState(0)
   const [dimension, setDimension] = useState({ width: 0, height: 0 })
   const [isExiting, setIsExiting] = useState(false)
@@ -24,13 +27,19 @@ export function Preloader({ onComplete }: PreloaderProps) {
   }, [])
 
   useEffect(() => {
-    if (index === words.length - 1) {
-      setTimeout(() => setIsExiting(true), 1000)
-      setTimeout(() => onComplete?.(), 2000)
-      return
+    if (words.length === 1) {
+      const t1 = setTimeout(() => setIsExiting(true), holdDuration || 2000)
+      const t2 = setTimeout(() => onComplete?.(), (holdDuration || 2000) + 1000)
+      return () => { clearTimeout(t1); clearTimeout(t2) }
     }
-    setTimeout(() => setIndex(i => i + 1), index === 0 ? 1000 : 150)
-  }, [index, onComplete])
+    if (index === words.length - 1) {
+      const t1 = setTimeout(() => setIsExiting(true), 1000)
+      const t2 = setTimeout(() => onComplete?.(), 2000)
+      return () => { clearTimeout(t1); clearTimeout(t2) }
+    }
+    const t = setTimeout(() => setIndex(i => i + 1), index === 0 ? 1000 : 150)
+    return () => clearTimeout(t)
+  }, [index, onComplete, words, holdDuration])
 
   const initialPath = `M0 0 L${dimension.width} 0 L${dimension.width} ${dimension.height} Q${dimension.width / 2} ${dimension.height + 300} 0 ${dimension.height} L0 0`
   const targetPath = `M0 0 L${dimension.width} 0 L${dimension.width} ${dimension.height} Q${dimension.width / 2} ${dimension.height} 0 ${dimension.height} L0 0`
