@@ -89,8 +89,8 @@ export function Shell({ children }: ShellProps) {
         </main>
       </div>
 
-      {/* Bottom Dock — visible on all screens */}
-      <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50">
+      {/* Bottom Dock — mobile/tablet only; desktop uses Sidebar */}
+      <div className="fixed bottom-3 left-1/2 -translate-x-1/2 z-50 lg:hidden">
         <Dock items={visibleDockItems} />
       </div>
     </div>
