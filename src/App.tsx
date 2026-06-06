@@ -14,13 +14,15 @@ import { CooperativeHub } from '@/pages/CooperativeHub'
 import { AIHub } from '@/pages/AIHub'
 import { DeveloperHub } from '@/pages/DeveloperHub'
 import { Administration } from '@/pages/Administration'
+import { Landing } from '@/pages/Landing'
 import { NotFound } from '@/pages/NotFound'
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Shell><CommandCenter /></Shell>} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/dashboard" element={<Shell><CommandCenter /></Shell>} />
         <Route path="/marketplace" element={<Shell><Marketplace /></Shell>} />
         <Route path="/trade-desk" element={<Shell><TradeDesk /></Shell>} />
         <Route path="/logistics" element={<Shell><Logistics /></Shell>} />

@@ -14,7 +14,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { to: '/', label: 'Command Center', icon: Command, badge: 6 },
+  { to: '/dashboard', label: 'Command Center', icon: Command, badge: 6 },
   { to: '/marketplace', label: 'Trade Engine', icon: ShoppingBag, layer: 2, badge: 7 },
   { to: '/market-intel', label: 'Market Intel', icon: BarChart3, layer: 6 },
   { to: '/business', label: 'Business Hub', icon: Building2, layer: 7 },
@@ -52,7 +52,7 @@ export function Sidebar({ onNav, className = '' }: SidebarProps) {
           <NavLink
             key={item.to}
             to={item.to}
-            end={item.to === '/'}
+            end={item.to === '/dashboard'}
             onClick={onNav}
             className={({ isActive }) =>
               `flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
