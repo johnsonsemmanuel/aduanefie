@@ -342,9 +342,6 @@ function Shader({ source, uniforms }: ShaderProps) {
           gl.domElement.addEventListener('webglcontextlost', (e: Event) => {
             e.preventDefault()
           })
-          gl.domElement.addEventListener('webglcontextrestored', () => {
-            gl.render()
-          })
         }}
       >
         <ShaderMaterial source={source} uniforms={uniforms} />

@@ -162,10 +162,9 @@ export function Dock({ items, openApps = [], className = '' }: DockProps) {
                   filter: `drop-shadow(0 ${scale > 1.2 ? Math.max(2, baseSize * 0.04) : 1}px ${scale > 1.2 ? Math.max(3, baseSize * 0.08) : 1}px rgba(0,0,0,${0.2 + (scale - 1) * 0.15}))`,
                 }}
               >
-                {React.cloneElement(app.icon as React.ReactElement, {
-                  className: 'text-white',
-                  size: Math.max(14, sz * 0.5),
-                })}
+                <span className="text-white flex items-center justify-center" style={{ fontSize: Math.max(14, sz * 0.5), width: sz * 0.55, height: sz * 0.55 }}>
+                  {app.icon}
+                </span>
               </div>
 
               {openApps.includes(app.id) && (

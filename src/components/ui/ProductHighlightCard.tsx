@@ -36,11 +36,11 @@ export const ProductHighlightCard = React.forwardRef<HTMLDivElement, ProductHigh
     return (
       <motion.div
         ref={ref}
-        onMouseMove={handleMouseMove}
+        onMouseMove={handleMouseMove as unknown as React.ComponentProps<typeof motion.div>['onMouseMove']}
         onMouseLeave={() => { mouseX.set(0); mouseY.set(0) }}
         style={{ rotateX: springRotateX, rotateY: springRotateY, transformStyle: 'preserve-3d' }}
         className={cn('relative h-[320px] w-full max-w-[350px] rounded-2xl bg-card shadow-lg transition-shadow duration-300 hover:shadow-2xl', className)}
-        {...props}
+        {...props as React.ComponentProps<typeof motion.div>}
       >
         <div style={{ transform: 'translateZ(20px)', transformStyle: 'preserve-3d' }} className="absolute inset-3 rounded-xl bg-card-foreground/5 shadow-inner overflow-hidden">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:32px_32px] [mask-image:radial-gradient(ellipse_50%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
