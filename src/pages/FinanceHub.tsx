@@ -1,118 +1,102 @@
 import { useState } from 'react'
 import {
   Wallet, ArrowUpRight, ArrowDownLeft, TrendingUp, Landmark,
-  ShieldCheck, Clock, Plus, Send, FileText, DollarSign
+  ShieldCheck, Clock, Plus, Send, FileText, List,
+  BarChart3
 } from 'lucide-react'
-import { Tabs } from '@/components/ui/Tabs'
-import { Card, CardHeader, CardTitle } from '@/components/ui/Card'
-import { StatusChip, Chip } from '@/components/ui/Chip'
-import { Button } from '@/components/ui/Button'
+import { PageShell } from '@/components/layout/PageShell'
+import { GlassCard, GlassCardHeader, GlassCardTitle } from '@/components/ui/GlassCard'
+import { StatusPill, Pill } from '@/components/ui/Pill'
 import { financeDashboard, wallet, transactions, loans, insurancePolicies, tradeFinanceFacilities } from '@/data/finance'
 import type { Transaction, Loan, InsurancePolicy, TradeFinanceFacility } from '@/types'
-
-const financeTabs = [
-  { id: 'overview', label: 'Overview', icon: <DollarSign className="w-3.5 h-3.5" /> },
-  { id: 'transactions', label: 'Transactions', icon: <ArrowUpRight className="w-3.5 h-3.5" /> },
-  { id: 'loans', label: 'Loans', icon: <Landmark className="w-3.5 h-3.5" /> },
-  { id: 'insurance', label: 'Insurance', icon: <ShieldCheck className="w-3.5 h-3.5" /> },
-  { id: 'trade-finance', label: 'Trade Finance', icon: <FileText className="w-3.5 h-3.5" /> },
-]
 
 export function FinanceHub() {
   const [activeTab, setActiveTab] = useState('overview')
   const [showWallet, setShowWallet] = useState(false)
 
   return (
-    <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-bold text-text-primary">Finance Hub</h1>
-          <p className="text-xs text-text-secondary">Digital wallet, payments, trade finance, loans & insurance</p>
-        </div>
-        <div className="hidden sm:flex items-center gap-2">
-          <Button size="sm" icon={<Plus className="w-3.5 h-3.5" />}>Fund Wallet</Button>
-          <Button size="sm" variant="secondary" icon={<Send className="w-3.5 h-3.5" />}>Send</Button>
-        </div>
-      </div>
-
-      {/* Balance & Metrics */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
-        <div className="rounded-lg border border-border bg-surface p-4 col-span-1 sm:col-span-2 lg:col-span-1">
-          <div className="flex items-center gap-2 mb-1">
-            <Wallet className="w-4 h-4 text-primary" />
-            <span className="text-xs text-text-secondary font-medium">Wallet Balance</span>
+    <PageShell
+      tabs={[
+        { id: 'overview', icon: BarChart3, label: 'Overview' },
+        { id: 'transactions', icon: List, label: 'Transactions' },
+        { id: 'loans', icon: Landmark, label: 'Loans' },
+        { id: 'insurance', icon: ShieldCheck, label: 'Insurance' },
+        { id: 'trade-finance', icon: FileText, label: 'Trade Finance' },
+      ]}
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+    >
+      <div className="space-y-4 min-w-0">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-lg font-bold text-text-primary">Finance Hub</h1>
+            <p className="text-xs text-text-secondary">Digital wallet, payments, trade finance, loans & insurance</p>
           </div>
-          <div className="flex items-baseline gap-2 mb-1">
-            <span className="text-2xl font-bold text-text-primary">
-              {showWallet ? `$${wallet.balance.toLocaleString()}` : '••••••'}
-            </span>
-            <button onClick={() => setShowWallet(!showWallet)} className="text-text-secondary hover:text-text-primary">
-              {showWallet ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+          <div className="hidden sm:flex items-center gap-2">
+            <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+              <Plus className="w-3 h-3" /> Fund Wallet
+            </button>
+            <button className="px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-surface-hover transition-colors">
+              <Send className="w-3 h-3" /> Send
             </button>
           </div>
-          <div className="flex items-center gap-3 text-[10px] text-text-secondary">
-            <span>Available: ${wallet.availableBalance.toLocaleString()}</span>
-            <span>Reserved: ${wallet.reservedBalance.toLocaleString()}</span>
-          </div>
-          <div className="mt-2 pt-2 border-t border-border flex gap-2">
-            <Button size="sm" variant="secondary" icon={<Plus className="w-3 h-3" />} fullWidth>Top Up</Button>
-            <Button size="sm" icon={<Send className="w-3 h-3" />} fullWidth>Send</Button>
-          </div>
         </div>
 
-        {[
-          { label: 'Monthly Volume', value: `$${(financeDashboard.monthlyVolume / 1000).toFixed(0)}K`, change: '+23%', icon: TrendingUp, color: 'text-success', bg: 'bg-success/10' },
-          { label: 'Active Loans', value: `${financeDashboard.activeLoans.length}`, change: `${financeDashboard.loanUtilization}% utilized`, icon: Landmark, color: 'text-commodity-export', bg: 'bg-commodity-export/10' },
-          { label: 'Insurance Cover', value: `$${insurancePolicies.reduce((s, p) => s + p.coverage, 0).toLocaleString()}`, change: `${insurancePolicies.filter(p => p.status === 'active').length} active`, icon: ShieldCheck, color: 'text-commodity-inputs', bg: 'bg-commodity-inputs/10' },
-        ].map((m) => (
-          <div key={m.label} className="rounded-lg border border-border bg-surface p-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] text-text-secondary font-medium uppercase tracking-wider">{m.label}</span>
-              <div className={`w-7 h-7 rounded-lg ${m.bg} flex items-center justify-center`}>
-                <m.icon className={`w-3.5 h-3.5 ${m.color}`} />
-              </div>
+        {/* Balance & Metrics */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+          <GlassCard className="col-span-1 sm:col-span-2 lg:col-span-1">
+            <div className="flex items-center gap-2 mb-1">
+              <Wallet className="w-4 h-4 text-primary" />
+              <span className="text-xs text-text-secondary font-medium">Wallet Balance</span>
             </div>
-            <p className="text-lg font-bold text-text-primary">{m.value}</p>
-            <p className="text-[10px] text-text-secondary mt-0.5">{m.change}</p>
-          </div>
-        ))}
-      </div>
+            <div className="flex items-baseline gap-2 mb-1">
+              <span className="text-2xl font-bold text-text-primary">
+                {showWallet ? `$${wallet.balance.toLocaleString()}` : '••••••'}
+              </span>
+              <button onClick={() => setShowWallet(!showWallet)} className="text-text-secondary hover:text-text-primary">
+                {showWallet ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+            <div className="flex items-center gap-3 text-[10px] text-text-secondary">
+              <span>Available: ${wallet.availableBalance.toLocaleString()}</span>
+              <span>Reserved: ${wallet.reservedBalance.toLocaleString()}</span>
+            </div>
+            <div className="mt-2 pt-2 border-t border-border flex gap-2">
+              <button className="flex-1 px-3 py-1.5 rounded-full border border-border text-text-secondary text-[10px] font-semibold inline-flex items-center justify-center gap-1 hover:bg-surface-hover transition-colors">
+                <Plus className="w-3 h-3" /> Top Up
+              </button>
+              <button className="flex-1 px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center justify-center gap-1 hover:bg-primary/90 transition-colors">
+                <Send className="w-3 h-3" /> Send
+              </button>
+            </div>
+          </GlassCard>
 
-      {/* Tab Nav — desktop: horizontal bar, mobile: bottom tabs */}
-      <div className="hidden lg:block">
-        <Card padding="none">
-          <Tabs tabs={financeTabs} activeId={activeTab} onChange={setActiveTab} className="px-4" />
-        </Card>
-      </div>
+          {[
+            { label: 'Monthly Volume', value: `$${(financeDashboard.monthlyVolume / 1000).toFixed(0)}K`, change: '+23%', icon: TrendingUp, color: 'text-success', bg: 'bg-success/10' },
+            { label: 'Active Loans', value: `${financeDashboard.activeLoans.length}`, change: `${financeDashboard.loanUtilization}% utilized`, icon: Landmark, color: 'text-commodity-export', bg: 'bg-commodity-export/10' },
+            { label: 'Insurance Cover', value: `$${insurancePolicies.reduce((s, p) => s + p.coverage, 0).toLocaleString()}`, change: `${insurancePolicies.filter(p => p.status === 'active').length} active`, icon: ShieldCheck, color: 'text-commodity-inputs', bg: 'bg-commodity-inputs/10' },
+          ].map((m) => (
+            <GlassCard key={m.label}>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[10px] text-text-secondary font-medium uppercase tracking-wider">{m.label}</span>
+                <div className={`w-7 h-7 rounded-lg ${m.bg} flex items-center justify-center`}>
+                  <m.icon className={`w-3.5 h-3.5 ${m.color}`} />
+                </div>
+              </div>
+              <p className="text-lg font-bold text-text-primary">{m.value}</p>
+              <p className="text-[10px] text-text-secondary mt-0.5">{m.change}</p>
+            </GlassCard>
+          ))}
+        </div>
 
-      {/* Tab Content */}
-      <div className="space-y-4 pb-14 lg:pb-0">
         {activeTab === 'overview' && <OverviewTab />}
         {activeTab === 'transactions' && <TransactionsTab />}
         {activeTab === 'loans' && <LoansTab />}
         {activeTab === 'insurance' && <InsuranceTab />}
         {activeTab === 'trade-finance' && <TradeFinanceTab />}
       </div>
-
-      {/* Mobile bottom tab bar — only on mobile */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface border-t border-border pb-safe">
-        <div className="flex items-center justify-around h-14">
-          {financeTabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex flex-col items-center gap-0.5 min-w-0 px-2 py-1 rounded-lg transition-colors ${
-                activeTab === tab.id ? 'text-primary' : 'text-text-secondary'
-              }`}
-            >
-              <span className="w-4 h-4">{tab.icon}</span>
-              <span className="text-[10px] font-medium whitespace-nowrap">{tab.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
+    </PageShell>
   )
 }
 
@@ -132,29 +116,33 @@ function EyeOff({ className }: { className?: string }) {
   )
 }
 
+function SectionHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+  return (
+    <GlassCardHeader>
+      <GlassCardTitle>{title}</GlassCardTitle>
+      {subtitle && <span className="text-xs text-text-secondary">{subtitle}</span>}
+    </GlassCardHeader>
+  )
+}
+
 function OverviewTab() {
   return (
     <>
-      {/* Recent Transactions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Transactions</CardTitle>
-          <span className="text-xs text-text-secondary">Last 30 days</span>
-        </CardHeader>
+      <GlassCard padding="none">
+        <SectionHeader title="Recent Transactions" subtitle="Last 30 days" />
         <div className="divide-y divide-border">
           {financeDashboard.recentTransactions.map((tx) => (
             <TxRow key={tx.id} tx={tx} />
           ))}
         </div>
-      </Card>
+      </GlassCard>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Active Loans Summary */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Active Loans</CardTitle>
-            <span className="text-xs text-text-secondary">{financeDashboard.activeLoans.length} facilities</span>
-          </CardHeader>
+        <GlassCard padding="none">
+          <SectionHeader
+            title="Active Loans"
+            subtitle={`${financeDashboard.activeLoans.length} facilities`}
+          />
           {financeDashboard.activeLoans.length > 0 ? (
             <div className="divide-y divide-border">
               {financeDashboard.activeLoans.slice(0, 3).map((loan) => (
@@ -164,34 +152,32 @@ function OverviewTab() {
           ) : (
             <p className="text-xs text-text-secondary py-4 text-center">No active loans</p>
           )}
-        </Card>
+        </GlassCard>
 
-        {/* Trade Finance */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Trade Finance</CardTitle>
-            <span className="text-xs text-text-secondary">{financeDashboard.tradeFacilities.length} facilities</span>
-          </CardHeader>
+        <GlassCard padding="none">
+          <SectionHeader
+            title="Trade Finance"
+            subtitle={`${financeDashboard.tradeFacilities.length} facilities`}
+          />
           <div className="divide-y divide-border">
             {tradeFinanceFacilities.slice(0, 3).map((tf) => (
               <TradeFinanceRow key={tf.id} facility={tf} />
             ))}
           </div>
-        </Card>
+        </GlassCard>
       </div>
 
-      {/* Insurance Summary */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Insurance Coverage</CardTitle>
-          <span className="text-xs text-text-secondary">${insurancePolicies.reduce((s, p) => s + p.coverage, 0).toLocaleString()} total cover</span>
-        </CardHeader>
+      <GlassCard padding="none">
+        <SectionHeader
+          title="Insurance Coverage"
+          subtitle={`$${insurancePolicies.reduce((s, p) => s + p.coverage, 0).toLocaleString()} total cover`}
+        />
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {insurancePolicies.filter(p => p.status === 'active').slice(0, 3).map((policy) => (
             <PolicyCard key={policy.id} policy={policy} compact />
           ))}
         </div>
-      </Card>
+      </GlassCard>
     </>
   )
 }
@@ -210,29 +196,29 @@ function TransactionsTab() {
   ]
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>All Transactions</CardTitle>
+    <GlassCard padding="none">
+      <GlassCardHeader className="px-4 pt-4">
+        <GlassCardTitle>All Transactions</GlassCardTitle>
         <div className="flex gap-1">
           {filters.map((f) => (
             <button
               key={f.key}
               onClick={() => setFilter(f.key as typeof filter)}
-              className={`px-2.5 py-1 rounded text-[10px] font-medium transition-colors ${
-                filter === f.key ? 'bg-primary text-white' : 'bg-border/50 text-text-secondary hover:bg-surface-hover'
+              className={`px-2.5 py-1 rounded-full text-[10px] font-medium transition-colors ${
+                filter === f.key ? 'bg-primary text-white' : 'bg-surface-active text-text-secondary hover:bg-surface-hover'
               }`}
             >
               {f.label}
             </button>
           ))}
         </div>
-      </CardHeader>
+      </GlassCardHeader>
       <div className="divide-y divide-border max-h-[500px] overflow-y-auto scrollbar-thin">
         {filtered.map((tx) => (
           <TxRow key={tx.id} tx={tx} detailed />
         ))}
       </div>
-    </Card>
+    </GlassCard>
   )
 }
 
@@ -240,7 +226,9 @@ function LoansTab() {
   return (
     <div className="space-y-3">
       <div className="flex justify-end">
-        <Button size="sm" icon={<Plus className="w-3.5 h-3.5" />}>Apply for Loan</Button>
+        <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+          <Plus className="w-3.5 h-3.5" /> Apply for Loan
+        </button>
       </div>
       {loans.map((loan) => (
         <LoanCard key={loan.id} loan={loan} />
@@ -253,7 +241,9 @@ function InsuranceTab() {
   return (
     <div className="space-y-3">
       <div className="flex justify-end">
-        <Button size="sm" icon={<Plus className="w-3.5 h-3.5" />}>New Policy</Button>
+        <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+          <Plus className="w-3.5 h-3.5" /> New Policy
+        </button>
       </div>
       {insurancePolicies.map((policy) => (
         <PolicyCard key={policy.id} policy={policy} />
@@ -266,7 +256,9 @@ function TradeFinanceTab() {
   return (
     <div className="space-y-3">
       <div className="flex justify-end">
-        <Button size="sm" icon={<Plus className="w-3.5 h-3.5" />}>New Facility</Button>
+        <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[10px] font-semibold inline-flex items-center gap-1.5 hover:bg-primary/90 transition-colors">
+          <Plus className="w-3.5 h-3.5" /> New Facility
+        </button>
       </div>
       {tradeFinanceFacilities.map((tf) => (
         <TradeFinanceCard key={tf.id} facility={tf} />
@@ -284,7 +276,7 @@ function TxRow({ tx, detailed = false }: { tx: Transaction; detailed?: boolean }
   const Icon = isInflow ? ArrowDownLeft : isOutflow ? ArrowUpRight : Clock
 
   return (
-    <div className="flex items-start gap-3 py-2.5 px-1 hover:bg-surface-hover transition-colors rounded-lg">
+    <div className="flex items-start gap-3 py-2.5 px-4 hover:bg-surface-hover transition-colors">
       <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${
         isInflow ? 'bg-success/10' : isOutflow ? 'bg-danger/10' : 'bg-warning/10'
       }`}>
@@ -296,7 +288,7 @@ function TxRow({ tx, detailed = false }: { tx: Transaction; detailed?: boolean }
           <span>{tx.counterparty}</span>
           <span>·</span>
           <span>{tx.reference}</span>
-          {detailed && <StatusChip status={tx.status} />}
+          {detailed && <StatusPill status={tx.status} />}
         </div>
       </div>
       <div className="text-right shrink-0">
@@ -312,10 +304,10 @@ function TxRow({ tx, detailed = false }: { tx: Transaction; detailed?: boolean }
 function LoanRow({ loan }: { loan: Loan }) {
   const progress = loan.amount > 0 ? ((loan.repaidAmount / loan.amount) * 100) : 0
   return (
-    <div className="py-2.5 px-1 hover:bg-surface-hover transition-colors rounded-lg">
+    <div className="py-2.5 px-4 hover:bg-surface-hover transition-colors">
       <div className="flex items-center justify-between mb-1">
         <span className="text-xs font-medium text-text-primary capitalize">{loan.type.replace('_', ' ')}</span>
-        <StatusChip status={loan.status} />
+        <StatusPill status={loan.status} />
       </div>
       <div className="flex items-baseline justify-between mb-1">
         <span className="text-sm font-bold">${loan.remainingAmount.toLocaleString()}</span>
@@ -335,7 +327,7 @@ function LoanRow({ loan }: { loan: Loan }) {
 function LoanCard({ loan }: { loan: Loan }) {
   const progress = loan.amount > 0 ? ((loan.repaidAmount / loan.amount) * 100) : 0
   return (
-    <Card>
+    <GlassCard>
       <div className="flex items-start justify-between mb-3">
         <div>
           <div className="flex items-center gap-2 mb-0.5">
@@ -344,7 +336,7 @@ function LoanCard({ loan }: { loan: Loan }) {
           </div>
           <p className="text-xs text-text-secondary">{loan.purpose}</p>
         </div>
-        <StatusChip status={loan.status} />
+        <StatusPill status={loan.status} />
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
@@ -381,13 +373,13 @@ function LoanCard({ loan }: { loan: Loan }) {
           Collateral: {loan.collateral}
         </div>
       )}
-    </Card>
+    </GlassCard>
   )
 }
 
 function PolicyCard({ policy, compact = false }: { policy: InsurancePolicy; compact?: boolean }) {
   return (
-    <Card padding={compact ? 'sm' : 'md'}>
+    <GlassCard padding={compact ? 'sm' : 'md'}>
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2 min-w-0">
           <ShieldCheck className="w-4 h-4 text-commodity-inputs shrink-0" />
@@ -396,7 +388,7 @@ function PolicyCard({ policy, compact = false }: { policy: InsurancePolicy; comp
             <p className="text-[10px] text-text-secondary">{policy.policyNumber}</p>
           </div>
         </div>
-        <StatusChip status={policy.status} />
+        <StatusPill status={policy.status} />
       </div>
 
       {!compact && (
@@ -438,19 +430,19 @@ function PolicyCard({ policy, compact = false }: { policy: InsurancePolicy; comp
           <span>Premium: ${policy.premium.toLocaleString()}/yr</span>
         </div>
       )}
-    </Card>
+    </GlassCard>
   )
 }
 
 function TradeFinanceRow({ facility }: { facility: TradeFinanceFacility }) {
   return (
-    <div className="py-2.5 px-1 hover:bg-surface-hover transition-colors rounded-lg">
+    <div className="py-2.5 px-4 hover:bg-surface-hover transition-colors">
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-1.5">
           <span className="text-[10px] font-mono font-medium text-text-secondary">{facility.reference}</span>
-          <Chip size="sm">{facility.type.replace(/_/g, ' ')}</Chip>
+          <Pill>{facility.type.replace(/_/g, ' ')}</Pill>
         </div>
-        <StatusChip status={facility.status} />
+        <StatusPill status={facility.status} />
       </div>
       <div className="flex items-baseline justify-between">
         <span className="text-xs font-semibold">${facility.amount.toLocaleString()}</span>
@@ -466,7 +458,7 @@ function TradeFinanceRow({ facility }: { facility: TradeFinanceFacility }) {
 
 function TradeFinanceCard({ facility }: { facility: TradeFinanceFacility }) {
   return (
-    <Card>
+    <GlassCard>
       <div className="flex items-start justify-between mb-3">
         <div>
           <div className="flex items-center gap-2 mb-0.5">
@@ -476,7 +468,7 @@ function TradeFinanceCard({ facility }: { facility: TradeFinanceFacility }) {
           </div>
           <p className="text-xs text-text-secondary">{facility.applicant} → {facility.beneficiary}</p>
         </div>
-        <StatusChip status={facility.status} />
+        <StatusPill status={facility.status} />
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
@@ -503,6 +495,6 @@ function TradeFinanceCard({ facility }: { facility: TradeFinanceFacility }) {
         <span>Expires: {new Date(facility.expiryDate).toLocaleDateString()}</span>
         <span className="text-primary font-medium">{facility.documents.length} documents →</span>
       </div>
-    </Card>
+    </GlassCard>
   )
 }
