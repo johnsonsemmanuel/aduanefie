@@ -158,7 +158,7 @@ export function CommandCenter() {
                       {mod.badge}
                     </div>
                   )}
-                </button>
+                </Button>
               ))}
             </div>
           </>
