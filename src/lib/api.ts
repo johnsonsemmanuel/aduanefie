@@ -76,7 +76,14 @@ export interface CommodityDto {
   id: string
   name: string
   category: string
+  origin?: string
+  grade?: string
+  price?: number
   unit: string
+  priceChange?: number
+  priceChangePercent?: number
+  volume?: number
+  stock?: number
   image?: string
 }
 
@@ -100,8 +107,8 @@ export interface OpportunityDto {
   createdAt: string
   userId: string
   commodityId: string
-  user: { id: string; name: string; avatar?: string }
-  commodity: { id: string; name: string; category: string; image?: string }
+  user: { id: string; name: string; type?: string; location?: string; rating?: number; verified?: boolean; avatar?: string }
+  commodity: CommodityDto
 }
 
 export const opportunityApi = {

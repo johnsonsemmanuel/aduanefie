@@ -1,17 +1,64 @@
-import { useState } from 'react'
-import { useSimulatedLoading } from '@/hooks/useSimulatedLoading'
-import { PageSkeleton } from '@/components/ui/PageSkeleton'
-import { TrendingUp, CheckCircle, Clock, ShoppingCart } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { TrendingUp, CheckCircle, Clock, ShoppingCart, AlertCircle, RefreshCw } from 'lucide-react'
 import { PageShell } from '@/components/layout/PageShell'
 import { GlassCard, GlassCardHeader, GlassCardTitle } from '@/components/ui/GlassCard'
 import { StatusPill } from '@/components/ui/Pill'
 import { Table } from '@/components/ui/Table'
 import { TradeMetricsCard } from '@/components/trade/TradeMetricsCard'
 import { OrderTimeline } from '@/components/trade/OrderTimeline'
-import { orders, tradeMetrics, tradeOpportunities } from '@/data/mock'
 import { PriceSparkline } from '@/components/trade/MarketPriceWidget'
-import type { Order } from '@/types'
 import { Button } from '@/components/ui/Button'
+import { PageSkeleton } from '@/components/ui/PageSkeleton'
+import { orderApi, opportunityApi } from '@/lib/api'
+import { tradeMetrics } from '@/data/mock'
+import type { Order, TradeOpportunity } from '@/types'
+import type { OrderDto, OpportunityDto } from '@/lib/api'
+
+function mapOrderDto(dto: OrderDto): Order {
+  return {
+    id: dto.id,
+    orderNumber: dto.orderNumber,
+    commodity: '',
+    quantity: Number(dto.quantity),
+    unit: dto.unit,
+    total: Number(dto.total),
+    status: dto.status as Order['status'],
+    paymentStatus: dto.paymentStatus as Order['paymentStatus'],
+    supplier: '',
+    buyer: '',
+    createdAt: dto.createdAt,
+    updatedAt: dto.createdAt,
+    deliveryDate: dto.deliveryDate ?? '',
+    tracking: [],
+    items: [],
+  }
+}
+
+function mapOpportunityDto(dto: OpportunityDto): TradeOpportunity {
+  return {
+    id: dto.id,
+    type: dto.type,
+    commodity: dto.commodity as unknown as TradeOpportunity['commodity'],
+    quantity: Number(dto.quantity),
+    unit: dto.unit,
+    price: Number(dto.price),
+    totalValue: Number(dto.totalValue),
+    location: dto.location,
+    deliveryDate: dto.deliveryDate ?? '',
+    status: dto.status as TradeOpportunity['status'],
+    createdAt: dto.createdAt,
+    trader: dto.user as unknown as TradeOpportunity['trader'],
+    quality: (dto.quality ?? 'Standard') as TradeOpportunity['quality'],
+    description: dto.description ?? '',
+  }
+}
+
+const tabs = [
+  { id: 'active', icon: Clock, label: 'Active' },
+  { id: 'all', icon: ShoppingCart, label: 'All' },
+  { id: 'completed', icon: CheckCircle, label: 'Completed' },
+  { id: 'opportunities', icon: TrendingUp, label: 'Trades' },
+]
 
 const orderColumns = [
   { key: 'orderNumber', header: 'Order', render: (o: Order) => <span className="text-xs font-mono font-medium">{o.orderNumber}</span> },
@@ -26,8 +73,31 @@ const orderColumns = [
 export function TradeDesk() {
   const [activeTab, setActiveTab] = useState('active')
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null)
-  const loading = useSimulatedLoading(500)
-  if (loading) return <PageShell tabs={[{ id: 'active', icon: Clock, label: 'Active' }, { id: 'all', icon: ShoppingCart, label: 'All' }, { id: 'completed', icon: CheckCircle, label: 'Completed' }, { id: 'opportunities', icon: TrendingUp, label: 'Trades' }]} activeTab={activeTab} onTabChange={setActiveTab}><PageSkeleton type="dashboard" /></PageShell>
+  const [orders, setOrders] = useState<Order[]>([])
+  const [opportunities, setOpportunities] = useState<TradeOpportunity[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  const fetchData = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const [orderDtos, oppDtos] = await Promise.all([
+        orderApi.list(),
+        opportunityApi.list(),
+      ])
+      setOrders(orderDtos.map(mapOrderDto))
+      setOpportunities(oppDtos.map(mapOpportunityDto))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load trade data')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   const filterOrders = (): Order[] => {
     switch (activeTab) {
@@ -37,17 +107,31 @@ export function TradeDesk() {
     }
   }
 
+  if (loading) {
+    return (
+      <PageShell tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
+        <PageSkeleton type="dashboard" />
+      </PageShell>
+    )
+  }
+
+  if (error) {
+    return (
+      <PageShell tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
+        <div className="flex flex-col items-center justify-center py-16 gap-4">
+          <AlertCircle className="w-10 h-10 text-danger" />
+          <p className="text-sm text-text-secondary">{error}</p>
+          <Button onClick={fetchData} variant="secondary" size="sm">
+            <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
+            Retry
+          </Button>
+        </div>
+      </PageShell>
+    )
+  }
+
   return (
-    <PageShell
-      tabs={[
-        { id: 'active', icon: Clock, label: 'Active' },
-        { id: 'all', icon: ShoppingCart, label: 'All' },
-        { id: 'completed', icon: CheckCircle, label: 'Completed' },
-        { id: 'opportunities', icon: TrendingUp, label: 'Trades' },
-      ]}
-      activeTab={activeTab}
-      onTabChange={setActiveTab}
-    >
+    <PageShell tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
       <div className="space-y-4 min-w-0">
         <div className="grid grid-cols-4 gap-2.5">
           <TradeMetricsCard metric={tradeMetrics[1]} />
@@ -76,7 +160,7 @@ export function TradeDesk() {
               <GlassCardTitle>My Active Trades</GlassCardTitle>
             </GlassCardHeader>
             <div className="space-y-2 p-3 pt-0">
-              {tradeOpportunities.filter(o => o.status === 'open' || o.status === 'negotiating').slice(0, 3).map((opp) => (
+              {opportunities.filter(o => o.status === 'open' || o.status === 'negotiating').slice(0, 3).map((opp) => (
                 <div
                   key={opp.id}
                   className="flex items-center justify-between p-3 rounded-lg border border-border bg-surface hover:bg-surface-hover transition-colors"
