@@ -1,4 +1,4 @@
-import { Navigate, useSearchParams } from 'react-router-dom'
+import { Navigate, useSearchParams, useLocation } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { hasAccess, type OSModuleId } from '@/config/permissions'
 
@@ -22,16 +22,25 @@ const pathToModule: Record<string, OSModuleId> = {
 }
 
 export function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, user } = useAuth()
+  const { isAuthenticated, user, isLoading } = useAuth()
   const [searchParams] = useSearchParams()
+  const location = useLocation()
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-black">
+        <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+      </div>
+    )
+  }
 
   if (!isAuthenticated) {
-    const currentPath = window.location.pathname
+    const currentPath = location.pathname + location.search
     const redirect = searchParams.get('redirect') || currentPath
     return <Navigate to={`/login?redirect=${encodeURIComponent(redirect)}`} replace />
   }
 
-  const requiredModule = pathToModule[window.location.pathname]
+  const requiredModule = pathToModule[location.pathname]
   if (requiredModule && user && !hasAccess(user.role, requiredModule)) {
     return <Navigate to="/dashboard" replace />
   }

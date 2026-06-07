@@ -185,7 +185,7 @@ export function Sidebar({ onNav, className = '' }: SidebarProps) {
         </div>
         <nav className="flex flex-col gap-2 w-full items-center overflow-y-auto flex-1 scrollbar-thin">
           {navItems.map((item) => (
-            <NavLink key={item.to} to={item.to} end={item.to === '/dashboard'} onClick={onNav}>
+            <NavLink key={item.to} to={item.to} end={item.to === '/dashboard'} onClick={onNav} title={item.label}>
               {({ isActive }) => (
                 <IconNavButton isActive={isActive}>
                   <item.icon className="size-4" />

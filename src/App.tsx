@@ -1,5 +1,5 @@
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom'
-import { AuthProvider } from '@/context/AuthContext'
+import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-router-dom'
+import { AuthProvider, useAuth } from '@/context/AuthContext'
 import { ToastProvider } from '@/context/ToastContext'
 import { Toaster } from '@/components/ui/Toast'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
@@ -40,6 +40,16 @@ function ProtectedShell({ children }: { children: React.ReactNode }) {
 }
 
 function EntryPoint() {
+  const { isAuthenticated } = useAuth()
+
+  if (isAuthenticated) {
+    return <Navigate to="/dashboard" replace />
+  }
+
+  return <EntryRedirect />
+}
+
+function EntryRedirect() {
   const navigate = useNavigate()
   return <Preloader onComplete={() => navigate('/login', { replace: true })} words={['Welcome to Aduanefie']} holdDuration={2600} />
 }
