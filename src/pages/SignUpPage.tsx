@@ -128,26 +128,31 @@ function Shader({ source, uniforms }: ShaderProps) {
 
 export function SignUpPage() {
   const navigate = useNavigate()
-  const { login } = useAuth()
+  const { register } = useAuth()
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [step, setStep] = useState<'signup' | 'success'>('signup')
   const [initialCanvasVisible] = useState(true)
   const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    if (!name.trim() || !email.trim()) return
-    const user = login(email.trim())
-    if (user) {
+    if (!name.trim() || !email.trim() || !password.trim()) {
+      setError('All fields are required')
+      return
+    }
+    setSubmitting(true)
+    try {
+      await register({ name: name.trim(), email: email.trim(), password })
       setStep('success')
       setTimeout(() => navigate('/dashboard', { replace: true }), 2000)
-    } else {
-      setError('Account created! Try signing in.')
-      setStep('success')
-      setTimeout(() => navigate('/login', { replace: true }), 2000)
+    } catch (err: any) {
+      setError(err.message || 'Registration failed')
+      setSubmitting(false)
     }
   }
 
@@ -208,10 +213,23 @@ export function SignUpPage() {
                             placeholder="Email address"
                             value={email}
                             onChange={e => { setEmail(e.target.value); setError('') }}
-                            className="w-full backdrop-blur-[1px] text-white border border-white/10 rounded-full py-3 px-4 focus:outline-none focus:border-white/30 text-center pr-12"
+                            disabled={submitting}
+                            className="w-full backdrop-blur-[1px] text-white border border-white/10 rounded-full py-3 px-4 focus:outline-none focus:border-white/30 text-center disabled:opacity-50"
                             required
                           />
-                          <ArrowButton type="submit" />
+                        </div>
+                        <div className="relative">
+                          <input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={e => { setPassword(e.target.value); setError('') }}
+                            disabled={submitting}
+                            className="w-full backdrop-blur-[1px] text-white border border-white/10 rounded-full py-3 px-4 focus:outline-none focus:border-white/30 text-center pr-12"
+                            required
+                            minLength={6}
+                          />
+                          <ArrowButton type="submit" disabled={submitting} />
                         </div>
                       </form>
                     </div>
