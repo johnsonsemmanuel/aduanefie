@@ -13,23 +13,23 @@ import { BuyerRequestCard } from '@/components/trade/BuyerRequestCard'
 import { SupplierCard } from '@/components/trade/SupplierCard'
 import { commodityApi, opportunityApi } from '@/lib/api'
 import { buyerRequests, suppliers } from '@/data/mock'
-import type { Commodity, TradeOpportunity, CommodityCategory, QualityGrade } from '@/types'
+import type { Commodity, TradeOpportunity, QualityGrade } from '@/types'
 import type { CommodityDto, OpportunityDto } from '@/lib/api'
 
 function toCommodity(dto: CommodityDto): Commodity {
   return {
     id: dto.id,
     name: dto.name,
-    category: (dto.category || 'grains') as CommodityCategory,
+    category: dto.category || 'Other',
     origin: dto.origin ?? '',
     grade: (dto.grade ?? 'Standard') as QualityGrade,
-    price: dto.price ?? 0,
+    price: Number(dto.price ?? 0),
     unit: dto.unit,
-    priceChange: dto.priceChange ?? 0,
-    priceChangePercent: dto.priceChangePercent ?? 0,
+    priceChange: Number(dto.priceChange ?? 0),
+    priceChangePercent: Number(dto.priceChangePercent ?? 0),
     volume: dto.volume ?? 0,
     stock: dto.stock ?? 0,
-    image: dto.image,
+    image: dto.image ?? undefined,
   }
 }
 

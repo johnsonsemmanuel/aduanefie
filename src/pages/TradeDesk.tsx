@@ -120,7 +120,7 @@ export function TradeDesk() {
   }, [fetchData])
 
   const computedMetrics: TradeMetric[] = useMemo(() => {
-    const activeOrders = orders.filter(o => o.status !== 'delivered' && o.status !== 'completed' && o.status !== 'cancelled').length
+    const activeOrders = orders.filter(o => o.status !== 'delivered' && o.status !== 'completed').length
     const completedOrders = orders.filter(o => o.status === 'completed' || o.status === 'delivered').length
     const openTrades = opportunities.filter(o => o.status === 'open').length
     const totalValue = orders.reduce((sum, o) => sum + o.total, 0)
