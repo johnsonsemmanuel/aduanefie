@@ -6,6 +6,7 @@ import { GlassCard, GlassCardHeader, GlassCardTitle } from '@/components/ui/Glas
 import { FilterBar } from '@/components/ui/FilterBar'
 import { Button } from '@/components/ui/Button'
 import { CreateOpportunityModal } from '@/components/trade/CreateOpportunityModal'
+import { PlaceOrderModal } from '@/components/trade/PlaceOrderModal'
 import { CommodityCard } from '@/components/trade/CommodityCard'
 import { TradeOpportunityCard } from '@/components/trade/TradeOpportunityCard'
 import { BuyerRequestCard } from '@/components/trade/BuyerRequestCard'
@@ -87,6 +88,7 @@ export function Marketplace() {
   const [commodities, setCommodities] = useState<Commodity[]>([])
   const [opportunities, setOpportunities] = useState<TradeOpportunity[]>([])
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [orderTarget, setOrderTarget] = useState<TradeOpportunity | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
@@ -210,7 +212,7 @@ export function Marketplace() {
               </Button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {filteredOpportunities.map((opp) => <TradeOpportunityCard key={opp.id} opportunity={opp} />)}
+              {filteredOpportunities.map((opp) => <TradeOpportunityCard key={opp.id} opportunity={opp} onRespond={(id) => setOrderTarget(opportunities.find(o => o.id === id) || null)} />)}
             </div>
             {filteredOpportunities.length === 0 && (
               <div className="text-center py-12">
@@ -258,6 +260,12 @@ export function Marketplace() {
         open={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onCreated={fetchData}
+      />
+      <PlaceOrderModal
+        open={!!orderTarget}
+        opportunity={orderTarget}
+        onClose={() => setOrderTarget(null)}
+        onOrderPlaced={fetchData}
       />
     </PageShell>
   )
