@@ -1,4 +1,7 @@
-const API_BASE = import.meta.env.VITE_API_URL || 'https://aduanefie-backend-production.up.railway.app/api'
+let API_BASE = (import.meta.env.VITE_API_URL as string) || 'https://aduanefie-backend-production.up.railway.app'
+if (!API_BASE.endsWith('/api')) {
+  API_BASE = API_BASE.replace(/\/+$/, '') + '/api'
+}
 
 interface RequestOptions {
   method?: string

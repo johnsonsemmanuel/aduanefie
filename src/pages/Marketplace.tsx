@@ -1,10 +1,11 @@
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { PageSkeleton } from '@/components/ui/PageSkeleton'
-import { ShoppingBag, TrendingUp, Users, Truck, RefreshCw } from 'lucide-react'
+import { ShoppingBag, TrendingUp, Users, Truck, RefreshCw, Plus } from 'lucide-react'
 import { PageShell } from '@/components/layout/PageShell'
 import { GlassCard, GlassCardHeader, GlassCardTitle } from '@/components/ui/GlassCard'
 import { FilterBar } from '@/components/ui/FilterBar'
 import { Button } from '@/components/ui/Button'
+import { CreateOpportunityModal } from '@/components/trade/CreateOpportunityModal'
 import { CommodityCard } from '@/components/trade/CommodityCard'
 import { TradeOpportunityCard } from '@/components/trade/TradeOpportunityCard'
 import { BuyerRequestCard } from '@/components/trade/BuyerRequestCard'
@@ -85,6 +86,7 @@ export function Marketplace() {
   const [activeTab, setActiveTab] = useState('commodities')
   const [commodities, setCommodities] = useState<Commodity[]>([])
   const [opportunities, setOpportunities] = useState<TradeOpportunity[]>([])
+  const [showCreateModal, setShowCreateModal] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
@@ -199,8 +201,22 @@ export function Marketplace() {
         )
       case 'opportunities':
         return (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {filteredOpportunities.map((opp) => <TradeOpportunityCard key={opp.id} opportunity={opp} />)}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-text-secondary">{filteredOpportunities.length} listing{filteredOpportunities.length !== 1 ? 's' : ''}</span>
+              <Button variant="primary" size="sm" onClick={() => setShowCreateModal(true)}>
+                <Plus className="w-3.5 h-3.5 mr-1" />
+                Create Listing
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {filteredOpportunities.map((opp) => <TradeOpportunityCard key={opp.id} opportunity={opp} />)}
+            </div>
+            {filteredOpportunities.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-sm text-text-secondary">No listings found</p>
+              </div>
+            )}
           </div>
         )
       case 'buyer-requests':
@@ -238,6 +254,11 @@ export function Marketplace() {
         </GlassCard>
         <div className="pt-1">{renderContent()}</div>
       </div>
+      <CreateOpportunityModal
+        open={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreated={fetchData}
+      />
     </PageShell>
   )
 }
