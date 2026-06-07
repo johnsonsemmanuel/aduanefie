@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { TrendingUp, CheckCircle, Clock, ShoppingCart, AlertCircle, RefreshCw } from 'lucide-react'
 import { PageShell } from '@/components/layout/PageShell'
 import { GlassCard, GlassCardHeader, GlassCardTitle } from '@/components/ui/GlassCard'
@@ -10,22 +10,21 @@ import { PriceSparkline } from '@/components/trade/MarketPriceWidget'
 import { Button } from '@/components/ui/Button'
 import { PageSkeleton } from '@/components/ui/PageSkeleton'
 import { orderApi, opportunityApi } from '@/lib/api'
-import { tradeMetrics } from '@/data/mock'
-import type { Order, TradeOpportunity } from '@/types'
+import type { Order, TradeOpportunity, TradeMetric, Trader } from '@/types'
 import type { OrderDto, OpportunityDto } from '@/lib/api'
 
 function mapOrderDto(dto: OrderDto): Order {
   return {
     id: dto.id,
     orderNumber: dto.orderNumber,
-    commodity: '',
+    commodity: dto.commodity,
     quantity: Number(dto.quantity),
     unit: dto.unit,
     total: Number(dto.total),
     status: dto.status as Order['status'],
     paymentStatus: dto.paymentStatus as Order['paymentStatus'],
-    supplier: '',
-    buyer: '',
+    supplier: dto.seller,
+    buyer: dto.buyer,
     createdAt: dto.createdAt,
     updatedAt: dto.createdAt,
     deliveryDate: dto.deliveryDate ?? '',
@@ -38,7 +37,20 @@ function mapOpportunityDto(dto: OpportunityDto): TradeOpportunity {
   return {
     id: dto.id,
     type: dto.type,
-    commodity: dto.commodity as unknown as TradeOpportunity['commodity'],
+    commodity: {
+      id: dto.commodity.id,
+      name: dto.commodity.name,
+      category: dto.commodity.category,
+      unit: dto.commodity.unit,
+      price: Number(dto.commodity.price ?? 0),
+      priceChange: Number(dto.commodity.priceChange ?? 0),
+      priceChangePercent: Number(dto.commodity.priceChangePercent ?? 0),
+      volume: dto.commodity.volume ?? 0,
+      stock: dto.commodity.stock ?? 0,
+      origin: dto.commodity.origin ?? '',
+      grade: (dto.commodity.grade ?? 'Standard') as TradeOpportunity['quality'],
+      image: dto.commodity.image ?? undefined,
+    },
     quantity: Number(dto.quantity),
     unit: dto.unit,
     price: Number(dto.price),
@@ -47,7 +59,15 @@ function mapOpportunityDto(dto: OpportunityDto): TradeOpportunity {
     deliveryDate: dto.deliveryDate ?? '',
     status: dto.status as TradeOpportunity['status'],
     createdAt: dto.createdAt,
-    trader: dto.user as unknown as TradeOpportunity['trader'],
+    trader: {
+      id: dto.user.id,
+      name: dto.user.name,
+      avatar: dto.user.avatar,
+      location: dto.user.location ?? '',
+      rating: dto.user.rating ?? 0,
+      verified: dto.user.verified ?? false,
+      type: (dto.user.type ?? 'farmer') as Trader['type'],
+    },
     quality: (dto.quality ?? 'Standard') as TradeOpportunity['quality'],
     description: dto.description ?? '',
   }
@@ -62,7 +82,7 @@ const tabs = [
 
 const orderColumns = [
   { key: 'orderNumber', header: 'Order', render: (o: Order) => <span className="text-xs font-mono font-medium">{o.orderNumber}</span> },
-  { key: 'commodity', header: 'Commodity', render: (o: Order) => <span className="text-xs font-medium">{o.commodity}</span> },
+  { key: 'commodity', header: 'Commodity', render: (o: Order) => <span className="text-xs font-medium">{typeof o.commodity === 'string' ? o.commodity : o.commodity.name}</span> },
   { key: 'quantity', header: 'Qty', render: (o: Order) => <span className="text-xs">{o.quantity} {o.unit}</span> },
   { key: 'total', header: 'Total', align: 'right' as const, render: (o: Order) => <span className="text-xs font-semibold">${o.total.toLocaleString()}</span> },
   { key: 'status', header: 'Status', render: (o: Order) => <StatusPill status={o.status} /> },
@@ -99,6 +119,20 @@ export function TradeDesk() {
     fetchData()
   }, [fetchData])
 
+  const computedMetrics: TradeMetric[] = useMemo(() => {
+    const totalOrders = orders.length
+    const activeOrders = orders.filter(o => o.status !== 'delivered' && o.status !== 'completed' && o.status !== 'cancelled').length
+    const completedOrders = orders.filter(o => o.status === 'completed' || o.status === 'delivered').length
+    const openTrades = opportunities.filter(o => o.status === 'open').length
+    const totalValue = orders.reduce((sum, o) => sum + o.total, 0)
+    return [
+      { label: 'Active Orders', value: String(activeOrders), change: 0, changePercent: 0, trend: 'up' },
+      { label: 'Total Value', value: `$${totalValue.toLocaleString()}`, change: 0, changePercent: 0, trend: 'up' },
+      { label: 'Completed', value: String(completedOrders), change: 0, changePercent: 0, trend: 'up' },
+      { label: 'Open Trades', value: String(openTrades), change: 0, changePercent: 0, trend: 'up' },
+    ]
+  }, [orders, opportunities])
+
   const filterOrders = (): Order[] => {
     switch (activeTab) {
       case 'active': return orders.filter(o => o.status !== 'delivered' && o.status !== 'completed')
@@ -134,10 +168,7 @@ export function TradeDesk() {
     <PageShell tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab}>
       <div className="space-y-4 min-w-0">
         <div className="grid grid-cols-4 gap-2.5">
-          <TradeMetricsCard metric={tradeMetrics[1]} />
-          <TradeMetricsCard metric={tradeMetrics[2]} />
-          <TradeMetricsCard metric={tradeMetrics[3]} />
-          <TradeMetricsCard metric={tradeMetrics[0]} />
+          {computedMetrics.map((m, i) => <TradeMetricsCard key={i} metric={m} />)}
         </div>
 
         {activeTab !== 'opportunities' ? (
@@ -203,7 +234,7 @@ export function TradeDesk() {
                   <span className="text-xs font-mono font-medium">{selectedOrder.orderNumber}</span>
                   <StatusPill status={selectedOrder.status} />
                 </div>
-                <p className="text-sm font-semibold">{selectedOrder.commodity}</p>
+                <p className="text-sm font-semibold">{typeof selectedOrder.commodity === 'string' ? selectedOrder.commodity : selectedOrder.commodity.name}</p>
                 <p className="text-xs text-text-secondary">{selectedOrder.quantity} {selectedOrder.unit} · ${selectedOrder.total.toLocaleString()}</p>
               </div>
               <OrderTimeline order={selectedOrder} />

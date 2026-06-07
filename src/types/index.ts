@@ -3,7 +3,7 @@ export type OrderStatus = 'pending' | 'processing' | 'shipped' | 'in_transit' | 
 export type LogisticsStatus = 'pending' | 'dispatched' | 'in_transit' | 'arrived' | 'delivered'
 export type PaymentStatus = 'pending' | 'partial' | 'completed' | 'overdue'
 export type QualityGrade = 'A' | 'B' | 'C' | 'Premium' | 'Standard'
-export type CommodityCategory = 'grains' | 'livestock' | 'produce' | 'inputs' | 'processed' | 'export'
+export type CommodityCategory = string
 
 export interface Commodity {
   id: string
@@ -142,14 +142,14 @@ export interface MarketPrice {
 export interface Order {
   id: string
   orderNumber: string
-  commodity: string
+  commodity: { id: string; name: string; category?: string; image?: string }
   quantity: number
   unit: string
   total: number
   status: OrderStatus
   paymentStatus: PaymentStatus
-  supplier: string
-  buyer: string
+  supplier: { id: string; name: string }
+  buyer: { id: string; name: string }
   createdAt: string
   updatedAt: string
   deliveryDate: string

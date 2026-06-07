@@ -79,15 +79,15 @@ export interface CommodityDto {
   id: string
   name: string
   category: string
-  origin?: string
-  grade?: string
-  price?: number
+  origin?: string | null
+  grade?: string | null
+  price?: string | null
   unit: string
-  priceChange?: number
-  priceChangePercent?: number
-  volume?: number
-  stock?: number
-  image?: string
+  priceChange?: string | null
+  priceChangePercent?: string | null
+  volume?: number | null
+  stock?: number | null
+  image?: string | null
 }
 
 export const commodityApi = {
@@ -147,6 +147,9 @@ export interface OrderDto {
   paymentStatus: string
   deliveryDate?: string
   createdAt: string
+  buyer: { id: string; name: string }
+  seller: { id: string; name: string }
+  commodity: { id: string; name: string; category?: string; image?: string }
 }
 
 export const orderApi = {

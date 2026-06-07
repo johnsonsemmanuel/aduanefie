@@ -69,9 +69,11 @@ const tabs = [
 
 const categoryFilters = [
   { key: 'category', label: 'Category', options: [
-    { value: 'grains', label: 'Grains' }, { value: 'livestock', label: 'Livestock' },
-    { value: 'produce', label: 'Produce' }, { value: 'inputs', label: 'Inputs' },
-    { value: 'processed', label: 'Processed' }, { value: 'export', label: 'Export' },
+    { value: 'Cocoa', label: 'Cocoa' }, { value: 'Grains', label: 'Grains' },
+    { value: 'Legumes', label: 'Legumes' }, { value: 'Tubers', label: 'Tubers' },
+    { value: 'Oil', label: 'Oil' }, { value: 'Nuts', label: 'Nuts' },
+    { value: 'Coffee', label: 'Coffee' }, { value: 'Fruits', label: 'Fruits' },
+    { value: 'Industrial', label: 'Industrial' }, { value: 'Other', label: 'Other' },
   ]},
   { key: 'grade', label: 'Grade', options: [
     { value: 'Premium', label: 'Premium' }, { value: 'A', label: 'Grade A' },
