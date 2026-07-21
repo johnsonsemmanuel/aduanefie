@@ -23,10 +23,5 @@
             ]
         }
     ],
-    "rewrites": [
-        {
-            "source": "/admin/:path*",
-            "destination": "https://aduanefie-backend-production-3b65.up.railway.app/admin/:path*"
-        }
-    ]
+    "rewrites": []
 }
