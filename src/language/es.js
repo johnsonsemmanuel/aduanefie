@@ -51,8 +51,8 @@ export const spain = {
   "/km": "/km",
   "1k+ km": "1k+ km",
   "24/7 Helpline": "24/7 خط المساعدة",
-  "6amMart": "Aduanefie",
-  "6amMart is a Laravel and Flutter Framework-based multi-vendor food, grocery, eCommerce, parcel, and pharmacy delivery system. It has six modules to cover all your business functionality.":
+  "Aduanefie": "Aduanefie",
+  "Aduanefie is a Laravel and Flutter Framework-based multi-vendor food, grocery, eCommerce, parcel, and pharmacy delivery system. It has six modules to cover all your business functionality.":
     "Aduanefie عبارة عن نظام متعدد البائعين للأغذية والبقالة والتجارة الإلكترونية والطرود والصيدليات قائم على Laravel و Flutter Framework. يحتوي على ست وحدات لتغطية جميع وظائف عملك.",
   "A Module has been selected.": "Se ha seleccionado un módulo.",
   "A location where you want to pick up the parcel":
@@ -1739,7 +1739,7 @@ export const spain = {
   Register: "يسجل",
   "Register as delivery man and earn money": "سجل كرجل توصيل واكسب المال",
   "Register as seller and open shop in": "سجل كبائع وافتح متجرًا في",
-  "Register as seller and open shop in 6amMart to start your business":
+  "Register as seller and open shop in Aduanefie to start your business":
     "سجل كبائع وافتح متجرًا في Aduanefie لبدء عملك",
   "Remaining Balance": "Saldo restante",
   "Remaining Bill": "Factura restante",
@@ -2203,7 +2203,7 @@ export const spain = {
   "Theme Settings": "إعدادات الموضوع",
   "Theme mode": "وضع الموضوع",
   "They create a account on": "Crean una cuenta en",
-  "They create a account on 6amMart using your code and place their first order":
+  "They create a account on Aduanefie using your code and place their first order":
     "Crean una cuenta en Aduanefie usando tu código y realizan su primer pedido",
   This: "هذا",
   "This Variation needs to be selected in between minimum":
@@ -2446,7 +2446,7 @@ export const spain = {
   "We will begin processing your order shortly. Your Order ID is":
     "Comenzaremos a procesar tu pedido en breve. Tu ID de pedido es",
   "Welcome to ! {{name}}": "Welcome to ! {{name}}",
-  "Welcome to 6amMart!": "¡Bienvenido a Aduanefie!",
+  "Welcome to Aduanefie!": "¡Bienvenido a Aduanefie!",
   "Welcome to React": "Bienvenido a React",
   "Welcome to {{name}}": "Welcome to {{name}}",
   "We’re just a click away if you have more questions.":

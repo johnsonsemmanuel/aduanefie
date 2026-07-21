@@ -45,8 +45,8 @@ export const arabic = {
   "/km": "/كم",
   "1k+ km": "1K+ كم",
   "24/7 Helpline": "24/7 خط المساعدة",
-  "6amMart": "Aduanefie",
-  "6amMart is a Laravel and Flutter Framework-based multi-vendor food, grocery, eCommerce, parcel, and pharmacy delivery system. It has six modules to cover all your business functionality.":
+  "Aduanefie": "Aduanefie",
+  "Aduanefie is a Laravel and Flutter Framework-based multi-vendor food, grocery, eCommerce, parcel, and pharmacy delivery system. It has six modules to cover all your business functionality.":
     "Aduanefie عبارة عن نظام توصيل متعدد البائعين ، والبقالة ، والتجارة الإلكترونية ، والتجارة الإلكترونية ، والتجارة الإلكترونية ، والطرز ، ونظام توصيل الصيدلة. لديها ست وحدات لتغطية جميع وظائف عملك.",
   "A Module has been selected.": "تم تحديد وحدة.",
   "A location where you want to pick up the parcel":
@@ -1539,7 +1539,7 @@ export const arabic = {
   Register: "يسجل",
   "Register as delivery man and earn money": "سجل كرجل توصيل وكسب المال",
   "Register as seller and open shop in": "سجل كبائع ومحل مفتوح في",
-  "Register as seller and open shop in 6amMart to start your business":
+  "Register as seller and open shop in Aduanefie to start your business":
     "سجل كبائع ومتجر مفتوح في Aduanefie لبدء عملك",
   "Remaining Balance": "الرصيد المتبقي",
   "Remaining Bill": "الفاتورة المتبقية",
@@ -1941,7 +1941,7 @@ export const arabic = {
   "Theme Settings": "إعدادات الموضوع",
   "Theme mode": "وضع الموضوع",
   "They create a account on": "يقومون بإنشاء حساب على",
-  "They create a account on 6amMart using your code and place their first order":
+  "They create a account on Aduanefie using your code and place their first order":
     "يقومون بإنشاء حساب على Aduanefie باستخدام الكود الخاص بك ويضعون طلبهم الأول",
   This: "هذا",
   "This Variation needs to be selected in between minimum":
@@ -2161,7 +2161,7 @@ export const arabic = {
   "We will begin processing your order shortly. Your Order ID is":
     "سنبدأ في معالجة طلبك قريباً. معرف طلبك هو",
   "Welcome to ! {{name}}": "مرحباً بك في ! {{name}}",
-  "Welcome to 6amMart!": "مرحباً بك في Aduanefie!",
+  "Welcome to Aduanefie!": "مرحباً بك في Aduanefie!",
   "Welcome to React": "مرحبًا بك في React و React-I18Next",
   "Welcome to {{name}}": "مرحباً بك في {{name}}",
   "We’re just a click away if you have more questions.":
