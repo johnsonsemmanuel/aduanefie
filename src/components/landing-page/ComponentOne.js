@@ -41,7 +41,12 @@ const ComponentOne = ({ landingPageData }) => {
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const router = useRouter();
   const handleButtonClick = () => {
-    router.push(landingPageData?.company_button_url);
+    const url = landingPageData?.company_button_url;
+    if (typeof url === "string" && url) {
+      router.push(url);
+    } else {
+      router.push("/");
+    }
   };
 
   return (
