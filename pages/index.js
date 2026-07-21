@@ -62,19 +62,29 @@ export const getServerSideProps = async (context) => {
   const { req, res } = context;
   const language = req.cookies.languageSetting;
 
-  const configRes = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/config`,
-    {
-      method: "GET",
-      headers: {
-        "X-software-id": 33571750,
-        "X-server": "server",
-        "X-localization": language,
-        origin: process.env.NEXT_CLIENT_HOST_URL,
-      },
-    }
-  );
-  const config = await configRes.json();
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const clientHostUrl = process.env.NEXT_CLIENT_HOST_URL || "";
+
+  if (!baseUrl) {
+    return {
+      props: { configData: null, landingPageData: null },
+    };
+  }
+
+  try {
+    const configRes = await fetch(
+      `${baseUrl}/api/v1/config`,
+      {
+        method: "GET",
+        headers: {
+          "X-software-id": 33571750,
+          "X-server": "server",
+          "X-localization": language,
+          origin: clientHostUrl,
+        },
+      }
+    );
+    const config = await configRes.json();
 
   if (checkMaintenanceMode(config)) {
     return {
@@ -85,29 +95,35 @@ export const getServerSideProps = async (context) => {
     };
   }
 
-  const landingPageRes = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/react-landing-page`,
-    {
-      method: "GET",
-      headers: {
-        "X-software-id": 33571750,
-        "X-server": "server",
-        "X-localization": language,
-        origin: process.env.NEXT_CLIENT_HOST_URL,
-      },
-    }
-  );
-  const landingPageData = await landingPageRes.json();
-  // Set cache control headers for 1 hour (3600 seconds)
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=3600, stale-while-revalidate"
-  );
+    const landingPageRes = await fetch(
+      `${baseUrl}/api/v1/react-landing-page`,
+      {
+        method: "GET",
+        headers: {
+          "X-software-id": 33571750,
+          "X-server": "server",
+          "X-localization": language,
+          origin: clientHostUrl,
+        },
+      }
+    );
+    const landingPageData = await landingPageRes.json();
+    // Set cache control headers for 1 hour (3600 seconds)
+    res.setHeader(
+      "Cache-Control",
+      "public, s-maxage=3600, stale-while-revalidate"
+    );
 
-  return {
-    props: {
-      configData: config,
-      landingPageData: landingPageData,
-    },
-  };
+    return {
+      props: {
+        configData: config,
+        landingPageData: landingPageData,
+      },
+    };
+  } catch (error) {
+    console.error("getServerSideProps error:", error);
+    return {
+      props: { configData: null, landingPageData: null },
+    };
+  }
 };
