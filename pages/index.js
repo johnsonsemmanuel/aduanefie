@@ -10,6 +10,7 @@ import useGetLandingPage from "../src/api-manage/hooks/react-query/useGetLanding
 import { useGetConfigData } from "../src/api-manage/hooks/useGetConfigData";
 import { RTL } from "components/rtl";
 import { checkMaintenanceMode } from "../src/utils/serverSidePropsHelper";
+import { getBaseUrl } from "../src/utils/getBaseUrl";
 
 const Root = (props) => {
   const { configData, landingPageData } = props;
@@ -62,7 +63,7 @@ export const getServerSideProps = async (context) => {
   const { req, res } = context;
   const language = req.cookies.languageSetting;
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+  const baseUrl = getBaseUrl();
   const clientHostUrl = process.env.NEXT_CLIENT_HOST_URL || "";
 
   if (!baseUrl) {
