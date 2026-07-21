@@ -1,18 +1,5 @@
 const nextConfig = {
   reactStrictMode: true,
-  // Hide Next.js dev-mode indicator (bottom-left "N" badge)
-  devIndicators: {
-    buildActivity: false,
-    appIsrStatus: false,
-  },
-  experimental: {
-    swcPlugins: [],
-  },
-  compiler: {
-    removeConsole: process.env.NODE_ENV === 'production' ? {
-      exclude: ['error', 'warn'], // Keep error and warn, remove log, info, debug, etc.
-    } : false,
-  },
   images: {
     remotePatterns: [
       {

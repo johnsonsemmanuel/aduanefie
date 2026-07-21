@@ -22,10 +22,5 @@
             ]
         }
     ],
-    "rewrites": [
-        {
-            "source": "/(.*)",
-            "destination": "/index"
-        }
-    ]
+    "rewrites": []
 }
