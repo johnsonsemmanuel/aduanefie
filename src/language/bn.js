@@ -51,9 +51,9 @@ export const bengali = {
   "/km": "/কিমি",
   "1k+ km": "১ হাজার+ কিমি",
   "24/7 Helpline": "24/7 خط المساعدة",
-  "6amMart": "6amMart",
+  "6amMart": "Aduanefie",
   "6amMart is a Laravel and Flutter Framework-based multi-vendor food, grocery, eCommerce, parcel, and pharmacy delivery system. It has six modules to cover all your business functionality.":
-    "6amMart عبارة عن نظام متعدد البائعين للأغذية والبقالة والتجارة الإلكترونية والطرود والصيدليات قائم على Laravel و Flutter Framework. يحتوي على ست وحدات لتغطية جميع وظائف عملك.",
+    "Aduanefie عبارة عن نظام متعدد البائعين للأغذية والبقالة والتجارة الإلكترونية والطرود والصيدليات قائم على Laravel و Flutter Framework. يحتوي على ست وحدات لتغطية جميع وظائف عملك.",
   "A Module has been selected.": "একটি মডিউল নির্বাচন করা হয়েছে।",
   "A location where you want to pick up the parcel":
     "যে স্থান থেকে আপনি পার্সেলটি নিতে চান",
@@ -1725,7 +1725,7 @@ export const bengali = {
   "Register as delivery man and earn money": "سجل كرجل توصيل واكسب المال",
   "Register as seller and open shop in": "سجل كبائع وافتح متجرًا في",
   "Register as seller and open shop in 6amMart to start your business":
-    "سجل كبائع وافتح متجرًا في 6ammart لبدء عملك",
+    "سجل كبائع وافتح متجرًا في Aduanefie لبدء عملك",
   "Remaining Balance": "অবশিষ্ট ব্যালেন্স",
   "Remaining Bill": "অবশিষ্ট বিল",
   "Remaining Wallet Balance": "অবশিষ্ট ওয়ালেট ব্যালেন্স",
@@ -2199,7 +2199,7 @@ export const bengali = {
   "Theme mode": "وضع الموضوع",
   "They create a account on": "তারা এতে একটি অ্যাকাউন্ট তৈরি করে",
   "They create a account on 6amMart using your code and place their first order":
-    "তারা আপনার কোড ব্যবহার করে 6amMart-এ একটি অ্যাকাউন্ট তৈরি করে এবং প্রথম অর্ডার করে",
+    "তারা আপনার কোড ব্যবহার করে Aduanefie-এ একটি অ্যাকাউন্ট তৈরি করে এবং প্রথম অর্ডার করে",
   This: "هذا",
   "This Variation needs to be selected in between minimum":
     "يجب تحديد هذا الاختلاف بين الحد الأدنى",
@@ -2440,7 +2440,7 @@ export const bengali = {
   "We will begin processing your order shortly. Your Order ID is":
     "আমরা শীঘ্রই আপনার অর্ডার প্রক্রিয়া করা শুরু করব। আপনার অর্ডার আইডি",
   "Welcome to ! {{name}}": "Welcome to ! {{name}}",
-  "Welcome to 6amMart!": "6amMart-এ স্বাগতম!",
+  "Welcome to 6amMart!": "Aduanefie-এ স্বাগতম!",
   "Welcome to React": "React-এ স্বাগতম",
   "Welcome to {{name}}": "Welcome to {{name}}",
   "We’re just a click away if you have more questions.":

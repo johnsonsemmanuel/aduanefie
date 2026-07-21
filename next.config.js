@@ -29,9 +29,9 @@ module.exports = nextConfig;
 //   images: {
 //     domains: [
 //       "bjorn66.com",
-//       "6ammart-test.6amdev.xyz",
+//       "aduanefie-test.6amdev.xyz",
 //       "192.168.50.168",
-//       "6ammart-dev.6amdev.xyz",
+//       "aduanefie-dev.6amdev.xyz",
 //     ], // Add the domain here
 //   },
 // };

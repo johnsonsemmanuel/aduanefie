@@ -117,7 +117,7 @@ const adSpin = keyframes`
   100% { transform: scaleX(-1); }
 `;
 
-// Coupon variants — based on Figma 6amMart React Redesign (node 2042:50829)
+// Coupon variants — based on Figma Aduanefie React Redesign (node 2042:50829)
 const COUPON_PRO_ACCENT = "#2A61BA";
 
 const CouponCard = styled(Box)(({ theme, variant }) => {
