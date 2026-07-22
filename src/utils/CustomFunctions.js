@@ -711,11 +711,6 @@ export const getInfoFromZoneData = (zoneData) => {
     zoneData?.zone_data?.forEach((item, index) => {
       if (item?.modules?.length > 0) {
         item?.modules?.forEach((moduleItem) => {
-            "vvv",
-            moduleItem?.id,
-            getCurrentModuleType(),
-            getCurrentModuleId()
-          );
           if (
             moduleItem?.module_type === getCurrentModuleType() &&
             moduleItem?.id === getCurrentModuleId()
