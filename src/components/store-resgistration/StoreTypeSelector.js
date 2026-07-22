@@ -13,6 +13,24 @@ const STORE_TYPE_OPTIONS = [
 const StoreTypeSelector = ({ formik, handleFieldChange }) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const selectedType = formik?.values?.store_type;
+
+  const startIcon =
+    selectedType === "farm" ? (
+      <AgricultureIcon
+        sx={{
+          color: alpha(theme.palette.neutral[400], 0.7),
+          fontSize: "18px",
+        }}
+      />
+    ) : (
+      <StorefrontIcon
+        sx={{
+          color: alpha(theme.palette.neutral[400], 0.7),
+          fontSize: "18px",
+        }}
+      />
+    );
 
   return (
     <Grid item xs={12}>
@@ -26,14 +44,7 @@ const StoreTypeSelector = ({ formik, handleFieldChange }) => {
         fieldProps={formik.getFieldProps("store_type")}
         placeholder={t("Select Store Type")}
         required
-        startIcon={
-          <StorefrontIcon
-            sx={{
-              color: alpha(theme.palette.neutral[400], 0.7),
-              fontSize: "18px",
-            }}
-          />
-        }
+        startIcon={startIcon}
       />
     </Grid>
   );

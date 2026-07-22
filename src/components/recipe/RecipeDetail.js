@@ -91,7 +91,11 @@ const RecipeDetail = ({ recipeId }) => {
 
   const handleAddToCart = (product) => {
     if (!product) return;
-    setAddedToCartIds((prev) => [...prev, product.id]);
+    setAddedToCartIds((prev) => {
+      if (prev.includes(product.id)) return prev;
+      toast.success(t("Item added to cart"));
+      return [...prev, product.id];
+    });
   };
 
   const imageUrl = recipe?.image_url || recipe?.thumbnail || recipe?.image || "/images/recipe-placeholder.png";
@@ -248,13 +252,23 @@ const RecipeDetail = ({ recipeId }) => {
             <Typography variant="h6" sx={{ fontWeight: 600, fontSize: isSmall ? "16px" : "18px" }}>
               {t("Recommended Products")}
             </Typography>
-            <Grid container spacing={2}>
-              {recommendedProducts.map((product) => (
-                <Grid item xs={6} sm={6} md={3} key={product?.id}>
-                  <ProductCard item={product} cardFor="vertical" cardType="vertical-type" noMargin="true" />
-                </Grid>
-              ))}
-            </Grid>
+            {ingredientsLoading ? (
+              <Grid container spacing={2}>
+                {[...Array(4)].map((_, i) => (
+                  <Grid item xs={6} sm={6} md={3} key={i}>
+                    <Box sx={{ height: 220, borderRadius: "12px", bgcolor: "neutral.100" }} />
+                  </Grid>
+                ))}
+              </Grid>
+            ) : (
+              <Grid container spacing={2}>
+                {recommendedProducts.map((product) => (
+                  <Grid item xs={6} sm={6} md={3} key={product?.id}>
+                    <ProductCard item={product} cardFor="vertical" cardType="vertical-type" noMargin="true" />
+                  </Grid>
+                ))}
+              </Grid>
+            )}
           </>
         )}
       </Stack>

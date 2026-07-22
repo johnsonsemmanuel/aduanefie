@@ -14,7 +14,6 @@ export default function useGetRecipes(params) {
     ["recipes", params],
     () => getData(params),
     {
-      enabled: false,
       onError: onSingleErrorResponse,
     }
   );

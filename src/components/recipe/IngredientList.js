@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   Box,
   Button,
@@ -13,6 +13,7 @@ import {
 import { useTranslation } from "react-i18next";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import ShoppingBasketIcon from "@mui/icons-material/ShoppingBasket";
 import { getAmountWithSign } from "../../helper-functions/CardHelpers";
 
 const IngredientList = ({
@@ -63,9 +64,31 @@ const IngredientList = ({
         <Typography variant="h6" sx={{ fontWeight: 600, fontSize: isSmall ? "16px" : "18px" }}>
           {t("Ingredients")}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {matchCount}/{totalCount} {t("available")}
-        </Typography>
+        <Stack direction="row" alignItems="center" gap={1}>
+          <Typography variant="body2" color="text.secondary">
+            {matchCount}/{totalCount} {t("available")}
+          </Typography>
+          {matchCount < totalCount && (
+            <Button
+              variant="outlined"
+              size="small"
+              startIcon={<ShoppingBasketIcon />}
+              onClick={() => {
+                mapped.forEach((item) => {
+                  if (item.isMatched && !addedToCartIds?.includes(item.id || item._originalIndex || mapped.indexOf(item))) {
+                    onAddToCart?.(item.matchedProduct);
+                  }
+                });
+              }}
+              sx={{
+                textTransform: "none",
+                fontSize: isSmall ? "11px" : "12px",
+              }}
+            >
+              {t("Add all missing")}
+            </Button>
+          )}
+        </Stack>
       </Stack>
       <List disablePadding>
         {mapped.map((item, index) => {

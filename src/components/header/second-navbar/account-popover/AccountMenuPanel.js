@@ -158,6 +158,28 @@ const AccountMenuPanel = ({
       hidden: configData?.ref_earning_status === 0,
     },
     {
+      key: "my-farm",
+      label: "My Farm",
+      icon: "fi fi-rr-plant",
+      path: profilePath("my-farm"),
+      requireAuth: true,
+    },
+    {
+      key: "saved-recipes",
+      label: "Saved Recipes",
+      icon: "fi fi-rr-bookmark",
+      path: profilePath("saved-recipes"),
+      requireAuth: true,
+    },
+    {
+      key: "community-agent-earnings",
+      label: "Agent Earnings",
+      icon: "fi fi-rr-wallet",
+      path: profilePath("community-agent-earnings"),
+      requireAuth: true,
+      hidden: !configData?.customer_personalization_status,
+    },
+    {
       key: "subscription-plan",
       label: "Subscription Plan",
       icon: "fi fi-rr-crown",

@@ -6,12 +6,14 @@ import {
   CircularProgress,
   Grid,
   Stack,
+  TextField,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import CustomImageContainer from "components/CustomImageContainer";
 import ImageUploaderWithPreview from "components/single-file-uploader-with-preview/ImageUploaderWithPreview";
+import CustomModal from "components/modal";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -19,9 +21,8 @@ import { useTranslation } from "react-i18next";
 import useGetFarmInputProducts from "api-manage/hooks/react-query/farm/useGetFarmInputProducts";
 import { useSelector } from "react-redux";
 import { onSingleErrorResponse } from "api-manage/api-error-response/ErrorResponses";
-import { useQuery } from "react-query";
 import MainApi from "api-manage/MainApi";
-import { farm_input_products_api } from "api-manage/ApiRoutes";
+import { farm_input_products_api, farm_updates_api } from "api-manage/ApiRoutes";
 import toast from "react-hot-toast";
 import AgricultureIcon from "@mui/icons-material/Agriculture";
 import VerifiedIcon from "@mui/icons-material/Verified";
@@ -55,16 +56,8 @@ const MyFarm = ({ configData }) => {
       ? localStorage.getItem("zoneid")
       : undefined;
 
-  const { data: inputProducts, isLoading: inputProductsLoading } = useQuery(
-    ["farm-input-products", zoneid],
-    async () => {
-      const { data } = await MainApi.get(farm_input_products_api, {
-        params: { zone_id: zoneid },
-      });
-      return data;
-    },
-    { enabled: !!zoneid, onError: onSingleErrorResponse }
-  );
+  const { data: inputProducts, isLoading: inputProductsLoading } =
+    useGetFarmInputProducts(zoneid ? { zone_id: zoneid } : undefined);
 
   const products = inputProducts?.data?.items ?? inputProducts?.items ?? [];
 
@@ -214,20 +207,14 @@ const MyFarm = ({ configData }) => {
             {t("Post Harvest Update")}
           </Typography>
           <Stack spacing={2}>
-            <textarea
-              placeholder={t("Share your harvest update...")}
+            <TextField
+              label={t("Share your harvest update...")}
               value={updateText}
               onChange={(e) => setUpdateText(e.target.value)}
+              multiline
               rows={4}
-              style={{
-                width: "100%",
-                padding: "12px",
-                borderRadius: "8px",
-                border: `1px solid ${theme.palette.divider}`,
-                fontSize: "14px",
-                fontFamily: "inherit",
-                resize: "vertical",
-              }}
+              variant="outlined"
+              fullWidth
             />
             <ImageUploaderWithPreview
               imageUrl={updateImage}

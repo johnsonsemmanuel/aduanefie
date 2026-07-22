@@ -16,12 +16,18 @@ import { useTranslation } from "react-i18next";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ClearIcon from "@mui/icons-material/Clear";
+import BookmarkBorderIcon from "@mui/icons-material/BookmarkBorder";
+import BookmarkIcon from "@mui/icons-material/Bookmark";
 import CustomPagination from "components/custom-pagination";
 import RecipeCard from "./RecipeCard";
 import ProductCardSimmer from "components/Shimmer/ProductCardSimmer";
 import useGetRecipes from "api-manage/hooks/react-query/recipe/useGetRecipes";
+import usePostSaveRecipe from "api-manage/hooks/react-query/recipe/usePostSaveRecipe";
+import useDeleteSavedRecipe from "api-manage/hooks/react-query/recipe/useDeleteSavedRecipe";
 import { useSelector, useDispatch } from "react-redux";
 import { resetRecipeFilter, setCategory, setSelectedIngredients } from "redux/slices/recipeFilter";
+import { addSavedRecipe, removeSavedRecipe } from "redux/slices/savedRecipes";
+import toast from "react-hot-toast";
 
 const CATEGORY_OPTIONS = [
   { label: "All", value: null },
@@ -39,6 +45,9 @@ const RecipeCatalogue = ({ onRecipeClick }) => {
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const dispatch = useDispatch();
   const { category } = useSelector((state) => state.recipeFilter);
+  const { savedRecipes } = useSelector((state) => state.savedRecipes);
+  const { mutate: saveRecipe, isLoading: saveLoading } = usePostSaveRecipe();
+  const { mutate: deleteRecipe, isLoading: deleteLoading } = useDeleteSavedRecipe();
 
   const [page, setPage] = useState(1);
   const [pageLimit] = useState(12);
@@ -70,7 +79,38 @@ const RecipeCatalogue = ({ onRecipeClick }) => {
     setPage(1);
   };
 
+  const handleSaveToggle = (recipe) => {
+    if (!recipe) return;
+    const isSaved = savedRecipes?.list?.some((r) => r.id === recipe.id);
+    if (isSaved) {
+      deleteRecipe(recipe.id, {
+        onSuccess: () => {
+          dispatch(removeSavedRecipe(recipe.id));
+          toast.success(t("Recipe removed from saved recipes"));
+        },
+        onError: () => {
+          toast.error(t("Failed to remove recipe"));
+        },
+      });
+    } else {
+      saveRecipe(
+        { recipe_id: recipe.id },
+        {
+          onSuccess: (res) => {
+            dispatch(addSavedRecipe({ ...recipe, saved_at: new Date().toISOString() }));
+            toast.success(res?.message || t("Recipe saved successfully"));
+          },
+          onError: () => {
+            toast.error(t("Failed to save recipe"));
+          },
+        }
+      );
+    }
+  };
+
   const hasActiveFilters = category || searchQuery;
+
+  const isRecipeSaved = (recipeId) => savedRecipes?.list?.some((r) => r.id === recipeId);
 
   return (
     <Box>
@@ -153,6 +193,8 @@ const RecipeCatalogue = ({ onRecipeClick }) => {
                 <RecipeCard
                   recipe={recipe}
                   onClick={() => onRecipeClick?.(recipe)}
+                  onSave={() => handleSaveToggle(recipe)}
+                  isSaved={isRecipeSaved(recipe?.id)}
                 />
               </Grid>
             ))}

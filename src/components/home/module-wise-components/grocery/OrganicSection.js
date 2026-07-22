@@ -50,7 +50,11 @@ const OrganicSection = () => {
     farming_method: farmingMethod,
   });
 
-  const products = data?.data?.items ?? data?.items ?? [];
+  const products = useMemo(() => {
+    const items = data?.data?.items ?? data?.items ?? [];
+    if (items.length === 0) return [];
+    return items.filter((item) => item?.is_in_season !== false);
+  }, [data]);
 
   const handleCropChipClick = (value) => {
     dispatch(setCropType(value));

@@ -2,6 +2,9 @@ import { useMemo, useState } from "react";
 import {
   Box,
   Button,
+  Card,
+  CardContent,
+  CardMedia,
   Grid,
   Stack,
   Typography,
@@ -13,7 +16,6 @@ import BookmarkIcon from "@mui/icons-material/Bookmark";
 import useGetSavedRecipes from "api-manage/hooks/react-query/recipe/useGetSavedRecipes";
 import useDeleteSavedRecipe from "api-manage/hooks/react-query/recipe/useDeleteSavedRecipe";
 import RecipeCard from "components/recipe/RecipeCard";
-import ProductCardSimmer from "components/Shimmer/ProductCardSimmer";
 import CustomPagination from "components/custom-pagination";
 import { useDispatch } from "react-redux";
 import { removeSavedRecipe } from "redux/slices/savedRecipes";
@@ -69,7 +71,13 @@ const SavedRecipes = ({ configData }) => {
         <Grid container spacing={2}>
           {[...Array(pageLimit)].map((_, i) => (
             <Grid item xs={6} sm={6} md={4} key={i}>
-              <ProductCardSimmer variant="vertical" />
+              <Card sx={{ borderRadius: "12px", overflow: "hidden" }}>
+                <Box sx={{ height: 180, bgcolor: "neutral.100" }} />
+                <CardContent>
+                  <Box sx={{ height: 20, bgcolor: "neutral.100", borderRadius: "4px", mb: 1 }} />
+                  <Box sx={{ height: 14, bgcolor: "neutral.100", borderRadius: "4px", width: "70%" }} />
+                </CardContent>
+              </Card>
             </Grid>
           ))}
         </Grid>
