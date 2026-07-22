@@ -10,9 +10,11 @@ import CouponsTabbedPage from "./CouponsTabbedPage";
 import Chatting from "../chat/Chatting";
 import Settings from "../settings";
 import MyTrips from "components/home/module-wise-components/rental/components/my-trips/MyTrips";
-import SubscriptionPlanPage from "./subscription/SubscriptionPlanPage";
-import MonthlyCartListPage from "./MonthlyCartListPage";
-import TrackOrderInput from "../track-order/TrackOrderInput";
+import MyFarm from "./MyFarm";
+import CommunityAgentEarnings from "./CommunityAgentEarnings";
+import SavedRecipes from "./SavedRecipes";
+import MarketerDashboard from "../marketer/MarketerDashboard";
+import MarketerLeaderboard from "../marketer/MarketerLeaderboard";
 
 const ORDER_DETAIL_PAGES = [
   "my-orders",
@@ -33,6 +35,23 @@ const SUBSCRIPTION_PAGES = [
   "subscription-plan?flag=success",
   "subscription-plan?flag=cancel",
   "subscription-plan?flag=fail",
+];
+
+const PROFILE_PAGES = [
+  "profile-settings",
+  "track-order",
+  "my-orders",
+  "my-trips",
+  "wallet",
+  "loyalty-points",
+  "referral-code",
+  "coupons",
+  "inbox",
+  "subscription-plan",
+  "settings",
+  "my-farm",
+  "community-agent-earnings",
+  "saved-recipes",
 ];
 
 const ProfileBody = ({
@@ -121,9 +140,38 @@ const ProfileBody = ({
         />
       );
     }
+
+    if (page === "my-farm") {
+      return <MyFarm configData={configData} />;
+    }
+
+    if (page === "community-agent-earnings") {
+      return <CommunityAgentEarnings configData={configData} />;
+    }
+
+    if (page === "saved-recipes") {
+      return <SavedRecipes configData={configData} />;
+    }
+
+    if (page === "marketer-dashboard") {
+      return <MarketerDashboard configData={configData} />;
+    }
+
+    if (page === "marketer-leaderboard") {
+      return <MarketerLeaderboard configData={configData} />;
+    }
+
+    return null;
   };
+
+  const showNav =
+    PROFILE_PAGES.includes(page) ||
+    ORDER_DETAIL_PAGES.some((p) => page?.startsWith(p.split("?")[0])) ||
+    WALLET_PAGES.some((p) => page?.startsWith(p.split("?")[0])) ||
+    SUBSCRIPTION_PAGES.some((p) => page?.startsWith(p.split("?")[0]));
 
   return <Stack>{renderContent()}</Stack>;
 };
 
 export default ProfileBody;
+

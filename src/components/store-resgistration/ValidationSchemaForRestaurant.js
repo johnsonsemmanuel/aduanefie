@@ -112,6 +112,43 @@ const ValidationSchemaForRestaurant = () => {
 			.required(t("Confirm Password required"))
 			.oneOf([Yup.ref("password"), null], t("Passwords must match")),
 		
+		store_type: Yup.string().required(t("Store type is required")),
+		farm_name: Yup.string().when("store_type", {
+			is: "farm",
+			then: () => Yup.string().required(t("Farm name is required")),
+			otherwise: () => Yup.string().optional(),
+		}),
+		growing_area_sqm: Yup.number().when("store_type", {
+			is: "farm",
+			then: () => Yup.number().required(t("Growing area is required")),
+			otherwise: () => Yup.number().optional(),
+		}),
+		primary_crops: Yup.array().when("store_type", {
+			is: "farm",
+			then: () => Yup.array().min(1, t("Select at least one crop")).required(t("Primary crops are required")),
+			otherwise: () => Yup.array().optional(),
+		}),
+		farming_method: Yup.string().when("store_type", {
+			is: "farm",
+			then: () => Yup.string().required(t("Farming method is required")),
+			otherwise: () => Yup.string().optional(),
+		}),
+		farm_photos: Yup.array().when("store_type", {
+			is: "farm",
+			then: () => Yup.array().min(1, t("Upload at least one photo")).required(t("Farm photos are required")),
+			otherwise: () => Yup.array().optional(),
+		}),
+		ghana_card_number: Yup.string().when("store_type", {
+			is: "farm",
+			then: () => Yup.string().required(t("Ghana Card Number is required")).matches(/^GHA-[0-9A-Z]{9}-[0-9]$/, t("Invalid Ghana Card format")),
+			otherwise: () => Yup.string().optional(),
+		}),
+		ghana_card_image: Yup.mixed().when("store_type", {
+			is: "farm",
+			then: () => Yup.mixed().required(t("Ghana Card image is required")),
+			otherwise: () => Yup.mixed().optional(),
+		}),
+		referral_code: Yup.string().optional(),
 	});
 };
 

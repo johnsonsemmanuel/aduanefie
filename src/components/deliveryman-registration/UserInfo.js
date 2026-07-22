@@ -23,6 +23,7 @@ const UserInfo = ({
   image,
   setImage,
   handleFieldChange,
+  hideVehicle = false,
 }) => {
   const theme = useTheme();
   const {
@@ -250,32 +251,34 @@ const UserInfo = ({
                   }
                 />
               </Grid>
-              <Grid item xs={12} sm={6} >
-                <CustomSelectWithFormik
-                  required
-                  selectFieldData={vehicleListOptions}
-                  inputLabel={t("Select Vehicle Type")}
-                  passSelectedValue={(value) => {
-                    handleFieldChange("vehicle_id", value);
-                  }}
-                  touched={deliveryManFormik.touched.vehicle_id}
-                  errors={deliveryManFormik.errors.vehicle_id}
-                  fieldProps={deliveryManFormik.getFieldProps("vehicle_id")}
-                  placeholder={t("Select Vehicle Type")}
-                  startIcon={
-                    <DirectionsCarIcon
-                      sx={{
-                        color:
-                          deliveryManFormik.touched.vehicle_id &&
-                            !deliveryManFormik.errors.vehicle_id
-                            ? theme.palette.primary.main
-                            : alpha(theme.palette.neutral[400], 0.7),
-                        fontSize: "18px",
-                      }}
-                    />
-                  }
-                />
-              </Grid>
+              {!hideVehicle && (
+                <Grid item xs={12} sm={6} >
+                  <CustomSelectWithFormik
+                    required
+                    selectFieldData={vehicleListOptions}
+                    inputLabel={t("Select Vehicle Type")}
+                    passSelectedValue={(value) => {
+                      handleFieldChange("vehicle_id", value);
+                    }}
+                    touched={deliveryManFormik.touched.vehicle_id}
+                    errors={deliveryManFormik.errors.vehicle_id}
+                    fieldProps={deliveryManFormik.getFieldProps("vehicle_id")}
+                    placeholder={t("Select Vehicle Type")}
+                    startIcon={
+                      <DirectionsCarIcon
+                        sx={{
+                          color:
+                            deliveryManFormik.touched.vehicle_id &&
+                              !deliveryManFormik.errors.vehicle_id
+                              ? theme.palette.primary.main
+                              : alpha(theme.palette.neutral[400], 0.7),
+                          fontSize: "18px",
+                        }}
+                      />
+                    }
+                  />
+                </Grid>
+              )}
             </Grid>
           </Grid>
           <Grid

@@ -36,6 +36,7 @@ import { useRouter } from "next/router";
 import LastOrdersSection from "./food/LastOrdersSection";
 import QuickDeliverySection from "./food/QuickDeliverySection";
 import TopPicksSection from "./grocery/TopPicksSection";
+import OrganicSection from "./grocery/OrganicSection";
 import Brands from "../brands";
 import FlashSalesSection from "./ecommerce/FlashSalesSection";
 
@@ -200,6 +201,12 @@ const Grocery = (props) => {
           }}
         >
           <TopPicksSection />
+        </CustomContainer>
+      </S>
+
+      <S>
+        <CustomContainer>
+          <OrganicSection />
         </CustomContainer>
       </S>
 

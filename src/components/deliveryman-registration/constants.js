@@ -3,6 +3,7 @@ export const IDENTITY_TYPE = [
   { label: "Driving License", value: "driving_license" },
 
   { label: "NID", value: "nid" },
+  { label: "Ghana Card", value: "ghana_card" },
 ];
 
 export const DELIVERY_MAN_TYPE = [

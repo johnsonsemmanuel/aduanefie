@@ -22,6 +22,10 @@ import storeResDataReducer from "../slices/storeRegistrationData";
 import rentalCategoriesLists from "../slices/rentalCategories";
 import rentalSearch from "../slices/rentalSearch";
 import searchProductModalReducer from "../slices/searchProductModal";
+import savedRecipesReducer from "../slices/savedRecipes";
+import marketerDataReducer from "../slices/marketerData";
+import organicFilterReducer from "../slices/organicFilter";
+import recipeFilterReducer from "../slices/recipeFilter";
 
 //register all reducers here
 export const rootReducer = combineReducers({
@@ -48,4 +52,8 @@ export const rootReducer = combineReducers({
   rentalCategoriesLists: rentalCategoriesLists,
   rentalSearch: rentalSearch,
   searchProductModal: searchProductModalReducer,
+  savedRecipes: savedRecipesReducer,
+  marketerData: marketerDataReducer,
+  organicFilter: organicFilterReducer,
+  recipeFilter: recipeFilterReducer,
 });

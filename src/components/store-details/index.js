@@ -40,6 +40,12 @@ import useGetProActiveOffer from "api-manage/hooks/react-query/pro-plans/useGetP
 import useSubscribeProPlan from "api-manage/hooks/react-query/pro-plans/useSubscribeProPlan";
 import ProPlanBanner from "components/pro-plan/ProPlanBanner";
 import ProSavingsBanner from "components/pro-plan/ProSavingsBanner";
+import { shadows } from "@mui/system";
+import useGetFarmUpdates from "../../api-manage/hooks/react-query/farm/useGetFarmUpdates";
+import AgricultureIcon from "@mui/icons-material/Agriculture";
+import OrganicTag from "components/organic-tag";
+import CustomBadge from "components/cards/CustomBadge";
+import HarvestUpdatesFeed from "./HarvestUpdatesFeed";
 
 const ProPlanSubscriptionModal = dynamic(() =>
   import("components/pro-plan/ProPlanSubscriptionModal")
@@ -448,6 +454,56 @@ const StoreDetails = ({ storeDetails, configData }) => {
         />
       )} */}
       {topSection}
+      {storeDetails?.store_type === "farm" && (
+        <Box sx={{ mt: 2, mb: 1 }}>
+          <CustomStackFullWidth
+            sx={{
+              backgroundColor: theme.palette.neutral[100],
+              borderRadius: "8px",
+              boxShadow: shadows[1],
+              p: { xs: 1.5, sm: 2 },
+            }}
+          >
+            <Stack direction="row" alignItems="center" spacing={1} mb={1.5}>
+              <AgricultureIcon sx={{ color: theme.palette.primary.main, fontSize: "20px" }} />
+              <Typography fontSize="18px" fontWeight="600">
+                {storeDetails?.farm_name || t("Farm Store")}
+              </Typography>
+              {storeDetails?.is_organic_badge_active && storeDetails?.complaint_count_30d < 3 && (
+                <CustomBadge top={0} left={0} text={t("Organic")} />
+              )}
+            </Stack>
+            <Grid container spacing={2}>
+              {storeDetails?.neighbourhood && (
+                <Grid item xs={12} sm={6} md={3}>
+                  <Typography fontSize="12px" color="text.secondary">{t("Neighbourhood")}</Typography>
+                  <Typography fontSize="14px" fontWeight="500">{storeDetails.neighbourhood}</Typography>
+                </Grid>
+              )}
+              {storeDetails?.growing_area_sqm && (
+                <Grid item xs={12} sm={6} md={3}>
+                  <Typography fontSize="12px" color="text.secondary">{t("Growing Area")}</Typography>
+                  <Typography fontSize="14px" fontWeight="500">{`${storeDetails.growing_area_sqm} ${t("sqm")}`}</Typography>
+                </Grid>
+              )}
+              {storeDetails?.farming_method && (
+                <Grid item xs={12} sm={6} md={3}>
+                  <Typography fontSize="12px" color="text.secondary">{t("Farming Method")}</Typography>
+                  <Typography fontSize="14px" fontWeight="500" sx={{ textTransform: "capitalize" }}>{storeDetails.farming_method}</Typography>
+                </Grid>
+              )}
+              {storeDetails?.primary_crops?.length > 0 && (
+                <Grid item xs={12} sm={6} md={3}>
+                  <Typography fontSize="12px" color="text.secondary">{t("Primary Crops")}</Typography>
+                  <Typography fontSize="14px" fontWeight="500">{storeDetails.primary_crops.join(", ")}</Typography>
+                </Grid>
+              )}
+            </Grid>
+          </CustomStackFullWidth>
+
+          <HarvestUpdatesFeed storeId={storeDetails?.id} />
+        </Box>
+      )}
       {proFeatureEnabled &&
         (activeOffer?.status === true ? (
           <Box sx={{ pt: 2 }}>

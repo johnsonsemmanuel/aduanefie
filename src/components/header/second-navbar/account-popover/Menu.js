@@ -28,6 +28,7 @@ const Menu = ({ onClose, cartListRefetch }) => {
   const [openModal, setOpenModal] = useState(false);
   const [isLogoutLoading, setIsLogoutLoading] = useState(false);
   const { configData, modules } = useSelector((state) => state.configData);
+  const { profileInfo } = useSelector((state) => state.profileInfo);
 
   const handleLogout = async () => {
     setIsLogoutLoading(true);
@@ -82,7 +83,12 @@ const Menu = ({ onClose, cartListRefetch }) => {
               item.id === 3) ||
             (modules?.find((item) => item?.module_type === "rental")?.status ===
               0 &&
-              item.id === 3)
+              item.id === 3) ||
+            (profileInfo?.store_type !== "farm" && item.id === 13) ||
+            (profileInfo?.account_type !== "community_agent" && item.id === 14) ||
+            (configData?.recipe_module_status === 0 && item.id === 15) ||
+            (profileInfo?.account_type !== "marketer" && item.id === 16) ||
+            (profileInfo?.account_type !== "marketer" && item.id === 17)
           ) {
             return null;
           } else {

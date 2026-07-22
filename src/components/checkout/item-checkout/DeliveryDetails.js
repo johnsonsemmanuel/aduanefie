@@ -24,6 +24,7 @@ import { getToken } from "helper-functions/getToken";
 import LockIcon from "@mui/icons-material/Lock";
 import InstantDelivery from "./InstantDelivery";
 import DeliverySpeedOptions from "./DeliverySpeedOptions";
+import CommunityDeliveryOption from "../CommunityDeliveryOption";
 
 const DeliveryDetails = (props) => {
   const {
@@ -196,6 +197,12 @@ const DeliveryDetails = (props) => {
         orderType={orderType}
         deliveryFee={deliveryFee}
         couponDiscount={couponDiscount}
+        selectedDeliveryOption={selectedDeliveryOption}
+        setSelectedDeliveryOption={setSelectedDeliveryOption}
+      />
+      <CommunityDeliveryOption
+        address={address}
+        zoneData={zoneData}
         selectedDeliveryOption={selectedDeliveryOption}
         setSelectedDeliveryOption={setSelectedDeliveryOption}
       />

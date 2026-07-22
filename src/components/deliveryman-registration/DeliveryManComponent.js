@@ -22,10 +22,13 @@ import {
 import { objectToFormData } from "helper-functions/objectToFormData";
 import { FORM_TITLE } from "./constants";
 import useScrollToTop from "api-manage/hooks/custom-hooks/useScrollToTop";
+import CommunityZoneInfo from "./CommunityZoneInfo";
+import MobileMoneySelector from "components/common/MobileMoneySelector";
 
 const DeliveryManComponent = ({
   configData,
   applicationTitle = "Deliveryman Application",
+  registrationType = "delivery_man",
 }) => {
   useScrollToTop();
   const router = useRouter();
@@ -34,6 +37,7 @@ const DeliveryManComponent = ({
   const [identityImage, setIdentityImage] = useState("");
   const { mutate: registerDeliveryman, isLoading } =
     usePostDeliveryManRegisterInfo();
+  const isCommunityAgent = registrationType === "community_agent";
   const deliveryManFormik = useFormik({
     initialValues: {
       f_name: "",
@@ -48,14 +52,17 @@ const DeliveryManComponent = ({
       phone: "",
       password: "",
       confirm_password: "",
-      type: "is_delivery",
+      type: isCommunityAgent ? "community_agent" : "is_delivery",
+      region: "",
+      community_zone_id: "",
+      momo_network: "",
+      momo_number: "",
     },
     validationSchema: deliveryManValidationSchema(),
     validationOptions: {
-      abortEarly: false, // ✅ THIS IS THE KEY
+      abortEarly: false,
     },
     onSubmit: async (values, helpers) => {
-      
       try {
         const { confirm_password, ...modifiedValues } = values;
         registerDeliveryman(objectToFormData(modifiedValues), {
@@ -88,7 +95,7 @@ const DeliveryManComponent = ({
     <>
       <TitleTopSection>
         <H1
-          text={t(applicationTitle)}
+          text={t(isCommunityAgent ? "Community Agent Application" : applicationTitle)}
           sx={{
             fontWeight: "700",
             fontSize: { xs: "26px", md: "36px" },
@@ -111,9 +118,23 @@ const DeliveryManComponent = ({
                     setImage,
                   }}
                   handleFieldChange={handleFieldChange}
+                  hideVehicle={isCommunityAgent}
                 />
               }
             />
+            {isCommunityAgent && (
+              <DeliverymanFormWrapper
+                title={t("Community Zone Information")}
+                component={
+                  <CommunityZoneInfo
+                    handleFieldChange={handleFieldChange}
+                    values={deliveryManFormik.values}
+                    touched={deliveryManFormik.touched}
+                    errors={deliveryManFormik.errors}
+                  />
+                }
+              />
+            )}
             <DeliverymanFormWrapper
               title={FORM_TITLE.identityInfo}
               component={
@@ -127,6 +148,19 @@ const DeliveryManComponent = ({
                 />
               }
             />
+            {isCommunityAgent && (
+              <DeliverymanFormWrapper
+                title={t("Payout Details")}
+                component={
+                  <MobileMoneySelector
+                    formik={deliveryManFormik}
+                    networkField="momo_network"
+                    accountField="momo_number"
+                    handleFieldChange={handleFieldChange}
+                  />
+                }
+              />
+            )}
             <DeliverymanFormWrapper
               title={FORM_TITLE.accountInfo}
               component={
@@ -166,7 +200,7 @@ const DeliveryManComponent = ({
                 fontWeight: "500",
                 fontSize: "14px",
                 "&:hover": {
-                  background: (theme) => theme.palette.primary.dark, // set hover color here
+                  background: (theme) => theme.palette.primary.dark,
                 },
               }}
             >

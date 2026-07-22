@@ -11,9 +11,14 @@ import { useGetConfigData } from "api-manage/hooks/useGetConfigData";
 import { setConfigData } from "redux/slices/configData";
 import { getCommonServerSideProps } from "utils/serverSidePropsHelper";
 import { processMetadata } from "utils/fetchPageMetaData";
+import { ToggleButtonGroup, ToggleButton, Box, useMediaQuery, useTheme } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 const Index = ({ metaData }) => {
-
+  const [registrationType, setRegistrationType] = useState("delivery_man");
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down("md"));
 
   const dispatch = useDispatch();
   const { landingPageData, configData } = useSelector(
@@ -47,11 +52,74 @@ const Index = ({ metaData }) => {
         configData={configData}
       />
       <MainLayout configData={configData} >
-        <SimpleMobileHeader title="Deliveryman Application" />
+        <SimpleMobileHeader title={registrationType === "community_agent" ? t("Community Agent Application") : t("Deliveryman Application")} />
         <NoSsr>
           <CustomContainer>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                mb: { xs: 2, md: 3 },
+                mt: { xs: 1, md: 2 },
+              }}
+            >
+              <ToggleButtonGroup
+                value={registrationType}
+                exclusive
+                onChange={(_, value) => value && setRegistrationType(value)}
+                aria-label="registration type"
+                sx={{
+                  backgroundColor: (theme) => theme.palette.neutral[100],
+                  borderRadius: "8px",
+                  p: "4px",
+                  gap: "4px",
+                }}
+              >
+                <ToggleButton
+                  value="delivery_man"
+                  aria-label="delivery person"
+                  sx={{
+                    px: { xs: 2, md: 3 },
+                    py: 1,
+                    fontSize: { xs: "13px", md: "14px" },
+                    fontWeight: 500,
+                    borderRadius: "6px",
+                    color: registrationType === "delivery_man" ? "primary.main" : "text.secondary",
+                    backgroundColor: registrationType === "delivery_man" ? "background.paper" : "transparent",
+                    boxShadow: registrationType === "delivery_man" ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
+                    "&.Mui-selected": {
+                      backgroundColor: "background.paper",
+                      color: "primary.main",
+                    },
+                  }}
+                >
+                  {t("Delivery Person")}
+                </ToggleButton>
+                <ToggleButton
+                  value="community_agent"
+                  aria-label="community agent"
+                  sx={{
+                    px: { xs: 2, md: 3 },
+                    py: 1,
+                    fontSize: { xs: "13px", md: "14px" },
+                    fontWeight: 500,
+                    borderRadius: "6px",
+                    color: registrationType === "community_agent" ? "primary.main" : "text.secondary",
+                    backgroundColor: registrationType === "community_agent" ? "background.paper" : "transparent",
+                    boxShadow: registrationType === "community_agent" ? "0 1px 3px rgba(0,0,0,0.08)" : "none",
+                    "&.Mui-selected": {
+                      backgroundColor: "background.paper",
+                      color: "primary.main",
+                    },
+                  }}
+                >
+                  {t("Community Agent")}
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
             <DeliveryManComponent
               configData={configData}
+              registrationType={registrationType}
             />
           </CustomContainer>
         </NoSsr>

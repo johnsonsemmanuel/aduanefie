@@ -188,3 +188,32 @@ export const ai_chat_conversations_api =
   "/api/v1/customer/ai-chat/conversations";
 export const ai_chat_messages_api = "/api/v1/customer/ai-chat/messages";
 export const ai_chat_send_api = "/api/v1/customer/ai-chat/send";
+
+
+// Zone & Community Delivery
+export const community_zones_api = "/api/v1/community-zones";
+export const community_zone_by_zone_api = "/api/v1/community-zones/by-zone";
+export const community_delivery_check_api = "/api/v1/community-delivery/check";
+export const agent_earnings_api = "/api/v1/community-agent/earnings";
+
+// Farming & Organic
+export const organic_items_api = "/api/v1/items/organic";
+export const organic_stores_api = "/api/v1/stores/organic";
+export const farm_updates_api = "/api/v1/stores/farm-updates";
+export const farm_input_products_api = "/api/v1/items/farm-inputs";
+
+// Recipes
+export const recipe_list_api = "/api/v1/recipes";
+export const recipe_detail_api = "/api/v1/recipes/details";
+export const recipe_ingredients_api = "/api/v1/recipes/ingredients";
+export const save_recipe_api = "/api/v1/customer/saved-recipes/add";
+export const saved_recipes_list_api = "/api/v1/customer/saved-recipes";
+export const remove_saved_recipe_api = "/api/v1/customer/saved-recipes/remove";
+
+// Marketers
+export const marketer_registration_api = "/api/v1/auth/marketer/register";
+export const marketer_dashboard_api = "/api/v1/marketer/dashboard";
+export const marketer_referrals_api = "/api/v1/marketer/referrals";
+export const marketer_payout_request_api = "/api/v1/marketer/payout/request";
+export const marketer_payout_history_api = "/api/v1/marketer/payout/history";
+export const marketer_leaderboard_api = "/api/v1/marketer/leaderboard";

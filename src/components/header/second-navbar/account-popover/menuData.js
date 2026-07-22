@@ -9,6 +9,10 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import LocalTaxiIcon from "@mui/icons-material/LocalTaxi";
 import EmojiEventsRoundedIcon from "@mui/icons-material/EmojiEventsRounded";
+import AgricultureIcon from "@mui/icons-material/Agriculture";
+import PeopleIcon from "@mui/icons-material/People";
+import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
+import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 
 // `name` is the routing/page key (kebab-case, must stay stable for `page=...`
 // query routing and the active-menu highlight check). `label` is the
@@ -69,6 +73,41 @@ export const menuData = [
     label: "Loyalty Points",
     icon: <LoyaltyIcon />,
     path: "/loyalty-points",
+  },
+  {
+    id: 13,
+    name: "my-farm",
+    label: "My Farm",
+    icon: <AgricultureIcon />,
+    path: "/profile?page=my-farm",
+  },
+  {
+    id: 14,
+    name: "community-agent-earnings",
+    label: "Agent Earnings",
+    icon: <PeopleIcon />,
+    path: "/profile?page=community-agent-earnings",
+  },
+  {
+    id: 15,
+    name: "saved-recipes",
+    label: "Saved Recipes",
+    icon: <RestaurantMenuIcon />,
+    path: "/profile?page=saved-recipes",
+  },
+  {
+    id: 16,
+    name: "marketer-dashboard",
+    label: "Marketer Dashboard",
+    icon: <EmojiEventsIcon />,
+    path: "/profile?page=marketer-dashboard",
+  },
+  {
+    id: 17,
+    name: "marketer-leaderboard",
+    label: "Leaderboard",
+    icon: <EmojiEventsRoundedIcon />,
+    path: "/profile?page=marketer-leaderboard",
   },
   {
     id: 7,

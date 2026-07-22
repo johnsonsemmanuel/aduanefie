@@ -106,6 +106,32 @@ const deliveryManValidationSchema = () => {
         if (!file) return false;
         return file.size <= 1024 * 1024;
       }),
+
+    type: Yup.string().required("Type is required"),
+
+    vehicle_id: Yup.string().when("type", {
+      is: "community_agent",
+      then: () => Yup.string().optional(),
+      otherwise: () => Yup.string().required("Vehicle selection is required"),
+    }),
+
+    community_zone_id: Yup.string().when("type", {
+      is: "community_agent",
+      then: () => Yup.string().required("Community zone is required"),
+      otherwise: () => Yup.string().optional(),
+    }),
+
+    momo_network: Yup.string().when("type", {
+      is: "community_agent",
+      then: () => Yup.string().required("Mobile money network is required"),
+      otherwise: () => Yup.string().optional(),
+    }),
+
+    momo_number: Yup.string().when("type", {
+      is: "community_agent",
+      then: () => Yup.string().required("Mobile money number is required"),
+      otherwise: () => Yup.string().optional(),
+    }),
   });
 };
 

@@ -10,7 +10,8 @@
     "i18n:scan": "node i18n-scan.js",
     "i18n:watch": "node i18n-watch.js",
     "type-check": "tsc --noEmit",
-    "type-check:watch": "tsc --noEmit --watch"
+    "type-check:watch": "tsc --noEmit --watch",
+    "test": "node --test src/**/*.test.js"
   },
   "dependencies": {
     "@emotion/cache": "^11.10.5",

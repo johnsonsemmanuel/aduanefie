@@ -29,6 +29,8 @@ import useGetZoneList from "api-manage/hooks/react-query/zone-list/zone-list";
 import { ActonButtonsSection } from "components/deliveryman-registration/CustomStylesDeliveryman";
 import BusinessTin from "components/store-resgistration/BusinessTin";
 import { shadows } from "@mui/system";
+import StoreTypeSelector from "components/store-resgistration/StoreTypeSelector";
+import FarmFields from "components/store-resgistration/FarmFields";
 
 export const generateInitialValues = (languages, allData) => {
   const initialValues = {
@@ -53,6 +55,15 @@ export const generateInitialValues = (languages, allData) => {
     tin: allData?.tin || "",
     tin_expire_date: allData?.tin_expire_date || "",
     tin_certificate_image: allData?.tin_certificate_image || "",
+    store_type: allData?.store_type || "default",
+    farm_name: allData?.farm_name || "",
+    growing_area_sqm: allData?.growing_area_sqm || "",
+    primary_crops: allData?.primary_crops || [],
+    farming_method: allData?.farming_method || "",
+    farm_photos: allData?.farm_photos || [],
+    ghana_card_number: allData?.ghana_card_number || "",
+    ghana_card_image: allData?.ghana_card_image || "",
+    referral_code: allData?.referral_code || "",
   };
 
   // Set initial values for each language
@@ -362,6 +373,8 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
     RestaurantJoinFormik.resetForm();
     setSelectedDates(null);
     dispatch(setInZone(null));
+    dispatch(setStoreType("default"));
+    dispatch(setFarmFields({}));
   };
   useEffect(() => {
     if (showZoneWarning || !inZone) {
@@ -369,6 +382,20 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
       RestaurantJoinFormik.setFieldValue("restaurant_address", null);
     }
   }, [showZoneWarning]);
+
+  const handleFieldChange = (fieldName, value) => {
+    RestaurantJoinFormik.setFieldValue(fieldName, value);
+    if (fieldName === "store_type") {
+      dispatch(setStoreType(value));
+      if (value !== "farm") {
+        dispatch(setFarmFields({}));
+      }
+    }
+    if (["farm_name", "growing_area_sqm", "primary_crops", "farming_method", "farm_photos", "ghana_card_number", "ghana_card_image"].includes(fieldName)) {
+      const currentFarmFields = { ...RestaurantJoinFormik.values };
+      dispatch(setFarmFields(currentFarmFields));
+    }
+  };
 
   return (
     <CustomStackFullWidth
@@ -392,6 +419,20 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
 
           <CustomStackFullWidth padding="1rem" mt=".5rem">
             <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <StoreTypeSelector
+                  formik={RestaurantJoinFormik}
+                  handleFieldChange={handleFieldChange}
+                />
+              </Grid>
+              {RestaurantJoinFormik.values.store_type === "farm" && (
+                <Grid item xs={12}>
+                  <FarmFields
+                    RestaurantJoinFormik={RestaurantJoinFormik}
+                    handleFieldChange={handleFieldChange}
+                  />
+                </Grid>
+              )}
               <Grid item xs={12} md={6}>
                 <RestaurantDetailsForm
                   RestaurantJoinFormik={RestaurantJoinFormik}
@@ -502,6 +543,32 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
             file={file}
             setPreview={setPreview}
           />
+        </CustomStackFullWidth>
+        <CustomStackFullWidth
+          mt="20px"
+          sx={{
+            backgroundColor: theme.palette.neutral[100],
+            borderRadius: "8px",
+            boxShadow: shadows[1],
+          }}
+        >
+          <Grid container spacing={3} p={2}>
+            <Grid item xs={12} md={6}>
+              <CustomTextFieldWithFormik
+                labelColor={alpha(theme.palette.neutral[1000], 0.8)}
+                backgroundColor
+                placeholder={t("Referral Code (optional)")}
+                type="text"
+                label={t("Referral Code")}
+                value={RestaurantJoinFormik.values.referral_code}
+                touched={RestaurantJoinFormik.touched.referral_code}
+                errors={RestaurantJoinFormik.errors.referral_code}
+                fieldProps={RestaurantJoinFormik.getFieldProps("referral_code")}
+                onChangeHandler={(value) => handleFieldChange("referral_code", value)}
+                fontSize="12px"
+              />
+            </Grid>
+          </Grid>
         </CustomStackFullWidth>
         <Grid item md={12} xs={12} mt="1rem" align="end"
           sx={{
