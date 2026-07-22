@@ -141,7 +141,7 @@ const FloatingCartButton = () => {
                 top: "-8px",
                 insetInlineEnd: "-8px",
                 borderRadius: "9999px",
-                backgroundColor: "#039d55",
+                backgroundColor: "#8b9f69",
                 border: `2px solid ${theme.palette.background.paper}`,
                 display: "flex",
                 alignItems: "center",
