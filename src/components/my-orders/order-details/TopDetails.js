@@ -82,9 +82,7 @@ const TopDetails = (props) => {
   const { orderDetailsModal, offlineInfoStep } = useSelector(
     (state) => state.offlinePayment
   );
-  console.log({ orderDetailsModal });
   const { profileInfo } = useSelector((state) => state.profileInfo);
-  console.log({ profileInfo });
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
   const [cancelOpenModal, setCancelOpenModal] = useState(false);
   const [openModalForPayment, setModalOpenForPayment] = useState();
@@ -102,7 +100,6 @@ const TopDetails = (props) => {
     isLoading: postParcelReturnLoading,
   } = usePostParcelReturn();
 
-  console.log({ paymentFailedData });
   const handlePostParcelReturn = () => {
     const formData = {
       guest_id: getGuestId(),
@@ -317,7 +314,6 @@ const TopDetails = (props) => {
       router,
     });
   };
-  console.log({ orderDetailsModal });
   return (
     <CustomStackFullWidth
       alignItems="center"

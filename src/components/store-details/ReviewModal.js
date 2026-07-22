@@ -82,7 +82,6 @@ const RestaurantReviewModal = ({
   const [isWishlisted, setIsWishlisted] = useState(false);
   const { mutate: addFavoriteMutation } = useAddToWishlist();
   const { mutate } = useWishListDelete();
-  console.log({ productData });
 
   useEffect(() => {
     refetch();
@@ -106,7 +105,6 @@ const RestaurantReviewModal = ({
     return percentRate ? ((percentRate / total) * 100).toFixed(1) : 0;
   };
   const handleClick = (itemReview) => {
-    console.log({ itemReview });
 
     setProductData(itemReview);
 

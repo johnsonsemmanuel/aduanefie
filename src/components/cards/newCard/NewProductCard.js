@@ -1418,7 +1418,6 @@ const NewProductCard = ({
   // ── Cart add success handler ──
   const handleAddSuccess = (res) => {
     if (!res) return;
-    console.log({ res });
 
     let product = {};
     res.forEach((i) => {

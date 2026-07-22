@@ -55,7 +55,6 @@ const DeliveryManComponent = ({
       abortEarly: false, // ✅ THIS IS THE KEY
     },
     onSubmit: async (values, helpers) => {
-      console.log({values});
       
       try {
         const { confirm_password, ...modifiedValues } = values;

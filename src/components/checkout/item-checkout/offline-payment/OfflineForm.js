@@ -114,7 +114,6 @@ const OfflineForm = ({
         dispatch(setOrderInformation({ ...orderInformation, ...newData }));
         handleOffineOrder(newData);
       } catch (err) {
-        // console.log(error);
       }
     },
   });

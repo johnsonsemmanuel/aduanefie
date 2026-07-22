@@ -63,7 +63,6 @@ const RateAndReview = ({ onAllItemsReviewed, trackData }) => {
       });
     }
   };
-  console.log({ trackOrderData });
 
   return (
     <CustomStackFullWidth

@@ -27,7 +27,6 @@ const Index = ({ configData, metaData }) => {
   if (!configData) {
     return <div>{t("Configuration data is not available")}</div>;
   }
-  console.log({metadata,configData});
   
 
   return (

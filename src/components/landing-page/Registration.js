@@ -31,7 +31,6 @@ export const ImageContainer = styled(Box)(({ theme }) => ({
 
 const Registration = ({ seller_app_download_section }) => {
   const theme = useTheme();
-  console.log({ seller_app_download_section });
   return (
     <Box
       sx={{

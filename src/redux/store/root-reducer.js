@@ -5,7 +5,7 @@ import cartReducer from "../slices/cart";
 import cashbackReducer from "../slices/cashbackList";
 import categoryIdsReducer from "../slices/categoryIds";
 import configDataReducer from "../slices/configData";
-import exampleReducer from "../slices/example";
+
 import fbCredentialSliceReducer from "../slices/fbCredentials";
 import guestUserReducer from "../slices/guestUserInfo";
 import languageChangeReducer from "../slices/languageChange";
@@ -25,7 +25,7 @@ import searchProductModalReducer from "../slices/searchProductModal";
 
 //register all reducers here
 export const rootReducer = combineReducers({
-  example: exampleReducer,
+
   themeSettings: themeSettingsReducer,
   configData: configDataReducer,
   parcelInfoData: parcelInfoDataReducer,

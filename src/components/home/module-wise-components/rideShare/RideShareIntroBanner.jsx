@@ -25,7 +25,6 @@ const getPointsData = (pointsData) => {
 };
 
 const RideShareIntroBanner = ({ configData, appUrl }) => {
-  console.log({ appUrl });
   const customerData =
     configData?.react_ride_share_page?.customer?.hero_section || {};
   const riderData =

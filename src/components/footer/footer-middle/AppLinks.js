@@ -33,7 +33,6 @@ export const CustomButton = styled(Button)(({ theme, graybackground }) => ({
 const AppLinks = (props) => {
   const { graybackground, landingPageData, align = "center" } = props;
   const theme = useTheme();
-  console.log({ landingPageData });
 
   let language_direction;
   if (typeof window !== "undefined") {
@@ -134,7 +133,6 @@ const AppLinks = (props) => {
   const showPlayStore = Number(landingPageData?.play_status) === 1;
   const showAppStore = Number(landingPageData?.app_status) === 1;
 
-  // console.log({ showPlayStore, showAppStore });
   return (
     <Stack
       direction="row"

@@ -209,7 +209,6 @@ const TooltipTypography = ({ children, text, placement, arrow }) => {
       setIsEllipsis(isOverflowing);
     }
   }, [text]);
-  console.log({ isEllipsis });
   return (
     <PrimaryToolTip
       text={isEllipsis ? text : ""}

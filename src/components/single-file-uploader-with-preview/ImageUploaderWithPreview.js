@@ -17,7 +17,6 @@ const ImageUploaderWithPreview = ({
   marginLeft,
 }) => {
   const imageContainerRef = useRef();
-  console.log({ error })
   return (
     <>
       <ImagePreviewer

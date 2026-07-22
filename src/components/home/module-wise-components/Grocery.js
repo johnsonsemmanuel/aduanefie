@@ -86,7 +86,6 @@ const Grocery = (props) => {
   }, [visitedStores, newStore?.stores, moduleId]);
 
   const isSmallScreen = useMediaQuery("(max-width:600px)");
-  console.log({ configData });
 
   const overviewContent = (
     <Stack gap={{ xs: "16px", lg: "32px" }}>

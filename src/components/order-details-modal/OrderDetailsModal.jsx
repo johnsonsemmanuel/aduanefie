@@ -46,7 +46,6 @@ const OrderDetailsModal = ({ orderDetailsModalOpen }) => {
     dispatch(setOrderDetailsModalOpen(false));
     router.push(href, undefined, { shallow: true });
   };
-  console.log({orderDetailsModal});
   useEffect(() => {
     if (token) {
       try {

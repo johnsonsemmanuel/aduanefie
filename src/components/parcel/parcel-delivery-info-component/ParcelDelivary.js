@@ -200,7 +200,6 @@ const PercelDelivery = ({ configData }) => {
       userDecisionTimeout: 5000,
       isGeolocationEnabled: true,
     });
-  console.log("proOfferResolved", proOfferResolved);
   const addAddressFormik = useFormik({
     initialValues: {
       senderName: token
@@ -239,7 +238,6 @@ const PercelDelivery = ({ configData }) => {
       await formSubmitHandler(values);
     },
   });
-  console.log({ parcelInfo });
   useEffect(() => {
     const currentLocationLatLng = JSON.parse(
       localStorage.getItem("currentLatLng")
@@ -347,7 +345,6 @@ const PercelDelivery = ({ configData }) => {
     setSenderFormattedAddress(currentLocation);
   };
   const handleReceiverLocation = (location, currentLocation) => {
-    console.log({ location, currentLocation });
 
     setReceiverLocation(location);
     setReceiverFormattedAddress(currentLocation);
@@ -366,8 +363,6 @@ const PercelDelivery = ({ configData }) => {
     zoneid = localStorage.getItem("zoneid");
     currentLocation = JSON.parse(localStorage.getItem("currentLatLng"));
   }
-  console.log({ parcelCategories });
-  console.log({ receiverLocation });
 
   const formSubmitHandler = (values) => {
     if (!parcelCategories?.id) {

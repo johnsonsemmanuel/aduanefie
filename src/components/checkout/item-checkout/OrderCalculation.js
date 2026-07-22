@@ -108,7 +108,6 @@ const OrderCalculation = (props) => {
   const activeOffer = activeOfferRaw?.data ?? activeOfferRaw ?? null;
   const isProActive = activeOffer?.status === true;
   const proBenefit = activeOffer?.benefit ?? null;
-  console.log("[PRO-OFFER]", { activeOffer, isProActive, proBenefit });
 
   // Backend shape: {type, offer_type ("free" | "partial_free"),
   // charge_discount_percentage, min_order_status, min_order_amount}.
@@ -408,7 +407,6 @@ const OrderCalculation = (props) => {
       return getAmountWithSign(couponDiscountValue);
     }
   };
-  console.log("ddd", handleCouponDiscount());
 
   const totalAmountForRefer = couponDiscount
     ? handlePurchasedAmount(cartList) -
@@ -522,7 +520,6 @@ const OrderCalculation = (props) => {
       ? `. ${surgePrice?.customer_note} `
       : ""
   }${proDeliveryTooltipText}`;
-  console.log({ proCoversDelivery });
 
   return (
     <>

@@ -47,11 +47,9 @@ const CheckoutFailedCard = ({
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { data: cancelReasonsData, refetch } = useGetOrderCancelReason();
-  console.log({ id });
   const { guestUserInfo } = useSelector((state) => state.guestUserInfo);
   const { refetch: refetchFailedPayment, data: failPayment } =
     useGetFailedPayment(id, (res) => {
-      console.log(res);
       if (res) {
         setPaymentFailedData?.(res);
       }
@@ -112,7 +110,6 @@ const CheckoutFailedCard = ({
     handleCancelSuccess();
     //setOpenModal(true);
   };
-  console.log(failPayment);
   const handleOnSuccess = () => {
     if (failPayment?.maximum_cod_order_amount > failPayment?.order_amount) {
       paymentMethodUpdateMutation(formData, {

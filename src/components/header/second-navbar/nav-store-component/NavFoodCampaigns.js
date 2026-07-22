@@ -15,7 +15,6 @@ const NavFoodCampaigns = ({ campaigns, isLoading }) => {
   const theme = useTheme();
 
   const handleClick = (e, item) => {
-    console.log({item});
     
     e.stopPropagation();
     router.push(

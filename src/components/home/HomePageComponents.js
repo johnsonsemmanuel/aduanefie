@@ -30,6 +30,7 @@ import FoodModule from "./module-wise-components/food";
 import Parcel from "./module-wise-components/parcel/Index";
 import Pharmacy from "./module-wise-components/pharmacy/Pharmacy";
 
+import toast from "react-hot-toast";
 import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
 import { GoogleApi } from "api-manage/hooks/react-query/googleApi";
 import useGetOfflinePaymentOptions from "api-manage/hooks/react-query/offlinePayment/useGetOfflinePaymentOptions";

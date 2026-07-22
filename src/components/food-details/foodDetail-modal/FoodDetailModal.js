@@ -68,7 +68,6 @@ const FoodDetailModal = ({
   isWishlisted,
   setOpenLocationAlert,
 }) => {
-  console.log({ fromCard });
   const router = useRouter();
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -100,7 +99,6 @@ const FoodDetailModal = ({
     location = localStorage.getItem("location");
   }
   const handleSuccessItem = (resData) => {};
-  console.log({ fromCard, imageBaseUrl });
   const params = {
     id: fromCard?.id,
   };
@@ -134,7 +132,6 @@ const FoodDetailModal = ({
       );
     } else {
       if (data) {
-        console.log({ data });
         handleInitialTotalPriceVarPriceQuantitySet(
           data,
           setModalData,
@@ -153,7 +150,6 @@ const FoodDetailModal = ({
     //initially setting these states to use further
   }, [product, data]);
 
-  console.log({ totalPrice });
 
   const notify = (i) => toast(i);
   const itemValuesHandler = (itemIndex, variationValues) => {

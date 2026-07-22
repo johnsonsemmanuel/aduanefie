@@ -2,7 +2,6 @@
 import React from "react";
 
 const DollarSignHighlighter = ({ theme, text }) => {
-  // console.log({ text });
 
   return (
     <>
@@ -10,7 +9,6 @@ const DollarSignHighlighter = ({ theme, text }) => {
         text.split(/\s+/).map((part, index) => {
           // Check if the word contains at least one dollar sign
           const isMatch = part.includes("$");
-          // console.log({ part, isMatch });
 
           const normalizedPart = part.replaceAll("$", "");
           return (

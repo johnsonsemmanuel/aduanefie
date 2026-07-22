@@ -95,7 +95,6 @@ const MapModal = ({
     searchKey,
     enabled
   );
-  console.log({ predictions });
 
   const dispatch = useDispatch();
   const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =

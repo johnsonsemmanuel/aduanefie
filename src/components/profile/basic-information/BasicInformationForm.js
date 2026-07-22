@@ -140,7 +140,6 @@ const BasicInformationForm = ({
         {
           size: "invisible",
           callback: (response) => {
-            // console.log("Recaptcha verified", response);
           },
           "expired-callback": () => {
             window.recaptchaVerifier?.reset();

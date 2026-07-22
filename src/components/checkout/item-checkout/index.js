@@ -185,7 +185,6 @@ const ItemCheckout = (props) => {
         .oneOf([Yup.ref("password"), null], t("Passwords must match")),
     }),
   });
-  console.log({ couponDiscount });
 
   const currentModuleType = getCurrentModuleType();
   const storeId =
@@ -246,7 +245,6 @@ const ItemCheckout = (props) => {
       enabled: Boolean(currentLatLng?.lat && currentLatLng?.lng),
     }
   );
-  console.log({ zoneData, storeData });
 
   const {
     data: distanceData,
@@ -298,7 +296,6 @@ const ItemCheckout = (props) => {
     }
   );
 
-  console.log({ address });
 
   useEffect(() => {
     const currentLatLng = JSON.parse(localStorage.getItem("currentLatLng"));
@@ -405,7 +402,6 @@ const ItemCheckout = (props) => {
       };
     });
   };
-  console.log({});
   const handleOrderMutationObject = (carts, productList) => {
     const guestId = getToken() ? "" : guest_id;
     const isDigital =
@@ -895,7 +891,6 @@ const ItemCheckout = (props) => {
   const handleImageUpload = (value) => {
     setIsImageSelected([value]);
   };
-  console.log({ payableAmount });
 
   const handlePartialPayment = () => {
     if (

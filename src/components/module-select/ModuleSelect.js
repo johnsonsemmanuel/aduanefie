@@ -127,7 +127,6 @@ const ModuleSelect = ({
       }
     }
   }
-  console.log("vvvv", data);
   const filteredModules = filterOutRiderShareModules(data);
   const modulesToShow = currentZoneIds
     ? zoneWiseModule(filteredModules)

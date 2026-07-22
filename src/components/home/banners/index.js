@@ -67,7 +67,6 @@ const Banners = ({ feature }) => {
       refetchBannerData();
     }
   }, [banners]);
-  console.log({ data, bannersData });
   useEffect(() => {
     if (data) {
       dispatch(setBanners(data));

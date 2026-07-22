@@ -67,7 +67,6 @@ const DeliveryInfo = ({
   walletBalance,
   payableAmount,
 }) => {
-  console.log({ walletBalance });
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -95,7 +94,6 @@ const DeliveryInfo = ({
   const handleCheckbox = (e) => {
     setCheck(e.target.checked);
   };
-  console.log({ zoneData });
   const handlePartialPayment = () => {
     return;
     // if (payableAmount > customerData?.data?.wallet_balance) {

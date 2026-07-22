@@ -28,14 +28,12 @@ const RunningCampaigns = () => {
   const router = useRouter();
   const { runningCampaigns } = useSelector((state) => state.storedData);
   const dispatch = useDispatch();
-  console.log({data});
   
 
   useEffect(() => {
     dispatch(setRunningCampaigns(data));
   }, [data]);
   const handleClick = (product) => {
-    console.log({campaignsData});
     
     if (getCurrentModuleType() === "ecommerce") {
       dispatch(setCampaignItem(product));

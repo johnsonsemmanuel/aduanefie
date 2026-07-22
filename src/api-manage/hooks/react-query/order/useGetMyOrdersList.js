@@ -7,7 +7,6 @@ import {
 } from "../../../api-error-response/ErrorResponses";
 
 const getData = async (pageParams) => {
-  console.log({ pageParams });
   const { orderType, offset, moduleId } = pageParams;
   const { data } = await MainApi.get(
     `${my_orders_api}/${orderType}?limit=${data_limit}&offset=${offset}${

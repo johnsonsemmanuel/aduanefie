@@ -31,7 +31,6 @@ const CustomSlider = ({
   );
   const minDistance = 1;
   const isMount = useIsMount();
-  console.log({ priceFilterRange });
 
 
   const handleChange = (event, newValue, activeThumb) => {

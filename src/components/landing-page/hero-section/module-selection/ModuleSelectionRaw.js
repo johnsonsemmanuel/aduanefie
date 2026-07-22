@@ -182,7 +182,6 @@ const ModuleSelectionRaw = (props) => {
       dispatch(setModules(data));
     }
   }, [data]);
-  console.log({ data, modules });
 
   const router = useRouter();
 

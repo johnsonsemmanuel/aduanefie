@@ -36,7 +36,6 @@ export const setUpRecaptcha = () => {
         {
           size: "invisible",
           callback: (response) => {
-            // console.log("Recaptcha verified", response);
           },
           "expired-callback": () => {
             window.recaptchaVerifier?.reset();
@@ -197,7 +196,6 @@ const AuthModal = ({
         setMainToken(response);
       })
       .catch((error) => {
-        // console.log("Error in sending OTP", error);
       });
   };
   const renderModalContent = () => {

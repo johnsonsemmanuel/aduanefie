@@ -61,7 +61,6 @@ const ClientSection: React.FC<ClientSectionProps> = ({ popular_client_section })
     const canGoPrev = currentIndex > 0;
 
 
-    // console.log({ popular_client_section });
 
     return (
         <Box sx={{ py: 6 }}>

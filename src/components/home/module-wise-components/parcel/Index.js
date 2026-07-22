@@ -142,14 +142,12 @@ const Parcel = ({ configData }) => {
     });
 
   const activeOffer = activeOfferRaw?.data ?? activeOfferRaw ?? null;
-  console.log({ proFeatureEnabled, activeOffer, activeOfferLoading });
   const isProMember =
     Number(activeOffer?.plan_details?.days_remaining) > 0 ||
     Boolean(activeOffer?.plan_details?.plan_name);
   const isProActive = activeOffer?.status === true;
   const proBenefit = activeOffer?.benefit ?? null;
   const proOfferResolved = !activeOfferLoading;
-  console.log({ activeOfferLoading });
 
   const proSavingsMessage = (() => {
     if (!proBenefit) return undefined;
@@ -211,7 +209,6 @@ const Parcel = ({ configData }) => {
     setProModalOpen(false);
     setProPaymentOpen(true);
   };
-  console.log({ activeOffer });
 
   return (
     <Grid container spacing={1}>

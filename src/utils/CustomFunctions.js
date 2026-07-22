@@ -41,37 +41,18 @@ export const handleTotalAmountWithAddons = (
   mainTotalAmount,
   selectedAddOns
 ) => {
-  console.log({mainTotalAmount, selectedAddOns});
   
   if (selectedAddOns?.length > 0) {
     let selectedAddonsTotalPrice = 0;
     selectedAddOns?.forEach(
       (item) => (selectedAddonsTotalPrice += item?.price * item?.quantity)
     );
-    return mainTotalAmount  ;
-   
-    
+    return mainTotalAmount + selectedAddonsTotalPrice;
   } else {
     return mainTotalAmount;
   }
 };
-export const newHandleTotalAmountWithAddons = (
-  mainTotalAmount,
-  selectedAddOns
-) => {
-  console.log({mainTotalAmount, selectedAddOns});
-  
-  if (selectedAddOns?.length > 0) {
-    let selectedAddonsTotalPrice = 0;
-    selectedAddOns?.forEach(
-      (item) => (selectedAddonsTotalPrice += item?.price * item?.quantity)
-    );
-    return mainTotalAmount + selectedAddonsTotalPrice  ;
-
-  } else {
-    return mainTotalAmount;
-  }
-};
+export const newHandleTotalAmountWithAddons = handleTotalAmountWithAddons;
 
 export const getDateFormat = (date) => {
   return moment(date).format("LL");
@@ -441,7 +422,6 @@ export const getProductDiscount = (items, storeData, diffDiscount) => {
 
     // Check if the store discount is still valid
     if (combinedEndDateTime.isAfter(currentDateTime)) {
-      // console.log("Store discount is available");
       const {
         discount: restaurentDiscount,
         discount_type: resDisType,
@@ -684,7 +664,6 @@ export const handleDistance = (distance, origin, destination) => {
 };
 
 export const cartItemsTotalAmount = (cartList) => {
-  console.log({cartList});
   
   let totalAmount = 0;
   if (cartList?.length > 0) {
@@ -701,12 +680,10 @@ export const cartItemsTotalAmount = (cartList) => {
       );
     });
   }
-  console.log({totalAmount});
   
   return totalAmount;
 };
 export const newCartItemsTotalAmount = (cartList) => {
-  console.log({cartList});
   
   let totalAmount = 0;
   if (cartList?.length > 0) {
@@ -723,7 +700,6 @@ export const newCartItemsTotalAmount = (cartList) => {
       );
     });
   }
-  console.log({totalAmount});
   
   return totalAmount;
 };
@@ -731,12 +707,10 @@ export const newCartItemsTotalAmount = (cartList) => {
 export const getInfoFromZoneData = (zoneData) => {
   let chargeInfo;
 
-  console.log("vvv", zoneData);
   if (zoneData?.zone_data?.length > 0) {
     zoneData?.zone_data?.forEach((item, index) => {
       if (item?.modules?.length > 0) {
         item?.modules?.forEach((moduleItem) => {
-          console.log(
             "vvv",
             moduleItem?.id,
             getCurrentModuleType(),
@@ -841,7 +815,6 @@ export const getDeliveryFees = (
     } else {
       if (zoneData?.zone_data?.length > 0) {
         const chargeInfo = getInfoFromZoneData(zoneData);
-        console.log({ chargeInfo });
 
         if (chargeInfo?.pivot?.delivery_charge_type === "fixed") {
           if (

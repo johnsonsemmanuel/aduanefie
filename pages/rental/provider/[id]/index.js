@@ -39,7 +39,6 @@ const Index = ({ providerMetaData, configData }) => {
       dispatch(setConfigData(dataConfig));
     }
   }, [dataConfig, dispatch]);
-  console.log({ providerMetaData });
   return (
     <>
       <CssBaseline />

@@ -36,7 +36,6 @@ const Root = (props) => {
   if (typeof window !== "undefined") {
     lanDirection = JSON.parse(localStorage.getItem("settings"));
   }
-  console.log({ configData });
   return (
     <>
       <CssBaseline />

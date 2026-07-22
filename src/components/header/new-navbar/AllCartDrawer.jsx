@@ -82,7 +82,6 @@ const normalizeServerGroups = (cartGroups = []) => {
 };
 
 const calcStoreTotals = (rawItems = []) => {
-  console.log({rawItems});
   let total = 0;
   for (const ci of rawItems) {
     // cartList items already have totalPrice; fallback to price * quantity

@@ -39,7 +39,6 @@ const OfflineOrderDetailsModal = ({
 }) => {
   const theme = useTheme();
   const router = useRouter();
-  console.log({ trackDataIsFetching });
 
   return (
     <CustomStackFullWidth

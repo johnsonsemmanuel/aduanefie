@@ -261,7 +261,6 @@ const Top = (props) => {
       String(coupon.store_id) === String(storeDetails?.id)
     );
   });
-  console.log({ storeCouponData });
 
   const handleBack = () => {
     if (typeof window !== "undefined" && window.history.length > 1) {

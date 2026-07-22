@@ -1018,7 +1018,6 @@ const MiddleSection = (props) => {
               ) : (
                 (() => {
                   const allProducts = state.data?.products ?? [];
-                  console.log({ allProducts });
 
                   // Group products by their category id. Defensive: handle both
                   // `category_ids: [{id, ...}]` (object form) and

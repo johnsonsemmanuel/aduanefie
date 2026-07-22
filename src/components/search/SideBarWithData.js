@@ -41,7 +41,6 @@ const SideBarWithData = forwardRef((props, ref) => {
     // Clear the timeout if the component unmounts before it fires
     return () => clearTimeout(timeoutId);
   }, []);
-  console.log({pageData});
   
 
   const getProductShimmer = () => (

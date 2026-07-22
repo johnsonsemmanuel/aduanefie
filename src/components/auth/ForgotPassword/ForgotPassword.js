@@ -55,7 +55,6 @@ const ForgotPassword = ({ configData }) => {
         {
           size: "invisible",
           callback: (response) => {
-            // console.log("Recaptcha verified", response);
           },
           "expired-callback": () => {
             window.recaptchaVerifier?.reset();
@@ -82,7 +81,6 @@ const ForgotPassword = ({ configData }) => {
       })
       .catch((error) => {
         toast.error(error.message)
-        // console.log({error})
       });
   };
   const handleSubmitOtp= (values,onSuccessHandler,mutate) => {

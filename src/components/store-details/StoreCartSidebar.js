@@ -277,7 +277,6 @@ const CartItemRow = ({ cartItem }) => {
       onError: onErrorResponse,
     });
   };
-  console.log({ cartItem });
 
   const quantity = Number(cartItem?.quantity) || 1;
   const isFood = cartItem?.module_type === ModuleTypes.FOOD;
@@ -681,7 +680,6 @@ const StoreCartSidebar = ({ storeDetails, isCartLoading = false }) => {
       ? cartList
       : [];
   const { configData } = useSelector((state) => state.configData);
-  console.log({ cartList, storeCartList, storeScopedCart });
 
   // Packaging fee comes from the parent's `storeDetails` (the store-details
   // page already has it from SSR — no need for a second fetch).
@@ -1686,7 +1684,6 @@ const StoreCartSidebar = ({ storeDetails, isCartLoading = false }) => {
           {/* Footer with subtotal and checkout */}
           {moduleCartList?.length > 0 &&
             (() => {
-              console.log({ subtotal });
 
               const extraPackagingFee = extraPackaging
                 ? extraPackagingAmount

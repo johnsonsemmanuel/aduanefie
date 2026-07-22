@@ -22,7 +22,6 @@ const GetLocationAlert = ({ setOpenAlert }) => {
     setOpen(true);
     //setOpenAlert(false);
   };
-  console.log({coords});
   
   return (
     <CustomStackFullWidth

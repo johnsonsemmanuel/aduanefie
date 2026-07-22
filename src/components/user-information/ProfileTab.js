@@ -36,7 +36,6 @@ const ProfileTab = ({
     handlePage(item);
     setEditProfile?.(false);
   };
-console.log({configData});
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [deleteModal, setDeleteModal] = useState(false);

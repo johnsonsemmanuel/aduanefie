@@ -64,7 +64,6 @@ const FloatingCartButton = () => {
   // Badge count — current module items only
   const cartItems = getCartListModuleWise(cartList) ?? [];
   const itemCount = cartItems.length;
-  console.log({ cartItems, cartGroups });
 
   // Grand total = sum of every cart line's (price × quantity).
   // `price` on the cart line already includes variation/addon pricing — prefer

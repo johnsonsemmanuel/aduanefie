@@ -49,7 +49,6 @@ const RouteLinks = (props) => {
   };
   const theme = useTheme();
   const isXsmall = useMediaQuery(theme.breakpoints.down("sm"));
-  console.log({ configData });
 
 
   const linkSx = {

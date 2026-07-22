@@ -52,7 +52,6 @@ const AddNewAddress = (props) => {
   } = props;
   const contactInfoOnly = mode === "contact";
   const checkoutLocationOnly = mode === "location";
-  console.log({ mode });
 
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));

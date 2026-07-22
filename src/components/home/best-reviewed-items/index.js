@@ -86,7 +86,6 @@ const BestReviewedItems = (props) => {
       setFilteredData(bestReviewedItems.products);
     }
   }, [bestReviewedItems.products]);
-  console.log({ uniqueCategories });
 
   useEffect(() => {
     if (selectedMenuIndex === 0) {
@@ -104,7 +103,6 @@ const BestReviewedItems = (props) => {
     }
   }, [selectedMenuIndex]);
 
-  console.log("vvvv", getCategoryIds());
 
   const slides = () =>
     filteredData?.map((product) =>

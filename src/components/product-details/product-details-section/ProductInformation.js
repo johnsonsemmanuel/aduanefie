@@ -91,7 +91,6 @@ const ProductInformation = ({
   const dispatchRedux = useDispatch();
   const [state, dispatch] = useReducer(reducer, initialState);
   const { t } = useTranslation();
-  console.log({ cartList });
 
   const actionCardRef = useRef(null);
   const [showStickyBar, setShowStickyBar] = useState(false);
@@ -127,7 +126,6 @@ const ProductInformation = ({
       (availableStock > 1 ? availableStock - 1 : availableStock) -
         (cartQuantity - 1)
     );
-    console.log({ currentStock, availableStock });
 
     const showWarning =
       showLowStockCount && minimumStockForWarning >= currentStock;
@@ -216,7 +214,6 @@ const ProductInformation = ({
   const decrementQuantity = () => {
     dispatch({ type: ACTION.decrementQuantity });
   };
-  console.log("ddd", cartList);
 
   const incrementQuantity = () => {
     const modalItem = state.modalData[0];
@@ -242,7 +239,6 @@ const ProductInformation = ({
     }
   };
   const handleSuccess = (res) => {
-    console.log({ res });
 
     if (res) {
       let product = {};
@@ -255,7 +251,6 @@ const ProductInformation = ({
           selectedOption: item?.variation,
         };
       });
-      console.log({ product });
 
       dispatchRedux(
         setCart({
@@ -390,7 +385,6 @@ const ProductInformation = ({
       });
     } else toast.error(t(not_logged_in_message));
   };
-  console.log({ state });
 
   const isInModal = modalmanage === "true" || modalmanage === true;
 

@@ -29,7 +29,6 @@ export const ComponentTwoContainer = styled(Box)(
 );
 
 const ComponentTwo = ({ user_app_download_section }) => {
-  console.log({ user_app_download_section });
 
   const theme = useTheme();
   return (

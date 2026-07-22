@@ -47,12 +47,6 @@ const Home = ({ metaData, configData }) => {
       }
     }
   }, [configData]);
-  useEffect(() => {
-    if (configData) {
-      dispatch(setConfigData(configData));
-    }
-  }, [configData]);
-  console.log({ metaData, configData });
 
   return (
     <>

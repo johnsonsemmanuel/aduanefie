@@ -84,7 +84,6 @@ const ParcelCheckout = () => {
   const { offlineInfoStep, offlinePaymentInfo } = useSelector(
     (state) => state.offlinePayment
   );
-  console.log({ profileInfo });
 
   const { parcelCategories } = useSelector((state) => state.parcelCategories);
   const [address, setAddress] = useState(undefined);
@@ -114,7 +113,6 @@ const ParcelCheckout = () => {
     parcelInfo?.senderLocations,
     parcelInfo?.receiverLocations
   );
-  console.log({ parcelInfo });
 
   const { data: surgePrice, mutate: surgeMutate } = useGetSurgePrice();
   const token = getToken();
@@ -369,7 +367,6 @@ const ParcelCheckout = () => {
         )
       : t("Delivery fee benefit as a Pro member");
   })();
-  console.log({ parcelInfo });
 
   const receiverDetails = JSON.stringify({
     id: null,
@@ -539,7 +536,6 @@ const ParcelCheckout = () => {
             );
             // setOfflineCheck(true);
             toast.success(res?.message);
-            console.log("offline");
             Router.push(
               {
                 pathname: "/checkout",

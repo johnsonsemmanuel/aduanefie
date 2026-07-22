@@ -28,7 +28,6 @@ const ModuleTabbedLayout = ({
   // Hide the rider/rental (ride-share) module from the order/coupon tab bar —
   // it doesn't belong to the order or coupon flows.
   const modules = allModules?.filter((m) => m?.module_type !== "ride-share");
-console.log({allModules});
 
   const activeModule =
     modules?.find((m) => m.id === activeModuleId) ?? modules?.[0];

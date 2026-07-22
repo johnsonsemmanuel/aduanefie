@@ -65,7 +65,6 @@ const SearchProductModal = () => {
 
   const moduleType = selectedItem?.module_type ?? getCurrentModuleType();
   const isFood = moduleType === "food";
-  console.log({isFood});
   
 
   if (isFood) {

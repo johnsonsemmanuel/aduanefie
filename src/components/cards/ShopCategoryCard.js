@@ -45,7 +45,6 @@ const ShopCategoryCard = (props) => {
   const { ref: textRef, isEllipsed } = useTextEllipsis(item?.name);
   const { t } = useTranslation();
   const classes = textWithEllipsis();
-  console.log({ isEllipsed });
   const queryModule = router?.query?.module || router?.query?.module_id;
     const moduleValue = Array.isArray(queryModule)
       ? queryModule[0]

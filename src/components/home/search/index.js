@@ -235,7 +235,6 @@ const SearchResult = (props) => {
     isFetchingNextPage,
     isLoading: isLoadingSearch,
   } = useGetSearchPageData(pageParams, handleSuccess);
-  console.log({searchData});
   
 
   // Update items container height when data changes
@@ -406,7 +405,6 @@ const SearchResult = (props) => {
     minMax,
     selectedBrands,
   ]);
-  console.log({inView});
   
 
   const handleCurrentTab = (value) => {

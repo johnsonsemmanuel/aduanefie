@@ -105,7 +105,6 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
       } catch (err) { }
     },
   });
-  console.log({ inZone });
   let currentLatLng = undefined;
   if (typeof window !== "undefined") {
     currentLatLng = JSON.parse(window.localStorage.getItem("currentLatLng"));

@@ -111,7 +111,6 @@ const SubscriptionPlanPage = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   const flagToastShownRef = useRef(false);
-  console.log({ profileInfo });
 
   // Pulls a fresh user profile + pushes it into redux. Triggered after
   // cancel/subscribe so `pro_status` and the wallet balance stay in sync
@@ -119,7 +118,6 @@ const SubscriptionPlanPage = () => {
   const { refetch: refetchProfile } = useGetProfile((res) => {
     if (res) dispatch(setUser(res));
   });
-  console.log({ profileInfo });
 
   const { data: activeOfferRaw, isLoading } = useGetProActiveOffer();
 

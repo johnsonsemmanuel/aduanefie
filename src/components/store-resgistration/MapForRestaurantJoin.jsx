@@ -145,7 +145,6 @@ const MapForRestaurantJoin = ({
   const handleCloseLocation = () => {
     setPredictions([]);
   };
-  console.log({inZone,showZoneWarning});
   return (
     <CustomStackFullWidth>
       <Box

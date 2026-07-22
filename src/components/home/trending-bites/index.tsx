@@ -407,7 +407,6 @@ const TrendingBites = ({ title, subtitle }: TrendingBitesProps) => {
   };
 
   if (items.length === 0) return null;
-  console.log({ showViewAll, totalSize });
 
   return (
     <>

@@ -26,7 +26,6 @@ const ExitingUser = ({
     setIsYes(value);
     formSubmitHandler(value);
   };
-  console.log({loginInfo});
   
   return (
     <CustomStackFullWidth

@@ -48,7 +48,6 @@ const NavPopularStore = () => {
   }, [data]);
 
   const handleClick = (item) => {
-     console.log({item});
     handleStoreRedirect(item, router);
   };
   const popular = t("Popular");

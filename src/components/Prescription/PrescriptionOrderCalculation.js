@@ -75,7 +75,6 @@ const PrescriptionOrderCalculation = ({
       origin,
       destination
     );
-    console.log({ convertedDistance, storeData });
 
     const isAdminFreeDeliveryEnabled =
       configData?.admin_free_delivery?.status === true;
@@ -116,7 +115,6 @@ const PrescriptionOrderCalculation = ({
     } else {
       if (zoneData?.data?.zone_data?.length > 0) {
         const chargeInfo = getInfoFromZoneData(zoneData?.data);
-        console.log({ chargeInfo, zoneData });
 
         const perKmCharge = chargeInfo?.pivot?.per_km_shipping_charge || 0;
         const minCharge = chargeInfo?.pivot?.minimum_shipping_charge;

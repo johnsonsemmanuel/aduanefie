@@ -214,7 +214,6 @@ const MultipleCheckboxWithTitle = (props) => {
   useEffect(() => {
     const totalLength = data.length + data.reduce((acc, item) => acc + (item.childes?.length || 0), 0);
     const checkDuplicate = Array.isArray(storeSelectedItems || storeSelectedItems) ? [...new Set(selectedItems || storeSelectedItems)] : [];
-     console.log({totalLength,checkDuplicate});
      
     if (totalLength === (checkDuplicate.length || storeSelectedItems?.length) && !isAllSelected) {
       setIsAllSelected(true); // Only run if not already selected
@@ -331,7 +330,6 @@ const MultipleCheckboxWithTitle = (props) => {
       }
     }
   };
-console.log({isAllSelected,selectedItems,storeSelectedItems});
 
   return (
     <CustomStackFullWidth

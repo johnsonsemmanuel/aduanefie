@@ -152,7 +152,6 @@ const StoreCard = (props) => {
 	const handleClick = () => {
 		handleStoreRedirect(item, router);
 	};
-	console.log({ isWishlisted });
 
 	return (
 		<Wrapper

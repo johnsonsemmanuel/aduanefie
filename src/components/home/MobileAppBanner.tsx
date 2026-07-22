@@ -84,7 +84,6 @@ const MobileAppBanner = () => {
   const { t } = useTranslation();
   const [dismissed, setDismissed] = useState(false);
   const { data } = useGetAppDownloadSection();
-  console.log({ data });
 
   const sectionEnabled = Number(data?.download_user_app_section_status) === 1;
   const title = data?.download_user_app_title || DEFAULT_TITLE;

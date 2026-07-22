@@ -289,7 +289,6 @@ const StoreDetails = ({ storeDetails, configData }) => {
 
   const cartListSuccessHandler = (res) => {
     if (res) {
-      console.log({res});
       
       const thisStoreId = storeDetails?.id;
       const tempCartLists = res?.map((item) => ({
@@ -311,7 +310,6 @@ const StoreDetails = ({ storeDetails, configData }) => {
             ? item?.variation
             : getSelectedVariations(item?.item?.food_variations),
       }));
-      console.log({tempCartLists});
       
       // Store-scoped slot (read by StoreCartSidebar).
       dispatch(setStoreCartList(tempCartLists));

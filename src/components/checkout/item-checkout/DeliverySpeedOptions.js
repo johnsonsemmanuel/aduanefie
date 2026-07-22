@@ -173,7 +173,6 @@ const DeliverySpeedOptions = ({
   };
 
   const storeDeliveryTime = storeData?.delivery_time?.toString?.() || "";
-  console.log({ storeDeliveryTime });
 
   const deliverySpeedOptions = useMemo(() => {
     return deliveryOptionsRaw.map((option) => {

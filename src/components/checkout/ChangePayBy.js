@@ -8,7 +8,6 @@ import CustomImageContainer from "../CustomImageContainer";
 import { CustomTypography } from "../landing-page/hero-section/HeroSection.style";
 
 const ChangePayBy = ({ paidBy, setPaidBy, zoneData, setPaymentMethod, setSelectedPaymentMethod }) => {
-	console.log({ zoneData });
 	const theme = useTheme();
 	return (
 		<CustomStackFullWidth spacing={1.2} gap="5px">

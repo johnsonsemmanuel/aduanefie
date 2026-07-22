@@ -7,12 +7,6 @@ import {
 } from "../../../helper-functions/CardHelpers";
 import { handleTotalAmountWithAddons } from "../../../utils/CustomFunctions";
 import { CustomTypographyGray } from "../../../styled-components/CustomStyles.style";
-// import {
-//     getAmount,
-//     getConvertDiscount,
-//     handleTotalAmountWithAddons,
-// } from '../../utils/customFunctions'
-// import { CustomTypographyGray } from '../error/Errors.style'
 
 const TotalAmountVisibility = (props) => {
   const {

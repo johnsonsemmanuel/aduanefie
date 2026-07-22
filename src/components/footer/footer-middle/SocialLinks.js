@@ -28,7 +28,6 @@ const SocialLinks = (props) => {
         return <Twitter />;
     }
   };
-  // console.log({ landingPageData });
 
   return (
     <CustomStackFullWidth>

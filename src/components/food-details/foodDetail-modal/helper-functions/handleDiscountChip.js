@@ -4,7 +4,6 @@ import React from "react";
 import { getAmountWithSign } from "../../../../helper-functions/CardHelpers";
 
 export const handleDiscountChip = (product, t) => {
-  console.log({product});
   
   if (product?.restaurant_discount > 0) {
     if (product?.restaurant_discount === "percent") {
