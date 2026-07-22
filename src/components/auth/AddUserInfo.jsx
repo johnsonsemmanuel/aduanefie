@@ -93,7 +93,7 @@ const AddUserInfo = ({ formSubmitHandler, loginInfo, isLoading, userInfo }) => {
       >
         <CustomStackFullWidth alignItems="center">
           <CustomImageContainer
-            src={configData?.logo_full_url}
+            src={configData?.logo_full_url || "/logo.png"}
             maxWidth="300px"
             height="50px"
             alt="Logo"

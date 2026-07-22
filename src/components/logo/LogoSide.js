@@ -2,6 +2,7 @@ import CustomLogo from "./CustomLogo";
 import { Stack } from "@mui/system";
 
 const LogoSide = ({ configData, width, height, objectFit }) => {
+  const logoImg = configData?.logo_full_url || "/logo.png";
   return (
     <Stack
       direction="row"
@@ -11,7 +12,7 @@ const LogoSide = ({ configData, width, height, objectFit }) => {
     >
       <CustomLogo
         atlText="logo"
-        logoImg={configData?.logo_full_url}
+        logoImg={logoImg}
         width={width}
         height={height}
         objectFit={objectFit}

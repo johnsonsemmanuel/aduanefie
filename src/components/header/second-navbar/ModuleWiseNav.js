@@ -37,7 +37,7 @@ const ModuleWiseNav = (props) => {
 		"customer_image_url",
 		configData
 	)}/${profileInfo?.image}`;
-	const favIcon = configData?.logo_full_url;
+	const favIcon = configData?.logo_full_url || "/logo.png";
 	const lanDirection = getLanguage();
 	const dispatch = useDispatch();
 	useEffect(() => {

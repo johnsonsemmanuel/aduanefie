@@ -47,7 +47,7 @@ const FooterMiddle = ({ configData, landingPageData }) => {
         {/* Brand + App */}
         <Stack gap="16px" alignItems="center" sx={{ width: "100%" }}>
           <CustomImageContainer
-            src={configData?.logo_full_url}
+            src={configData?.logo_full_url || "/logo.png"}
             alt={configData?.business_name}
             width="auto"
             height="36px"
@@ -161,7 +161,7 @@ const FooterMiddle = ({ configData, landingPageData }) => {
           <Stack gap="16px">
             <Box sx={{ img: { transition: "all ease 0.5s" }, "&:hover img": { transform: "scale(1.04)" } }}>
               <CustomImageContainer
-                src={configData?.logo_full_url}
+                src={configData?.logo_full_url || "/logo.png"}
                 alt={configData?.business_name}
                 width="auto"
                 height="36px"

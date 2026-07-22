@@ -105,7 +105,7 @@ const FooterBottom = ({ configData }) => {
           {socialIcons}
           <Stack gap="12px" alignItems="center">
             <CustomImageContainer
-              src={configData?.logo_full_url}
+              src={configData?.logo_full_url || "/logo.png"}
               alt={configData?.business_name}
               width="auto"
               height="16px"

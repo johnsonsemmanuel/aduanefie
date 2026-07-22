@@ -29,7 +29,7 @@ const AuthHeader = ({ title, configData }) => {
           maxWidth="300px"
           height="50px"
           objectfit="cover"
-          src={configData?.logo_full_url}
+          src={configData?.logo_full_url || "/logo.png"}
         />
       </Box>
 
