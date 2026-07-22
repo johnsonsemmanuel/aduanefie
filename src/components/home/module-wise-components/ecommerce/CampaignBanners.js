@@ -71,7 +71,12 @@ const CampaignBanners = () => {
   };
   const handleBannerClick = (banner) => {
     if (banner?.type === "default") {
-      router.push(banner?.link);
+      const url = banner?.link;
+      if (typeof url === "string" && url) {
+        router.push(url);
+      } else {
+        router.push("/");
+      }
     }
     if (banner?.type === "store_wise") {
       handleStoreRedirect(banner?.store, router);

@@ -23,7 +23,11 @@ const Item = ({ image, title, link, t }) => {
   const router = useRouter();
   const handleClick = () => {
     if (link) {
-      router.push(link);
+      if (typeof link === "string") {
+        router.push(link);
+      } else {
+        router.push("/");
+      }
     } else {
       toast.error(t("No Redirect Url found"));
     }
