@@ -81,6 +81,7 @@ const AccountInformation = ({ data, refetch }) => {
               sx={{ width: "100%" }}
               id="password"
               variant="outlined"
+              placeholder={t("Password")}
               value={profileFormik.values.password}
               onChange={profileFormik.handleChange}
               name="password"
@@ -116,6 +117,7 @@ const AccountInformation = ({ data, refetch }) => {
               id="confirm_password"
               label={t("Confirm Password")}
               variant="outlined"
+              placeholder={t("Confirm Password")}
               name="confirm_password"
               type={showConfirmPassword ? "text" : "password"}
               value={profileFormik.values.confirm_password}

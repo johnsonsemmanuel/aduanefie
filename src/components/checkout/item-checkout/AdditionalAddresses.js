@@ -84,6 +84,7 @@ const AdditionalAddresses = (props) => {
 						<Grid item xs={12}>
 							<CustomTextField
 								label={t("Street number")}
+								placeholder={t("Enter street number")}
 								value={street}
 								fullWidth
 								onChange={(e) => handleStreetChange(e)}
@@ -92,6 +93,7 @@ const AdditionalAddresses = (props) => {
 						<Grid item xs={6}>
 							<CustomTextField
 								label={t("House number")}
+								placeholder={t("Enter house number")}
 								value={house}
 								fullWidth
 								onChange={(e) => handleHouseChange(e)}
@@ -100,6 +102,7 @@ const AdditionalAddresses = (props) => {
 						<Grid item xs={6}>
 							<CustomTextField
 								label={t("Floor")}
+								placeholder={t("Enter floor")}
 								value={floor}
 								fullWidth
 								onChange={(e) => handleFloorChange(e)}

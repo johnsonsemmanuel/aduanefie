@@ -351,12 +351,12 @@ const OfflineForm = ({
                   multiline
                   fullWidth
                   id="customer_note"
-                  label="Payment Note"
+                  label={t("Payment Note")}
+                  placeholder={t("Enter your payment note")}
                   name="customer_note"
                   value={formik.values["customer_note"]}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  // defaultValue="Default Value"
                 />
               </Grid>
             </Grid>

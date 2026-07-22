@@ -280,14 +280,15 @@ const AddressForm = ({
             <Grid item xs={12} md={12}>
               {" "}
               <CustomTextFieldWithFormik
-                type="text"
-                label={t("Label Name(Optional)")}
-                touched={addAddressFormik.touched.address_label}
-                errors={addAddressFormik.errors.address_label}
-                fieldProps={addAddressFormik.getFieldProps("address_label")}
-                onChangeHandler={addressLabelHandler}
-                value={addAddressFormik.values.address_label}
-              />
+                  type="text"
+                  label={t("Label Name(Optional)")}
+                  placeholder={t("Enter label name")}
+                  touched={addAddressFormik.touched.address_label}
+                  errors={addAddressFormik.errors.address_label}
+                  fieldProps={addAddressFormik.getFieldProps("address_label")}
+                  onChangeHandler={addressLabelHandler}
+                  value={addAddressFormik.values.address_label}
+                />
             </Grid>
           )}
 
@@ -298,6 +299,7 @@ const AddressForm = ({
                   required="true"
                   type="text"
                   label={t("Contact Person Name")}
+                  placeholder={t("Enter contact person name")}
                   touched={addAddressFormik.touched.contact_person_name}
                   errors={addAddressFormik.errors.contact_person_name}
                   fieldProps={addAddressFormik.getFieldProps(
@@ -327,6 +329,7 @@ const AddressForm = ({
                   <CustomTextFieldWithFormik
                     required
                     label={t("Email")}
+                    placeholder={t("Enter your email")}
                     touched={addAddressFormik.touched.contact_person_email}
                     errors={addAddressFormik.errors.contact_person_email}
                     fieldProps={addAddressFormik.getFieldProps(
@@ -346,6 +349,7 @@ const AddressForm = ({
                 <CustomTextFieldWithFormik
                   type="text"
                   label={t("House")}
+                  placeholder={t("Enter house")}
                   touched={addAddressFormik.touched.house}
                   errors={addAddressFormik.errors.house}
                   fieldProps={addAddressFormik.getFieldProps("house")}
@@ -357,6 +361,7 @@ const AddressForm = ({
                 <CustomTextFieldWithFormik
                   type="text"
                   label={t("Floor")}
+                  placeholder={t("Enter floor")}
                   touched={addAddressFormik.touched.floor}
                   errors={addAddressFormik.errors.floor}
                   fieldProps={addAddressFormik.getFieldProps("floor")}
@@ -368,6 +373,7 @@ const AddressForm = ({
                 <CustomTextFieldWithFormik
                   type="text"
                   label={t("Road")}
+                  placeholder={t("Enter road")}
                   touched={addAddressFormik.touched.road}
                   errors={addAddressFormik.errors.road}
                   fieldProps={addAddressFormik.getFieldProps("road")}
@@ -379,6 +385,7 @@ const AddressForm = ({
                 <CustomTextFieldWithFormik
                   type="text"
                   label={t("Additional Information")}
+                  placeholder={t("Enter additional information")}
                   touched={addAddressFormik.touched.additional_information}
                   errors={addAddressFormik.errors.additional_information}
                   fieldProps={addAddressFormik.getFieldProps(

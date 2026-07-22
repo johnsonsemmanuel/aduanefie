@@ -174,6 +174,7 @@ export const BringChangeAmount = ({
                     padding: "5.5px 14px",
                   },
                 }}
+                placeholder={t("Enter amount")}
                 value={changeAmount}
                 onChange={(e) => setChangeAmount(e.target.value)}
               />

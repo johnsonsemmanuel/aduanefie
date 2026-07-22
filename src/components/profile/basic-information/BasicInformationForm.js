@@ -348,6 +348,7 @@ const BasicInformationForm = ({
               value={profileFormik.values.name}
               onChange={profileFormik.handleChange}
               label={t("User Name")}
+              placeholder={t("Enter user name")}
               required
               error={
                 profileFormik.touched.name && Boolean(profileFormik.errors.name)
@@ -368,12 +369,12 @@ const BasicInformationForm = ({
                   },
                 }}
                 id="outlined-basic"
-                // label="Enter Email"
                 variant="outlined"
                 name="email"
                 value={profileFormik.values.email}
                 onChange={profileFormik.handleChange}
                 label={t("Email")}
+                placeholder={t("Enter your email")}
                 required
                 error={
                   profileFormik.touched.email &&
@@ -424,6 +425,7 @@ const BasicInformationForm = ({
               <TextField
                 name="phone"
                 disabled={data?.is_phone_verified === 1}
+                placeholder={t("Enter your phone number")}
                 label={
                   <span>
                     {t("Phone")}{" "}
