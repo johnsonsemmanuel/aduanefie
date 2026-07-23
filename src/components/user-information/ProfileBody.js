@@ -11,10 +11,7 @@ import Chatting from "../chat/Chatting";
 import Settings from "../settings";
 import MyTrips from "components/home/module-wise-components/rental/components/my-trips/MyTrips";
 import MyFarm from "./MyFarm";
-import CommunityAgentEarnings from "./CommunityAgentEarnings";
 import SavedRecipes from "./SavedRecipes";
-import MarketerDashboard from "../marketer/MarketerDashboard";
-import MarketerLeaderboard from "../marketer/MarketerLeaderboard";
 
 const ORDER_DETAIL_PAGES = [
   "my-orders",
@@ -50,7 +47,6 @@ const PROFILE_PAGES = [
   "subscription-plan",
   "settings",
   "my-farm",
-  "community-agent-earnings",
   "saved-recipes",
 ];
 
@@ -145,20 +141,8 @@ const ProfileBody = ({
       return <MyFarm configData={configData} />;
     }
 
-    if (page === "community-agent-earnings") {
-      return <CommunityAgentEarnings configData={configData} />;
-    }
-
     if (page === "saved-recipes") {
       return <SavedRecipes configData={configData} />;
-    }
-
-    if (page === "marketer-dashboard") {
-      return <MarketerDashboard configData={configData} />;
-    }
-
-    if (page === "marketer-leaderboard") {
-      return <MarketerLeaderboard configData={configData} />;
     }
 
     return null;

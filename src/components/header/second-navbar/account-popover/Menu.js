@@ -85,10 +85,7 @@ const Menu = ({ onClose, cartListRefetch }) => {
               0 &&
               item.id === 3) ||
             (profileInfo?.store_type !== "farm" && item.id === 13) ||
-            (profileInfo?.account_type !== "community_agent" && item.id === 14) ||
-            (configData?.recipe_module_status === 0 && item.id === 15) ||
-            (profileInfo?.account_type !== "marketer" && item.id === 16) ||
-            (profileInfo?.account_type !== "marketer" && item.id === 17)
+            (configData?.recipe_module_status === 0 && item.id === 15)
           ) {
             return null;
           } else {

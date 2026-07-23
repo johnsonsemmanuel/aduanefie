@@ -172,14 +172,6 @@ const AccountMenuPanel = ({
       requireAuth: true,
     },
     {
-      key: "community-agent-earnings",
-      label: "Agent Earnings",
-      icon: "fi fi-rr-wallet",
-      path: profilePath("community-agent-earnings"),
-      requireAuth: true,
-      hidden: !configData?.customer_personalization_status,
-    },
-    {
       key: "subscription-plan",
       label: "Subscription Plan",
       icon: "fi fi-rr-crown",
