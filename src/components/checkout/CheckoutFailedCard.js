@@ -225,10 +225,7 @@ const CheckoutFailedCard = ({
             onClick={() => handleOrderFail()}
             loading={cancelLoading}
           >
-            {failPayment?.module?.module_type === "parcel" ||
-            failPayment?.module_type === "parcel"
-              ? t("Cancel Parcel")
-              : t("Cancel Order")}
+            {t("Cancel Order")}
           </LoadingButton>
         </Stack>
       </Stack>

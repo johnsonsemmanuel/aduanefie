@@ -446,15 +446,8 @@ const SectionPageLayout = ({
     { key: "section", label: t(sectionLabel) },
   ];
 
-  const itemsLabel =
-    moduleType === "food"
-      ? t("Foods")
-      : moduleType === "pharmacy"
-      ? t("Medicines")
-      : moduleType === "ecommerce"
-      ? t("Items")
-      : t("Groceries");
-  const storesLabel = moduleType === "food" ? t("Restaurants") : t("Stores");
+  const itemsLabel = t("Groceries");
+  const storesLabel = t("Stores");
 
   const handleTabChange = (tab) => {
     onTabChange?.(tab);

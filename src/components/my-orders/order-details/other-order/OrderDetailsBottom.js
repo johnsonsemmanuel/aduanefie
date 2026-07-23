@@ -125,10 +125,7 @@ const OrderDetailsBottom = ({
                   onClick={() => setOpenModal(true)}
                 >
                   <Typography variant="h6">
-                    {trackData?.module_type === "parcel" ||
-                    trackData?.module?.module_type === "parcel"
-                      ? t("Cancel Parcel")
-                      : t("Cancel Order")}
+                    {t("Cancel Order")}
                   </Typography>
                 </Button>
               </Grid>

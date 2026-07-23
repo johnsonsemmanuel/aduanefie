@@ -51,29 +51,17 @@ const NavLinks = ({ zoneid, t, moduleType }) => {
               {t("Home")}
             </NavLinkStyle>
           </Link>
-          {moduleType !== "parcel" ? (
-            <>
-              <NavCategory
-                openModal={openCategoryModal}
-                setModal={setCategoryModal}
-                setRestaurantModal={setRestaurantModal}
-              />
-              <NavStore
-                openModal={openRestaurantModal}
-                setModal={setRestaurantModal}
-              />
-            </>
-          ) : (
-            <Link href="/help-and-support">
-              <NavLinkStyle
-                underline="none"
-                // language_direction={language_direction}
-                sx={{ cursor: "pointer" }}
-              >
-                {t("Contact")}
-              </NavLinkStyle>
-            </Link>
-          )}
+          <>
+            <NavCategory
+              openModal={openCategoryModal}
+              setModal={setCategoryModal}
+              setRestaurantModal={setRestaurantModal}
+            />
+            <NavStore
+              openModal={openRestaurantModal}
+              setModal={setRestaurantModal}
+            />
+          </>
         </>
       
     </Stack>

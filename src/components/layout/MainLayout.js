@@ -56,7 +56,6 @@ const getMobileMarginTop = ({ pathname, currentModuleType, isCollapsed }) => {
   if (currentModuleType === ModuleTypes.RENTAL) {
     return pathname?.startsWith("/rental") ? "3rem" : "6.3rem";
   }
-  if (currentModuleType === "parcel") return "7.8rem";
   return isCollapsed ? "10rem" : "11.9rem";
 };
 
@@ -203,7 +202,6 @@ const MainLayout = ({ children, configData }) => {
         />
       </footer>
       {isSmall &&
-        page !== "parcel" &&
         router.pathname !== "/store/[id]" &&
         router.pathname !== "/product/[id]" && <BottomNav />}
       <SearchProductModal />

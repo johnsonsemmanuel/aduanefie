@@ -9,27 +9,6 @@ const NotAvailableCard = ({ endTime, startTime, moduleType }) => {
   const { t } = useTranslation();
   return (
     <Box textAlign="center">
-      {moduleType === "food" ? (
-        <Box
-          bgcolor={(theme) => theme.palette.error.info}
-          borderRadius="10px"
-          padding="1rem"
-          mt={{ xs: "7px" }}
-        >
-          <Stack spacing={1} alignItems="flex-start">
-            <Typography
-              color={(theme) => theme.palette.primary.main}
-              variant="h6"
-            >
-              {t("Not Available now")}
-            </Typography>
-            <Typography variant="h6">
-              {t("Available will be")}: <CustomTimeFormat time={startTime} /> -{" "}
-              <CustomTimeFormat time={endTime} />
-            </Typography>
-          </Stack>
-        </Box>
-      ) : (
         <Stack spacing={1} alignItems="flex-start">
           <Typography
             color={(theme) => theme.palette.primary.main}
@@ -38,7 +17,6 @@ const NotAvailableCard = ({ endTime, startTime, moduleType }) => {
             {t("Store is closed.")}
           </Typography>
         </Stack>
-      )}
     </Box>
   );
 };

@@ -18,9 +18,7 @@ const GroupButtonsRateAndReview = ({ setType, type, moduleType }) => {
         indicatorColor="primary"
         textColor="primary"
       >
-        {moduleType !== "parcel" && (
-          <Tab label={t("Items")} value="items" />
-        )}
+        <Tab label={t("Items")} value="items" />
         <Tab label={t("Delivery man")} value="delivery_man" />
       </Tabs>
     </Box>

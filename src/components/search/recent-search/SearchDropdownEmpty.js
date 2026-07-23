@@ -316,8 +316,6 @@ const TrendingSearchSection = ({ onItemClick, t, isLoading, items }) => {
 const TopRestaurantsSection = ({ t, searchFromNav = false }) => {
   const [isSliderHovered, setIsSliderHovered] = useState(false);
   const slider = useRef(null);
-  const isFoodModule = getCurrentModuleType() === "food";
-
   const { data: storesData, isLoading } = useGetSearchPageData(
     {
       offset: 1,
@@ -408,7 +406,7 @@ const TopRestaurantsSection = ({ t, searchFromNav = false }) => {
   );
 
   return (
-    <Section title={isFoodModule ? t("Top Restaurants") : t("Top Store")}>
+    <Section title={t("Top Store")}>
       {sliderItems}
     </Section>
   );
@@ -422,8 +420,6 @@ const FeaturedRestaurantsSection = ({
 }) => {
   const [isSliderHovered, setIsSliderHovered] = useState(false);
   const slider = useRef(null);
-  const isFoodModule = getCurrentModuleType() === "food";
-
   const enhancedSettings = {
     dots: false,
     infinite: false,
@@ -559,9 +555,7 @@ const FeaturedRestaurantsSection = ({
   if (!popularData?.stores?.length) return null;
 
   return (
-    <Section
-      title={isFoodModule ? t("Featured Restaurants") : t("Featured Store")}
-    >
+    <Section title={t("Featured Store")}>
       {sliderItems}
     </Section>
   );

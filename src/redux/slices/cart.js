@@ -27,7 +27,7 @@ const initialState = {
     monthlySubscribe: false,
   },
 };
-const isEqual = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
 export const cartSlice = createSlice({
   name: "cart",
   initialState,
@@ -39,61 +39,23 @@ export const cartSlice = createSlice({
       state.storeCartList = Array.isArray(action.payload) ? action.payload : [];
     },
     setCart: (state = initialState, action) => {
-      if (action.payload.module_type !== "food") {
-        let isItemExist = state?.cartList?.find(
-          (obj) => obj.id === action.payload.id
-        );
+      let isItemExist = state?.cartList?.find(
+        (obj) => obj.id === action.payload.id
+      );
 
-        if (isItemExist) {
-          if (isItemExist?.selectedOption) {
-            if (
-              JSON.stringify(isItemExist?.selectedOption) !==
-              JSON.stringify(action.payload?.selectedOption)
-            ) {
-              state.cartList.push(action.payload);
-            }
-          } else {
+      if (isItemExist) {
+        if (isItemExist?.selectedOption) {
+          if (
+            JSON.stringify(isItemExist?.selectedOption) !==
+            JSON.stringify(action.payload?.selectedOption)
+          ) {
             state.cartList.push(action.payload);
           }
         } else {
-          state.cartList = [...state.cartList, { ...action.payload }];
+          state.cartList.push(action.payload);
         }
       } else {
-        //for food module
-
-        let isPayloadItemMatches = false;
-        if (state.cartList?.length > 0) {
-          for (let i = 0; i < state.cartList.length; i++) {
-            if (
-              isEqual(
-                state.cartList[i].food_variations,
-                action.payload.food_variations
-              ) &&
-              state.cartList[i].id === action.payload.id
-            ) {
-              isPayloadItemMatches = true;
-              state.cartList[i] = {
-                ...state.cartList[i],
-                totalPrice:
-                  state.cartList[i].totalPrice + action.payload.totalPrice,
-                quantity: state.cartList[i].quantity + action.payload.quantity,
-              };
-              return;
-            } else {
-              isPayloadItemMatches = false;
-            }
-          }
-          if (!isPayloadItemMatches) {
-            state.cartList.push(action.payload);
-          }
-        } else {
-          state.cartList = [
-            ...state?.cartList,
-            {
-              ...action.payload,
-            },
-          ];
-        }
+        state.cartList = [...state.cartList, { ...action.payload }];
       }
     },
     setVariationToCart: (state = initialState, action) => {
@@ -122,112 +84,52 @@ export const cartSlice = createSlice({
       state.cartList = action.payload;
     },
     setUpdateVariationToCart: (state = initialState, action) => {
-      if (action.payload.newObj.module_type === "food") {
-        const index = state.cartList.findIndex(
-          (item, index) => index === action.payload.indexNumber
-        );
-        const newData = state.cartList.map((item, i) =>
-          i === index ? action.payload.newObj : item
-        );
-        state.cartList = newData;
-      }
+      const index = state.cartList.findIndex(
+        (item, index) => index === action.payload.indexNumber
+      );
+      const newData = state.cartList.map((item, i) =>
+        i === index ? action.payload.newObj : item
+      );
+      state.cartList = newData;
     },
     setIncrementToCartItem: (state = initialState, action) => {
       let newData;
-      if (getCurrentModuleType() === "food") {
-        if (action.payload.food_variations.length > 0) {
-          let index = state.cartList.findIndex((item) =>
-            isEqual(item.food_variations, action.payload.food_variations)
-          );
-          newData = state.cartList.map((item, i) =>
-            // action.payload.totalPrice * action.payload.quantity  +
-
-            i === index
-              ? {
-                  ...item,
-                  totalPrice: action.payload.totalPrice,
-                  quantity: action.payload.quantity,
-                }
-              : item
-          );
+      newData = state.cartList.map((stateItem) => {
+        if (
+          stateItem.id === action.payload.id &&
+          JSON.stringify(stateItem?.selectedOption) ===
+            JSON.stringify(action.payload?.selectedOption)
+        ) {
+          return {
+            ...action.payload,
+            price: action.payload.price,
+            quantity: action.payload.quantity,
+            totalPrice: action.payload.totalPrice,
+          };
         } else {
-          newData = state.cartList.map((item) =>
-            item.id === action.payload.id
-              ? {
-                  ...item,
-                  totalPrice: action.payload.totalPrice,
-                  quantity: action.payload.quantity,
-                }
-              : item
-          );
+          return stateItem;
         }
-      } else {
-        newData = state.cartList.map((stateItem) => {
-          if (
-            stateItem.id === action.payload.id &&
-            JSON.stringify(stateItem?.selectedOption) ===
-              JSON.stringify(action.payload?.selectedOption)
-          ) {
-            return {
-              ...action.payload,
-              price: action.payload.price,
-              quantity: action.payload.quantity,
-              totalPrice: action.payload.totalPrice,
-            };
-          } else {
-            return stateItem;
-          }
-        });
-      }
+      });
       state.cartList = newData;
     },
     setDecrementToCartItem: (state = initialState, action) => {
-      // without food module
       let newData;
-      if (getCurrentModuleType() === "food") {
-        if (action.payload.food_variations.length > 0) {
-          let index = state.cartList.findIndex((item) =>
-            isEqual(item.food_variations, action.payload.food_variations)
-          );
-
-          newData = state.cartList.map((item, i) =>
-            i === index
-              ? {
-                  ...item,
-                  totalPrice: action.payload.totalPrice,
-                  quantity: action.payload.quantity,
-                }
-              : item
-          );
+      newData = state.cartList.map((stateItem) => {
+        if (
+          stateItem.id === action.payload.id &&
+          JSON.stringify(stateItem?.selectedOption) ===
+            JSON.stringify(action.payload?.selectedOption)
+        ) {
+          return {
+            ...action.payload,
+            price: action.payload.price,
+            quantity: action.payload.quantity,
+            totalPrice: action.payload.totalPrice,
+          };
         } else {
-          newData = state.cartList.map((item) =>
-            item.id === action.payload.id
-              ? {
-                  ...item,
-                  totalPrice: action.payload.totalPrice,
-                  quantity: action.payload.quantity,
-                }
-              : item
-          );
+          return stateItem;
         }
-      } else {
-        newData = state.cartList.map((stateItem) => {
-          if (
-            stateItem.id === action.payload.id &&
-            JSON.stringify(stateItem?.selectedOption) ===
-              JSON.stringify(action.payload?.selectedOption)
-          ) {
-            return {
-              ...action.payload,
-              price: action.payload.price,
-              quantity: action.payload.quantity,
-              totalPrice: action.payload.totalPrice,
-            };
-          } else {
-            return stateItem;
-          }
-        });
-      }
+      });
 
       state.cartList = newData;
     },

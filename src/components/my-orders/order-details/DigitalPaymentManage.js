@@ -80,7 +80,7 @@ const DigitalPaymentManage = ({
               variant="contained"
               onClick={handleClose}
             >
-              {moduleType === "parcel" ? t("Cancel Parcel") : t("Cancel Order")}
+              {t("Cancel Order")}
             </CustomButtonCancel>
           </Stack>
         </DialogActions>

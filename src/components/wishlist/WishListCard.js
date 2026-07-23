@@ -151,28 +151,15 @@ const WishListCard = ({ item, onOpenModal }) => {
     }
   };
   const addToCart = (e) => {
-    if (item?.module_type === "ecommerce") {
-      if (item?.variations.length > 0) {
-        handleProductRedirect(item, router);
-      } else {
-        e.stopPropagation();
-        addToCartHandler();
-      }
+    if (item?.food_variations.length > 0 || item?.variations.length > 0) {
+      onOpenModal?.(item);
     } else {
-      if (item?.food_variations.length > 0 || item?.variations.length > 0) {
-        onOpenModal?.(item);
-      } else {
-        e.stopPropagation();
-        addToCartHandler();
-      }
+      e.stopPropagation();
+      addToCartHandler();
     }
   };
   const handleClick = () => {
-    if (item?.module_type === "ecommerce") {
-      handleProductRedirect(item, router);
-    } else {
-      onOpenModal?.(item);
-    }
+    onOpenModal?.(item);
   };
 
   const addToWishlistHandler = (e) => {

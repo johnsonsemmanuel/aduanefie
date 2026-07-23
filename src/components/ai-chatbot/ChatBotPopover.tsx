@@ -85,7 +85,7 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
   const [addingProductId, setAddingProductId] = useState<number | null>(null);
   const [productModal, setProductModal] = useState<{
     product: ChatProduct;
-    type: "food" | "module";
+    type: "module";
   } | null>(null);
   const [pendingModuleSwitch, setPendingModuleSwitch] = useState<{
     moduleItem: any;
@@ -425,27 +425,9 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
           return;
         }
 
-        if (moduleType === ModuleTypes.ECOMMERCE) {
-          if (isCrossModule) {
-            router
-              .push(
-                getProductRedirectURL(
-                  product,
-                  undefined,
-                  getModuleIdentifier(moduleItem)
-                )
-              )
-              .then(() => window.scrollTo({ top: 0, behavior: "smooth" }));
-          } else {
-            handleProductRedirect(product, router);
-          }
-          onClose();
-          return;
-        }
-
         setProductModal({
           product,
-          type: moduleType === ModuleTypes.FOOD ? "food" : "module",
+          type: "module",
         });
       };
 
@@ -705,7 +687,7 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
           </Box>
         </Box>
       </Fade>
-      {productModal?.type === "module" && (
+      {productModal && (
         <ModuleModal
           open={Boolean(productModal)}
           handleModalClose={handleCloseProductModal}

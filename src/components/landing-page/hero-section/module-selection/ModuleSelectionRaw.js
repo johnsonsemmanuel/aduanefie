@@ -121,33 +121,19 @@ const Card = ({ item, handleClick }) => {
             sx={{
               fontSize: "12px",
               minHeight: "16px", // Reserve space even when empty
-              visibility: item?.module_type === "parcel" ? "hidden" : "visible",
+              visibility: "visible",
             }}
           >
-            {item?.module_type !== "parcel" &&
-              item?.module_type !== "ride-share" && (
+            {item?.module_type !== "ride-share" && (
                 <>
                   {t("Over")}{" "}
-                  {item?.module_type === "ecommerce" ? (
-                    <>
-                      {item?.items_count > 2
-                        ? item?.items_count - 1
-                        : item?.items_count}
-                      {item?.items_count > 2 && "+"} {t("Items")}
-                    </>
-                  ) : (
-                    <>
-                      {item?.stores_count > 2
-                        ? item?.stores_count - 1
-                        : item?.stores_count}
-                      {item?.stores_count > 2 && "+"}{" "}
-                      {item?.module_type === "food"
-                        ? t("Restaurants")
-                        : item?.module_type === "rental"
-                        ? t("Providers")
-                        : t("Stores")}
-                    </>
-                  )}
+                  {item?.stores_count > 2
+                    ? item?.stores_count - 1
+                    : item?.stores_count}
+                  {item?.stores_count > 2 && "+"}{" "}
+                  {item?.module_type === "rental"
+                    ? t("Providers")
+                    : t("Stores")}
                 </>
               )}
           </Typography>

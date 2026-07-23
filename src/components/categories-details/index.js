@@ -90,13 +90,7 @@ const CategoriesDetails = ({
             />
           )}
         </Grid>
-        {selectedModule?.module_type === "food" && (
-          <Grid item xs={12} sm={12} md={12} align="center">
-            <CustomStackFullWidth alignItems="center" justifyContent="center">
-              <GroupButtons setType={setType} type={type} />
-            </CustomStackFullWidth>
-          </Grid>
-        )}
+
         <Grid container item xs={12} sm={12} md={12} spacing={1}>
           {currentTab === getItemsOrFoods() &&
             (!isRefetching && !itemIsLoading ? (

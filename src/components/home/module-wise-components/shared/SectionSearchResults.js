@@ -131,11 +131,8 @@ const SectionSearchResults = ({ sectionId, q, appliedFilters }) => {
   const items = itemsData?.pages?.flatMap((p) => p?.products ?? []) ?? [];
   const stores = storesData?.pages?.flatMap((p) => p?.stores ?? []) ?? [];
 
-  const itemsLabel =
-    moduleType === "food" ? t("Foods") :
-    moduleType === "pharmacy" ? t("Medicines") :
-    moduleType === "ecommerce" ? t("Items") : t("Groceries");
-  const storesLabel = moduleType === "food" ? t("Restaurants") : t("Stores");
+  const itemsLabel = t("Groceries");
+  const storesLabel = t("Stores");
 
   const showItems = !itemFocus ? false : true;
   const showStores = itemFocus ? false : true;

@@ -303,15 +303,6 @@ const Sidebar = (props) => {
           })}
         </CustomPaperBox>
       )}
-      {getCurrentModuleType() === "food" && isSmall && (
-        <VegNonVegCheckBox
-          selected={state.type}
-          handleSelection={handleSelection}
-          checkState={checkState}
-          setCheckState={setCheckState}
-        />
-      )}
-
       <CustomStackFullWidth spacing={2}>
         <Typography fontWeight="bold" color={theme.palette.neutral[1000]}>
           {t("Price Range")}

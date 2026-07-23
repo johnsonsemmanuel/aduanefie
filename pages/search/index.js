@@ -38,11 +38,7 @@ const SearchPage = ({ configData, metaData }) => {
   }, [configData]);
 
   const moduleType = getCurrentModuleType();
-  const isModuleWithSidebar =
-    moduleType === "food" ||
-    moduleType === ModuleTypes.GROCERY ||
-    moduleType === "pharmacy" ||
-    moduleType === "ecommerce";
+  const isModuleWithSidebar = moduleType === ModuleTypes.GROCERY;
 
   const searchResult = (
     <SearchResult

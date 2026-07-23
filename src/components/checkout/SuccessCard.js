@@ -43,13 +43,7 @@ const SuccessCard = ({ configData, total, order_id }) => {
     }
   };
   const handleText = () => {
-    if (getCurrentModuleType() === "food") {
-      return "food";
-    } else if (getCurrentModuleType() === "parcel") {
-      return "parcel";
-    } else {
-      return "order";
-    }
+    return "order";
   };
   const colorId = () => {
     return <Typography color={theme.palette.primary.main}>234248</Typography>;

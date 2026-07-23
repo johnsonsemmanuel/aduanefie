@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { handleStoreRedirect } from "helper-functions/handleStoreRedirect";
 
-import { Grid, Skeleton, styled, useMediaQuery, useTheme } from "@mui/material";
+import { Skeleton, styled, useMediaQuery, useTheme } from "@mui/material";
 import { Box } from "@mui/system";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,17 +9,12 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import useGetBanners from "../../../api-manage/hooks/react-query/useGetBanners";
-import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
-import { getModuleId } from "helper-functions/getModuleId";
-import { ModuleTypes } from "helper-functions/moduleTypes";
 import { setBanners } from "redux/slices/storedData";
 import {
   CustomStackFullWidth,
   SliderCustom,
 } from "styled-components/CustomStyles.style";
-import CustomImageContainer from "../../CustomImageContainer";
 import NextImage from "components/NextImage";
-import { handleProductRedirect } from "helper-functions/handleProductRedirect";
 
 export const BannersWrapper = styled(Box)(({ theme }) => ({
   cursor: "pointer",
@@ -80,22 +75,10 @@ const Banners = ({ feature }) => {
   const handleBannersData = () => {
     let mergedBannerData = [];
 
-    if (getCurrentModuleType() === "food") {
-      if (banners?.banners?.length > 0) {
-        banners?.banners?.forEach((item) => mergedBannerData.push(item));
-      }
-      if (banners?.campaigns?.length > 0) {
-        banners?.campaigns?.forEach((item) =>
-          mergedBannerData.push({ ...item, isCampaign: true }),
-        );
-      }
-      setBannersData(mergedBannerData);
-    } else {
-      if (banners?.banners?.length > 0) {
-        banners?.banners?.forEach((item) => mergedBannerData.push({ ...item }));
-      }
-      setBannersData(mergedBannerData);
+    if (banners?.banners?.length > 0) {
+      banners?.banners?.forEach((item) => mergedBannerData.push({ ...item }));
     }
+    setBannersData(mergedBannerData);
   };
   const handleBannerClick = (banner) => {
     if (banner?.isCampaign) {
@@ -121,12 +104,8 @@ const Banners = ({ feature }) => {
         handleStoreRedirect(banner?.store, router);
       } else {
         if (banner?.type === "item_wise") {
-          if (selectedModule?.module_type !== "ecommerce") {
-            setFoodBanner(banner?.item);
-            setOpenModal(true);
-          } else {
-            handleProductRedirect(banner?.item, router);
-          }
+          setFoodBanner(banner?.item);
+          setOpenModal(true);
         }
       }
     }
@@ -136,47 +115,12 @@ const Banners = ({ feature }) => {
   };
 
   const getModuleWiseBanners = () => {
-    switch (getCurrentModuleType()) {
-      case ModuleTypes.GROCERY:
-        if (bannersData.length === 1) {
-          return 1;
-        } else if (bannersData.length === 2) {
-          return 2;
-        } else {
-          return 3.1;
-        }
-      case "pharmacy":
-        if (bannersData.length === 1) {
-          return 1;
-        } else if (bannersData.length === 2) {
-          return 2;
-        } else {
-          return 3.2;
-        }
-      case "ecommerce":
-        if (bannersData.length === 1) {
-          return 1;
-        } else if (bannersData.length === 2) {
-          return 2;
-        } else {
-          return 3.2;
-        }
-      case "food":
-        if (bannersData.length === 1) {
-          return 1;
-        } else if (bannersData.length === 2) {
-          return 2;
-        } else {
-          return 3.2;
-        }
-      case ModuleTypes.RIDE:
-        if (bannersData.length === 1) {
-          return 1;
-        } else if (bannersData.length === 2) {
-          return 2;
-        } else {
-          return 3.1;
-        }
+    if (bannersData.length === 1) {
+      return 1;
+    } else if (bannersData.length === 2) {
+      return 2;
+    } else {
+      return 3.1;
     }
   };
 

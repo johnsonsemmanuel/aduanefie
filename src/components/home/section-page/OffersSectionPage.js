@@ -65,14 +65,7 @@ const OffersSectionPage = () => {
 
   const searchPlaceholder = "Search Here...";
 
-  const bannerTitle =
-    moduleType === "food"
-      ? "Search Delicious Offers"
-      : moduleType === "pharmacy"
-      ? "Search Medicine Offers"
-      : moduleType === "ecommerce"
-      ? "Search Product Offers"
-      : "Search Grocery Offers";
+  const bannerTitle = "Search Grocery Offers";
 
   return (
     <SectionPageLayout

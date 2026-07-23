@@ -7,8 +7,7 @@ import MicIcon from "@mui/icons-material/Mic";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { CloseIconWrapper } from "styled-components/CustomStyles.style";
 import { Search, StyledInputBase } from "./CustomSearch.style";
-import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
-import { ModuleTypes } from "helper-functions/moduleTypes";
+
 import VoiceSearchModal from "./VoiceSearchModal";
 
 const CustomSearch = ({
@@ -75,10 +74,6 @@ const CustomSearch = ({
           <i
             class="fi fi-bs-search"
             style={{
-              color: (theme) =>
-                getCurrentModuleType() === "food"
-                  ? theme.palette.moduleTheme.food
-                  : "primary.main",
               marginInlineStart: "12px",
               fontSize: "16px",
               lineHeight: 1,

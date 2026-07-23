@@ -142,18 +142,7 @@ export const getItemDataForAddToCart = (
     price: mainPrice,
     quantity: updateQuantity,
     variation:
-      values?.module_type === "food"
-        ? values?.food_variations?.length > 0
-          ? values?.food_variations?.map((variation) => {
-              return {
-                name: variation.name,
-                values: {
-                  label: handleValuesFromCartItems(variation.values),
-                },
-              };
-            })
-          : []
-        : values?.selectedOption?.length > 0
+        values?.selectedOption?.length > 0
         ? values?.selectedOption
         : [],
   };
@@ -164,9 +153,7 @@ export const getPriceAfterQuantityChange = (cart, Quantity) => {
   //here quantity is incremented with number 1
   const productPrice = price * Quantity;
   mainPrice =
-    getCurrentModuleType() === "food"
-      ? productPrice
-      : (cart?.selectedOption?.length > 0
+    (cart?.selectedOption?.length > 0
           ? cart?.selectedOption?.[0]?.price
           : cart?.price) * Quantity;
   return mainPrice;

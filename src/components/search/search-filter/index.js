@@ -135,7 +135,7 @@ const SearchFilter = (props) => {
               fromNav={fromNav}
             />
           )}
-          {brands && currentTab !== 1 && getCurrentModuleType() === "ecommerce" && (
+          {brands && currentTab !== 1 && (
             <BrandCheckBox
               linkRouteTo={linkRouteTo}
               title="Brands"

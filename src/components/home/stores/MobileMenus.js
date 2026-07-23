@@ -8,20 +8,9 @@ import FormLabel from "@mui/material/FormLabel";
 import { useTranslation } from "react-i18next";
 import RadioGroup from "@mui/material/RadioGroup";
 import { CustomStackFullWidth } from "../../../styled-components/CustomStyles.style";
-import { getCurrentModuleType } from "../../../helper-functions/getCurrentModuleType";
-import { ModuleTypes } from "../../../helper-functions/moduleTypes";
 
 const getModuleWiseData = (theme) => {
-  switch (getCurrentModuleType()) {
-    case ModuleTypes.GROCERY:
-      return theme.palette.primary.main;
-    case "pharmacy":
-      return theme.palette.primary.main;
-    case "ecommerce":
-      return theme.palette.primary.main;
-    case "food":
-      return theme.palette.moduleTheme.food;
-  }
+  return theme.palette.primary.main;
 };
 
 const CustomButtonWrapper = styled(Button)(({ theme }) => ({

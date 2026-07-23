@@ -310,12 +310,7 @@ const ReelsModal = ({
     e.stopPropagation();
     if (!productData) return;
     const moduleType = getCurrentModuleType();
-    if (moduleType === ModuleTypes.FOOD) {
-      setOpenFoodModal(true);
-    } else if (moduleType === ModuleTypes.ECOMMERCE) {
-      handleProductRedirect(productData, router);
-       onClose();
-    } else if (moduleType === ModuleTypes.RENTAL) {
+    if (moduleType === ModuleTypes.RENTAL) {
       const vehicleSlug = (productData as any)?.slug ?? productData?.id;
       onClose();
       router.push(`/rental/vehicle/${vehicleSlug}`);

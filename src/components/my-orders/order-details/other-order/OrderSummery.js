@@ -124,17 +124,6 @@ const OrderSummery = (props) => {
         <Grid container pr={{ xs: "0px", sm: "0px", md: "40px" }}>
           <Grid container item md={8} xs={12}>
             <Grid item xs={12} sm={12} md={12}>
-              {!data?.prescription_order &&
-              trackOrderData?.module_type === "pharmacy" &&
-              trackOrderData?.order_attachment_full_url &&
-              trackOrderData?.order_attachment_full_url?.length &&
-              trackOrderData?.order_attachment ? (
-                <SingleOrderAttachment
-                  title="Prescription"
-                  trackOrderData={trackOrderData}
-                  configData={configData}
-                />
-              ) : null}
               {data?.prescription_order ? (
                 <PrescriptionOrderSummery data={data} />
               ) : null}
@@ -299,58 +288,6 @@ const OrderSummery = (props) => {
                       {trackOrderData?.delivery_address?.address || "—"}
                     </Typography>
                   </Stack>
-
-                  {/* Cutlery card (inside left column) — food orders only */}
-                  {trackOrderData?.module_type === "food" &&
-                    trackOrderData?.cutlery && (
-                      <Stack
-                        spacing={1}
-                        sx={{
-                          border: (t) =>
-                            `1px solid ${alpha(t.palette.neutral[400], 0.2)}`,
-                          borderRadius: "14px",
-                          padding: { xs: "14px", md: "16px" },
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            fontSize: "11px",
-                            fontWeight: 700,
-                            letterSpacing: "0.5px",
-                            textTransform: "uppercase",
-                            color:
-                              theme.palette.neutral?.[500] ||
-                              theme.palette.text.secondary,
-                          }}
-                        >
-                          {t("Cutlery")}
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "inline-flex",
-                            alignSelf: "flex-start",
-                            px: 1.25,
-                            py: 0.5,
-                            borderRadius: "999px",
-                            backgroundColor: alpha(
-                              theme.palette.success.main,
-                              0.12,
-                            ),
-                            color: theme.palette.success.main,
-                            border: `1px solid ${alpha(
-                              theme.palette.success.main,
-                              0.25,
-                            )}`,
-                            fontSize: "12px",
-                            fontWeight: 700,
-                            textTransform: "capitalize",
-                            lineHeight: 1.4,
-                          }}
-                        >
-                          {t("Included")}
-                        </Box>
-                      </Stack>
-                    )}
                 </Stack>
 
                 {/* Payment card (right column, spans full height) */}

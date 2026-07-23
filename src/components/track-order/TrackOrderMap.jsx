@@ -35,15 +35,11 @@ const TrackOrderMap = ({
         deliveryManLat={
           trackOrderData?.delivery_man!==null
             ? dLat?.lat
-            : trackOrderData?.module_type === "parcel"
-            ? trackOrderData?.receiver_details?.latitude
             : trackOrderData?.store?.latitude
         }
         deliveryManLng={
           trackOrderData?.delivery_man!==null
             ? dLat?.lng
-            : trackOrderData?.module_type === "parcel"
-            ? trackOrderData?.receiver_details?.longitude
             : trackOrderData?.store?.longitude
         }
         isStore={trackOrderData?.order_status === "picked_up" || trackOrderData?.order_status === "handover" ? false : true}

@@ -17,13 +17,12 @@ export const StyleCheckBox = styled(({ checkedColor, ...other }) => (
   <Checkbox {...other} />
 ))(({ checkedColor, module, theme }) => ({
   "& .MuiIconButton-label": {
-    color: checkedColor, // Change this to the desired checked color
+    color: checkedColor,
   },
   "&.Mui-checked": {
-    color:
-      module === "food" ? theme.palette.moduleTheme.food : theme.palette.mian, // Change this to the desired checked color
+    color: theme.palette.primary.main,
     "& .MuiIconButton-label": {
-      color: theme.palette.neutral[100], // Change this to the desired color of the checkmark icon
+      color: theme.palette.neutral[100],
     },
   },
 }));

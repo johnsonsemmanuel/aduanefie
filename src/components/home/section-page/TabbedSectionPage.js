@@ -161,35 +161,12 @@ const TabbedSectionPage = ({ sectionType }) => {
   const items = itemsData?.pages?.flatMap((p) => p?.products ?? []) ?? [];
   const stores = storesData?.pages?.flatMap((p) => p?.stores ?? []) ?? [];
 
-  const itemsLabel =
-    moduleType === "food"
-      ? t("Foods")
-      : moduleType === "pharmacy"
-      ? t("Medicines")
-      : moduleType === "ecommerce"
-      ? t("Items")
-      : t("Groceries");
-  const storesLabel = moduleType === "food" ? t("Restaurants") : t("Stores");
+  const itemsLabel = t("Groceries");
+  const storesLabel = t("Stores");
 
   const searchPlaceholder = t("Search Here...");
 
   const TABBED_BANNER_TITLES = {
-    food: {
-      "free-delivery": "Find Free Delivery Food",
-      "top-rated": "Search Top Rated Restaurants",
-      nearby: "Search Nearby Restaurants",
-    },
-    pharmacy: {
-      "free-delivery": "Find Free Delivery Medicine",
-      "top-rated": "Search Top Rated Pharmacies",
-      nearby: "Search Nearby Pharmacies",
-    },
-    ecommerce: {
-      "free-delivery": "Find Free Delivery Products",
-      "top-rated": "Search Top Rated Shops",
-      "verified-seller": "Search Verified Seller Shops",
-      nearby: "Search Nearby Shops",
-    },
     grocery: {
       "free-delivery": "Find Free Delivery Grocery",
       "top-rated": "Search Top Rated Grocery Stores",
@@ -199,14 +176,7 @@ const TabbedSectionPage = ({ sectionType }) => {
 
   const moduleKey = moduleType ?? "grocery";
   const bannerTitle =
-    TABBED_BANNER_TITLES[moduleKey]?.[sectionType] ??
-    (moduleType === "food"
-      ? "Search Delicious Food"
-      : moduleType === "pharmacy"
-      ? "Search for Medicine"
-      : moduleType === "ecommerce"
-      ? "Search for Products"
-      : "Search for Grocery");
+    TABBED_BANNER_TITLES[moduleKey]?.[sectionType] ?? "Search for Grocery";
 
   if (!config) return null;
 

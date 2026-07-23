@@ -147,16 +147,12 @@ const TrackOrder = ({ configData, trackOrderData }) => {
       img: orderConfirmImage.src,
     },
     {
-      label: `Preparing ${
-        trackOrderData?.module?.module_type === "food" ? "foods" : "items"
-      }`,
+        label: "Preparing items",
       time: trackOrderData?.processing,
       img: shippedImage.src,
     },
     {
-      label: ` ${
-        trackOrderData?.module?.module_type === "food" ? "Foods" : "Items"
-      } is on the way`,
+        label: "Items is on the way",
       time: trackOrderData?.picked_up,
       img: outForDelivery.src,
     },

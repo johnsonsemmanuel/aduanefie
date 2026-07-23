@@ -502,19 +502,6 @@ const ProductInformation = ({
         ) : (
           <Skeleton width={100} variant="text" />
         )}
-        {(state.modalData[0]?.module_type === "pharmacy" ||
-          state.modalData[0]?.module?.module_type === "pharmacy") &&
-          state.modalData[0]?.generic_name?.[0] && (
-            <Typography
-              fontSize={{ xs: "12px", sm: "12px" }}
-              fontWeight="400"
-              color="customColor.textGray"
-              component="h2"
-            >
-              {state.modalData[0]?.generic_name?.[0]}
-            </Typography>
-          )}
-
         {!state.modalData[0]?.isCampaignItem &&
           Number(state.modalData[0]?.avg_rating) > 0 &&
           Number(state.modalData[0]?.rating_count) > 0 && (
@@ -593,10 +580,7 @@ const ProductInformation = ({
             !!productDetailsData?.store_details?.free_delivery;
           const showHalal = !!item?.halal_tag_status && !!item?.is_halal;
           const showOrganic = !!item?.organic;
-          const showVeg =
-            (item?.module_type === "food" ||
-              item?.module?.module_type === "food") &&
-            !!configData?.toggle_veg_non_veg;
+          const showVeg = false;
           if (
             !showDiscount &&
             !showFreeDelivery &&
@@ -746,89 +730,6 @@ const ProductInformation = ({
             </Stack>
           );
         })()}
-
-        {(state.modalData[0]?.module_type === "pharmacy" ||
-          state.modalData[0]?.module?.module_type === "pharmacy") &&
-          (() => {
-            const item = state.modalData[0];
-            const company =
-              item?.brand?.name ||
-              item?.manufacturer_name ||
-              item?.company_name;
-            const unit = item?.unit_type;
-            const perUnit = item?.per_unit;
-            const categoryNames = item?.category_ids
-              ?.map((c) => c?.name)
-              ?.filter(Boolean)
-              ?.join(" › ");
-            const genericName = Array.isArray(item?.generic_name)
-              ? item.generic_name.filter(Boolean).join(", ")
-              : item?.generic_name;
-
-            const rows = [
-              company && { label: t("Company"), value: company },
-              unit && { label: t("Unit"), value: unit },
-              perUnit && {
-                label: `${t("Per")} ${unit || t("Unit")}`,
-                value: perUnit,
-              },
-              categoryNames && {
-                label: t("Category"),
-                value: categoryNames,
-              },
-              genericName && {
-                label: t("Generic Name"),
-                value: genericName,
-              },
-            ].filter(Boolean);
-
-            if (rows.length === 0) return null;
-
-            return (
-              <Stack
-                spacing={0.75}
-                sx={{
-                  mt: 1,
-                  p: { xs: 1.25, md: 1.5 },
-                  borderRadius: "10px",
-                  border: `1px solid ${alpha(
-                    theme.palette.text.primary,
-                    0.08
-                  )}`,
-                  backgroundColor: theme.palette.background.paper,
-                }}
-              >
-                {rows.map((row, idx) => (
-                  <Stack
-                    key={idx}
-                    direction="row"
-                    spacing={1}
-                    alignItems="flex-start"
-                  >
-                    <Typography
-                      sx={{
-                        fontSize: { xs: "13px", md: "14px" },
-                        color: theme.palette.text.secondary,
-                        minWidth: { xs: "100px", md: "120px" },
-                      }}
-                    >
-                      {row.label} :
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: { xs: "13px", md: "14px" },
-                        fontWeight: 600,
-                        color: theme.palette.text.primary,
-                        flex: 1,
-                      }}
-                    >
-                      {row.value}
-                    </Typography>
-                  </Stack>
-                ))}
-              </Stack>
-            );
-          })()}
 
         {modalmanage === "true" && state?.modalData?.[0]?.description ? (
           <Typography

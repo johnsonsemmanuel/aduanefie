@@ -61,7 +61,7 @@ const VariationContent = ({ cartItem }) => {
       gap="4px"
       sx={{ fontSize: "12px" }}
     >
-      {cartItem?.module_type === "food" ? handleFood() : handleProduct()}
+      {handleProduct()}
     </Stack>
   );
 };

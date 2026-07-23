@@ -210,15 +210,8 @@ const SectionPageContent = ({ sectionId }) => {
   ];
 
   // Labels
-  const itemsLabel =
-    moduleType === "food"
-      ? t("Foods")
-      : moduleType === "pharmacy"
-      ? t("Medicines")
-      : moduleType === "ecommerce"
-      ? t("Items")
-      : t("Groceries");
-  const storesLabel = moduleType === "food" ? t("Restaurants") : t("Stores");
+  const itemsLabel = t("Groceries");
+  const storesLabel = t("Stores");
 
   // Search placeholder
   const searchPlaceholder = t("Search Here...");
@@ -263,14 +256,7 @@ const SectionPageContent = ({ sectionId }) => {
   const showStores = activeTab === TAB_ALL || activeTab === TAB_STORES;
 
   // Banner title per module
-  const bannerTitle =
-    moduleType === "food"
-      ? "Search Delicious Food"
-      : moduleType === "pharmacy"
-      ? "Search for Medicine"
-      : moduleType === "ecommerce"
-      ? "Search for Products"
-      : "Search for Grocery";
+  const bannerTitle = "Search for Grocery";
 
   return (
     <Stack spacing={2}>

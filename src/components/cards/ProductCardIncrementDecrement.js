@@ -27,12 +27,8 @@ const ProductCardIncrementDecrement = ({ isInCart, modalData }) => {
 
   const handleIncrement = (e) => {
     e.stopPropagation();
-    if (getCurrentModuleType() !== "food") {
-      if (modalData?.stock <= getQuantity(modalData?.id)) {
-        toast.error(t(out_of_stock));
-      } else {
-        reduxDispatch(setIncrementToCartItem(isInCart));
-      }
+    if (modalData?.stock <= getQuantity(modalData?.id)) {
+      toast.error(t(out_of_stock));
     } else {
       reduxDispatch(setIncrementToCartItem(isInCart));
     }

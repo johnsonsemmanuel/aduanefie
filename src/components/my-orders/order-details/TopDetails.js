@@ -274,9 +274,7 @@ const TopDetails = (props) => {
     refetchOfflinePaymentOptions();
   }, []);
   const isZoneDigital = getDigitalMethodFromZone(
-    trackData?.module_type !== "parcel"
-      ? trackData?.store?.zone_id
-      : trackData?.zone_id,
+    trackData?.store?.zone_id,
     zoneData?.data
   );
 
@@ -434,39 +432,6 @@ const TopDetails = (props) => {
             </Typography>
           </Typography>
 
-          {trackData?.module_type === "food" && (
-            <Stack
-              direction="row"
-              alignItems="center"
-              spacing={1}
-              sx={{
-                borderLeft: !isSmall
-                  ? (t) => `1.5px solid ${alpha(t.palette.neutral[400], 0.5)}`
-                  : "none",
-                pl: !isSmall ? "12px" : 0,
-                ml: !isSmall ? "4px" : 0,
-                height: !isSmall ? "16px" : "auto",
-              }}
-            >
-              <TrackSvg />
-              <Typography
-                color={theme.palette.primary.main}
-                fontSize={{ xs: "11px", md: "12px" }}
-                fontWeight="500"
-                lineHeight={1}
-              >
-                {t("Estimated delivery:")}{" "}
-                <Typography
-                  fontSize={{ xs: "11px", md: "12px" }}
-                  fontWeight="600"
-                  component="span"
-                  color={theme.palette.primary.main}
-                >
-                  {handleTime()} {t("min")}
-                </Typography>
-              </Typography>
-            </Stack>
-          )}
         </Stack>
         {configData?.order_delivery_verification ? (
           <Typography
@@ -558,83 +523,22 @@ const TopDetails = (props) => {
       zoneData?.data?.zone_data?.[0]?.cash_on_delivery ? null : (
         <Box sx={{ "@media (max-width: 385px)": { mt: "4px" } }}>
           {trackData && trackData?.order_status === "failed" && !getToken() ? (
-            <OrderStatusButton
-              background={theme.palette.error.deepLight}
-              onClick={() => setCancelOpenModal(true)}
-            >
-              {trackData?.module_type === "parcel" ||
-              trackData?.module?.module_type === "parcel"
-                ? t("Cancel Parcel")
-                : t("Cancel Order")}
-            </OrderStatusButton>
+              <OrderStatusButton
+                background={theme.palette.error.deepLight}
+                onClick={() => setCancelOpenModal(true)}
+              >
+                {t("Cancel Order")}
+              </OrderStatusButton>
           ) : (
-            <>
-              {trackData?.module_type === "parcel" &&
-              (trackData.order_status === "canceled" ||
-                trackData.order_status === "failed") ? (
-                <>
-                  {trackData?.order_status === "canceled" &&
-                  trackData?.charge_payer === "sender" &&
-                  trackData?.parcel_cancellation?.before_pickup === 0 ? (
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      gap={4}
-                      padding="10px 10px"
-                      backgroundColor={theme.palette.neutral[300]}
-                      borderRadius="10px"
-                    >
-                      <Stack direction="row" alignItems="center" gap={2}>
-                        <Typography>{t("Parcel Returned OTP")}</Typography>
-                        <Typography fontSize="20px" fontWeight="700">
-                          {trackData?.parcel_cancellation?.return_otp}
-                        </Typography>
-                      </Stack>
-                      <Button
-                        sx={{ padding: "8px 10px", fontSize: "12px" }}
-                        variant="contained"
-                        onClick={() => setParcelReceiveModal(true)}
-                      >
-                        {"Parcel Received"}
-                      </Button>
-                    </Stack>
-                  ) : (
-                    <>
-                      {configData?.parcel_cancellation_status === 1 &&
-                        trackData?.order_status !== "canceled" &&
-                        trackData?.order_status !== "delivered" && (
-                          <OrderStatusButton
-                            background={theme.palette.error.deepLight}
-                            onClick={() => setCancelOpenModal(true)}
-                          >
-                            {trackData?.module_type === "parcel" ||
-                            trackData?.module?.module_type === "parcel"
-                              ? t("Cancel Parcel")
-                              : t("Cancel Order")}
-                          </OrderStatusButton>
-                        )}
-                    </>
-                  )}
-                </>
-              ) : (
-                (trackData?.module_type === "parcel"
-                  ? ["pending", "confirmed", "picked_up"].includes(
-                      trackData?.order_status
-                    )
-                  : trackData?.order_status === "pending" ||
-                    trackData?.order_status === "failed") && (
-                  <OrderStatusButton
-                    background={theme.palette.error.deepLight}
-                    onClick={() => setCancelOpenModal(true)}
-                  >
-                    {trackData?.module_type === "parcel" ||
-                    trackData?.module?.module_type === "parcel"
-                      ? t("Cancel Parcel")
-                      : t("Cancel Order")}
-                  </OrderStatusButton>
-                )
-              )}
-            </>
+            (trackData?.order_status === "pending" ||
+              trackData?.order_status === "failed") && (
+              <OrderStatusButton
+                background={theme.palette.error.deepLight}
+                onClick={() => setCancelOpenModal(true)}
+              >
+                {t("Cancel Order")}
+              </OrderStatusButton>
+            )
           )}
         </Box>
       )}
@@ -692,7 +596,7 @@ const TopDetails = (props) => {
           orderLoading={orderLoading}
           additionalInfo={additionalInfo}
           setAdditionalInfo={setAdditionalInfo}
-          isParcel={trackData?.module_type === "parcel"}
+          isParcel={false}
           orderStatus={trackData?.order_status}
           setReturnFareOpenModal={setReturnFareOpenModal}
           configData={configData}

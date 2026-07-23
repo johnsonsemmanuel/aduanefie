@@ -488,14 +488,7 @@ const WishListLayout = ({ configData }) => {
 
   const searchPlaceholder = t("Search Here...");
 
-  const bannerTitle =
-    moduleType === "food"
-      ? "Search Saved Restaurants"
-      : moduleType === "pharmacy"
-      ? "Search Saved Medicine"
-      : moduleType === "ecommerce"
-      ? "Search Saved Products"
-      : "Search Saved Grocery";
+  const bannerTitle = "Search Saved Grocery";
 
   const itemsLabel = t(getItemsOrFoods()).replace(/\b\w/g, (c) =>
     c.toUpperCase(),

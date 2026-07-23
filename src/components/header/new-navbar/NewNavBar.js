@@ -244,7 +244,6 @@ const NewNavBar = ({ configData }) => {
   const isSearchlessModule =
     _moduleType === "ride-share" ||
     _moduleType === "rental" ||
-    _moduleType === "parcel" ||
     _moduleType === "ride";
   const scrollTrigger = isLandingPage ? false : _scrollTrigger;
   // On the home & search pages the navbar search must stay hidden while the
@@ -406,7 +405,7 @@ const NewNavBar = ({ configData }) => {
   // ── Icons row (right side) ──
   const renderIcons = () => (
     <Stack direction="row" alignItems="center" spacing={1}>
-      {token && moduleType !== "parcel" && (
+      {token && (
         <NavBarIcon
           icon={
             <i
@@ -419,11 +418,10 @@ const NewNavBar = ({ configData }) => {
           handleClick={() => handleWishlistClick("inbox")}
         />
       )}
-      {token && zoneId && moduleType !== "parcel" && (
+      {token && zoneId && (
         <WishListIcon totalWishList={totalWishList} />
       )}
-      {moduleType !== "parcel" &&
-        moduleType !== "rental" &&
+      {moduleType !== "rental" &&
         (location || cartList?.length !== 0) &&
         zoneId && <CartIcon refetch={cartListRefetch} cartData={cartData} />}
       {moduleType === "rental" && (

@@ -70,9 +70,7 @@ const TrackOrderDetails = ({
 				>
 					<AddBusinessIcon color="primary" />
 					<Typography fontSize="12px">
-						{trackOrderData?.module_type !== "parcel"
-							? trackOrderData?.store?.name
-							: trackOrderData?.receiver_details?.address}
+						{trackOrderData?.store?.name}
 					</Typography>
 				</Stack>
 				<Stack

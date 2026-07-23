@@ -25,7 +25,6 @@ import {
   out_of_limits,
   out_of_stock,
 } from "utils/toasterMessages";
-import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import ModuleModal from "../cards/ModuleModal";
 import { CartIncrementStack } from "./Cart.style";
 import CustomDivider from "../CustomDivider";
@@ -100,11 +99,9 @@ const CartContent = (props) => {
     //here quantity is incremented with number 1
     const productPrice = price * updateQuantity;
     const mainPrice =
-      getCurrentModuleType() === "food"
-        ? productPrice
-        : (cartItem?.selectedOption?.length > 0
-            ? cartItem?.selectedOption?.[0]?.price
-            : cartItem?.price) * updateQuantity;
+      (cartItem?.selectedOption?.length > 0
+        ? cartItem?.selectedOption?.[0]?.price
+        : cartItem?.price) * updateQuantity;
 
     const itemObject = getItemDataForAddToCart(
       cartItem,
@@ -113,37 +110,24 @@ const CartContent = (props) => {
       guestId
     );
 
-    if (getCurrentModuleType() !== "food") {
-      if (cartItem?.stock <= cartItem?.quantity) {
-        toast.error(t(out_of_stock));
-      } else {
-        if (cartItem?.maximum_cart_quantity) {
-          if (cartItem?.maximum_cart_quantity <= cartItem?.quantity) {
-            toast.error(t(out_of_limits), { id: "out-of-limits" });
-          } else {
-            updateMutate(itemObject, {
-              onSuccess: cartUpdateHandleSuccess,
-              onError: onErrorResponse,
-            });
-          }
+    if (cartItem?.stock <= cartItem?.quantity) {
+      toast.error(t(out_of_stock));
+    } else {
+      if (cartItem?.maximum_cart_quantity) {
+        if (cartItem?.maximum_cart_quantity <= cartItem?.quantity) {
+          toast.error(t(out_of_limits), { id: "out-of-limits" });
         } else {
           updateMutate(itemObject, {
             onSuccess: cartUpdateHandleSuccess,
             onError: onErrorResponse,
           });
         }
+      } else {
+        updateMutate(itemObject, {
+          onSuccess: cartUpdateHandleSuccess,
+          onError: onErrorResponse,
+        });
       }
-    } else {
-      if (cartItem?.maximum_cart_quantity) {
-        if (cartItem?.maximum_cart_quantity <= cartItem?.quantity) {
-          toast.error(t(out_of_limits));
-        } else {
-        }
-      }
-      updateMutate(itemObject, {
-        onSuccess: cartUpdateHandleSuccess,
-        onError: onErrorResponse,
-      });
     }
   };
 
@@ -154,11 +138,9 @@ const CartContent = (props) => {
     //here quantity is decremented with number 1
     const productPrice = price * updateQuantity;
     const mainPrice =
-      getCurrentModuleType() === "food"
-        ? productPrice
-        : (cartItem?.selectedOption?.length > 0
-            ? cartItem?.selectedOption?.[0]?.price
-            : cartItem?.price) * updateQuantity;
+      (cartItem?.selectedOption?.length > 0
+        ? cartItem?.selectedOption?.[0]?.price
+        : cartItem?.price) * updateQuantity;
     const itemObject = getItemDataForAddToCart(
       cartItem,
       updateQuantity,
@@ -229,24 +211,6 @@ const CartContent = (props) => {
           <Typography fontWeight="500" fontSize={{ xs: "12px", md: "14px" }}>
             {cartItem?.name}
           </Typography>
-          {cartItem?.module_type === "pharmacy" && (
-            <Typography
-              sx={{
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: "1",
-                WebkitBoxOrient: "vertical",
-                paddingTop: "3px",
-                wordWrap: "break-word",
-              }}
-              variant="body2"
-              color="#93A2AE"
-              textAlign="center"
-            >
-              {cartItem?.generic_name[0]}
-            </Typography>
-          )}
           {cartItem?.is_prescription_required == 1 && (
             <Typography
               color={theme.palette.error.main}

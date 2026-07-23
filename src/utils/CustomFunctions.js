@@ -143,26 +143,17 @@ const handleValuesSum = (productVariations) => {
 
 export const handleProductValueWithOutDiscount = (product) => {
   let productPrice = product?.price;
-  if (getCurrentModuleType() === "food") {
-    if (product?.food_variations?.length > 0) {
-      productPrice += handleVariationValuesSum(product?.food_variations);
-      return productPrice;
-    } else {
+  if (
+    product?.variations?.length > 0 &&
+    product?.selectedOption?.length > 0
+  ) {
+    if (product?.selectedOption?.length > 0) {
+      productPrice = product?.selectedOption?.[0]?.price;
       return productPrice;
     }
   } else {
-    if (
-      product?.variations?.length > 0 &&
-      product?.selectedOption?.length > 0
-    ) {
-      if (product?.selectedOption?.length > 0) {
-        productPrice = product?.selectedOption?.[0]?.price;
-        return productPrice;
-      }
-    } else {
-      productPrice = product.price;
-      return productPrice;
-    }
+    productPrice = product.price;
+    return productPrice;
   }
 };
 
@@ -190,28 +181,15 @@ const handleValueWithOutDiscount = (product) => {
 };
 
 export const handlePurchasedAmount = (cartList) => {
-  if (getCurrentModuleType() === "food") {
-    return cartList.reduce(
-      (total, product) =>
-        (product.food_variations.length > 0
-          ? handleProductValueWithOutDiscount(product)
-          : product.price) *
-          product.quantity +
-        selectedAddonsTotal(product.selectedAddons) +
-        total,
-      0
-    );
-  } else {
-    return cartList.reduce(
-      (total, product) =>
-        (product?.selectedOption?.length > 0
-          ? handleValueWithOutDiscount(product)
-          : product.price) *
-          product.quantity +
-        total,
-      0
-    );
-  }
+  return cartList.reduce(
+    (total, product) =>
+      (product?.selectedOption?.length > 0
+        ? handleValueWithOutDiscount(product)
+        : product.price) *
+        product.quantity +
+      total,
+    0
+  );
 };
 
 export const getCouponDiscount = (couponDiscount, storeData, cartList) => {
@@ -337,52 +315,27 @@ const handleTotalDiscountBasedOnModules = (
   restaurentDiscount,
   resDisType
 ) => {
-  if (getCurrentModuleType() === "food") {
-    return items.reduce(
-      (total, product) =>
-        (product.food_variations.length > 0
-          ? handleProductValueWithOutDiscount(product) -
-            getConvertDiscount(
-              restaurentDiscount,
-              resDisType,
-              handleProductValueWithOutDiscount(product),
-              product.store_discount
-            )
-          : product.price -
-            getConvertDiscount(
-              restaurentDiscount,
-              resDisType,
-              product.price,
-              product.store_discount,
-              product.flash_sale
-            )) *
-          product.quantity +
-        total,
-      0
-    );
-  } else {
-    return items.reduce(
-      (total, product) =>
-        (product?.selectedOption?.length > 0
-          ? handleValueWithOutDiscount(product) -
-            getConvertDiscount(
-              restaurentDiscount,
-              resDisType,
-              handleValueWithOutDiscount(product),
-              product.store_discount
-            )
-          : product.price -
-            getConvertDiscount(
-              restaurentDiscount,
-              resDisType,
-              product.price,
-              product.store_discount
-            )) *
-          product.quantity +
-        total,
-      0
-    );
-  }
+  return items.reduce(
+    (total, product) =>
+      (product?.selectedOption?.length > 0
+        ? handleValueWithOutDiscount(product) -
+          getConvertDiscount(
+            restaurentDiscount,
+            resDisType,
+            handleValueWithOutDiscount(product),
+            product.store_discount
+          )
+        : product.price -
+          getConvertDiscount(
+            restaurentDiscount,
+            resDisType,
+            product.price,
+            product.store_discount
+          )) *
+        product.quantity +
+      total,
+    0
+  );
 };
 
 const handleProductWiseDiscount = (items) => {
@@ -873,28 +826,15 @@ export const getItemTotalWithoutDiscount = (item) => {
 };
 
 export const getSubTotalPrice = (cartList) => {
-  if (getCurrentModuleType() === "food") {
-    return cartList.reduce(
-      (total, product) =>
-        (product?.food_variations.length > 0
-          ? getItemTotalWithoutDiscount(product)
-          : product.price) *
-          product.quantity +
-        selectedAddonsTotal(product.selectedAddons) +
-        total,
-      0
-    );
-  } else {
-    return cartList.reduce(
-      (total, product) =>
-        (product?.selectedOption?.length > 0
-          ? product?.selectedOption?.[0]?.price
-          : product.price) *
-          product.quantity +
-        total,
-      0
-    );
-  }
+  return cartList.reduce(
+    (total, product) =>
+      (product?.selectedOption?.length > 0
+        ? product?.selectedOption?.[0]?.price
+        : product.price) *
+        product.quantity +
+      total,
+    0
+  );
 };
 
 const handleTaxIncludeExclude = (

@@ -27,33 +27,24 @@ const Slide = ({ item }) => {
   const imageBaseUrl = configData?.base_urls?.item_image_url;
 
   const getModuleWiseItemName = () => {
-    if (getCurrentModuleType() === "food") {
-      return (
-        <Stack direction="row" alignItems="center" spacing={0.8}>
-          <H4 text={item?.item?.name} />
-          <FoodVegNonVegFlag veg={item?.item?.veg == 0 ? false : true} />
-        </Stack>
-      );
-    } else {
-      return (
-        <Stack
-          direction="row"
-          alignItems="center"
-          textAlign="center"
-          spacing={0.8}
-        >
-          {item?.item?.unit_type !== null ? (
-            <H4
-              text={`${item?.item?.name.slice(0, 25)} (${
-                item?.item?.unit_type
-              })`}
-            />
-          ) : (
-            <H4 text={`${item?.item?.name.slice(0, 25)}`} />
-          )}
-        </Stack>
-      );
-    }
+    return (
+      <Stack
+        direction="row"
+        alignItems="center"
+        textAlign="center"
+        spacing={0.8}
+      >
+        {item?.item?.unit_type !== null ? (
+          <H4
+            text={`${item?.item?.name.slice(0, 25)} (${
+              item?.item?.unit_type
+            })`}
+          />
+        ) : (
+          <H4 text={`${item?.item?.name.slice(0, 25)}`} />
+        )}
+      </Stack>
+    );
   };
 
   const handleBadge = () => {

@@ -274,10 +274,7 @@ const IncompleteOrderModal: React.FC<IncompleteOrderModalProps> = ({
         loading={cancelLoading}
         disabled={!failPaymentOrderData.order_id || cancelLoading}
       >
-        {failPaymentOrderData?.module_type === "parcel" ||
-        failPaymentOrderData?.module?.module_type === "parcel"
-          ? t("Cancel Parcel")
-          : t("Cancel Order")}
+        {t("Cancel Order")}
       </LoadingButton>
     </Stack>
   );

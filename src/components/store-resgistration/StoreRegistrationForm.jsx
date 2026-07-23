@@ -320,15 +320,13 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
 
   if (zoneWiseModules?.length > 0) {
     zoneWiseModules.forEach((module) => {
-      if (module.module_type !== "parcel") {
         moduleOption.push({
           label: module.module_name,
           value: module.id,
           type: module.module_type,
         });
-      }
     });
-    // Check if moduleOption remains empty after filtering out "parcel"
+    // Check if moduleOption is empty
     if (moduleOption.length === 0) {
       moduleOption.push({
         label: "No result found",

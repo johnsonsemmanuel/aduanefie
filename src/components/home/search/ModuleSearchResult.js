@@ -160,15 +160,8 @@ const ModuleSearchResult = ({
   const theme = useTheme();
 
   const moduleType = getCurrentModuleType();
-  const itemsLabel =
-    moduleType === "food"
-      ? t("Foods")
-      : moduleType === "ecommerce"
-      ? t("Items")
-      : moduleType === "pharmacy"
-      ? t("Medicines")
-      : t("Groceries");
-  const storesLabel = moduleType === "food" ? t("Restaurants") : t("Stores");
+  const itemsLabel = t("Groceries");
+  const storesLabel = t("Stores");
 
   const totalCount =
     activeTab === TAB_FOODS

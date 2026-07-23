@@ -353,13 +353,11 @@ const ProductInformationBottomSection = ({
   );
   const handleUnavailability = () => (
     <Stack spacing={2}>
-      {getCurrentModuleType() !== "ecommerce" && (
-        <NotAvailableCard
+      <NotAvailableCard
           endTime={productDetailsData?.available_time_ends}
           startTime={productDetailsData?.available_time_starts}
           moduleType={productDetailsData?.module?.module_type}
         />
-      )}
       {productDetailsData?.schedule_order && <>{actionsHandler()}</>}
     </Stack>
   );

@@ -107,11 +107,7 @@ const RestaurantReviewModal = ({
 
     setProductData(itemReview);
 
-    if (itemReview?.item?.module_type === "ecommerce") {
-      handleProductRedirect(itemReview?.item, router);
-    } else {
-      setOpenModal(true);
-    }
+    setOpenModal(true);
   };
   const addToWishlistHandler = (e) => {
     e.stopPropagation();

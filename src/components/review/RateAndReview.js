@@ -76,8 +76,7 @@ const RateAndReview = ({ onAllItemsReviewed, trackData }) => {
         {isRefetching && !items.length && !data ? (
           <Skeleton variant="ractangle" width="100px" height="100%" />
         ) : (
-          trackData?.delivery_man &&
-          (data?.module_type !== "parcel" || items?.module_type !== "parcel") && (
+          trackData?.delivery_man && (
             <GroupButtonsRateAndReview
               setType={setType}
               type={type}
@@ -94,7 +93,7 @@ const RateAndReview = ({ onAllItemsReviewed, trackData }) => {
             maxWidth: "600px"
           }}
         >
-          {type === "items" && (data?.module_type !== "parcel") ? (
+          {type === "items" ? (
             items?.length > 0 ? (
               items?.map((item, index) => {
                 return (

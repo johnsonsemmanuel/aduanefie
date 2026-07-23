@@ -19,31 +19,6 @@ const SearchWithTitle = (props) => {
 
   const getBannerTexts = () => {
     switch (getCurrentModuleType()) {
-      case ModuleTypes.GROCERY:
-        return {
-          title: "Fresh Item that deserve to eat",
-          subTitle: "Get your groceries items delivered in less than an hour",
-        };
-      case "pharmacy":
-        return {
-          title: "Quality Medicines & Health care at your Doorstep.",
-          subTitle: "",
-        };
-      case "ecommerce":
-        return {
-          title: "Exclusive collection for everyone",
-          subTitle: "Get Your Desired High Quality Products Here",
-        };
-      case "food":
-        return {
-          title: "FIND YOUR HAPPINESS",
-          subTitle: "For the love of delicious food.",
-        };
-      case "parcel":
-        return {
-          title: "Track your Products",
-          subTitle: "Now you can track your products easily whenever you want.",
-        };
       case ModuleTypes.RENTAL:
         return {
           title: "Rent best car for best experience",
@@ -51,8 +26,8 @@ const SearchWithTitle = (props) => {
         };
       default:
         return {
-          title: "",
-          subTitle: "",
+          title: "Fresh Item that deserve to eat",
+          subTitle: "Get your groceries items delivered in less than an hour",
         };
     }
   };
@@ -80,7 +55,7 @@ const SearchWithTitle = (props) => {
           sx={{
             fontSize: {
               md: ModuleTypes.RENTAL === "rental" && "30px !important",
-              color: moduleType === "parcel" ? "black" : "inherit"
+              color: "inherit"
             },
             textTransform:
               ModuleTypes.RENTAL === "rental" ? "capitalize" : "initial",
@@ -91,7 +66,7 @@ const SearchWithTitle = (props) => {
         <Typography
           variant={isSmall ? "subtitle2" : "subtitle1"}
           textAlign="center"
-          sx={{ color: moduleType === "parcel" ? "black" : (theme) => theme.palette.mode === "dark" ? theme.palette.neutral[1000] : theme.palette.neutral[400] }}
+          sx={{ color: (theme) => theme.palette.mode === "dark" ? theme.palette.neutral[1000] : theme.palette.neutral[400] }}
           fontWeight="400"
           lineHeight="18.75px"
           component="p"

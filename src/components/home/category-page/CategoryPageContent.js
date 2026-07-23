@@ -245,26 +245,13 @@ const CategoryPageContent = () => {
   const items = itemsData?.pages?.flatMap((p) => p?.products ?? []) ?? [];
   const stores = storesData?.pages?.flatMap((p) => p?.stores ?? []) ?? [];
 
-  const itemsLabel =
-    moduleType === "food"
-      ? t("Foods")
-      : moduleType === "pharmacy"
-      ? t("Medicines")
-      : moduleType === "ecommerce"
-      ? t("Items")
-      : t("Groceries");
-  const storesLabel = moduleType === "food" ? t("Restaurants") : t("Stores");
+  const itemsLabel = t("Groceries");
+  const storesLabel = t("Stores");
 
   const searchPlaceholder = t("Search Here...");
 
   const bannerTitle = currentCategoryName
     ? t("Search in {{name}}", { name: currentCategoryName })
-    : moduleType === "food"
-    ? "Search Delicious Food"
-    : moduleType === "pharmacy"
-    ? "Search for Medicine"
-    : moduleType === "ecommerce"
-    ? "Search for Products"
     : "Search for Grocery";
 
   return (

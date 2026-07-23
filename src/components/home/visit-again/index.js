@@ -1,16 +1,12 @@
 import {
-  alpha,
   useMediaQuery,
   useTheme,
   Card,
   Skeleton,
   Box,
   Grid,
-  Typography,
 } from "@mui/material";
-import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { getToken } from "helper-functions/getToken";
-import { ModuleTypes } from "helper-functions/moduleTypes";
 import React, { useState, useRef, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Slider from "react-slick";
@@ -84,68 +80,20 @@ const VisitAgain = ({ configData, visitedStores, isVisited, isLoading }) => {
   }, [isLoading, visitedStores]);
 
   const getModuleWiseData = () => {
-    switch (getCurrentModuleType()) {
-      case ModuleTypes.GROCERY:
-        return {
-          mainPosition: "flex-start",
-          heading: isVisited ? t("Visit Again!") : t("Whats New"),
-          subHeading: t(
-            "Get your recent purchase from the shop you recently ordered",
-          ),
-          bgColor: "transparent",
-          titleSx: {
-            fontSize: { xs: "18px", md: "24px" },
-            color: "neutral.1050",
-            lineHeight: 1.1,
-            letterSpacing: "-1.2px",
-          },
-        };
-      case "pharmacy":
-        return {
-          mainPosition: !isVisited ? "flex-start" : "center",
-          heading: isVisited ? t("Visit Again!") : t("Whats New"),
-          subHeading: t(
-            "Get your recent medicine from the store you recently ordered",
-          ),
-          bgColor: "transparent",
-          titleSx: {
-            fontSize: { xs: "18px", md: "24px" },
-            color: "neutral.1050",
-            lineHeight: 1.1,
-            letterSpacing: "-1.2px",
-          },
-        };
-      case "ecommerce":
-        return {
-          mainPosition: "flex-start",
-          heading: isVisited ? t("Visit Again!") : t("Whats New"),
-          subHeading: t(
-            "Get your recent purchase from the shop you recently ordered",
-          ),
-          bgColor: "transparent",
-          titleSx: {
-            fontSize: { xs: "18px", md: "24px" },
-            color: "neutral.1050",
-            lineHeight: 1.1,
-            letterSpacing: "-1.2px",
-          },
-        };
-      case "food":
-        return {
-          mainPosition: "flex-start",
-          heading: isVisited ? t("Wanna Try  Again!!") : t("Whats New"),
-          subHeading: t(
-            "Get your recent food from the restaurant you recently ordered",
-          ),
-          bgColor: "transparent",
-          titleSx: {
-            fontSize: { xs: "18px", md: "24px" },
-            color: "neutral.1050",
-            lineHeight: 1.1,
-            letterSpacing: "-1.2px",
-          },
-        };
-    }
+    return {
+      mainPosition: "flex-start",
+      heading: isVisited ? t("Visit Again!") : t("Whats New"),
+      subHeading: t(
+        "Get your recent purchase from the shop you recently ordered",
+      ),
+      bgColor: "transparent",
+      titleSx: {
+        fontSize: { xs: "18px", md: "24px" },
+        color: "neutral.1050",
+        lineHeight: 1.1,
+        letterSpacing: "-1.2px",
+      },
+    };
   };
   // Don't render the section if not loading and no visited stores
   if (!isLoading && (!visitedStores || visitedStores.length === 0) && !token) {

@@ -133,9 +133,7 @@ const NewOrderCard = ({ order, bg = "transparent", configData }) => {
       : rawActionType;
 
   const storeName =
-    order?.module_type === "parcel"
-      ? order?.parcel_category?.name ?? t("Parcel")
-      : order?.store?.name ?? "";
+    order?.store?.name ?? "";
 
   const itemDescription = itemNamesFrom(order?.items_preview ?? []);
   const thumbnailSize = isMobile ? 28 : 36;
@@ -156,9 +154,6 @@ const NewOrderCard = ({ order, bg = "transparent", configData }) => {
     e?.stopPropagation?.();
     if (order?.delivery_man)
       dispatch(setDeliveryManInfoByDispatch(order.delivery_man));
-    if (order?.module_type === "parcel") {
-      setParcelDrawerOpen(true);
-    } else {
       router.push({
         pathname: "/profile",
         query: {
@@ -168,7 +163,6 @@ const NewOrderCard = ({ order, bg = "transparent", configData }) => {
           ...keepOrderTabModule,
         },
       });
-    }
   };
 
   const handleAction = (e) => {

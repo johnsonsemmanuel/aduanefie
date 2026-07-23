@@ -23,10 +23,7 @@ const RedirectWhenCartEmpty = ({
       typeof window !== "undefined" && localStorage.getItem("location");
     const targetPath = hasLocation ? "/home" : "/";
 
-    if (page === "parcel" && !hasLocation) {
-      router.replace("/home");
-      return;
-    }
+
 
     // Read the `cart-list` cookie written by the cart fetch on success.
     //  - "1"   → server says cart HAS items; never redirect even if the

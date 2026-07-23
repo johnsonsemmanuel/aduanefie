@@ -134,10 +134,7 @@ export const ModuleSelection = ({
         quantity: item?.quantity,
         food_variations: item?.item?.food_variations,
         itemBasePrice: item?.item?.price,
-        selectedOption:
-          moduleType !== "food"
-            ? item?.variation
-            : getSelectedVariations(item?.item?.food_variations),
+        selectedOption: item?.variation,
       }));
       dispatch(setCartList(tempCartLists));
     }

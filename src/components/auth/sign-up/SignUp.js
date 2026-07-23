@@ -135,10 +135,7 @@ const SignUp = ({
         router.push(pathname, undefined, { shallow: true });
       };
       if (zoneSelected && getCurrentModuleType()) {
-        if (
-          getCurrentModuleType() !== "parcel" &&
-          getCurrentModuleType() !== "rental"
-        ) {
+        if (getCurrentModuleType() !== "rental") {
           pushWithModule("/interest");
         } else {
           pushWithModule("/home");
@@ -165,7 +162,7 @@ const SignUp = ({
       saveModuleParam(item?.id, item?.slug);
 
       const nextQuery = { module: moduleIdentifier };
-      if (item.module_type !== "parcel" && item?.module_type !== "rental") {
+      if (item?.module_type !== "rental") {
         router.push({ pathname: "/interest", query: nextQuery }, undefined, {
           shallow: true,
         });

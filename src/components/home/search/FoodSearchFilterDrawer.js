@@ -826,8 +826,7 @@ const FoodSearchFilterDrawer = ({
   // Non-Veg don't apply to grocery/pharmacy/shop catalogs. Other modules
   // get an empty list so the section is hidden entirely (the render
   // guard `typeOptions?.length > 0` below drops the block).
-  const visibleTypeOptions =
-    currentModule === "food" ? TYPE_OPTIONS : [];
+  const visibleTypeOptions = [];
 
   const open = Boolean(anchorEl);
 

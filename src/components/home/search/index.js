@@ -179,18 +179,11 @@ const SearchResult = (props) => {
 
   const tabs = [
     {
-      name:
-        getCurrentModuleType() === "food"
-          ? "Foods"
-          : getCurrentModuleType() === "ecommerce"
-            ? "Items"
-            : getCurrentModuleType() === "pharmacy"
-              ? "Medicines"
-              : "Groceries",
+      name: "Groceries",
       value: "items",
     },
     {
-      name: getCurrentModuleType() === "food" ? "Restaurants" : "Stores",
+      name: "Stores",
       value: "stores",
     },
   ];

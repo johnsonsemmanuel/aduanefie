@@ -113,21 +113,6 @@ const OrderCalculation = ({ data, t, trackOrderData }) => {
           {data && data?.length > 0 && getAmountWithSign(getItemsPrice(data))}
         </Typography>
       </CustomStackFullWidth>
-      {trackOrderData?.module?.module_type === "food" && (
-        <CustomStackFullWidth
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          spacing={2}
-        >
-          <Typography fontSize="14px"> {t("Addons Price")}</Typography>
-          <Typography fontSize="14px">
-            {data &&
-              data?.length > 0 &&
-              getAmountWithSign(getAddOnsPrice(data))}
-          </Typography>
-        </CustomStackFullWidth>
-      )}
 
       <CustomStackFullWidth
         direction="row"

@@ -176,7 +176,7 @@ const ProductDetailsSection = ({
                 : undefined
             }
           >
-            {productDetailsData?.module_type !== "food" && productUpdate ? (
+            {productUpdate ? (
               <CustomImageContainer
                 width={isSmall ? "200px" : "100%"}
                 height={isSmall ? "200px" : "250px"}
@@ -219,8 +219,7 @@ const ProductDetailsSection = ({
                 : undefined
             }
           >
-            {productDetailsData?.module_type !== "food" && (
-              <ProductInformation
+            <ProductInformation
                 productDetailsData={productDetailsData}
                 configData={configData}
                 productUpdate={productUpdate}
@@ -228,7 +227,6 @@ const ProductDetailsSection = ({
                 modalmanage={modalmanage}
                 isSmall={isSmall}
               />
-            )}
           </Grid>
         </Grid>
       </Box>

@@ -108,11 +108,7 @@ const OtherOrder = (props) => {
   };
   const handleTab = (item) => {
     if (item.name === "track-order") {
-      if (trackOrderData?.module_type === "parcel") {
-        setSideDrawerOpen(true);
-      } else {
-        setCurrentTab(item?.name);
-      }
+      setCurrentTab(item?.name);
     } else {
       setCurrentTab(item?.name);
     }
@@ -165,7 +161,7 @@ const OtherOrder = (props) => {
       case "seller-info":
         return (
           <>
-            {data && data.module_type !== "parcel" && (
+            {data && (
               <StoreDetails
                 storeData={trackOrderData?.store}
                 configData={configData}
@@ -352,11 +348,9 @@ const OtherOrder = (props) => {
       {!trackDataIsLoading && (
         <ProfileTab
           menuData={
-            data && data.module_type === "parcel"
-              ? orderDetailsMenuDataForParcel
-              : trackOrderData?.order_type === "take_away"
-                ? orderDetailsMenuDataTakeAway
-                : orderDetailsMenuData
+            trackOrderData?.order_type === "take_away"
+              ? orderDetailsMenuDataTakeAway
+              : orderDetailsMenuData
           }
           marginright="20px"
           fontSize="14px"

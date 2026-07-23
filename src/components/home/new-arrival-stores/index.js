@@ -181,195 +181,33 @@ const NewArrivalStores = () => {
   );
 
   const getLayout = () => {
-    if (getCurrentModuleType() === "food") {
-      return (
-        <>
-          {newArrivalStores && newArrivalStores.length > 0 && (
-            <>
-              <CustomStackFullWidth
-                direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-                py="10px"
-                mb={"10px"}
-              >
-                {isLoading ? (
-                  <Skeleton variant="text" width="200px" />
-                ) : (
-                  <Typography
-                    sx={{
-                      fontSize: { xs: "18px", md: "24px" },
-                      fontWeight: 700,
-                      color: "neutral.1050",
-                      lineHeight: 1.1,
-                      letterSpacing: "-1.2px",
-                    }}
-                  >
-                    {t("New Arrival Restaurants")}
-                  </Typography>
-                )}
-              </CustomStackFullWidth>
-              <FoodSliderWrapper>
-                <Slider
-                  {...foodNewArrivalsettings}
-                  beforeChange={() => { isDragging.current = true; }}
-                  afterChange={() => { setTimeout(() => { isDragging.current = false; }, 50); }}
-                >
-                  {newArrivalStores?.map((item, index) => (
-                    <Box key={index}>
-                      <Link
-                        href={getStoreRedirectURL(item)}
-                        onClick={(e) => { if (isDragging.current) e.preventDefault(); }}
-                      >
-                        <FoodNewArrivalCard>
-                          <FoodNewArrivalImageBox>
-                            <NextImage
-                              src={item?.logo_full_url}
-                              alt={item?.title}
-                              height={93}
-                              width={93}
-                              objectFit="cover"
-                              style={{ width: "100%", height: "100%" }}
-                            />
-                            <ClosedNow
-                              active={item?.active}
-                              open={item?.open}
-                              borderRadius="12px"
-                            />
-                          </FoodNewArrivalImageBox>
-                          <Box
-                            sx={{
-                              fontSize: "14px",
-                              fontWeight: 400,
-                              color: "neutral.1050",
-                              letterSpacing: "-0.42px",
-                              lineHeight: 1.2,
-                              textAlign: "center",
-                              width: "100%",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
-                            {item?.name}
-                          </Box>
-                        </FoodNewArrivalCard>
-                      </Link>
-                    </Box>
-                  ))}
-                </Slider>
-              </FoodSliderWrapper>
-            </>
-          )}
-        </>
-      );
-    } else if (
-      getCurrentModuleType() === ModuleTypes.GROCERY ||
-      getCurrentModuleType() === "ecommerce"
-    ) {
-      return (
-        <>
-          {popularData && popularData?.stores?.length > 0 && (
-            <>
-              <CustomStackFullWidth
-                direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-                py="10px"
-                mb={"10px"}
-              >
-                {isLoading ? (
-                  <Skeleton variant="text" width="200px" />
-                ) : (
-                  <Typography
-                    sx={{
-                      fontSize: { xs: "18px", md: "24px" },
-                      fontWeight: 700,
-                      color: "neutral.1050",
-                      lineHeight: 1.1,
-                      letterSpacing: "-1.2px",
-                    }}
-                  >
-                    {t("Top Brands")}
-                  </Typography>
-                )}
-              </CustomStackFullWidth>
-              <FoodSliderWrapper>
-                <Slider {...foodNewArrivalsettings}>
-                  {popularData?.stores?.map((item, index) => (
-                    <Box key={index}>
-                      <Link href={getStoreRedirectURL(item)}>
-                        <FoodNewArrivalCard>
-                          <FoodNewArrivalImageBox>
-                            <NextImage
-                              src={item?.logo_full_url}
-                              alt={item?.title}
-                              height={93}
-                              width={93}
-                              objectFit="cover"
-                              style={{ width: "100%", height: "100%" }}
-                            />
-                            <ClosedNow
-                              active={item?.active}
-                              open={item?.open}
-                              borderRadius="12px"
-                            />
-                          </FoodNewArrivalImageBox>
-                          <Box
-                            sx={{
-                              fontSize: "14px",
-                              fontWeight: 400,
-                              color: "neutral.1050",
-                              letterSpacing: "-0.42px",
-                              lineHeight: 1.2,
-                              textAlign: "center",
-                              width: "100%",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              whiteSpace: "nowrap",
-                            }}
-                          >
-                            {item?.name}
-                          </Box>
-                        </FoodNewArrivalCard>
-                      </Link>
-                    </Box>
-                  ))}
-                </Slider>
-              </FoodSliderWrapper>
-            </>
-          )}
-        </>
-      );
-    } else {
-      return (
-        <>
-          {popularData && popularData?.stores?.length > 0 && (
-            <>
-              <CustomStackFullWidth
-                direction="row"
-                alignItems="center"
-                justifyContent="space-between"
-              >
-                {isLoading ? (
-                  <Skeleton variant="text" width="110px" />
-                ) : (
-                  <H2 text={t("Best Store Nearby")} component="h2" />
-                )}
-                <Menus
-                  selectedMenuIndex={selectedMenuIndex}
-                  setSelectedMenuIndex={handleMenuClick}
-                  menus={menus}
-                />
-              </CustomStackFullWidth>
-              {selectedMenuIndex === 0 && <>{sliderItems}</>}
-              {selectedMenuIndex === 1 && <>{sliderItems}</>}
-              {selectedMenuIndex === 2 && <>{sliderItems}</>}
-            </>
-          )}
-        </>
-      );
-    }
+    return (
+      <>
+        {popularData && popularData?.stores?.length > 0 && (
+          <>
+            <CustomStackFullWidth
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              {isLoading ? (
+                <Skeleton variant="text" width="110px" />
+              ) : (
+                <H2 text={t("Best Store Nearby")} component="h2" />
+              )}
+              <Menus
+                selectedMenuIndex={selectedMenuIndex}
+                setSelectedMenuIndex={handleMenuClick}
+                menus={menus}
+              />
+            </CustomStackFullWidth>
+            {selectedMenuIndex === 0 && <>{sliderItems}</>}
+            {selectedMenuIndex === 1 && <>{sliderItems}</>}
+            {selectedMenuIndex === 2 && <>{sliderItems}</>}
+          </>
+        )}
+      </>
+    );
   };
 
   return (

@@ -159,7 +159,7 @@ const Filter = (props) => {
 												item?.value === "coupon" ||
 												item?.value ===
 												"free_delivery" ||
-												item?.value === "fast_delivery" ) || (currentTab===1 && item?.value==="available_now" || getCurrentModuleType()!=="food" )
+												item?.value === "fast_delivery" ) || true
 											) {
 												return null;
 											} else {

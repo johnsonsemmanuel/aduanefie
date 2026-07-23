@@ -317,19 +317,19 @@ const SecondNavBar = ({ configData }) => {
       totalPrice:
         handleProductValueWithOutDiscount({
           ...item?.item,
-          selectedOption:
-            getModule()?.module_type !== "food"
-              ? getOtherModuleVariation(item?.item?.variations, item?.variation)
-              : [],
+          selectedOption: getOtherModuleVariation(
+            item?.item?.variations,
+            item?.variation
+          ),
         }) * item?.quantity,
       selectedAddons: item?.item?.addons,
       quantity: item?.quantity,
       food_variations: item?.item?.food_variations,
       itemBasePrice: item?.item?.price,
-      selectedOption:
-        getModule()?.module_type !== "food"
-          ? getOtherModuleVariation(item?.item?.variations, item?.variation)
-          : getSelectedVariations(item?.item?.food_variations),
+      selectedOption: getOtherModuleVariation(
+        item?.item?.variations,
+        item?.variation
+      ),
     }));
   };
 
@@ -436,7 +436,7 @@ const SecondNavBar = ({ configData }) => {
           justifyContent="flex-end"
           spacing={2.5}
         >
-          {!token && moduleType !== "parcel" && location && (
+          {!token && location && (
             <IconButton onClick={handleTrackOrder} id="track-order-button">
               <Tooltip
                 title={
@@ -489,7 +489,7 @@ const SecondNavBar = ({ configData }) => {
               </Tooltip>
             </IconButton>
           )}
-          {token && moduleType !== "parcel" && (
+          {token && (
             <NavBarIcon
               icon={<ChatBubbleOutlineIcon sx={{ fontSize: "22px" }} />}
               label={t("Chat")}
@@ -497,12 +497,11 @@ const SecondNavBar = ({ configData }) => {
               handleClick={() => handleWishlistClick("inbox")}
             />
           )}
-          {token && zoneId && moduleType !== "parcel" && (
+          {token && zoneId && (
             <WishListSideBar totalWishList={totalWishList} />
           )}
 
-          {moduleType !== "parcel" &&
-            moduleType !== "rental" &&
+          {moduleType !== "rental" &&
             // !isLoading &&
             (location || cartList?.length !== 0) &&
             zoneId && <Cart isLoading={isLoading} refetch={cartListRefetch} />}
