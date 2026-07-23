@@ -101,7 +101,7 @@ const ModuleSelect = ({
     if (
       interestId?.length > 0 &&
       !isModuleExist &&
-      item.module_type !== "parcel" && item?.module !== "rental"
+      item?.module !== "rental"
     ) {
       router.push({ pathname: "/interest", query: nextQuery }, undefined, {
         shallow: true,

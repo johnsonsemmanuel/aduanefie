@@ -48,12 +48,7 @@ const primary = {
   lite: "rgba(139, 159, 105, 0.1)",
   icon: "#8b9f69",
 };
-const moduleTheme = {
-  pharmacy: "#8b9f69",
-  ecommerce: "#8b9f69",
-  food: "#8b9f69",
-  parcel: "#8b9f69",
-};
+const moduleTheme = {};
 const horizontalCardBG = "#f0eadb";
 
 const secondary = {

@@ -1,9 +1,5 @@
 export const ModuleTypes = {
   GROCERY: "grocery",
-  PHARMACY: "pharmacy",
-  ECOMMERCE: "ecommerce",
-  FOOD: "food",
-  PARCEL: "parcel",
   RENTAL: "rental",
   // RIDE: deprioritized — redirected to community delivery (DEPRECATED — retained for backend data compatibility)
   RIDE: "ride-share" || "rideshare",

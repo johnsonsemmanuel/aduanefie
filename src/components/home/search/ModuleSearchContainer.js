@@ -13,31 +13,19 @@ import {
 import useGetSearchPageData from "api-manage/hooks/react-query/search/useGetSearchPageData";
 import { useGetCategories } from "api-manage/hooks/react-query/all-category/all-categorys";
 import useGetExclusiveDealsStores from "api-manage/hooks/react-query/store/useGetExclusiveDealsStores";
-import FoodSearchBanner from "components/home/module-wise-components/food/FoodSearchBanner";
 import GrocerySearchBanner from "components/home/module-wise-components/grocery/GrocerySearchBanner";
-import PharmacySearchBanner from "components/home/module-wise-components/pharmacy/PharmacySearchBanner";
-import EcommerceSearchBanner from "components/home/module-wise-components/ecommerce/EcommerceSearchBanner";
-import { getFoodSections } from "components/home/module-wise-components/food/foodSectionsConfig";
 import { getGrocerySections } from "components/home/module-wise-components/grocery/grocerySectionsConfig";
-import { getPharmacySections } from "components/home/module-wise-components/pharmacy/pharmacySectionsConfig";
-import { getEcommerceSections } from "components/home/module-wise-components/ecommerce/ecommerceSectionsConfig";
 import ModuleHomeSidebarLayout from "components/home/sidebar-layout/ModuleHomeSidebarLayout";
 import FoodSearchFilterDrawer from "./FoodSearchFilterDrawer";
 import ModuleSearchResult from "./ModuleSearchResult";
 import MobileSearchPageBar from "components/header/new-navbar/MobileSearchPageBar";
 
 const BANNER_MAP = {
-  [ModuleTypes.FOOD]: FoodSearchBanner,
   [ModuleTypes.GROCERY]: GrocerySearchBanner,
-  [ModuleTypes.PHARMACY]: PharmacySearchBanner,
-  [ModuleTypes.ECOMMERCE]: EcommerceSearchBanner,
 };
 
 const SECTIONS_MAP = {
-  [ModuleTypes.FOOD]: getFoodSections,
   [ModuleTypes.GROCERY]: getGrocerySections,
-  [ModuleTypes.PHARMACY]: getPharmacySections,
-  [ModuleTypes.ECOMMERCE]: getEcommerceSections,
 };
 
 const ALL_TAB_LIMIT = 10;
@@ -205,7 +193,7 @@ const ModuleSearchContainer = ({
     storesData?.pages?.[0]?.total_count_store ??
     storesData?.pages?.[0]?.total_size ?? 0;
 
-  const SearchBanner = BANNER_MAP[moduleType] ?? FoodSearchBanner;
+  const SearchBanner = BANNER_MAP[moduleType] ?? GrocerySearchBanner;
   const getSections = SECTIONS_MAP[moduleType] ?? (() => []);
 
   return (

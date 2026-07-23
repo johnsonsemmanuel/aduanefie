@@ -24,12 +24,6 @@ import PushNotificationLayout from "../PushNotificationLayout";
 import CustomModal from "../modal";
 import LastOrderReview from "./LastOrderReview";
 import SearchWithTitle from "./SearchWithTitle";
-import Grocery from "./module-wise-components/Grocery";
-import Shop from "./module-wise-components/ecommerce";
-import FoodModule from "./module-wise-components/food";
-import Parcel from "./module-wise-components/parcel/Index";
-import Pharmacy from "./module-wise-components/pharmacy/Pharmacy";
-
 import toast from "react-hot-toast";
 import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
 import { GoogleApi } from "api-manage/hooks/react-query/googleApi";
@@ -41,6 +35,7 @@ import { useUpdatePaymentByWallet } from "api-manage/hooks/react-query/useUpdate
 import PaymentMethod from "components/checkout/PaymentMethod";
 import ScrollUpButton from "components/common/ScrollUpButton";
 import IncompleteOrderModal from "components/home/IncompleteOrderModal";
+import Grocery from "./module-wise-components/Grocery";
 import Rental from "components/home/module-wise-components/rental/Rental";
 import TaxiSearchPanel from "components/home/module-wise-components/rental/components/global/search/TaxiSearchPanel";
 import { useQuery } from "react-query";
@@ -179,20 +174,6 @@ const HomePageComponents = ({
     switch (getCurrentModuleType()) {
       case ModuleTypes.GROCERY:
         return <Grocery configData={configData} routeSection={routeSection} />;
-      case ModuleTypes.PHARMACY:
-        return <Pharmacy configData={configData} routeSection={routeSection} />;
-      case ModuleTypes.ECOMMERCE:
-        return <Shop configData={configData} routeSection={routeSection} />;
-      case ModuleTypes.FOOD:
-        return (
-          <FoodModule
-            configData={configData}
-            routeSection={routeSection}
-            routeCategory={routeCategory}
-          />
-        );
-      case ModuleTypes.PARCEL:
-        return <Parcel configData={configData} />;
       case ModuleTypes.RENTAL:
         return (
           <Rental configData={configData} landingPageData={landingPageData} />
@@ -261,13 +242,13 @@ const HomePageComponents = ({
     <PushNotificationLayout>
       <NoSsr>
         <CustomStackFullWidth>
-          {/* Food/Grocery/Pharmacy/Ecommerce handle banner+search inside their own sidebar layout */}
+          {/* Grocery handles banner+search inside its own sidebar layout */}
 
           <Box
             width="100%"
             sx={{
               mt:
-                moduleType === "rental" || moduleType === "parcel"
+                moduleType === "rental"
                   ? { xs: 0, md: "34px" }
                   : { xs: "34px", md: "34px" },
             }}
@@ -329,7 +310,7 @@ const HomePageComponents = ({
             </Box>
           </Box>
         </CustomModal>
-        {token && getCurrentModuleType() !== "parcel" && <CashBackPopup />}
+        {token && <CashBackPopup />}
         {token &&
           failPayment &&
           !(Array.isArray(failPayment) && failPayment.length === 0) && (

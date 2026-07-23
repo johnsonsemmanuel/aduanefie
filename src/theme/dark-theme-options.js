@@ -16,12 +16,7 @@ const neutral = {
   1050: "#e0e0e0", // Figma: --sds-color-text-default-default
   1100: "#D6D6D6",
 };
-const moduleTheme = {
-  pharmacy: "#31C0F5",
-  ecommerce: "#EEF5FF",
-  food: "#EF7822",
-  parcel: "#D7EFE4",
-};
+const moduleTheme = {};
 
 const background = {
   default: "#2C2C2C",
