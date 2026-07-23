@@ -827,7 +827,7 @@ const FoodSearchFilterDrawer = ({
   // get an empty list so the section is hidden entirely (the render
   // guard `typeOptions?.length > 0` below drops the block).
   const visibleTypeOptions =
-    currentModule === ModuleTypes.FOOD ? TYPE_OPTIONS : [];
+    currentModule === "food" ? TYPE_OPTIONS : [];
 
   const open = Boolean(anchorEl);
 

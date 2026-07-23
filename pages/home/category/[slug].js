@@ -8,10 +8,7 @@ import { processMetadata } from "utils/fetchPageMetaData";
 import { getCommonServerSideProps } from "utils/serverSidePropsHelper";
 import MainLayout from "components/layout/MainLayout";
 import SEO from "components/seo";
-import { getFoodSections } from "components/home/module-wise-components/food/foodSectionsConfig";
 import { getGrocerySections } from "components/home/module-wise-components/grocery/grocerySectionsConfig";
-import { getPharmacySections } from "components/home/module-wise-components/pharmacy/pharmacySectionsConfig";
-import { getEcommerceSections } from "components/home/module-wise-components/ecommerce/ecommerceSectionsConfig";
 import ModuleHomeSidebarLayout from "components/home/sidebar-layout/ModuleHomeSidebarLayout";
 import CategoryPageContent from "components/home/category-page/CategoryPageContent";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
@@ -37,11 +34,7 @@ const CategoryPage = ({ configData, metaData }) => {
   const moduleType = getCurrentModuleType();
 
   const sections =
-    moduleType === ModuleTypes.FOOD ? getFoodSections() :
-    moduleType === ModuleTypes.GROCERY ? getGrocerySections() :
-    moduleType === ModuleTypes.PHARMACY ? getPharmacySections() :
-    moduleType === ModuleTypes.ECOMMERCE ? getEcommerceSections() :
-    [];
+    moduleType === ModuleTypes.GROCERY ? getGrocerySections() : [];
 
   return (
     <>

@@ -152,7 +152,7 @@ const StoreFilter = ({
         showFilterBy={false}
         showQuickAction={false}
         showCategories={false}
-        showType={getCurrentModuleType() === ModuleTypes.FOOD}
+        showType={getCurrentModuleType() === "food"}
         categories={[]}
       />
     </>

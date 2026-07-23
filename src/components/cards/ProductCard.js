@@ -31,7 +31,7 @@ import {
 } from "styled-components/CustomStyles.style";
 import { textWithEllipsis } from "styled-components/TextWithEllipsis";
 import CustomImageContainer from "../CustomImageContainer";
-import FoodDetailModal from "../food-details/foodDetail-modal/FoodDetailModal";
+
 import {
   ACTION,
   initialState,
@@ -120,7 +120,7 @@ export const CardWrapper = styled(Card)(
     height: cardheight ? cardheight : "220px",
     marginBottom: pharmaCommon && "20px !important",
     border:
-      getCurrentModuleType() === ModuleTypes.FOOD &&
+      getCurrentModuleType() === "food" &&
       `1px solid ${alpha(theme.palette.moduleTheme.food, 0.1)}`,
 
     "&:hover": {
@@ -1145,51 +1145,27 @@ const ProductCard = (props) => {
   return (
     <>
       {" "}
-      {state.openModal && getCurrentModuleType() === "food" && item ? (
-        <FoodDetailModal
-          product={item}
-          imageBaseUrl={imageBaseUrl}
+      {cardFor === "flashSale" && stock !== 0 && state.openModal && (
+        <ModuleModal
           open={state.openModal}
           handleModalClose={handleClose}
-          setOpen={(value) =>
-            dispatch({ type: ACTION.setOpenModal, payload: value })
-          }
+          configData={configData}
+          productDetailsData={item}
           addToWishlistHandler={addToWishlistHandler}
           removeFromWishlistHandler={removeFromWishlistHandler}
           isWishlisted={isWishlisted}
-          setOpenLocationAlert={setOpenLocationAlert}
         />
-      ) : (
-        <>
-          {cardFor === "flashSale" ? (
-            <>
-              {stock !== 0 && state.openModal && (
-                <ModuleModal
-                  open={state.openModal}
-                  handleModalClose={handleClose}
-                  configData={configData}
-                  productDetailsData={item}
-                  addToWishlistHandler={addToWishlistHandler}
-                  removeFromWishlistHandler={removeFromWishlistHandler}
-                  isWishlisted={isWishlisted}
-                />
-              )}
-            </>
-          ) : (
-            item &&
-            state.openModal && (
-              <ModuleModal
-                open={state.openModal}
-                handleModalClose={handleClose}
-                configData={configData}
-                productDetailsData={item}
-                addToWishlistHandler={addToWishlistHandler}
-                removeFromWishlistHandler={removeFromWishlistHandler}
-                isWishlisted={isWishlisted}
-              />
-            )
-          )}
-        </>
+      )}
+      {cardFor !== "flashSale" && item && state.openModal && (
+        <ModuleModal
+          open={state.openModal}
+          handleModalClose={handleClose}
+          configData={configData}
+          productDetailsData={item}
+          addToWishlistHandler={addToWishlistHandler}
+          removeFromWishlistHandler={removeFromWishlistHandler}
+          isWishlisted={isWishlisted}
+        />
       )}
       <Stack sx={{ position: "relative" }}>
         {wishlistcard === "true" && (

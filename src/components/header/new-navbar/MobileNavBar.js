@@ -11,10 +11,7 @@ import { getModule } from "helper-functions/getLanguage";
 import MobileSearchOverlay from "./MobileSearchOverlay";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { ModuleTypes } from "helper-functions/moduleTypes";
-import { getFoodSections } from "components/home/module-wise-components/food/foodSectionsConfig";
 import { getGrocerySections } from "components/home/module-wise-components/grocery/grocerySectionsConfig";
-import { getPharmacySections } from "components/home/module-wise-components/pharmacy/pharmacySectionsConfig";
-import { getEcommerceSections } from "components/home/module-wise-components/ecommerce/ecommerceSectionsConfig";
 
 import useGetGroupedCart from "../../../api-manage/hooks/react-query/add-cart/useGetGroupedCart";
 import useGetBookingList from "api-manage/hooks/react-query/useGetBookingList";
@@ -136,11 +133,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
   }, [address]);
 
   const MODULE_NOUN = {
-    [ModuleTypes.FOOD]: t("Food"),
     [ModuleTypes.GROCERY]: t("Grocery"),
-    [ModuleTypes.PHARMACY]: t("Medicine"),
-    [ModuleTypes.ECOMMERCE]: t("Products"),
-    [ModuleTypes.PARCEL]: t("Parcel"),
   };
   const moduleNoun = MODULE_NOUN[getCurrentModuleType()] ?? t("Items");
 
@@ -223,10 +216,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
   // ── Module-wise section chips ──
   const sectionChips = useMemo(() => {
     const sectionsFn = {
-      [ModuleTypes.FOOD]: getFoodSections,
       [ModuleTypes.GROCERY]: getGrocerySections,
-      [ModuleTypes.PHARMACY]: getPharmacySections,
-      [ModuleTypes.ECOMMERCE]: getEcommerceSections,
     }[getCurrentModuleType()];
     if (!sectionsFn) return [];
     try {
@@ -308,7 +298,6 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
     "/deliveryman-registration",
     "/help-and-support",
     "/about-us",
-    "/parcel-delivery-info",
     "/rental/vehicle-search",
     "/rental/checkout",
     "/rental/cart",
@@ -490,69 +479,67 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
               </Box>
 
               {/* Cart — monochrome stroke icon */}
-              {getCurrentModuleType() === ModuleTypes.PARCEL ? null : (
-                <IconButton
-                  onClick={() => {
-                    if (getCurrentModuleType() === ModuleTypes.RENTAL) {
-                      setTaxiOpen(true);
-                      return;
-                    }
-                    setCartOpen(true);
-                  }}
-                  sx={{
-                    width: 36,
-                    height: 36,
-                    borderRadius: "8px",
-                    color: theme.palette.neutral[1050],
-                    position: "relative",
-                    flexShrink: 0,
-                    p: "8px",
-                  }}
-                  aria-label={t("Cart")}
-                >
-                  {getCurrentModuleType() === ModuleTypes.RENTAL ? (
-                    <DirectionsCarOutlinedIcon
-                      sx={{
-                        fontSize: "20px",
-                        color: theme.palette.neutral[1050],
-                      }}
-                    />
-                  ) : (
-                    <i
-                      className="fi fi-rr-shopping-cart"
-                      style={{
-                        fontSize: "16px",
-                        lineHeight: 1,
-                        display: "flex",
-                        color: theme.palette.neutral[1050],
-                      }}
-                    />
-                  )}
-                  {cartCount > 0 && (
-                    <Box
-                      sx={{
-                        position: "absolute",
-                        top: 2,
-                        right: 2,
-                        minWidth: 16,
-                        height: 16,
-                        px: "4px",
-                        borderRadius: "8px",
-                        backgroundColor: "primary.main",
-                        color: "common.white",
-                        fontSize: "10px",
-                        fontWeight: 700,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        lineHeight: 1,
-                      }}
-                    >
-                      {cartCount}
-                    </Box>
-                  )}
-                </IconButton>
-              )}
+              <IconButton
+                onClick={() => {
+                  if (getCurrentModuleType() === ModuleTypes.RENTAL) {
+                    setTaxiOpen(true);
+                    return;
+                  }
+                  setCartOpen(true);
+                }}
+                sx={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: "8px",
+                  color: theme.palette.neutral[1050],
+                  position: "relative",
+                  flexShrink: 0,
+                  p: "8px",
+                }}
+                aria-label={t("Cart")}
+              >
+                {getCurrentModuleType() === ModuleTypes.RENTAL ? (
+                  <DirectionsCarOutlinedIcon
+                    sx={{
+                      fontSize: "20px",
+                      color: theme.palette.neutral[1050],
+                    }}
+                  />
+                ) : (
+                  <i
+                    className="fi fi-rr-shopping-cart"
+                    style={{
+                      fontSize: "16px",
+                      lineHeight: 1,
+                      display: "flex",
+                      color: theme.palette.neutral[1050],
+                    }}
+                  />
+                )}
+                {cartCount > 0 && (
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 2,
+                      right: 2,
+                      minWidth: 16,
+                      height: 16,
+                      px: "4px",
+                      borderRadius: "8px",
+                      backgroundColor: "primary.main",
+                      color: "common.white",
+                      fontSize: "10px",
+                      fontWeight: 700,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      lineHeight: 1,
+                    }}
+                  >
+                    {cartCount}
+                  </Box>
+                )}
+              </IconButton>
             </Stack>
           </Box>
 
@@ -648,7 +635,6 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
         {/* ── Section 3: Search bar — home only, hidden for rental and parcel */}
         {isHomePage &&
           getCurrentModuleType() !== ModuleTypes.RENTAL &&
-          getCurrentModuleType() !== ModuleTypes.PARCEL &&
           getCurrentModuleType() !== ModuleTypes.RIDE && (
             <Box
               sx={{

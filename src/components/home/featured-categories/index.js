@@ -94,10 +94,10 @@ const FeaturedCategories = () => {
   };
 
   const sectionTitle = {
-    [ModuleTypes.FOOD]: t("Find Your Flavour"),
+    ["food"]: t("Find Your Flavour"),
     [ModuleTypes.GROCERY]: t("Shop by Categories"),
-    [ModuleTypes.PHARMACY]: t("Shop by Categories"),
-    [ModuleTypes.ECOMMERCE]: t("Explore Categories"),
+    ["pharmacy"]: t("Shop by Categories"),
+    ["ecommerce"]: t("Explore Categories"),
   }[getCurrentModuleType()] ?? t("Find Your Flavour");
 
   return (

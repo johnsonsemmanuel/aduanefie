@@ -181,7 +181,7 @@ const NewArrivalStores = () => {
   );
 
   const getLayout = () => {
-    if (getCurrentModuleType() === ModuleTypes.FOOD) {
+    if (getCurrentModuleType() === "food") {
       return (
         <>
           {newArrivalStores && newArrivalStores.length > 0 && (
@@ -265,7 +265,7 @@ const NewArrivalStores = () => {
       );
     } else if (
       getCurrentModuleType() === ModuleTypes.GROCERY ||
-      getCurrentModuleType() === ModuleTypes.ECOMMERCE
+      getCurrentModuleType() === "ecommerce"
     ) {
       return (
         <>

@@ -103,7 +103,7 @@ const SpecialCard = (props) => {
   const { ref: textRef, isEllipsed } = useTextEllipsis(item?.name);
 
   const getModuleWiseItemName = () => {
-    if (getCurrentModuleType() === ModuleTypes.FOOD) {
+    if (getCurrentModuleType() === "food") {
       return (
         <Stack direction="row" alignItems="center" spacing={0.8}>
           {isEllipsed ? (

@@ -4,7 +4,6 @@ import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { ModuleTypes } from "helper-functions/moduleTypes";
 import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
 import ManageSearch from "../header/second-navbar/ManageSearch";
-import TrackParcelFromHomePage from "../parcel/TrackParcelFromHomePage";
 import { useSelector } from "react-redux";
 
 const SearchWithTitle = (props) => {
@@ -25,22 +24,22 @@ const SearchWithTitle = (props) => {
           title: "Fresh Item that deserve to eat",
           subTitle: "Get your groceries items delivered in less than an hour",
         };
-      case ModuleTypes.PHARMACY:
+      case "pharmacy":
         return {
           title: "Quality Medicines & Health care at your Doorstep.",
           subTitle: "",
         };
-      case ModuleTypes.ECOMMERCE:
+      case "ecommerce":
         return {
           title: "Exclusive collection for everyone",
           subTitle: "Get Your Desired High Quality Products Here",
         };
-      case ModuleTypes.FOOD:
+      case "food":
         return {
           title: "FIND YOUR HAPPINESS",
           subTitle: "For the love of delicious food.",
         };
-      case ModuleTypes.PARCEL:
+      case "parcel":
         return {
           title: "Track your Products",
           subTitle: "Now you can track your products easily whenever you want.",
@@ -101,9 +100,7 @@ const SearchWithTitle = (props) => {
         </Typography>
       </CustomStackFullWidth>
 
-      {moduleType === "parcel" ? (
-        <TrackParcelFromHomePage />
-      ) : moduleType === "rental" ? null : (
+      {moduleType === "rental" ? null : (
         <Box sx={{ width: "100%", maxWidth: "800px", mx: "auto" }}>
           <ManageSearch
             zoneid={zoneid}

@@ -22,16 +22,16 @@ const menus = [
 ];
 
 const ModuleWiseMenu = {
-  [ModuleTypes.FOOD]: menus,
+  ["food"]: menus,
   [ModuleTypes.GROCERY]: menus,
-  [ModuleTypes.PHARMACY]: [
+  ["pharmacy"]: [
     { label: t("All"), value: "all" },
     { label: t("Open Now"), value: "currently_open" },
     { label: t("Free Delivery"), value: "free_delivery" },
     { label: t("Rx Accepted"), value: "rx_accepted" },
     { label: t("Nearby"), value: "nearby" },
   ],
-  [ModuleTypes.ECOMMERCE]: menus,
+  ["ecommerce"]: menus,
 };
 
 // ─── Pill Tab ──────────────────────────────────────────────────────────────

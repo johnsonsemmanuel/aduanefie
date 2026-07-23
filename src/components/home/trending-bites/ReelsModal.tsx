@@ -32,9 +32,6 @@ import { useWishListDelete } from "api-manage/hooks/react-query/wish-list/useWis
 import { addWishList, removeWishListItem } from "redux/slices/wishList";
 import VerifiedStoreBadgeJs from "components/cards/VerifiedStoreBadge";
 
-const FoodDetailModal = dynamic(
-  () => import("components/food-details/foodDetail-modal/FoodDetailModal")
-);
 const ModuleModal = dynamic(() => import("components/cards/ModuleModal"));
 
 const VerifiedStoreBadge = VerifiedStoreBadgeJs as React.FC<{
@@ -1108,20 +1105,6 @@ const ReelsModal = ({
       </Stack>
 
       {/* ── Order Now modals ───────────────────────────────────────────── */}
-      {openFoodModal && productData && (
-        <FoodDetailModal
-          product={productData}
-          imageBaseUrl={configData?.base_urls?.item_image_url}
-          open={openFoodModal}
-          handleModalClose={() => setOpenFoodModal(false)}
-          setOpen={setOpenFoodModal}
-          productUpdate={undefined}
-          addToWishlistHandler={toggleWishlist}
-          removeFromWishlistHandler={toggleWishlist}
-          isWishlisted={isWishlisted}
-          setOpenLocationAlert={undefined}
-        />
-      )}
       {openModuleModal && productData && (
         <ModuleModal
           open={openModuleModal}

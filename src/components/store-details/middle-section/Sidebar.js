@@ -303,7 +303,7 @@ const Sidebar = (props) => {
           })}
         </CustomPaperBox>
       )}
-      {getCurrentModuleType() === ModuleTypes.FOOD && isSmall && (
+      {getCurrentModuleType() === "food" && isSmall && (
         <VegNonVegCheckBox
           selected={state.type}
           handleSelection={handleSelection}

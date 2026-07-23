@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 
 import { Box } from "@mui/system";
 import { CustomTabs } from "../../styled-components/CustomStyles.style";
-import { RestaurantDetailsNavButton } from "../food-details/food-card/FoodCard.style";
 
 const ItemNavigation = ({
   categoryMenus,
@@ -33,7 +32,7 @@ const ItemNavigation = ({
         aria-label="scrollable auto tabs example"
       >
         <Box>
-          <RestaurantDetailsNavButton
+          <Button
             sx={{
               color:
                 category_id === 0 || category_id === id
@@ -49,12 +48,12 @@ const ItemNavigation = ({
             onClick={() => handleCategoryId(id)}
           >
             {t("All")}
-          </RestaurantDetailsNavButton>
+          </Button>
 
           {categoryMenus?.length > 0 &&
             categoryMenus?.map((menu) => {
               return (
-                <RestaurantDetailsNavButton
+                <Button
                   sx={{
                     color: (theme) =>
                       category_id === menu.id && "whiteContainer.main",
@@ -73,7 +72,7 @@ const ItemNavigation = ({
                   onClick={() => handleCategoryId(menu.id)}
                 >
                   {menu.name}
-                </RestaurantDetailsNavButton>
+                </Button>
               );
             })}
         </Box>

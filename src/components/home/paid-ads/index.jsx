@@ -304,7 +304,7 @@ const PaidAds = () => {
                 whiteSpace: "nowrap",
               }}
             >
-              {getCurrentModuleType() === ModuleTypes.FOOD
+              {getCurrentModuleType() === "food"
                 ? t("Featured Restaurants")
                 : t("Featured Stores")}
             </Typography>

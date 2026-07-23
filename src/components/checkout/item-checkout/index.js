@@ -56,8 +56,6 @@ import CustomModal from "../../modal";
 import { handleValuesFromCartItems } from "../../product-details/product-details-section/helperFunction";
 import { CouponTitle } from "../CheckOut.style";
 import DeliveryManTip from "../DeliveryManTip";
-import SinglePrescriptionUpload from "../Prescription/SinglePrescriptionUpload";
-import MultiPrescriptionRoot from "../Prescription/MultiPrescriptionRoot";
 import AddPaymentMethod from "./AddPaymentMethod";
 import CheckoutStepper from "./CheckoutStepper";
 import DeliveryDetails from "./DeliveryDetails";
@@ -608,7 +606,7 @@ const ItemCheckout = (props) => {
   const handlePlaceOrder = () => {
     const itemsList = page === "campaign" ? campaignItemList : cartList;
     const isAvailable =
-      storeData?.schedule_order && getCurrentModuleType() === ModuleTypes.FOOD
+      storeData?.schedule_order && getCurrentModuleType() === "food"
         ? isFoodAvailableBySchedule(itemsList, scheduleAt)
         : true;
     if (isAvailable) {
@@ -1260,18 +1258,6 @@ const ItemCheckout = (props) => {
             }}
           >
             <CustomStackFullWidth>
-              {currentModuleType === "pharmacy" && (
-                <div
-                  style={{
-                    marginBottom: "16px",
-                  }}
-                >
-                  <MultiPrescriptionRoot
-                    prescriptionImages={prescriptionImages}
-                    setPrescriptionImages={setPrescriptionImages}
-                  />
-                </div>
-              )}
               <CustomPaperBigCard
                 height="auto"
                 padding={isSmall ? "1rem" : "1.25rem"}

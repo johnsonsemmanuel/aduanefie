@@ -22,7 +22,6 @@ import { getAmountWithSign } from "../../helper-functions/CardHelpers";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { getToken } from "helper-functions/getToken";
 import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
-import Prescription from "../Prescription";
 import CustomContainer from "../container";
 import Top from "./Top";
 import MiddleSection from "./middle-section";
@@ -35,7 +34,6 @@ import { setSelectedModule } from "redux/slices/utils";
 import CustomModal from "components/modal";
 import RestaurantReviewModal from "components/store-details/ReviewModal";
 import useScrollToTop from "api-manage/hooks/custom-hooks/useScrollToTop";
-import LastOrdersSection from "components/home/module-wise-components/food/LastOrdersSection";
 import useGetProActiveOffer from "api-manage/hooks/react-query/pro-plans/useGetProActiveOffer";
 import useSubscribeProPlan from "api-manage/hooks/react-query/pro-plans/useSubscribeProPlan";
 import ProPlanBanner from "components/pro-plan/ProPlanBanner";
@@ -523,11 +521,6 @@ const StoreDetails = ({ storeDetails, configData }) => {
           </Box>
         ))}
 
-      {configData?.repeat_order_option && getToken() ? (
-        <Box sx={{ pt: 2, pb: 2 }}>
-          <LastOrdersSection store_id={storeDetails?.id} />
-        </Box>
-      ) : null}
       {/* <PopularInTheStore id={storeDetails?.id} storeShare={storeShare} /> */}
       <MiddleSection
         ownCategories={ownCategories}
@@ -537,15 +530,6 @@ const StoreDetails = ({ storeDetails, configData }) => {
         setExpanded={setExpanded}
         condensedHeaderVisible={condensedHeaderVisible}
       />
-      {configData?.prescription_order_status &&
-        storeDetails?.prescription_order &&
-        getCurrentModuleType() === "pharmacy" && (
-          <Prescription
-            expanded={expanded}
-            storeId={storeDetails?.id}
-            storeSlug={storeDetails?.slug}
-          />
-        )}
     </CustomStackFullWidth>
   );
 
@@ -571,9 +555,6 @@ const StoreDetails = ({ storeDetails, configData }) => {
         </Box>
       )}
 
-      {configData?.repeat_order_option && getToken() ? (
-        <LastOrdersSection store_id={storeDetails?.id} />
-      ) : null}
       <Box sx={{ mt: { xs: "0px", md: 0 } }}>
         <CustomContainer>
           <CustomStackFullWidth spacing={2}>
@@ -585,15 +566,6 @@ const StoreDetails = ({ storeDetails, configData }) => {
               setExpanded={setExpanded}
               condensedHeaderVisible={condensedHeaderVisible}
             />
-            {configData?.prescription_order_status &&
-              storeDetails?.prescription_order &&
-              getCurrentModuleType() === "pharmacy" && (
-                <Prescription
-                  expanded={expanded}
-                  storeId={storeDetails?.id}
-                  storeSlug={storeDetails?.slug}
-                />
-              )}
           </CustomStackFullWidth>
         </CustomContainer>
       </Box>

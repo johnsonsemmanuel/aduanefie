@@ -1,5 +1,4 @@
 import React from "react";
-import { FoodDetailModalStyle } from "../food-details/foodDetail-modal/foodDetailModal.style";
 import {
   Box,
   Drawer,
@@ -281,8 +280,14 @@ const ModuleModal = (props) => {
 
   return (
     <Modal open={open} onClose={handleModalClose} disableAutoFocus={true}>
-      <FoodDetailModalStyle
+      <Box
         sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          maxWidth: "800px",
+          width: "100%",
           bgcolor: "background.paper",
           borderRadius: "16px",
           overflow: "hidden",
@@ -295,7 +300,7 @@ const ModuleModal = (props) => {
         {closeButton}
         {body}
         {stickyTarget}
-      </FoodDetailModalStyle>
+      </Box>
     </Modal>
   );
 };

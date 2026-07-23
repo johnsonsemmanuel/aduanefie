@@ -40,7 +40,6 @@ const FULL_BLEED_MOBILE_ROUTES = new Set([
   "/home/category/[slug]",
   "/home/wishlist",
   "/product/[id]",
-  "/parcel-delivery-info",
   "/rental/vehicle-search",
   "/rental/checkout",
   "/rental/cart",
@@ -57,7 +56,7 @@ const getMobileMarginTop = ({ pathname, currentModuleType, isCollapsed }) => {
   if (currentModuleType === ModuleTypes.RENTAL) {
     return pathname?.startsWith("/rental") ? "3rem" : "6.3rem";
   }
-  if (currentModuleType === ModuleTypes.PARCEL) return "7.8rem";
+  if (currentModuleType === "parcel") return "7.8rem";
   return isCollapsed ? "10rem" : "11.9rem";
 };
 

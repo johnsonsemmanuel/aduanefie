@@ -17,7 +17,6 @@ import {
   setIncrementToCartItem,
   setRemoveItemFromCart,
 } from "redux/slices/cart";
-import FoodDetailModal from "../food-details/foodDetail-modal/FoodDetailModal";
 import VariationContent from "./VariationContent";
 import { toast } from "react-hot-toast";
 import { t } from "i18next";
@@ -343,30 +342,16 @@ const CartContent = (props) => {
       <Stack paddingLeft="1rem">
         <CustomDivider paddingTop={isSmall ? ".5rem" : "1rem"} border="2px" />
       </Stack>
-      {updateModalOpen && cartItem?.module_type === "food" ? (
-        <FoodDetailModal
-          open={updateModalOpen}
-          product={{
-            ...cartItem,
-            cart_id: cartItem?.cartItemId,
-            add_ons: cartItem?.addons,
-          }}
-          handleModalClose={() => setUpdateModalOpen(false)}
-          imageBaseUrl={imageBaseUrl}
-          productUpdate
-        />
-      ) : (
-        <ModuleModal
-          open={updateModalOpen}
-          handleModalClose={() => setUpdateModalOpen(false)}
-          configData={configData}
-          productDetailsData={{
-            ...cartItem,
-            cart_id: cartItem?.cartItemId,
-          }}
-          productUpdate
-        />
-      )}
+      <ModuleModal
+        open={updateModalOpen}
+        handleModalClose={() => setUpdateModalOpen(false)}
+        configData={configData}
+        productDetailsData={{
+          ...cartItem,
+          cart_id: cartItem?.cartItemId,
+        }}
+        productUpdate
+      />
     </>
   );
 };

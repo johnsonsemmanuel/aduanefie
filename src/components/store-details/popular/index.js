@@ -14,7 +14,6 @@ import {
 import H1 from "../../typographies/H1";
 import { settings } from "./settings";
 import ProductCard from "../../cards/ProductCard";
-import useGetCommonConditionStore from "../../../api-manage/hooks/react-query/common-conditions/useGetCommonConditionStore";
 
 const PopularInTheStore = ({ id, storeShare, sortBy, type }) => {
   const theme = useTheme();
@@ -23,50 +22,16 @@ const PopularInTheStore = ({ id, storeShare, sortBy, type }) => {
   const limit = 10;
   const getBG = () => {
     if (getCurrentModuleType()) {
-      switch (getCurrentModuleType()) {
-        case ModuleTypes.GROCERY:
-          return {
-            bgColor: alpha(theme.palette.primary.main, 0.2),
-            title: t("Recommended for you"),
-          };
-        case ModuleTypes.PHARMACY:
-          return {
-            bgColor: alpha(theme.palette.info.custom1, 0.1),
-            title: t("Common Conditions!"),
-          };
-        case ModuleTypes.ECOMMERCE:
-          return {
-            bgColor: alpha(theme.palette.info.blue, 0.1),
-            title: t("Recommended for you"),
-          };
-        case ModuleTypes.FOOD:
-          return {
-            bgColor: alpha(theme.palette.moduleTheme.food, 0.1),
-            title: t("Recommended for you"),
-          };
-      }
+      return {
+        bgColor: alpha(theme.palette.primary.main, 0.2),
+        title: t("Recommended for you"),
+      };
     } else {
-      switch (storeShare?.moduleType) {
-        case ModuleTypes.GROCERY:
-          return {
-            bgColor: alpha(theme.palette.primary.main, 0.2),
-            title: t("Popular in this store!"),
-          };
-        case ModuleTypes.PHARMACY:
-          return {
-            bgColor: alpha(theme.palette.info.custom1, 0.2),
-            title: t("Common Conditions!"),
-          };
-        case ModuleTypes.ECOMMERCE:
-          return {
-            bgColor: alpha(theme.palette.info.blue, 0.1),
-            title: t("Popular in this store!"),
-          };
-        case ModuleTypes.FOOD:
-          return {
-            bgColor: alpha(theme.palette.moduleTheme.food, 0.1),
-            title: t("Popular in this Restaurant!"),
-          };
+      if (storeShare?.moduleType === ModuleTypes.GROCERY) {
+        return {
+          bgColor: alpha(theme.palette.primary.main, 0.2),
+          title: t("Popular in this store!"),
+        };
       }
     }
   };
@@ -77,19 +42,8 @@ const PopularInTheStore = ({ id, storeShare, sortBy, type }) => {
     type,
     ...storeShare,
   });
-  const {
-    data: commonConditionitems,
-    refetch: refetchCommonCondition,
-    isLoading: isLoddingCondition,
-  } = useGetCommonConditionStore({
-    id,
-    ...storeShare,
-    offset,
-    limit,
-  });
 
   useEffect(() => {
-    refetchCommonCondition();
     refetch();
   }, []);
 
@@ -102,77 +56,40 @@ const PopularInTheStore = ({ id, storeShare, sortBy, type }) => {
 
   return (
     <CustomBoxFullWidth>
-      {getCurrentModuleType() === "pharmacy" ? (
-        <>
-          {commonConditionitems?.products?.length > 0 && (
-            <SliderCustom
-              nopadding="true"
-              sx={{
-                backgroundColor: getBG()?.bgColor,
-                padding: "20px 20px 20px 20px",
-                borderRadius: "4px",
-                marginTop: "12px",
-                "& .slick-slide": {
-                  paddingRight: "20px",
-                  paddingBottom: "10px",
-                },
-              }}
-            >
-              <CustomStackFullWidth spacing={2.2}>
-                <H1 textAlign="start" text={getBG()?.title} />
-                {!isLoading && (
-                  <Slider {...settings}>
-                    {commonConditionitems?.products?.map((item, index) => {
-                      return (
-                        <ProductCard
-                          key={index}
-                          item={item}
-                          specialCard="true"
-                        />
-                      );
-                    })}
-                  </Slider>
-                )}
-              </CustomStackFullWidth>
-            </SliderCustom>
-          )}
-        </>
-      ) : (
-        <>
-          {data?.items?.length > 0 && (
-            <SliderCustom
-              nopadding="true"
-              sx={{
-                backgroundColor: getBG()?.bgColor,
-                padding: "20px 20px 8px 20px",
-                borderRadius: "4px",
-                marginTop: "12px",
-                "& .slick-slide": {
-                  paddingRight: "20px",
-                },
-              }}
-            >
-              <CustomStackFullWidth spacing={2.2}>
-                <H1 textAlign="start" text={getBG()?.title} />
-                {!isLoading && (
-                  <Slider {...settings}>
-                    {data?.items?.map((item, index) => {
-                      return (
-                        <ProductCard
-                          key={index}
-                          item={item}
-                          specialCard="true"
-                          noRecommended
-                        />
-                      );
-                    })}
-                  </Slider>
-                )}
-              </CustomStackFullWidth>
-            </SliderCustom>
-          )}
-        </>
-      )}
+      <>
+        {data?.items?.length > 0 && (
+          <SliderCustom
+            nopadding="true"
+            sx={{
+              backgroundColor: getBG()?.bgColor,
+              padding: "20px 20px 8px 20px",
+              borderRadius: "4px",
+              marginTop: "12px",
+              "& .slick-slide": {
+                paddingRight: "20px",
+              },
+            }}
+          >
+            <CustomStackFullWidth spacing={2.2}>
+              <H1 textAlign="start" text={getBG()?.title} />
+              {!isLoading && (
+                <Slider {...settings}>
+                  {data?.items?.map((item, index) => {
+                    return (
+                      <ProductCard
+                        key={index}
+                        item={item}
+                        specialCard="true"
+                        noRecommended
+                      />
+                    );
+                  })}
+                </Slider>
+              )}
+            </CustomStackFullWidth>
+          </SliderCustom>
+        )}
+      </>
     </CustomBoxFullWidth>
   );
 };

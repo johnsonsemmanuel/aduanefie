@@ -76,7 +76,7 @@ const CustomSearch = ({
             class="fi fi-bs-search"
             style={{
               color: (theme) =>
-                getCurrentModuleType() === ModuleTypes.FOOD
+                getCurrentModuleType() === "food"
                   ? theme.palette.moduleTheme.food
                   : "primary.main",
               marginInlineStart: "12px",

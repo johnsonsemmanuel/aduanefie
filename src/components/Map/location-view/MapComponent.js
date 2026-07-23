@@ -20,7 +20,6 @@ import { Stack } from "@mui/system";
 import { useTheme } from "@emotion/react";
 import CustomImageContainer from "../../CustomImageContainer";
 import ddd from "../assets/meeting-point.svg";
-import DeliveryManMapMarker from "../../parcel/DeliveryManMapMarker";
 import StoreIcon from "@mui/icons-material/Store";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";

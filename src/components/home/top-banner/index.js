@@ -5,10 +5,6 @@ import { ModuleTypes } from "helper-functions/moduleTypes";
 import { CustomBoxFullWidth } from "styled-components/CustomStyles.style";
 import CustomImageContainer from "../../CustomImageContainer";
 import banner from "../assets/banner.webp";
-import rcommerceSearchBg from "../assets/ecommerce_top_bg.png";
-import foodBanner from "../assets/food.png";
-import pharmacy from "../assets/par.png";
-import parcelImage from "../assets/parcel.svg";
 import { BannerCityIcon } from "components/home/module-wise-components/rental/RentalIcons";
 import LeftCar from "/public/static/rental/left_car.png";
 import RightCar from "/public/static/rental/right_car.png";
@@ -28,14 +24,6 @@ const TopBanner = () => {
     switch (getCurrentModuleType()) {
       case ModuleTypes.GROCERY:
         return alpha(theme.palette.primary.main, 0.2);
-      case ModuleTypes.PHARMACY:
-        return alpha(theme.palette.primary.main, 0.2);
-      case ModuleTypes.ECOMMERCE:
-        return alpha(theme.palette.primary.main, 0.2);
-      case ModuleTypes.FOOD:
-        return alpha(theme.palette.primary.main, 0.2);
-      case ModuleTypes.PARCEL:
-        return alpha(theme.palette.primary.main, 0.2);
       case ModuleTypes.RENTAL:
         return alpha(theme.palette.primary.main, 0.05);
       default:
@@ -46,15 +34,6 @@ const TopBanner = () => {
     switch (getCurrentModuleType()) {
       case ModuleTypes.GROCERY:
         return banner?.src;
-      case ModuleTypes.PHARMACY:
-        return pharmacy?.src;
-      case ModuleTypes.ECOMMERCE:
-        return rcommerceSearchBg?.src;
-      case ModuleTypes.FOOD:
-        return foodBanner?.src;
-      case ModuleTypes.PARCEL:
-        return parcelImage?.src;
-
       default:
         return null;
     }

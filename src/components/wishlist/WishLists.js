@@ -16,7 +16,6 @@ import StoreWishCard from "./StoreWishCard";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import RentalWishListCard from "components/home/module-wise-components/rental/components/global/RentalWishlistCard";
 import ProviderWishCard from "components/home/module-wise-components/rental/components/global/ProviderWishCard";
-import FoodDetailModal from "../food-details/foodDetail-modal/FoodDetailModal";
 import ModuleModal from "../cards/ModuleModal";
 import { addWishList, removeWishListItem } from "redux/slices/wishList";
 import { not_logged_in_message } from "utils/toasterMessages";
@@ -174,18 +173,7 @@ const WishLists = (props) => {
         {/*)}*/}
       </Stack>
 
-      {activeItem &&
-        (getCurrentModuleType() === "food" ? (
-          <FoodDetailModal
-            product={activeItem}
-            imageBaseUrl={imageBaseUrl}
-            open={!!activeItem}
-            handleModalClose={handleCloseItemModal}
-            addToWishlistHandler={addToWishlistHandler}
-            removeFromWishlistHandler={removeFromWishlistHandler}
-            isWishlisted={isWishlisted}
-          />
-        ) : (
+      {activeItem && (
           <ModuleModal
             open={!!activeItem}
             handleModalClose={handleCloseItemModal}
@@ -195,7 +183,7 @@ const WishLists = (props) => {
             removeFromWishlistHandler={removeFromWishlistHandler}
             isWishlisted={isWishlisted}
           />
-        ))}
+        )}
     </CustomStackFullWidth>
   );
 };

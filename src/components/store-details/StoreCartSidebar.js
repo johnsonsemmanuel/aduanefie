@@ -86,9 +86,6 @@ const ProPlanPaymentModal = dynamic(() =>
   import("../pro-plan/ProPlanPaymentModal")
 );
 
-const FoodDetailModal = dynamic(() =>
-  import("../food-details/foodDetail-modal/FoodDetailModal")
-);
 const ModuleModal = dynamic(() => import("../cards/ModuleModal"));
 const AuthModal = dynamic(() => import("../auth/AuthModal"));
 const GuestCheckoutModal = dynamic(() => import("../cards/GuestCheckoutModal"));
@@ -279,7 +276,7 @@ const CartItemRow = ({ cartItem }) => {
   };
 
   const quantity = Number(cartItem?.quantity) || 1;
-  const isFood = cartItem?.module_type === ModuleTypes.FOOD;
+  const isFood = cartItem?.module_type === "food";
 
   const optionsTotal = (cartItem?.selectedOption ?? []).reduce(
     (sum, o) =>
@@ -440,19 +437,7 @@ const CartItemRow = ({ cartItem }) => {
         </Box>
       </Stack>
 
-      {updateModalOpen && cartItem?.module_type === "food" ? (
-        <FoodDetailModal
-          open={updateModalOpen}
-          product={{
-            ...cartItem,
-            cart_id: cartItem?.cartItemId,
-            add_ons: cartItem?.addons,
-          }}
-          handleModalClose={() => setUpdateModalOpen(false)}
-          imageBaseUrl={configData?.base_urls?.item_image_url}
-          productUpdate
-        />
-      ) : updateModalOpen ? (
+      {updateModalOpen ? (
         <ModuleModal
           open={updateModalOpen}
           handleModalClose={() => setUpdateModalOpen(false)}
@@ -896,7 +881,7 @@ const StoreCartSidebar = ({ storeDetails, isCartLoading = false }) => {
   const subtotal =
     moduleCartList?.reduce((sum, item) => {
       const itemQty = Number(item?.quantity) || 1;
-      const isFood = item?.module_type === ModuleTypes.FOOD;
+      const isFood = item?.module_type === "food";
 
       let unitPrice;
       if (isFood) {
@@ -932,7 +917,7 @@ const StoreCartSidebar = ({ storeDetails, isCartLoading = false }) => {
 
   const originalSubtotal = moduleCartList?.reduce((sum, item) => {
     const itemQty = item?.quantity || 1;
-    const isFood = item?.module_type === ModuleTypes.FOOD;
+    const isFood = item?.module_type === "food";
     let unitPrice;
     if (isFood) {
       // Food: variation values are additive on top of the base price.
@@ -1354,7 +1339,7 @@ const StoreCartSidebar = ({ storeDetails, isCartLoading = false }) => {
                 </Stack>
 
                 {/* Add To Monthly Order — grocery & pharmacy only, hidden when any cart item is a flash sale */}
-                {[ModuleTypes.GROCERY, ModuleTypes.PHARMACY].includes(
+                {[ModuleTypes.GROCERY, "pharmacy"].includes(
                   getCurrentModuleType()
                 ) &&
                 configData?.monthly_order_reminder &&
@@ -1666,7 +1651,7 @@ const StoreCartSidebar = ({ storeDetails, isCartLoading = false }) => {
                               variant="vertical"
                               item={rel}
                               isPharmacy={
-                                ModuleTypes.PHARMACY === getCurrentModuleType()
+                                "pharmacy" === getCurrentModuleType()
                               }
                               isStore
                               cardWidth={{ xs: "120px", md: "120px" }}

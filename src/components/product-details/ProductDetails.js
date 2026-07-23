@@ -12,8 +12,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { addWishList, removeWishListItem, setWishList } from "redux/slices/wishList";
 import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
 import { not_logged_in_message } from "utils/toasterMessages";
-import SinglePoster from "../home/module-wise-components/ecommerce/SinglePoster";
-import FeaturedStores from "../home/module-wise-components/pharmacy/featured-stores";
 import DetailsAndReviews from "./details-and-reviews/DetailsAndReviews";
 import ProductDetailsSection from "./product-details-section/ProductDetailsSection";
 import ProductReviewsSection from "./ProductReviewsSection";
@@ -295,11 +293,6 @@ const ProductDetails = ({ productDetailsData, configData }) => {
               storename={productDetailsData?.store_details?.name}
             />
             <CustomStackFullWidth>
-              <FeaturedStores
-                slide="3"
-                title="Popular Store"
-                configData={configData}
-              />
             </CustomStackFullWidth>
           </CustomStackFullWidth>
         </Grid>
@@ -319,9 +312,6 @@ const ProductDetails = ({ productDetailsData, configData }) => {
           <ProductsMoreFromTheStore productDetails={productDetailsData} />
         </Grid>
 
-        <Grid item xs={12}>
-          <SinglePoster />
-        </Grid>
       </Grid>
     </CustomStackFullWidth>
   );

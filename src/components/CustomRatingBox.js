@@ -24,19 +24,19 @@ const CustomRatingBox = (props) => {
           color: "whiteContainer.main",
           borderRadius: "2px",
         };
-      case ModuleTypes.PHARMACY:
+      case "pharmacy":
         return {
           background: "primary.lite",
           color: "primary.main",
           borderRadius: "14px",
         };
-      case ModuleTypes.ECOMMERCE:
+      case "ecommerce":
         return {
           background: "primary.lite",
           color: "primary.main",
           borderRadius: "2px",
         };
-      case ModuleTypes.FOOD:
+      case "food":
         return {
           background: theme.palette.moduleTheme.food,
           color: "whiteContainer.main",

@@ -8,7 +8,7 @@ import { ModuleTypes } from "../helper-functions/moduleTypes";
 
 const AmountWithDiscountedAmount = ({ item, noPrimaryColor }) => {
 	const moduleWiseLayout = () => {
-		if (getCurrentModuleType() === ModuleTypes.FOOD) {
+		if (getCurrentModuleType() === "food") {
 			return (
 				<Typography
 					variant="h5"
@@ -20,7 +20,7 @@ const AmountWithDiscountedAmount = ({ item, noPrimaryColor }) => {
 					sx={{
 						fontSize: { xs: "13px", sm: "18px" },
 						color: (theme) =>
-							getCurrentModuleType() === ModuleTypes.FOOD
+							getCurrentModuleType() === "food"
 								? theme.palette.moduleTheme.food
 								: theme.palette.primary.main,
 					}}

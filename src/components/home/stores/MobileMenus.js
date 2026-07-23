@@ -15,11 +15,11 @@ const getModuleWiseData = (theme) => {
   switch (getCurrentModuleType()) {
     case ModuleTypes.GROCERY:
       return theme.palette.primary.main;
-    case ModuleTypes.PHARMACY:
+    case "pharmacy":
       return theme.palette.primary.main;
-    case ModuleTypes.ECOMMERCE:
+    case "ecommerce":
       return theme.palette.primary.main;
-    case ModuleTypes.FOOD:
+    case "food":
       return theme.palette.moduleTheme.food;
   }
 };

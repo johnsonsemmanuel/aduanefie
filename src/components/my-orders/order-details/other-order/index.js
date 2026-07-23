@@ -13,7 +13,6 @@ import {
 } from "styled-components/CustomStyles.style";
 import CustomDivider from "../../../CustomDivider";
 import NoDeliveryManImage from "../../../NoDeliveryManImage";
-import TrackParcelOrderDrawer from "../../../home/module-wise-components/parcel/TrackParcelOrderDrawer";
 import TrackOrder from "../../../track-order";
 import ProfileTab from "../../../user-information/ProfileTab";
 import TopDetails from "../TopDetails";
@@ -385,15 +384,6 @@ const OtherOrder = (props) => {
         formSubmit={formSubmitHandler}
         refundIsLoading={refundIsLoading}
       />
-      {sideDrawerOpen && trackOrderData && (
-        <TrackParcelOrderDrawer
-          orderId={trackOrderData?.id}
-          sideDrawerOpen={sideDrawerOpen}
-          setSideDrawerOpen={setSideDrawerOpen}
-          closeHandler={() => setSideDrawerOpen(false)}
-          phoneOrEmail={phone}
-        />
-      )}
     </CustomStackFullWidth>
   );
 };

@@ -180,11 +180,11 @@ const ManageSearch = ({
   }, [searchRef]);
 
   const MODULE_NOUN = {
-    [ModuleTypes.FOOD]: t("Food"),
+    ["food"]: t("Food"),
     [ModuleTypes.GROCERY]: t("Grocery"),
-    [ModuleTypes.PHARMACY]: t("Medicine"),
-    [ModuleTypes.ECOMMERCE]: t("Products"),
-    [ModuleTypes.PARCEL]: t("Parcel"),
+    ["pharmacy"]: t("Medicine"),
+    ["ecommerce"]: t("Products"),
+    ["parcel"]: t("Parcel"),
   };
 
   const moduleType = getCurrentModuleType();

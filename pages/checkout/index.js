@@ -7,10 +7,8 @@ import Router, { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import PrescriptionCheckout from "../../src/components/checkout/Prescription";
 import RedirectWhenCartEmpty from "../../src/components/checkout/RedirectWhenCartEmpty";
 import ItemCheckout from "../../src/components/checkout/item-checkout";
-import ParcelCheckout from "../../src/components/checkout/parcel";
 import CustomContainer from "../../src/components/container";
 import MainLayout from "../../src/components/layout/MainLayout";
 import AuthGuard from "../../src/components/route-guard/AuthGuard";
@@ -127,14 +125,6 @@ const CheckOutPage = () => {
         <CheckoutMobileHeader />
         <CustomContainer>
           <NoSsr>
-            {page === "parcel" && <ParcelCheckout configData={configData} />}
-            {page === "prescription" && (
-              <PrescriptionCheckout
-                storeId={store_id}
-                configData={configData}
-                page={page}
-              />
-            )}
             {page === "campaign" && campaignItemList.length > 0 && (
               <ItemCheckout
                 router={router}

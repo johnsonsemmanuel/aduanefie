@@ -389,17 +389,17 @@ const Top = (props) => {
   };
 
   const moduleType =
-    getCurrentModuleType() || storeShare?.moduleType || ModuleTypes.FOOD;
+    getCurrentModuleType() || storeShare?.moduleType || "food";
   const moduleLabelMap = {
-    [ModuleTypes.FOOD]: t("Restaurant"),
+    ["food"]: t("Restaurant"),
     [ModuleTypes.GROCERY]: t("Grocery"),
-    [ModuleTypes.PHARMACY]: t("Pharmacy"),
-    [ModuleTypes.ECOMMERCE]: t("Shop"),
+    ["pharmacy"]: t("Pharmacy"),
+    ["ecommerce"]: t("Shop"),
   };
   const moduleLabel = moduleLabelMap[moduleType] || t("Store");
 
   const moduleHref = `/${
-    moduleType === ModuleTypes.FOOD ? "restaurants" : "stores"
+    moduleType === "food" ? "restaurants" : "stores"
   }/${moduleType || "all"}?module_id=${
     storeShare?.moduleId || ""
   }&module_type=${storeShare?.moduleType || moduleType}`;

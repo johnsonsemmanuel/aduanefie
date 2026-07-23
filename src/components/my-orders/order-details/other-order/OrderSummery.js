@@ -22,7 +22,6 @@ import CustomDivider from "../../../CustomDivider";
 import CustomImageContainer from "../../../CustomImageContainer";
 import CustomModal from "../../../modal";
 import CashSvg from "../../assets/CashSvg";
-import ParcelOrderSummery from "../ParcelOrderSummery";
 import OfflineOrderDenied from "../offline-order/OfflineOrderDenied";
 import OfflineOrderDetails from "../offline-order/OfflineOrderDetails";
 import OfflinePaymentEdit from "../offline-order/OfflinePaymentEdit";
@@ -122,18 +121,6 @@ const OrderSummery = (props) => {
 
   return (
     <>
-      {data && data.module_type === "parcel" ? (
-        <ParcelOrderSummery
-          data={data}
-          trackOrderData={trackOrderData}
-          configData={configData}
-          refetchTrackOrder={refetchTrackOrder}
-          isPaymentFailed={isPaymentFailed}
-          repayOrderLoading={repayOrderLoading}
-          setOpenPaymentMethod={setOpenPaymentMethod}
-          handlePayment={handlePayment}
-        />
-      ) : (
         <Grid container pr={{ xs: "0px", sm: "0px", md: "40px" }}>
           <Grid container item md={8} xs={12}>
             <Grid item xs={12} sm={12} md={12}>
@@ -683,7 +670,6 @@ const OrderSummery = (props) => {
             )}
           </Grid>
         </Grid>
-      )}
       <CustomModal
         openModal={openAdmin}
         handleClose={() => setOpenAdmin(false)}

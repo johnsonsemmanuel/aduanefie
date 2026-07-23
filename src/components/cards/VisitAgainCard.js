@@ -46,25 +46,9 @@ export const getModuleWiseData = () => {
         smallImageMarginLeft: "false",
         border: "false",
       };
-    case ModuleTypes.PHARMACY:
-      return {
-        borderRadiusButton: "100px",
-        borderRadiusSmallImage: "50%",
-        smallImageGap: "0px",
-        smallImageMarginLeft: "true",
-        border: "true",
-      };
-    case ModuleTypes.ECOMMERCE:
+    default:
       return {
         borderRadiusButton: "5px",
-        borderRadiusSmallImage: "4px",
-        smallImageGap: "8px",
-        smallImageMarginLeft: "false",
-        border: "false",
-      };
-    case ModuleTypes.FOOD:
-      return {
-        borderRadiusButton: "2px",
         borderRadiusSmallImage: "4px",
         smallImageGap: "8px",
         smallImageMarginLeft: "false",
@@ -229,11 +213,9 @@ const VisitAgainCard = (props) => {
           obejctFit="cover"
           borderRadius="10px"
         />
-        {getCurrentModuleType() !== ModuleTypes.FOOD && (
-          <Box sx={{ position: "absolute", bottom: 12, left: 0, zIndex: 2 }}>
-            <KmShowing distance={item?.distance} />
-          </Box>
-        )}
+        <Box sx={{ position: "absolute", bottom: 12, left: 0, zIndex: 2 }}>
+          <KmShowing distance={item?.distance} />
+        </Box>
 
         {/*{isWishlisted && (*/}
         {/*	<Stack*/}
@@ -311,13 +293,10 @@ const VisitAgainCard = (props) => {
                   borderRadius: getModuleWiseData?.()?.borderRadiusButton,
                   padding: { xs: "4px 10px", sm: "8px 16px" },
                   backgroundColor: (theme) =>
-                    getCurrentModuleType() === ModuleTypes.FOOD
-                      ? theme.palette.moduleTheme.food
-                      : theme.palette.primary.main,
+                    theme.palette.primary.main,
                   "&:hover": {
                     backgroundColor: (theme) =>
-                      getCurrentModuleType() === ModuleTypes.FOOD &&
-                      alpha(theme.palette.moduleTheme.food, 0.7),
+                      alpha(theme.palette.primary.main, 0.7),
                   },
                 }}
                 onClick={handleClick}

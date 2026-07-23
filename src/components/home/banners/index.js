@@ -18,7 +18,6 @@ import {
   SliderCustom,
 } from "styled-components/CustomStyles.style";
 import CustomImageContainer from "../../CustomImageContainer";
-import FoodDetailModal from "../../food-details/foodDetail-modal/FoodDetailModal";
 import NextImage from "components/NextImage";
 import { handleProductRedirect } from "helper-functions/handleProductRedirect";
 
@@ -146,7 +145,7 @@ const Banners = ({ feature }) => {
         } else {
           return 3.1;
         }
-      case ModuleTypes.PHARMACY:
+      case "pharmacy":
         if (bannersData.length === 1) {
           return 1;
         } else if (bannersData.length === 2) {
@@ -154,7 +153,7 @@ const Banners = ({ feature }) => {
         } else {
           return 3.2;
         }
-      case ModuleTypes.ECOMMERCE:
+      case "ecommerce":
         if (bannersData.length === 1) {
           return 1;
         } else if (bannersData.length === 2) {
@@ -162,7 +161,7 @@ const Banners = ({ feature }) => {
         } else {
           return 3.2;
         }
-      case ModuleTypes.FOOD:
+      case "food":
         if (bannersData.length === 1) {
           return 1;
         } else if (bannersData.length === 2) {
@@ -299,15 +298,6 @@ const Banners = ({ feature }) => {
         )}
       </CustomStackFullWidth>
 
-      {openModal && foodBanner && (
-        <FoodDetailModal
-          product={foodBanner}
-          image={`${configData?.base_urls?.item_image_url}/${foodBanner?.image}`}
-          open={openModal}
-          handleModalClose={handleModalClose}
-          setOpen={setOpenModal}
-        />
-      )}
     </>
   );
 };

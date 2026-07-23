@@ -8,11 +8,7 @@ import { useWishListDelete } from "api-manage/hooks/react-query/wish-list/useWis
 import { addWishList, removeWishListItem } from "redux/slices/wishList";
 import { not_logged_in_message } from "utils/toasterMessages";
 import { closeSearchProductModal } from "redux/slices/searchProductModal";
-import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 
-const FoodDetailModal = dynamic(() =>
-  import("../../food-details/foodDetail-modal/FoodDetailModal"),
-);
 const ModuleModal = dynamic(() => import("../../cards/ModuleModal"));
 
 const SearchProductModal = () => {
@@ -62,28 +58,6 @@ const SearchProductModal = () => {
   const handleModalClose = () => {
     dispatch(closeSearchProductModal());
   };
-
-  const moduleType = selectedItem?.module_type ?? getCurrentModuleType();
-  const isFood = moduleType === "food";
-  
-
-  if (isFood) {
-    return (
-      <FoodDetailModal
-        product={selectedItem}
-        imageBaseUrl={configData?.base_urls?.item_image_url}
-        open={isOpen}
-        handleModalClose={handleModalClose}
-        setOpen={(v) => {
-          if (!v) handleModalClose();
-        }}
-        addToWishlistHandler={toggleWishlist}
-        removeFromWishlistHandler={toggleWishlist}
-        isWishlisted={isWishlisted}
-        setOpenLocationAlert={setOpenLocationAlert}
-      />
-    );
-  }
 
   return (
     <ModuleModal

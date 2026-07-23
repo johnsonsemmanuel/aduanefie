@@ -53,9 +53,6 @@ import {
   type ChatStore,
 } from "./types";
 
-const FoodDetailModal = dynamic(
-  () => import("components/food-details/foodDetail-modal/FoodDetailModal")
-);
 const ModuleModal = dynamic(() => import("components/cards/ModuleModal"));
 const GetLocationAlert = dynamic(() => import("components/GetLocationAlert"));
 const ChatModuleSwitchWarning = dynamic(
@@ -708,20 +705,6 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
           </Box>
         </Box>
       </Fade>
-      {productModal?.type === "food" && (
-        <FoodDetailModal
-          product={productModal.product}
-          imageBaseUrl={configData?.base_urls?.item_image_url}
-          open={Boolean(productModal)}
-          handleModalClose={handleCloseProductModal}
-          setOpen={(v: boolean) => !v && handleCloseProductModal()}
-          productUpdate={undefined}
-          addToWishlistHandler={handleAddProductToWishlist}
-          removeFromWishlistHandler={handleRemoveProductFromWishlist}
-          isWishlisted={isProductWishlisted}
-          setOpenLocationAlert={setOpenLocationAlert}
-        />
-      )}
       {productModal?.type === "module" && (
         <ModuleModal
           open={Boolean(productModal)}

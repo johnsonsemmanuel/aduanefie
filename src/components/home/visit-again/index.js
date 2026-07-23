@@ -100,7 +100,7 @@ const VisitAgain = ({ configData, visitedStores, isVisited, isLoading }) => {
             letterSpacing: "-1.2px",
           },
         };
-      case ModuleTypes.PHARMACY:
+      case "pharmacy":
         return {
           mainPosition: !isVisited ? "flex-start" : "center",
           heading: isVisited ? t("Visit Again!") : t("Whats New"),
@@ -115,7 +115,7 @@ const VisitAgain = ({ configData, visitedStores, isVisited, isLoading }) => {
             letterSpacing: "-1.2px",
           },
         };
-      case ModuleTypes.ECOMMERCE:
+      case "ecommerce":
         return {
           mainPosition: "flex-start",
           heading: isVisited ? t("Visit Again!") : t("Whats New"),
@@ -130,7 +130,7 @@ const VisitAgain = ({ configData, visitedStores, isVisited, isLoading }) => {
             letterSpacing: "-1.2px",
           },
         };
-      case ModuleTypes.FOOD:
+      case "food":
         return {
           mainPosition: "flex-start",
           heading: isVisited ? t("Wanna Try  Again!!") : t("Whats New"),

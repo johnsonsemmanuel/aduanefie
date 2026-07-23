@@ -24,21 +24,15 @@ import SpecialFoodOffers from "../special-food-offers";
 import Stores from "../stores";
 import VisitAgain from "../visit-again";
 import TrendingBites from "../trending-bites";
-import PharmacyStaticBanners from "./pharmacy/pharmacy-banners/PharmacyStaticBanners";
 import TopOffersNearMe from "../top-offers-nearme";
 import RecommendedStore from "components/home/recommended-store";
 import MobileAppBanner from "components/home/MobileAppBanner";
 import GrocerySearchBanner from "./grocery/GrocerySearchBanner";
 import { getGrocerySections } from "./grocery/grocerySectionsConfig";
 import TodaysDeals from "components/home/module-wise-components/grocery/TodaysDeals";
-import TopOfferNotifyBanner from "./food/TopOfferNotifyBanner";
-import { useRouter } from "next/router";
-import LastOrdersSection from "./food/LastOrdersSection";
-import QuickDeliverySection from "./food/QuickDeliverySection";
 import TopPicksSection from "./grocery/TopPicksSection";
 import OrganicSection from "./grocery/OrganicSection";
 import Brands from "../brands";
-import FlashSalesSection from "./ecommerce/FlashSalesSection";
 
 const menus = ["All", "Beauty", "Bread & Juice", "Drinks", "Milks"];
 
@@ -49,7 +43,6 @@ const S = ({ children }) => children ?? null;
 
 const Grocery = (props) => {
   const { configData, routeSection } = props;
-  const router = useRouter();
   const token = getToken();
   const [isVisited, setIsVisited] = useState(false);
   const [storeData, setStoreData] = React.useState([]);
@@ -108,19 +101,7 @@ const Grocery = (props) => {
 
       <S>
         <CustomContainer>
-          {/* new feature */}
-          <TopOfferNotifyBanner />
-        </CustomContainer>
-      </S>
-
-      <S>
-        <CustomContainer>
           <Banners />
-        </CustomContainer>
-      </S>
-      <S>
-        <CustomContainer>
-          <FlashSalesSection key="grocery" />
         </CustomContainer>
       </S>
 
@@ -145,13 +126,7 @@ const Grocery = (props) => {
         </CustomContainer>
       </S>
 
-      {configData?.repeat_order_option && token ? (
-        <S>
-          <CustomContainer noMobilePadding={true}>
-            <LastOrdersSection />
-          </CustomContainer>
-        </S>
-      ) : null}
+      {configData?.repeat_order_option && token ? null : null}
 
       <S>
         <CustomContainer
@@ -171,22 +146,6 @@ const Grocery = (props) => {
       </S>
 
       {/* new section... */}
-
-      <S>
-        {/* 🔥 new feature QuickDeliverySection */}
-        <CustomContainer
-          sx={{
-            paddingLeft: "16px !important",
-            paddingRight: "0 !important",
-          }}
-        >
-          <QuickDeliverySection
-            title={t("Express Delivery")}
-            subtitle={t("Get fastest order from your nearby store")}
-            cardVariant="withItems"
-          />
-        </CustomContainer>
-      </S>
 
       <S>
         <CustomContainer noMobilePadding>
@@ -233,12 +192,6 @@ const Grocery = (props) => {
             visitedStores={storeData}
             isFetching={isFetching}
           />
-        </CustomContainer>
-      </S>
-
-      <S>
-        <CustomContainer>
-          <PharmacyStaticBanners />
         </CustomContainer>
       </S>
 

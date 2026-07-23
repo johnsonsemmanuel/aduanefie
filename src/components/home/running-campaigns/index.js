@@ -12,7 +12,6 @@ import { getModuleId } from "helper-functions/getModuleId";
 import { ModuleTypes } from "helper-functions/moduleTypes";
 import { setCampaignItem } from "redux/slices/cart";
 import { setRunningCampaigns } from "redux/slices/storedData";
-import FoodDetailModal from "../../food-details/foodDetail-modal/FoodDetailModal";
 import H2 from "../../typographies/H2";
 import { HomeComponentsWrapper } from "../HomePageComponents";
 import SliderShimmer from "../SliderShimmer";
@@ -58,7 +57,7 @@ const RunningCampaigns = () => {
             isFetching={isFetching}
           />
         );
-      case ModuleTypes.PHARMACY:
+      case "pharmacy":
         return (
           <Pharmacy
             runningCampaigns={data}
@@ -67,7 +66,7 @@ const RunningCampaigns = () => {
             isFetching={isFetching}
           />
         );
-      case ModuleTypes.ECOMMERCE:
+      case "ecommerce":
         return (
           <Grocery
             runningCampaigns={data}
@@ -76,7 +75,7 @@ const RunningCampaigns = () => {
             isFetching={isFetching}
           />
         );
-      case ModuleTypes.FOOD:
+      case "food":
         return (
           <Grocery
             runningCampaigns={data}
@@ -117,15 +116,6 @@ const RunningCampaigns = () => {
             ""
           )}
         </>
-      )}
-      {openModal && (
-        <FoodDetailModal
-          product={campaignsData}
-          imageBaseUrl={imageBaseUrl}
-          open={openModal}
-          handleModalClose={handleClose}
-          productUpdate
-        />
       )}
     </>
   );

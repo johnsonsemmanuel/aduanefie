@@ -68,9 +68,6 @@ import ProductOrganicSvg from "../assets/ProductOrganicSvg";
 import ProductNonVegSvg from "../assets/ProductNonVegSvg";
 import StoreVerifiedSVG from "../assets/StoreVerifiedSVG";
 
-const FoodDetailModal = dynamic(() =>
-  import("../../food-details/foodDetail-modal/FoodDetailModal")
-);
 const ModuleModal = dynamic(() => import("../ModuleModal"));
 
 // ─── Constants ─────────────────────────────────────────────────────────────
@@ -311,7 +308,7 @@ const StoreRow = ({
 
   const moduleType = getCurrentModuleType();
   const verifiedLabel =
-    moduleType === ModuleTypes.FOOD
+    moduleType === "food"
       ? t("Verified Restaurant")
       : moduleType === ModuleTypes.RENTAL
       ? t("Verified Provider")
@@ -1550,7 +1547,7 @@ const NewProductCard = ({
       getGuestId()
     );
 
-    if (getCurrentModuleType() === ModuleTypes.FOOD) {
+    if (getCurrentModuleType() === "food") {
       if (
         item?.maximum_cart_quantity &&
         item.maximum_cart_quantity <= isInCart.quantity
@@ -1739,26 +1736,10 @@ const NewProductCard = ({
     onAdd: handleAddClick,
   };
 
-  const isFood = getCurrentModuleType() === ModuleTypes.FOOD;
+  const isFood = getCurrentModuleType() === "food";
 
   return (
     <>
-      {/* Product modal */}
-      {state.openModal && isFood && item && (
-        <FoodDetailModal
-          product={item}
-          imageBaseUrl={configData?.base_urls?.item_image_url}
-          open={state.openModal}
-          handleModalClose={() =>
-            dispatch({ type: ACTION.setOpenModal, payload: false })
-          }
-          setOpen={(v) => dispatch({ type: ACTION.setOpenModal, payload: v })}
-          addToWishlistHandler={toggleWishlist}
-          removeFromWishlistHandler={toggleWishlist}
-          isWishlisted={isWishlisted}
-          setOpenLocationAlert={setOpenLocationAlert}
-        />
-      )}
       {state.openModal && !isFood && item && (
         <ModuleModal
           open={state.openModal}
@@ -2041,7 +2022,7 @@ const NewProductCard = ({
               onWishlist={toggleWishlist}
               showVeg={
                 !!configData?.toggle_veg_non_veg &&
-                getCurrentModuleType() === ModuleTypes.FOOD
+                getCurrentModuleType() === "food"
               }
               {...cartControlProps}
             />
@@ -2134,7 +2115,7 @@ const NewProductCard = ({
               onWishlist={toggleWishlist}
               showVeg={
                 !!configData?.toggle_veg_non_veg &&
-                getCurrentModuleType() === ModuleTypes.FOOD
+                getCurrentModuleType() === "food"
               }
               {...cartControlProps}
             />

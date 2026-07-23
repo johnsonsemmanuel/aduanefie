@@ -285,7 +285,7 @@ const BestReviewedItems = (props) => {
 
   return (
     <>
-      {getCurrentModuleType() === ModuleTypes.FOOD ? (
+      {getCurrentModuleType() === "food" ? (
         <HomeComponentsWrapper>
           {bestReviewedItems && bestReviewedItems?.products?.length > 0 && (
             <>

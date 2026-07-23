@@ -10,8 +10,6 @@ import fbCredentialSliceReducer from "../slices/fbCredentials";
 import guestUserReducer from "../slices/guestUserInfo";
 import languageChangeReducer from "../slices/languageChange";
 import offlinePaymentInfoReducer from "../slices/offlinePaymentData";
-import parcelCategoriesReducers from "../slices/parcelCategoryData";
-import parcelInfoDataReducer from "../slices/parcelDeliveryInfo";
 import profileInfoReducers from "../slices/profileInfo";
 import searchFilterReducer from "../slices/searchFilter";
 import storedDataSliceReducer from "../slices/storedData";
@@ -31,10 +29,8 @@ export const rootReducer = combineReducers({
 
   themeSettings: themeSettingsReducer,
   configData: configDataReducer,
-  parcelInfoData: parcelInfoDataReducer,
   utilsData: utilsReducers,
   profileInfo: profileInfoReducers,
-  parcelCategories: parcelCategoriesReducers,
   cart: cartReducer,
   wishList: wishListReducer,
   searchFilterStore: searchFilterReducer,

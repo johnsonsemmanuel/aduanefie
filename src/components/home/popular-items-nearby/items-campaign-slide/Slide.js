@@ -27,7 +27,7 @@ const Slide = ({ item }) => {
   const imageBaseUrl = configData?.base_urls?.item_image_url;
 
   const getModuleWiseItemName = () => {
-    if (getCurrentModuleType() === ModuleTypes.FOOD) {
+    if (getCurrentModuleType() === "food") {
       return (
         <Stack direction="row" alignItems="center" spacing={0.8}>
           <H4 text={item?.item?.name} />

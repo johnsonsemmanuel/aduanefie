@@ -5,8 +5,7 @@ import { alpha, Typography, useTheme } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { Box, Stack } from "@mui/system";
 import React, { useState } from "react";
-import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
-import { ModuleTypes } from "helper-functions/moduleTypes";
+
 import Loading from "../custom-loading/Loading";
 import { PrimaryToolTip } from "./QuickView";
 import CustomModal from "components/modal";
@@ -22,20 +21,11 @@ const CustomButton = styled(Box)(({ theme, fill }) => ({
   justifyContent: "center",
   backgroundColor:
     fill === "true"
-      ? getCurrentModuleType() === ModuleTypes.FOOD
-        ? theme.palette.moduleTheme.food
-        : theme.palette.primary.main
-      : alpha(
-          getCurrentModuleType() === ModuleTypes.FOOD
-            ? theme.palette.moduleTheme.food
-            : theme.palette.primary.main,
-          0.1
-        ),
+      ? theme.palette.primary.main
+      : alpha(theme.palette.primary.main, 0.1),
   color:
     fill === "true"
       ? theme.palette.whiteContainer.main
-      : getCurrentModuleType() === ModuleTypes.FOOD
-      ? theme.palette.moduleTheme.food
       : theme.palette.primary.main,
   "&:hover": {
     filter: "brightness(0.6)",
@@ -294,24 +284,18 @@ const AddWithIncrementDecrement = (props) => {
                   sx={{
                     backgroundColor: (theme) =>
                       onHover
-                        ? getCurrentModuleType() === ModuleTypes.FOOD
-                          ? theme.palette.moduleTheme.food
-                          : "primary.main"
+                        ? "primary.main"
                         : theme.palette.neutral[100],
                     color: (theme) =>
                       onHover
                         ? "whiteContainer.main"
-                        : getCurrentModuleType() === ModuleTypes.FOOD
-                        ? theme.palette.moduleTheme.food
                         : "primary.main",
                     height: { xs: "25px", md: "35px" },
                     width: { xs: "25px", md: "35px" },
                     borderRadius: "5px",
                     transition: "all ease 0.5s",
                     border: (theme) =>
-                      getCurrentModuleType() === ModuleTypes.FOOD
-                        ? "none"
-                        : onHover
+                      onHover
                         ? "none"
                         : `1px solid ${alpha(theme.palette.neutral[400], 0.2)}`,
                   }}

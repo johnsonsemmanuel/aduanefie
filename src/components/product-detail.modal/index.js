@@ -1,7 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Modal } from "@mui/material";
-import { FoodDetailModalStyle } from "../food-details/foodDetail-modal/foodDetailModal.style";
+import { Box, Modal } from "@mui/material";
 import ProductDetailsSection from "../product-details/product-details-section/ProductDetailsSection";
 import { useSelector } from "react-redux";
 import {Scrollbar} from "../srollbar";
@@ -11,7 +10,7 @@ const ProductDetailModal = (props) => {
   const { configData } = useSelector((state) => state.configData);
   return (
     <Modal open={open} onClose={handleModalClose} disableAutoFocus={true}>
-      <FoodDetailModalStyle sx={{ bgcolor: "background.paper" }}>
+      <Box sx={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)", maxWidth: "800px", width: "100%", borderRadius: "10px", boxShadow: 24, bgcolor: "background.paper", ...{ bgcolor: "background.paper" } }}>
           <Scrollbar style={{maxHeight:'100%'}}>
               <ProductDetailsSection
                   productDetailsData={product}
@@ -21,7 +20,7 @@ const ProductDetailModal = (props) => {
               />
           </Scrollbar>
 
-      </FoodDetailModalStyle>
+      </Box>
     </Modal>
   );
 };

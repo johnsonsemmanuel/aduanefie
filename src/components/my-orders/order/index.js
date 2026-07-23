@@ -21,7 +21,6 @@ import {
 } from "styled-components/CustomStyles.style";
 import CustomImageContainer from "../../CustomImageContainer";
 import CustomFormatedDateTime from "../../date/CustomFormatedDateTime";
-import TrackParcelOrderDrawer from "../../home/module-wise-components/parcel/TrackParcelOrderDrawer";
 import trackOrderIcon1 from "../assets/Maskroup.svg";
 import trackOrderIcon from "../assets/trackOrderIcon.png";
 import { DateTypography, TrackOrderButton } from "../myorders.style";
@@ -324,14 +323,6 @@ const Order = (props) => {
           </CustomStackFullWidth>
         </Grid>
       </Grid>
-      {sideDrawerOpen && (
-        <TrackParcelOrderDrawer
-          orderId={order?.id}
-          sideDrawerOpen={sideDrawerOpen}
-          setSideDrawerOpen={setSideDrawerOpen}
-          closeHandler={() => setSideDrawerOpen(false)}
-        />
-      )}
     </CustomPaper>
   );
 };

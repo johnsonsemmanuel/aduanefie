@@ -14,7 +14,6 @@ import NextImage from "components/NextImage";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
 import { setDeliveryManInfoByDispatch } from "redux/slices/searchFilter";
 import StatusBadge from "components/common/StatusBadge";
-import TrackParcelOrderDrawer from "components/home/module-wise-components/parcel/TrackParcelOrderDrawer";
 
 // ── Status logic ──────────────────────────────────────────────────────────────
 
@@ -332,14 +331,6 @@ const NewOrderCard = ({ order, bg = "transparent", configData }) => {
         </Box>
       </Box>
 
-      {parcelDrawerOpen && (
-        <TrackParcelOrderDrawer
-          orderId={order?.id}
-          sideDrawerOpen={parcelDrawerOpen}
-          setSideDrawerOpen={setParcelDrawerOpen}
-          closeHandler={() => setParcelDrawerOpen(false)}
-        />
-      )}
     </>
   );
 };

@@ -39,10 +39,10 @@ const SearchPage = ({ configData, metaData }) => {
 
   const moduleType = getCurrentModuleType();
   const isModuleWithSidebar =
-    moduleType === ModuleTypes.FOOD ||
+    moduleType === "food" ||
     moduleType === ModuleTypes.GROCERY ||
-    moduleType === ModuleTypes.PHARMACY ||
-    moduleType === ModuleTypes.ECOMMERCE;
+    moduleType === "pharmacy" ||
+    moduleType === "ecommerce";
 
   const searchResult = (
     <SearchResult

@@ -33,7 +33,6 @@ import { getModuleId } from "helper-functions/getModuleId";
 import { handleProductRedirect } from "helper-functions/handleProductRedirect";
 
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
-import FoodDetailModal from "components/food-details/foodDetail-modal/FoodDetailModal";
 import ModuleModal from "components/cards/ModuleModal";
 import { useRouter } from "next/router";
 import { addWishList, removeWishListItem } from "redux/slices/wishList";
@@ -634,19 +633,7 @@ const RestaurantReviewModal = ({
           )}
         </StyledSimpleBar>
       </CustomStackFullWidth>
-      {openModal && getCurrentModuleType() === "food" && productData ? (
-        <FoodDetailModal
-          product={productData}
-          //imageBaseUrl={imageBaseUrl}
-          open={openModal}
-          handleModalClose={() => setOpenModal(false)}
-          setOpen={setOpenModal}
-          addToWishlistHandler={addToWishlistHandler}
-          removeFromWishlistHandler={removeFromWishlistHandler}
-          isWishlisted={isWishlisted}
-        />
-      ) : (
-        <ModuleModal
+      <ModuleModal
           open={openModal}
           handleModalClose={() => setOpenModal(false)}
           configData={configData}
@@ -656,7 +643,6 @@ const RestaurantReviewModal = ({
           isWishlisted={isWishlisted}
           p
         />
-      )}
     </Paper>
   );
 };

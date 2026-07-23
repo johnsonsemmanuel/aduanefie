@@ -22,16 +22,10 @@ import notFoundImage from "../../../public/static/empty.png";
 import FoodSearchFilterDrawer from "../home/search/FoodSearchFilterDrawer";
 import ModuleHomeSidebarLayout from "../home/sidebar-layout/ModuleHomeSidebarLayout";
 import SimpleMobileHeader from "components/common/SimpleMobileHeader";
-import { getFoodSections } from "../home/module-wise-components/food/foodSectionsConfig";
 import { getGrocerySections } from "../home/module-wise-components/grocery/grocerySectionsConfig";
-import { getPharmacySections } from "../home/module-wise-components/pharmacy/pharmacySectionsConfig";
-import { getEcommerceSections } from "../home/module-wise-components/ecommerce/ecommerceSectionsConfig";
 
 const SECTIONS_MAP = {
-  [ModuleTypes.FOOD]: getFoodSections,
   [ModuleTypes.GROCERY]: getGrocerySections,
-  [ModuleTypes.PHARMACY]: getPharmacySections,
-  [ModuleTypes.ECOMMERCE]: getEcommerceSections,
 };
 
 const PAGE_LIMIT = 9;

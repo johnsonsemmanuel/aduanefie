@@ -6,7 +6,6 @@ import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { CardWrapper } from "../cards/ProductCard";
 import { Skeleton } from "@mui/material";
-import { RatingStarIcon } from "../food-details/food-card/FoodCard.style";
 
 const CustomShimmerForBestFood = () => {
   const [count, setCount] = React.useState(5);

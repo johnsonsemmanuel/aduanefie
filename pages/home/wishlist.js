@@ -3,10 +3,7 @@ import MainLayout from "src/components/layout/MainLayout";
 import ModuleHomeSidebarLayout from "src/components/home/sidebar-layout/ModuleHomeSidebarLayout";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { ModuleTypes } from "helper-functions/moduleTypes";
-import { getFoodSections } from "src/components/home/module-wise-components/food/foodSectionsConfig";
 import { getGrocerySections } from "src/components/home/module-wise-components/grocery/grocerySectionsConfig";
-import { getPharmacySections } from "src/components/home/module-wise-components/pharmacy/pharmacySectionsConfig";
-import { getEcommerceSections } from "src/components/home/module-wise-components/ecommerce/ecommerceSectionsConfig";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { setConfigData } from "redux/slices/configData";
@@ -36,22 +33,10 @@ const WishlistPage = ({ configData, metaData }) => {
   }, [configData]);
 
   const moduleType = getCurrentModuleType();
-  const isModuleWithSidebar =
-    moduleType === ModuleTypes.FOOD ||
-    moduleType === ModuleTypes.GROCERY ||
-    moduleType === ModuleTypes.PHARMACY ||
-    moduleType === ModuleTypes.ECOMMERCE;
+  const isModuleWithSidebar = moduleType === ModuleTypes.GROCERY;
 
   const sections =
-    moduleType === ModuleTypes.FOOD
-      ? getFoodSections()
-      : moduleType === ModuleTypes.GROCERY
-      ? getGrocerySections()
-      : moduleType === ModuleTypes.PHARMACY
-      ? getPharmacySections()
-      : moduleType === ModuleTypes.ECOMMERCE
-      ? getEcommerceSections()
-      : [];
+    moduleType === ModuleTypes.GROCERY ? getGrocerySections() : [];
 
   return (
     <>
