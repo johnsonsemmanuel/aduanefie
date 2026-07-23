@@ -10,9 +10,6 @@ import {
 import { styled } from "@mui/material/styles";
 import { Box, Stack } from "@mui/system";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
-import { useRouter } from "next/router";
-import { handleProductRedirect } from "helper-functions/handleProductRedirect";
-
 import React, { useEffect, useReducer, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -44,7 +41,6 @@ import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
 import { useAddToWishlist } from "api-manage/hooks/react-query/wish-list/useAddWishList";
 import { useWishListDelete } from "api-manage/hooks/react-query/wish-list/useWishListDelete";
 import { getCartListModuleWise } from "helper-functions/getCartListModuleWise";
-import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { getLanguage } from "helper-functions/getLanguage";
 import { getModuleId } from "helper-functions/getModuleId";
 import { getGuestId } from "helper-functions/getToken";
@@ -75,9 +71,8 @@ import H3 from "../typographies/H3";
 import AddWithIncrementDecrement from "./AddWithIncrementDecrement";
 import { CustomOverLay } from "./Card.style";
 import ModuleModal from "./ModuleModal";
-import ProductsUnavailable from "./ProductsUnavailable";
 import QuickView, { PrimaryToolTip } from "./QuickView";
-import SpecialCard, { FoodHalalHaram, FoodVegNonVegFlag } from "./SpecialCard";
+import SpecialCard, { FoodHalalHaram } from "./SpecialCard";
 import NextImage from "components/NextImage";
 import useTextEllipsis from "api-manage/hooks/custom-hooks/useTextEllipsis";
 import VerifiedStoreBadge from "components/cards/VerifiedStoreBadge";
@@ -119,9 +114,6 @@ export const CardWrapper = styled(Card)(
     borderRadius: "8px",
     height: cardheight ? cardheight : "220px",
     marginBottom: pharmaCommon && "20px !important",
-    border:
-      getCurrentModuleType() === "food" &&
-      `1px solid ${alpha(theme.palette.moduleTheme.food, 0.1)}`,
 
     "&:hover": {
       boxShadow:
@@ -245,7 +237,6 @@ const ProductCard = (props) => {
   const [openLocationAlert, setOpenLocationAlert] = useState(false);
   const { configData } = useSelector((state) => state.configData);
   const imageBaseUrl = configData?.base_urls?.item_image_url;
-  const router = useRouter();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const reduxDispatch = useDispatch();
@@ -334,11 +325,7 @@ const ProductCard = (props) => {
     }
   };
   const handleClick = () => {
-    if (item?.module_type === "ecommerce") {
-      handleProductRedirect(item, router);
-    } else {
-      dispatch({ type: ACTION.setOpenModal, payload: true });
-    }
+    dispatch({ type: ACTION.setOpenModal, payload: true });
   };
 
   useEffect(() => {
@@ -432,27 +419,11 @@ const ProductCard = (props) => {
   };
 
   const addToCart = (e) => {
-    if (item?.module_type === "ecommerce") {
-      if (item?.variations?.length > 0 || item?.has_variant) {
-        handleProductRedirect(item, router);
-      } else {
-        e.stopPropagation();
-        addToCartHandler();
-      }
+    if (item?.variations?.length > 0 || item?.has_variant) {
+      dispatch({ type: ACTION.setOpenModal, payload: true });
     } else {
-      if (item?.module_type === "food") {
-        if (item?.food_variations?.length > 0 || item?.has_variant) {
-          dispatch({ type: ACTION.setOpenModal, payload: true });
-        } else {
-          e.stopPropagation();
-          addToCartHandler();
-        }
-      } else if (item?.variations?.length > 0 || item?.has_variant) {
-        dispatch({ type: ACTION.setOpenModal, payload: true });
-      } else {
-        e.stopPropagation();
-        addToCartHandler();
-      }
+      e.stopPropagation();
+      addToCartHandler();
     }
   };
 
@@ -504,7 +475,7 @@ const ProductCard = (props) => {
       getGuestId()
     );
     if (isExisted) {
-      if (getCurrentModuleType() === "food") {
+      if (isExisted?.quantity + 1 <= item?.stock) {
         if (item?.maximum_cart_quantity) {
           if (item?.maximum_cart_quantity <= isExisted?.quantity) {
             toast.error(t(out_of_limits), { id: "out-of-limits" });
@@ -519,28 +490,10 @@ const ProductCard = (props) => {
             onSuccess: cartUpdateHandleSuccess,
             onError: onErrorResponse,
           });
+          reduxDispatch(setIncrementToCartItem(isInCart));
         }
       } else {
-        if (isExisted?.quantity + 1 <= item?.stock) {
-          if (item?.maximum_cart_quantity) {
-            if (item?.maximum_cart_quantity <= isExisted?.quantity) {
-              toast.error(t(out_of_limits), { id: "out-of-limits" });
-            } else {
-              updateMutate(itemObject, {
-                onSuccess: cartUpdateHandleSuccess,
-                onError: onErrorResponse,
-              });
-            }
-          } else {
-            updateMutate(itemObject, {
-              onSuccess: cartUpdateHandleSuccess,
-              onError: onErrorResponse,
-            });
-            reduxDispatch(setIncrementToCartItem(isInCart));
-          }
-        } else {
-          toast.error(t(out_of_stock));
-        }
+        toast.error(t(out_of_stock));
       }
     }
   };
@@ -732,17 +685,6 @@ const ProductCard = (props) => {
           </Box>
         )}
         <CustomBoxFullWidth>
-          {item?.module_type === "pharmacy" ? (
-            <Typography
-              className={classes.singleLineEllipsis}
-              variant="body2"
-              color="text.secondary"
-              sx={{ wordBreak: "break-word" }}
-              component="h4"
-            >
-              {item?.generic_name[0]}
-            </Typography>
-          ) : (
             <Stack direction="row" alignItems="center" spacing={0.5}>
               <Body2 text={item?.store_name} component="h4" />
               <VerifiedStoreBadge
@@ -750,7 +692,6 @@ const ProductCard = (props) => {
                 fontSize="14px"
               />
             </Stack>
-          )}
         </CustomBoxFullWidth>
         {item?.unit_type ? (
           <Typography
@@ -792,143 +733,21 @@ const ProductCard = (props) => {
       </CustomStackFullWidth>
     );
   };
-  const foodHorizontalCardUi = () => {
-    return (
-      <CustomStackFullWidth
-        justifyContent="center"
-        alignItems="flex-start"
-        sx={{ position: "relative", padding: "13px 16px 16px 13px" }}
-      >
-        {isWishlisted && (
-          <Box
-            sx={{
-              color: "primary.main",
-              position: "absolute",
-              top: 20,
-              right: 10,
-            }}
-          >
-            <FavoriteIcon sx={{ fontSize: "15px" }} />
-          </Box>
-        )}
-        {/* <CustomStackFullWidth> */}
-        <CustomStackFullWidth
-          direction="row"
-          alignItems="center"
-          justifyContent="flex-start"
-          spacing={0.8}
-        >
-          {isEllipsed ? (
-            <PrimaryToolTip text={item?.name} placement="bottom" arrow="false">
-              <Typography
-                ref={textRef}
-                variant={horizontalcard === "true" ? "subtitle2" : "h6"}
-                marginBottom="4px"
-                sx={{
-                  color: (theme) => theme.palette.text.custom,
-                  fontSize: { xs: "13px", sm: "inherit" },
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  display: "-webkit-box",
-                  WebkitLineClamp: "2",
-                  WebkitBoxOrient: "vertical",
-                  lineHeight: "1.2", // Adjust this value to control line height
-                  mt: "5px",
-                }}
-                className="name"
-                component="h3"
-              >
-                {item?.name}
-              </Typography>
-            </PrimaryToolTip>
-          ) : (
-            <Typography
-              ref={textRef}
-              variant={horizontalcard === "true" ? "subtitle2" : "h6"}
-              marginBottom="4px"
-              sx={{
-                color: (theme) => theme.palette.text.custom,
-                fontSize: { xs: "13px", sm: "inherit" },
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: "2",
-                WebkitBoxOrient: "vertical",
-                lineHeight: "1.2", // Adjust this value to control line height
-                mt: "5px",
-              }}
-              className="name"
-              component="h3"
-            >
-              {item?.name}
-            </Typography>
-          )}
-          {configData?.toggle_veg_non_veg ? (
-            <FoodVegNonVegFlag veg={item?.veg === 0 ? "false" : "true"} />
-          ) : null}
-        </CustomStackFullWidth>
-        <Stack direction="row" alignItems="center" spacing={0.5}>
-          <Typography
-            color="text.secondary"
-            variant={isSmall ? "body2" : "body1"}
-            component="h4"
-          >
-            {item?.store_name}
-          </Typography>
-          <VerifiedStoreBadge
-            verified={item?.verified_seller}
-            fontSize="14px"
-          />
-        </Stack>
-        {/* </CustomStackFullWidth> */}
-        <CustomStackFullWidth
-          direction="row"
-          alignItems="flex-start"
-          // justifyContent="space-between"
-          spacing={13}
-          mb="3px"
-          mt="10px"
-        >
-          <AmountWithDiscountedAmount item={item} />
-        </CustomStackFullWidth>
-        <CustomStackFullWidth
-          alignItems="flex-end"
-          sx={{ paddingRight: "6px" }}
-        >
-          <Box>
-            <AddWithIncrementDecrement
-              onHover={state.isTransformed}
-              addToCartHandler={addToCart}
-              isProductExist={isProductExist}
-              handleIncrement={handleIncrement}
-              handleDecrement={handleDecrement}
-              count={count}
-              isLoading={isLoading}
-              updateLoading={updateLoading}
-            />
-          </Box>
-        </CustomStackFullWidth>
-      </CustomStackFullWidth>
-    );
-  };
-
   const verticalCardUi = () => {
     return (
       <CustomStackFullWidth
         justifyContent="center"
         alignItems="center"
         spacing={0.6}
-        p={item?.module_type === "pharmacy" ? "5px 16px 16px 16px" : "1rem"}
+        p="1rem"
       >
-        {item?.module_type !== "pharmacy" && (
-          <Stack direction="row" alignItems="center" spacing={0.5}>
-            <Body2 text={item?.store_name} component="h4" />
-            <VerifiedStoreBadge
-              verified={item?.verified_seller}
-              fontSize="14px"
-            />
-          </Stack>
-        )}
+        <Stack direction="row" alignItems="center" spacing={0.5}>
+          <Body2 text={item?.store_name} component="h4" />
+          <VerifiedStoreBadge
+            verified={item?.verified_seller}
+            fontSize="14px"
+          />
+        </Stack>
 
         {isEllipsed ? (
           <PrimaryToolTip text={item?.name} placement="bottom" arrow="false">
@@ -1246,37 +1065,6 @@ const ProductCard = (props) => {
                 horizontalcard={horizontalcard}
                 loveItem={loveItem}
               >
-                {item?.module?.module_type === "pharmacy" && (
-                  <Stack
-                    width="100%"
-                    direction="row"
-                    alignItems="center"
-                    justifyContent="center"
-                    spacing={0.5}
-                    padding={{
-                      xs: "3px 3px 8px 3px",
-                      md: "3px 3px 3px 3px",
-                    }}
-                    sx={{
-                      position: "absolute",
-                      bottom: 0,
-                      backgroundColor:
-                        theme.palette.mode === "dark"
-                          ? "#B3B3B399"
-                          : "#EDEDED99",
-                      color: theme.palette.neutral[1000],
-                      fontSize: "12px",
-                      zIndex: "9",
-                    }}
-                    component="h4"
-                  >
-                    <span>{item?.store_name}</span>
-                    <VerifiedStoreBadge
-                      verified={item?.verified_seller}
-                      fontSize="14px"
-                    />
-                  </Stack>
-                )}
                 {handleBadge()}
                 <NextImage
                   src={item?.image_full_url}
@@ -1286,9 +1074,6 @@ const ProductCard = (props) => {
                   objectFit="cover"
                   borderRadius="3px"
                 />
-                {item?.module?.module_type === "food" && (
-                  <ProductsUnavailable product={item} />
-                )}
                 {item?.halal_tag_status && item?.is_halal ? (
                   <FoodHalalHaram width={30} />
                 ) : (
@@ -1339,7 +1124,6 @@ const ProductCard = (props) => {
                 {cardFor === "vertical" && verticalCardUi()}
                 {cardFor === "flashSale" && verticalCardFlashUi()}
                 {cardFor === "flashSaleSlider" && verticalCardFlashSliderUi()}
-                {cardFor === "food horizontal card" && foodHorizontalCardUi()}
                 {cardFor === "list-view" && listViewCardUi()}
               </CustomStackFullWidth>
             </CustomStackFullWidth>

@@ -389,18 +389,13 @@ const Top = (props) => {
   };
 
   const moduleType =
-    getCurrentModuleType() || storeShare?.moduleType || "food";
+    getCurrentModuleType() || storeShare?.moduleType || ModuleTypes.GROCERY;
   const moduleLabelMap = {
-    ["food"]: t("Restaurant"),
     [ModuleTypes.GROCERY]: t("Grocery"),
-    ["pharmacy"]: t("Pharmacy"),
-    ["ecommerce"]: t("Shop"),
   };
   const moduleLabel = moduleLabelMap[moduleType] || t("Store");
 
-  const moduleHref = `/${
-    moduleType === "food" ? "restaurants" : "stores"
-  }/${moduleType || "all"}?module_id=${
+  const moduleHref = `/stores/${moduleType || "all"}?module_id=${
     storeShare?.moduleId || ""
   }&module_type=${storeShare?.moduleType || moduleType}`;
 

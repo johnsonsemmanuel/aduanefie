@@ -195,15 +195,10 @@ const CartItemRow = ({ cartItem }) => {
 
   const handleIncrement = () => {
     const updateQuantity = cartItem?.quantity + 1;
-    const price =
-      cartItem?.price + getTotalVariationsPrice(cartItem?.food_variations);
-    const productPrice = price * updateQuantity;
     const mainPrice =
-      getCurrentModuleType() === "food"
-        ? productPrice
-        : (cartItem?.selectedOption?.length > 0
-            ? cartItem?.selectedOption?.[0]?.price
-            : cartItem?.price) * updateQuantity;
+      (cartItem?.selectedOption?.length > 0
+        ? cartItem?.selectedOption?.[0]?.price
+        : cartItem?.price) * updateQuantity;
     const itemObject = getItemDataForAddToCart(
       cartItem,
       updateQuantity,
@@ -211,23 +206,15 @@ const CartItemRow = ({ cartItem }) => {
       guestId
     );
 
-    if (getCurrentModuleType() !== "food") {
-      if (cartItem?.stock <= cartItem?.quantity) {
-        toast.error(t(out_of_stock));
-        return;
-      }
-      if (
-        cartItem?.maximum_cart_quantity &&
-        cartItem?.maximum_cart_quantity <= cartItem?.quantity
-      ) {
-        toast.error(t(out_of_limits), { id: "out-of-limits" });
-        return;
-      }
-    } else if (
+    if (cartItem?.stock <= cartItem?.quantity) {
+      toast.error(t(out_of_stock));
+      return;
+    }
+    if (
       cartItem?.maximum_cart_quantity &&
       cartItem?.maximum_cart_quantity <= cartItem?.quantity
     ) {
-      toast.error(t(out_of_limits));
+      toast.error(t(out_of_limits), { id: "out-of-limits" });
       return;
     }
 
@@ -239,15 +226,10 @@ const CartItemRow = ({ cartItem }) => {
 
   const handleDecrement = () => {
     const updateQuantity = cartItem?.quantity - 1;
-    const price =
-      cartItem?.price + getTotalVariationsPrice(cartItem?.food_variations);
-    const productPrice = price * updateQuantity;
     const mainPrice =
-      getCurrentModuleType() === "food"
-        ? productPrice
-        : (cartItem?.selectedOption?.length > 0
-            ? cartItem?.selectedOption?.[0]?.price
-            : cartItem?.price) * updateQuantity;
+      (cartItem?.selectedOption?.length > 0
+        ? cartItem?.selectedOption?.[0]?.price
+        : cartItem?.price) * updateQuantity;
     const itemObject = getItemDataForAddToCart(
       cartItem,
       updateQuantity,
@@ -276,7 +258,6 @@ const CartItemRow = ({ cartItem }) => {
   };
 
   const quantity = Number(cartItem?.quantity) || 1;
-  const isFood = cartItem?.module_type === "food";
 
   const optionsTotal = (cartItem?.selectedOption ?? []).reduce(
     (sum, o) =>
@@ -289,16 +270,11 @@ const CartItemRow = ({ cartItem }) => {
     0
   );
 
-  let unitPrice;
-  if (isFood) {
-    unitPrice = (Number(cartItem?.price) || 0) + optionsTotal;
-  } else {
-    const variationPrice = Number(cartItem?.selectedOption?.[0]?.price);
-    unitPrice =
-      Number.isFinite(variationPrice) && variationPrice > 0
-        ? variationPrice
-        : Number(cartItem?.price) || 0;
-  }
+  const variationPrice = Number(cartItem?.selectedOption?.[0]?.price);
+  let unitPrice =
+    Number.isFinite(variationPrice) && variationPrice > 0
+      ? variationPrice
+      : Number(cartItem?.price) || 0;
   const discountValue = Number(cartItem?.discount) || 0;
   const discountPerUnit =
     cartItem?.discount_type === "percent" || cartItem?.discount_type === "fixed"
@@ -881,23 +857,12 @@ const StoreCartSidebar = ({ storeDetails, isCartLoading = false }) => {
   const subtotal =
     moduleCartList?.reduce((sum, item) => {
       const itemQty = Number(item?.quantity) || 1;
-      const isFood = item?.module_type === "food";
 
-      let unitPrice;
-      if (isFood) {
-        const optionsTotal = (item?.selectedOption ?? []).reduce(
-          (s, o) =>
-            o?.isSelected === false ? s : s + (Number(o?.optionPrice) || 0),
-          0
-        );
-        unitPrice = (Number(item?.price) || 0) + optionsTotal;
-      } else {
-        const variationPrice = Number(item?.selectedOption?.[0]?.price);
-        unitPrice =
-          Number.isFinite(variationPrice) && variationPrice > 0
-            ? variationPrice
-            : Number(item?.price) || 0;
-      }
+      const variationPrice = Number(item?.selectedOption?.[0]?.price);
+      const unitPrice =
+        Number.isFinite(variationPrice) && variationPrice > 0
+          ? variationPrice
+          : Number(item?.price) || 0;
 
       const discountValue = Number(item?.discount) || 0;
       const discountPerUnit =
@@ -917,22 +882,14 @@ const StoreCartSidebar = ({ storeDetails, isCartLoading = false }) => {
 
   const originalSubtotal = moduleCartList?.reduce((sum, item) => {
     const itemQty = item?.quantity || 1;
-    const isFood = item?.module_type === "food";
-    let unitPrice;
-    if (isFood) {
-      // Food: variation values are additive on top of the base price.
-      unitPrice =
-        (item?.price || 0) + getTotalVariationsPrice(item?.food_variations);
-    } else {
-      // Grocery / pharmacy / ecommerce: the selected variation in
-      // `selectedOption[0].price` IS the line price (replaces the base
-      // `item.price`). Fall back to base when no variation is picked.
-      const variationPrice = Number(item?.selectedOption?.[0]?.price);
-      unitPrice =
-        Number.isFinite(variationPrice) && variationPrice > 0
-          ? variationPrice
-          : Number(item?.price) || 0;
-    }
+    // Grocery / Rental: the selected variation in
+    // `selectedOption[0].price` IS the line price (replaces the base
+    // `item.price`). Fall back to base when no variation is picked.
+    const variationPrice = Number(item?.selectedOption?.[0]?.price);
+    const unitPrice =
+      Number.isFinite(variationPrice) && variationPrice > 0
+        ? variationPrice
+        : Number(item?.price) || 0;
     // Addons are priced by the addon's own quantity, independent of item qty.
     const addons = item?.selectedAddons ?? item?.addons ?? [];
     const addonTotal = addons.reduce(
@@ -1018,92 +975,7 @@ const StoreCartSidebar = ({ storeDetails, isCartLoading = false }) => {
   return (
     <>
       <SidebarSurface>
-        {configData?.prescription_order_status &&
-        storeDetails?.prescription_order &&
-        getCurrentModuleType() === "pharmacy" ? (
-          <SidebarPrescriptionCard sx={{ alignItems: "center" }}>
-            <Stack
-              sx={{
-                width: 40,
-                height: 40,
-                borderRadius: "10px",
-                backgroundColor: alpha(theme.palette.primary.main, 0.06),
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }}
-            >
-              <i
-                className="fi fi-rr-file-prescription prescription-icon"
-                style={{
-                  fontSize: "22px",
-                  display: "flex",
-                  color: theme.palette.primary.main,
-                }}
-              />
-            </Stack>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                width: "100%",
-              }}
-            >
-              <Box sx={{ flex: 1, minWidth: 0 }}>
-                <Typography
-                  sx={{
-                    fontSize: "15px",
-                    fontWeight: 600,
-                    color: theme.palette.text.primary,
-                    lineHeight: 1.3,
-                    letterSpacing: "-0.3px",
-                    fontFamily: "'DM Sans', sans-serif",
-                  }}
-                >
-                  {t("Prescription Order")}
-                </Typography>
-                <Stack
-                  direction="row"
-                  alignItems="center"
-                  gap="4px"
-                  sx={{ mt: "2px" }}
-                >
-                  <Typography
-                    sx={{
-                      fontSize: "13px",
-                      fontWeight: 400,
-                      color: theme.palette.primary.main,
-                      lineHeight: 1,
-                      fontFamily: "'DM Sans', sans-serif",
-                    }}
-                  >
-                    {t("Get your medicine as prescribed.")}
-                  </Typography>
-                </Stack>
-              </Box>
-              <IconButton
-                onClick={handlePrescriptionClick}
-                size="small"
-                sx={{
-                  backgroundColor: alpha(theme.palette.primary.main, 0.08),
-                  color: theme.palette.primary.main,
-                  width: 32,
-                  height: 32,
-                  flexShrink: 0,
-                  "&:hover": {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.16),
-                  },
-                }}
-              >
-                <i
-                  className="fi fi-rr-arrow-small-right prescription-arrow"
-                  style={{ fontSize: "18px", display: "flex" }}
-                />
-              </IconButton>
-            </Box>
-          </SidebarPrescriptionCard>
-        ) : null}
+        <CustomStackFullWidth />
         {/* Header */}
         <SidebarCartLayout>
           <Stack
@@ -1338,10 +1210,8 @@ const StoreCartSidebar = ({ storeDetails, isCartLoading = false }) => {
                   </Stack>
                 </Stack>
 
-                {/* Add To Monthly Order — grocery & pharmacy only, hidden when any cart item is a flash sale */}
-                {[ModuleTypes.GROCERY, "pharmacy"].includes(
-                  getCurrentModuleType()
-                ) &&
+                {/* Add To Monthly Order — grocery only, hidden when any cart item is a flash sale */}
+                {ModuleTypes.GROCERY === getCurrentModuleType() &&
                 configData?.monthly_order_reminder &&
                 !hasFlashSaleItem ? (
                   <Stack
@@ -1650,9 +1520,7 @@ const StoreCartSidebar = ({ storeDetails, isCartLoading = false }) => {
                               key={rel?.id}
                               variant="vertical"
                               item={rel}
-                              isPharmacy={
-                                "pharmacy" === getCurrentModuleType()
-                              }
+                              isPharmacy={false}
                               isStore
                               cardWidth={{ xs: "120px", md: "120px" }}
                             />

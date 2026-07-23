@@ -41,10 +41,8 @@ import {
   getInfoFromZoneData,
   getProductDiscount,
   getTaxableTotalPrice,
-  getVariation,
   handleDistance,
   isAvailable,
-  isFoodAvailableBySchedule,
 } from "utils/CustomFunctions";
 import { today, tomorrow } from "utils/formatedDays";
 import { cod_exceeds_message } from "utils/toasterMessages";
@@ -53,7 +51,6 @@ import useGetVehicleCharge from "../../../api-manage/hooks/react-query/order-pla
 import useGetStoreDetails from "../../../api-manage/hooks/react-query/store/useGetStoreDetails";
 import useGetMostTrips from "../../../api-manage/hooks/react-query/useGetMostTrips";
 import CustomModal from "../../modal";
-import { handleValuesFromCartItems } from "../../product-details/product-details-section/helperFunction";
 import { CouponTitle } from "../CheckOut.style";
 import DeliveryManTip from "../DeliveryManTip";
 import AddPaymentMethod from "./AddPaymentMethod";
@@ -69,7 +66,6 @@ import PlaceOrder from "./PlaceOrder";
 import { INITIAL_STATE, scheduleReducer } from "./ScheduleReducer";
 import OfflineForm from "./offline-payment/OfflineForm";
 import useGetCashBackAmount from "api-manage/hooks/react-query/cashback/useGetCashBackAmount";
-import { ModuleTypes } from "helper-functions/moduleTypes";
 import {
   setGuestUserInfo,
   setGuestUserOrderId,
@@ -184,7 +180,6 @@ const ItemCheckout = (props) => {
     }),
   });
 
-  const currentModuleType = getCurrentModuleType();
   const storeId =
     page === "campaign"
       ? campaignItemList?.[0]?.store_id
@@ -379,22 +374,9 @@ const ItemCheckout = (props) => {
           : "AppModelsItem",
         price: cart?.price,
         quantity: cart?.quantity,
-        variant:
-          cart?.module_type === "food" ? getVariation(cart?.variation) : [],
-        //new variation form needs to added here
+        variant: [],
         variation:
-          cart?.module_type === "food"
-            ? cart?.food_variations?.length > 0
-              ? cart?.food_variations?.map((variation) => {
-                  return {
-                    name: variation.name,
-                    values: {
-                      label: handleValuesFromCartItems(variation.values),
-                    },
-                  };
-                })
-              : []
-            : cart?.selectedOption?.length > 0
+          cart?.selectedOption?.length > 0
             ? cart?.selectedOption
             : [],
       };
@@ -414,170 +396,66 @@ const ItemCheckout = (props) => {
       latitude: storeData?.latitude,
       longitude: storeData?.longitude,
     };
-    if (getCurrentModuleType() === "pharmacy") {
-      const formData = new FormData();
-      formData.append("cart", JSON.stringify(carts));
-      if (scheduleAt !== "now") {
-        formData.append("schedule_at", scheduleAt);
-      }
-
-      formData.append("payment_method", isDigital);
-      formData.append("order_type", orderType);
-
-      // Delivery-speed selection (express / standard / slightly_delay).
-      // Skipped when a free-delivery coupon is applied — surcharge is moot.
-      if (
-        selectedDeliveryOption?.id != null &&
-        couponDiscount?.coupon_type !== "free_delivery"
-      ) {
-        formData.append("delivery_id", selectedDeliveryOption.id);
-        formData.append("delivery_type", selectedDeliveryOption.deliveryType);
-      }
-
-      formData.append("store_id", storeData?.id);
-      if (couponDiscount?.code) {
-        formData.append("coupon_code", couponDiscount?.code);
-      }
-
-      formData.append("coupon_discount_amount", couponDiscount?.discount);
-      formData.append("coupon_discount_title", couponDiscount?.title);
-
-      formData.append("discount_amount", getProductDiscount(productList));
-      formData.append(
-        "distance",
-        handleDistance(distanceData?.data, originData, address)
-      );
-      formData.append("order_amount", totalAmount);
-      formData.append("dm_tips", deliveryTip);
-
-      formData.append("address", address?.address);
-      formData.append("address_type", address?.address_type);
-      formData.append("lat", address?.lat);
-      formData.append("latitude", address?.latitude);
-      formData.append("lng", address?.lng);
-      formData.append("longitude", address?.longitude);
-      formData.append("guest_id", guestId);
-      formData.append(
-        "is_buy_now",
-        page === "buy_now" || page === "campaign" ? 1 : 0
-      );
-      formData.append("house", token ? address?.house : guestUserInfo?.house);
-      formData.append("floor", token ? address?.floor : guestUserInfo?.floor);
-      formData.append("road", token ? address?.road : guestUserInfo?.road);
-      formData.append(
-        "contact_person_name",
-        token
+    const resolvedCutlery = cartPrefs?.addCutlery ? 1 : cutlery ? 1 : 0;
+    const resolvedUnavailableNote =
+      cartPrefs?.unavailableChoice ?? unavailable_item_note;
+    const resolvedPackagingAmount = cartPrefs?.extraPackaging
+      ? packagingCharge > 0
+        ? packagingCharge
+        : 0
+      : 0;
+    return {
+      cart: JSON.stringify(carts),
+      ...address,
+      is_buy_now: page === "buy_now" || page === "campaign" ? 1 : 0,
+      partial_payment: usePartialPayment,
+      schedule_at: scheduleAt === "now" ? null : scheduleAt,
+      // order_time: scheduleAt,
+      payment_method: isDigital,
+      order_type: orderType === "schedule_order" ? "delivery" : orderType,
+      store_id: storeId,
+      coupon_code: couponDiscount?.code,
+      coupon_discount_amount: couponDiscount?.discount,
+      coupon_discount_title: couponDiscount?.title,
+      discount_amount: getProductDiscount(productList),
+      distance: dDistance || tempDistance,
+      order_amount: totalAmount,
+      dm_tips: deliveryTip,
+      cutlery: resolvedCutlery,
+      unavailable_item_note: resolvedUnavailableNote,
+      delivery_instruction: delivery_instruction,
+      guest_id: guestId,
+      contact_person_name: token
+        ? address?.contact_person_name
           ? address?.contact_person_name
-            ? address?.contact_person_name
-            : profileInfo?.name
-          : guestUserInfo?.contact_person_name
-      );
-      formData.append(
-        "contact_person_number",
+          : profileInfo?.name
+        : guestUserInfo?.contact_person_name,
+      contact_person_number: formatPhoneNumber(
         token
           ? address?.contact_person_number
             ? address?.contact_person_number
             : profileInfo?.phone
-          : `+${guestUserInfo?.contact_person_number}`
-      );
-      formData.append(
-        "contact_person_email",
-        guestUserInfo?.contact_person_email
-      );
-      if (prescriptionImages?.length > 0) {
-        const filterBinaryImages = prescriptionImages.filter(
-          (img) => !img.name
-        );
-        const filterUrlImages = prescriptionImages.filter((img) => img.name);
-        filterBinaryImages?.length &&
-          filterBinaryImages.forEach((image) => {
-            formData.append("order_attachment[]", image?.file);
-          });
-        filterUrlImages?.length &&
-          filterUrlImages.forEach((image) => {
-            formData.append("saved_images[]", image?.name);
-          });
-      }
-      const resolvedPackagingAmount = cartPrefs?.extraPackaging
-        ? packagingCharge > 0
-          ? packagingCharge
-          : 0
-        : 0;
-      formData.append("extra_packaging_amount", resolvedPackagingAmount);
-      formData.append("cutlery", cartPrefs?.addCutlery ? 1 : cutlery ? 1 : 0);
-      formData.append(
-        "unavailable_item_note",
-        cartPrefs?.unavailableChoice ?? unavailable_item_note ?? ""
-      );
-      if (cartPrefs?.monthlySubscribe) {
-        formData.append("monthly_subscribe", 1);
-      }
-      formData.append("create_new_user", check ? 1 : 0);
-      formData.append("is_guest", token ? 0 : 1);
-      formData.append("password", formik.values.password);
-      return formData;
-    } else {
-      const resolvedCutlery = cartPrefs?.addCutlery ? 1 : cutlery ? 1 : 0;
-      const resolvedUnavailableNote =
-        cartPrefs?.unavailableChoice ?? unavailable_item_note;
-      const resolvedPackagingAmount = cartPrefs?.extraPackaging
-        ? packagingCharge > 0
-          ? packagingCharge
-          : 0
-        : 0;
-      return {
-        cart: JSON.stringify(carts),
-        ...address,
-        is_buy_now: page === "buy_now" || page === "campaign" ? 1 : 0,
-        partial_payment: usePartialPayment,
-        schedule_at: scheduleAt === "now" ? null : scheduleAt,
-        // order_time: scheduleAt,
-        payment_method: isDigital,
-        order_type: orderType === "schedule_order" ? "delivery" : orderType,
-        store_id: storeId,
-        coupon_code: couponDiscount?.code,
-        coupon_discount_amount: couponDiscount?.discount,
-        coupon_discount_title: couponDiscount?.title,
-        discount_amount: getProductDiscount(productList),
-        distance: dDistance || tempDistance,
-        order_amount: totalAmount,
-        dm_tips: deliveryTip,
-        cutlery: resolvedCutlery,
-        unavailable_item_note: resolvedUnavailableNote,
-        delivery_instruction: delivery_instruction,
-        guest_id: guestId,
-        contact_person_name: token
-          ? address?.contact_person_name
-            ? address?.contact_person_name
-            : profileInfo?.name
-          : guestUserInfo?.contact_person_name,
-        contact_person_number: formatPhoneNumber(
-          token
-            ? address?.contact_person_number
-              ? address?.contact_person_number
-              : profileInfo?.phone
-            : `${guestUserInfo?.contact_person_number}`
-        ),
-        contact_person_email: guestUserInfo?.contact_person_email,
-        house: token ? address?.house : guestUserInfo?.house,
-        floor: token ? address?.floor : guestUserInfo?.floor,
-        road: token ? address?.road : guestUserInfo?.road,
-        extra_packaging_amount: resolvedPackagingAmount,
-        ...(cartPrefs?.monthlySubscribe && { monthly_subscribe: 1 }),
-        create_new_user: check ? 1 : 0,
-        password: formik.values.password,
-        is_guest: token ? 0 : 1,
-        bring_change_amount: changeAmount,
-        // Delivery-speed selection (express / standard / slightly_delay).
-        // Spread conditionally so free-delivery coupons skip the surcharge
-        // fields entirely and the backend uses base delivery only.
-        ...(selectedDeliveryOption?.id != null &&
-          couponDiscount?.coupon_type !== "free_delivery" && {
-            delivery_id: selectedDeliveryOption.id,
-            delivery_type: selectedDeliveryOption.deliveryType,
-          }),
-      };
-    }
+          : `${guestUserInfo?.contact_person_number}`
+      ),
+      contact_person_email: guestUserInfo?.contact_person_email,
+      house: token ? address?.house : guestUserInfo?.house,
+      floor: token ? address?.floor : guestUserInfo?.floor,
+      road: token ? address?.road : guestUserInfo?.road,
+      extra_packaging_amount: resolvedPackagingAmount,
+      ...(cartPrefs?.monthlySubscribe && { monthly_subscribe: 1 }),
+      create_new_user: check ? 1 : 0,
+      password: formik.values.password,
+      is_guest: token ? 0 : 1,
+      bring_change_amount: changeAmount,
+      // Delivery-speed selection (express / standard / slightly_delay).
+      // Spread conditionally so free-delivery coupons skip the surcharge
+      // fields entirely and the backend uses base delivery only.
+      ...(selectedDeliveryOption?.id != null &&
+        couponDiscount?.coupon_type !== "free_delivery" && {
+          delivery_id: selectedDeliveryOption.id,
+          delivery_type: selectedDeliveryOption.deliveryType,
+        }),
+    };
   };
 
   const prevCartRef = useRef(null);
@@ -605,10 +483,7 @@ const ItemCheckout = (props) => {
 
   const handlePlaceOrder = () => {
     const itemsList = page === "campaign" ? campaignItemList : cartList;
-    const isAvailable =
-      storeData?.schedule_order && getCurrentModuleType() === "food"
-        ? isFoodAvailableBySchedule(itemsList, scheduleAt)
-        : true;
+    const isAvailable = true;
     if (isAvailable) {
       const walletAmount = customerData?.data?.wallet_balance;
       let productList = page === "campaign" ? campaignItemList : cartList;

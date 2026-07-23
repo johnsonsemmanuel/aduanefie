@@ -57,7 +57,6 @@ import CustomImageContainer from "components/CustomImageContainer";
 import locationImage from "../../../public/static/fi_854878.svg";
 import CloseIcon from "@mui/icons-material/Close";
 import { useTranslation } from "react-i18next";
-import { getSelectedVariations } from "components/header/second-navbar/SecondNavbar";
 import { setCartList, setStoreCartList } from "redux/slices/cart";
 import { saveModuleParam } from "utils/moduleParamManager";
 
@@ -307,12 +306,8 @@ const StoreDetails = ({ storeDetails, configData }) => {
          item?.price,
         selectedAddons: item?.item?.addons,
         quantity: item?.quantity,
-        food_variations: item?.item?.food_variations,
         itemBasePrice: item?.item?.price,
-        selectedOption:
-          moduleType !== "food"
-            ? item?.variation
-            : getSelectedVariations(item?.item?.food_variations),
+        selectedOption: item?.variation,
       }));
       
       // Store-scoped slot (read by StoreCartSidebar).

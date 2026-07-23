@@ -1,10 +1,8 @@
-import { useTheme } from "@emotion/react";
 import StarIcon from "@mui/icons-material/Star";
 import { Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import React from "react";
-import { getCurrentModuleType } from "../helper-functions/getCurrentModuleType";
-import { ModuleTypes } from "../helper-functions/moduleTypes";
+
 import { IsSmallScreen } from "../utils/CommonValues";
 import { useSelector } from "react-redux";
 
@@ -17,32 +15,11 @@ const CustomRatingBox = (props) => {
   const theme = useTheme();
   // isXsmall = useMediaQuery(theme.breakpoints.down("sm"))
   const getModuleWise = () => {
-    switch (getCurrentModuleType()) {
-      case ModuleTypes.GROCERY:
-        return {
-          background: "primary.main",
-          color: "whiteContainer.main",
-          borderRadius: "2px",
-        };
-      case "pharmacy":
-        return {
-          background: "primary.lite",
-          color: "primary.main",
-          borderRadius: "14px",
-        };
-      case "ecommerce":
-        return {
-          background: "primary.lite",
-          color: "primary.main",
-          borderRadius: "2px",
-        };
-      case "food":
-        return {
-          background: theme.palette.moduleTheme.food,
-          color: "whiteContainer.main",
-          borderRadius: "2px",
-        };
-    }
+    return {
+      background: "primary.main",
+      color: "whiteContainer.main",
+      borderRadius: "2px",
+    };
   };
   return (
     <Stack

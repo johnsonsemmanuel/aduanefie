@@ -1,20 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Badge, styled } from "@mui/material";
-import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
-import { ModuleTypes } from "helper-functions/moduleTypes";
+
 
 const getModuleWiseBG = (theme) => {
-  switch (getCurrentModuleType()) {
-    case ModuleTypes.GROCERY:
-      return theme.palette.error.deepLight;
-    case "pharmacy":
-      return theme.palette.moduleTheme.pharmacy;
-    case "ecommerce":
-      return theme.palette.info.blue;
-    case "food":
-      return theme.palette.moduleTheme.food;
-  }
+  return theme.palette.error.deepLight;
 };
 
 export const CustomBadgeWrapepr = styled(Badge)(

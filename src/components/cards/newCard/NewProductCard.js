@@ -25,7 +25,6 @@ import { getAmountWithSign } from "helper-functions/CardHelpers";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { getLanguage } from "helper-functions/getLanguage";
 import { getGuestId } from "helper-functions/getToken";
-import { handleProductRedirect } from "helper-functions/handleProductRedirect";
 import { handleStoreRedirect } from "helper-functions/handleStoreRedirect";
 import { ModuleTypes } from "helper-functions/moduleTypes";
 import dynamic from "next/dynamic";
@@ -308,9 +307,7 @@ const StoreRow = ({
 
   const moduleType = getCurrentModuleType();
   const verifiedLabel =
-    moduleType === "food"
-      ? t("Verified Restaurant")
-      : moduleType === ModuleTypes.RENTAL
+    moduleType === ModuleTypes.RENTAL
       ? t("Verified Provider")
       : t("Verified Store");
 
@@ -1383,7 +1380,6 @@ const NewProductCard = ({
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const router = useRouter();
   const reduxDispatch = useDispatch();
   const queryClient = useQueryClient();
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -1547,45 +1543,31 @@ const NewProductCard = ({
       getGuestId()
     );
 
-    if (getCurrentModuleType() === "food") {
-      if (
-        item?.maximum_cart_quantity &&
-        item.maximum_cart_quantity <= isInCart.quantity
-      ) {
-        toast.error(t(out_of_limits), { id: "out-of-limits" });
-        return;
-      }
-      updateMutate(itemObject, {
-        onSuccess: cartUpdateHandleSuccess,
-        onError: onErrorResponse,
-      });
-    } else {
-      // Variation-aware stock: if a variation is selected, use its stock.
-      // isInCart.stock is base product stock — not reliable for variation products.
-      const selectedVariation = isInCart.selectedOption?.[0];
-      const stockValue =
-        selectedVariation && typeof selectedVariation.stock === "number"
-          ? selectedVariation.stock
-          : isInCart.stock ?? item?.stock;
-      if (
-        stockValue != null &&
-        (stockValue <= 0 || isInCart.quantity + 1 > stockValue)
-      ) {
-        toast.error(t(out_of_stock), { id: "out-of-stock" });
-        return;
-      }
-      if (
-        item?.maximum_cart_quantity &&
-        item.maximum_cart_quantity <= isInCart.quantity
-      ) {
-        toast.error(t(out_of_limits), { id: "out-of-limits" });
-        return;
-      }
-      updateMutate(itemObject, {
-        onSuccess: cartUpdateHandleSuccess,
-        onError: onErrorResponse,
-      });
+    // Variation-aware stock: if a variation is selected, use its stock.
+    // isInCart.stock is base product stock — not reliable for variation products.
+    const selectedVariation = isInCart.selectedOption?.[0];
+    const stockValue =
+      selectedVariation && typeof selectedVariation.stock === "number"
+        ? selectedVariation.stock
+        : isInCart.stock ?? item?.stock;
+    if (
+      stockValue != null &&
+      (stockValue <= 0 || isInCart.quantity + 1 > stockValue)
+    ) {
+      toast.error(t(out_of_stock), { id: "out-of-stock" });
+      return;
     }
+    if (
+      item?.maximum_cart_quantity &&
+      item.maximum_cart_quantity <= isInCart.quantity
+    ) {
+      toast.error(t(out_of_limits), { id: "out-of-limits" });
+      return;
+    }
+    updateMutate(itemObject, {
+      onSuccess: cartUpdateHandleSuccess,
+      onError: onErrorResponse,
+    });
   };
 
   // ── Decrement — exact logic from ProductCard ──
@@ -1667,34 +1649,16 @@ const NewProductCard = ({
       onCardClick(item);
       return;
     }
-    if (item?.module_type === "ecommerce") {
-      handleProductRedirect(item, router);
-    } else {
-      dispatch({ type: ACTION.setOpenModal, payload: true });
-    }
+    dispatch({ type: ACTION.setOpenModal, payload: true });
   };
 
   // ── Add button click — exact addToCart from ProductCard ──
   const handleAddClick = (e) => {
     e.stopPropagation();
-    if (item?.module_type === "ecommerce") {
-      if (item?.variations?.length > 0 || item?.has_variant) {
-        handleProductRedirect(item, router);
-      } else {
-        addToCartHandler();
-      }
-    } else if (item?.module_type === "food") {
-      if (item?.food_variations?.length > 0 || item?.has_variant) {
-        dispatch({ type: ACTION.setOpenModal, payload: true });
-      } else {
-        addToCartHandler();
-      }
+    if (item?.variations?.length > 0 || item?.has_variant) {
+      dispatch({ type: ACTION.setOpenModal, payload: true });
     } else {
-      if (item?.variations?.length > 0 || item?.has_variant) {
-        dispatch({ type: ACTION.setOpenModal, payload: true });
-      } else {
-        addToCartHandler();
-      }
+      addToCartHandler();
     }
   };
 
@@ -1736,11 +1700,10 @@ const NewProductCard = ({
     onAdd: handleAddClick,
   };
 
-  const isFood = getCurrentModuleType() === "food";
 
   return (
     <>
-      {state.openModal && !isFood && item && (
+      {state.openModal && item && (
         <ModuleModal
           open={state.openModal}
           handleModalClose={() =>
@@ -2020,10 +1983,7 @@ const NewProductCard = ({
               item={item}
               isWishlisted={isWishlisted}
               onWishlist={toggleWishlist}
-              showVeg={
-                !!configData?.toggle_veg_non_veg &&
-                getCurrentModuleType() === "food"
-              }
+              showVeg={false}
               {...cartControlProps}
             />
           </ImageContainer>
@@ -2113,10 +2073,7 @@ const NewProductCard = ({
               item={item}
               isWishlisted={isWishlisted}
               onWishlist={toggleWishlist}
-              showVeg={
-                !!configData?.toggle_veg_non_veg &&
-                getCurrentModuleType() === "food"
-              }
+              showVeg={false}
               {...cartControlProps}
             />
           </ImageContainer>

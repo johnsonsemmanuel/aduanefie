@@ -7,8 +7,7 @@ import {
   CustomBoxFullWidth,
   CustomStackFullWidth,
 } from "styled-components/CustomStyles.style";
-import { getCurrentModuleType } from "../../helper-functions/getCurrentModuleType";
-import { ModuleTypes } from "../../helper-functions/moduleTypes";
+
 import { textWithEllipsis } from "../../styled-components/TextWithEllipsis";
 import AmountWithDiscountedAmount from "../AmountWithDiscountedAmount";
 import CustomImageContainer from "../CustomImageContainer";
@@ -103,56 +102,9 @@ const SpecialCard = (props) => {
   const { ref: textRef, isEllipsed } = useTextEllipsis(item?.name);
 
   const getModuleWiseItemName = () => {
-    if (getCurrentModuleType() === "food") {
-      return (
-        <Stack direction="row" alignItems="center" spacing={0.8}>
-          {isEllipsed ? (
-            <PrimaryToolTip text={item?.name} placement="bottom" arrow="false">
-              <Typography
-                ref={textRef}
-                className={classes.singleLineEllipsis}
-                fontSize={{ xs: "12px", md: "14px" }}
-                fontWeight="500"
-                width={0}
-                flexGrow={1}
-                component="h3"
-              >
-                {item?.name}
-              </Typography>
-            </PrimaryToolTip>
-          ) : (
-            <Typography
-              ref={textRef}
-              className={classes.singleLineEllipsis}
-              fontSize={{ xs: "12px", md: "14px" }}
-              fontWeight="500"
-              width={0}
-              flexGrow={1}
-              component="h3"
-            >
-              {item?.name}
-            </Typography>
-          )}
-          {configData?.configData?.toggle_veg_non_veg ? (
-            <FoodVegNonVegFlag veg={item?.veg == 0 ? false : true} />
-          ) : null}
-        </Stack>
-      );
-    } else {
-      return (
-        isEllipsed ? (
-          <PrimaryToolTip text={item?.name} placement="bottom" arrow="false">
-            <Typography
-              ref={textRef}
-              className={classes.singleLineEllipsis}
-              fontSize={{ xs: "12px", md: "14px" }}
-              fontWeight="500"
-              component="h3"
-            >
-              {item?.name}
-            </Typography>
-          </PrimaryToolTip>
-        ) : (
+    return (
+      isEllipsed ? (
+        <PrimaryToolTip text={item?.name} placement="bottom" arrow="false">
           <Typography
             ref={textRef}
             className={classes.singleLineEllipsis}
@@ -162,9 +114,19 @@ const SpecialCard = (props) => {
           >
             {item?.name}
           </Typography>
-        )
-      );
-    }
+        </PrimaryToolTip>
+      ) : (
+        <Typography
+          ref={textRef}
+          className={classes.singleLineEllipsis}
+          fontSize={{ xs: "12px", md: "14px" }}
+          fontWeight="500"
+          component="h3"
+        >
+          {item?.name}
+        </Typography>
+      )
+    );
   };
 
   return (

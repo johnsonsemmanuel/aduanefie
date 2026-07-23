@@ -12,16 +12,7 @@ import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
 import Loading from "../custom-loading/Loading";
 
 const getModuleWiseData = (theme) => {
-  switch (getCurrentModuleType()) {
-    case ModuleTypes.GROCERY:
-      return theme.palette.toolTipColor;
-    case "pharmacy":
-      return theme.palette.toolTipColor;
-    case "ecommerce":
-      return theme.palette.toolTipColor;
-    case "food":
-      return theme.palette.toolTipColor;
-  }
+  return theme.palette.toolTipColor;
 };
 export const PrimaryToolTip = ({ children, text, placement, arrow }) => {
   return (
