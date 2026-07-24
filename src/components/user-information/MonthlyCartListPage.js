@@ -25,7 +25,7 @@ import { toast } from "react-hot-toast";
 import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
 
-const ALLOWED_MODULE_TYPES = ["grocery", "pharmacy"];
+const ALLOWED_MODULE_TYPES = ["grocery"];
 
 // ── Shimmer ───────────────────────────────────────────────────────────────────
 const ShimmerRow = () => {

@@ -16,7 +16,7 @@ import FoodCategoryCard from "../../cards/FoodCategoryCard";
 import { HomeComponentsWrapper } from "../HomePageComponents";
 import SliderSectionHeader from "components/common/SliderSectionHeader";
 
-const FeaturedCategories = () => {
+const FeaturedCategories = ({ title }) => {
   const { featuredCategories } = useSelector((state) => state.storedData);
   const slider = useRef(null);
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -93,12 +93,10 @@ const FeaturedCategories = () => {
     },
   };
 
-  const sectionTitle = {
-    ["food"]: t("Find Your Flavour"),
-    [ModuleTypes.GROCERY]: t("Shop by Categories"),
-    ["pharmacy"]: t("Shop by Categories"),
-    ["ecommerce"]: t("Explore Categories"),
-  }[getCurrentModuleType()] ?? t("Find Your Flavour");
+  const sectionTitle = title
+    ?? ({
+        [ModuleTypes.GROCERY]: t("Shop by Categories"),
+      }[getCurrentModuleType()] ?? t("Find Your Flavour"));
 
   return (
     <CustomBoxFullWidth>

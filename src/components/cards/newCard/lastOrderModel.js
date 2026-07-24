@@ -1,6 +1,6 @@
 /**
  * Shared data shape consumed by `LastOrdersSection` and `CartStoreCard`.
- * Every module (food, rental, ecommerce, pharmacy, parcel...) maps its own
+ * Every module (grocery, rental...) maps its own
  * API response into this shape via a normalizer, so the UI stays unified.
  *
  * @typedef {Object} LastOrderStore
@@ -21,7 +21,7 @@
  * @property {string} placedDate - Human-readable placed date
  *   (e.g. "20 Mar, 2026")
  * @property {string} [module] - Originating module name, useful for routing
- *   on reorder click (e.g. "food", "rental", "ecommerce")
+ *   on reorder click (e.g. "rental")
  */
 
 const isImg = (url) => typeof url === "string" && url.length > 0;
@@ -52,43 +52,6 @@ const pickStore = (raw, paths) => {
     if (v) return v;
   }
   return undefined;
-};
-
-/**
- * Food-module order normalizer.
- * Backend keys: `restaurant`, `details[].food.image_full_url`, `order_amount`,
- * `created_at` / `order_date`.
- *
- * @param {Object} raw
- * @returns {LastOrder}
- */
-export const normalizeFoodOrder = (raw = {}) => {
-  const store = pickStore(raw, ["store", "restaurant"]) || {};
-  const items = Array.isArray(raw.details)
-    ? raw.details
-        .map((d) => ({
-          image_full_url:
-            d?.food?.image_full_url ||
-            d?.item?.image_full_url ||
-            d?.image_full_url,
-        }))
-        .filter((i) => isImg(i.image_full_url))
-    : Array.isArray(raw.items)
-    ? raw.items
-    : [];
-  return {
-    id: raw.id,
-    store: {
-      id: store.id,
-      name: store.name,
-      logo_full_url: store.logo_full_url || store.logo,
-      slug: store.slug,
-    },
-    items,
-    totalPrice: raw.totalPrice ?? raw.order_amount ?? raw.total_amount ?? 0,
-    placedDate: raw.placedDate || formatDate(raw.created_at || raw.order_date),
-    module: "food",
-  };
 };
 
 /**
@@ -139,40 +102,6 @@ export const normalizeRentalOrder = (raw = {}) => {
     totalPrice: raw.totalPrice ?? raw.total_amount ?? raw.order_amount ?? 0,
     placedDate,
     module: "rental",
-  };
-};
-
-/**
- * Ecommerce-module order normalizer.
- * Backend keys: `store`, `details[].product.image_full_url`, `order_amount`.
- *
- * @param {Object} raw
- * @returns {LastOrder}
- */
-export const normalizeEcommerceOrder = (raw = {}) => {
-  const store = pickStore(raw, ["store", "shop"]) || {};
-  const items = Array.isArray(raw.details)
-    ? raw.details
-        .map((d) => ({
-          image_full_url:
-            d?.product?.image_full_url ||
-            d?.item?.image_full_url ||
-            d?.image_full_url,
-        }))
-        .filter((i) => isImg(i.image_full_url))
-    : [];
-  return {
-    id: raw.id,
-    store: {
-      id: store.id,
-      name: store.name,
-      logo_full_url: store.logo_full_url || store.logo,
-      slug: store.slug,
-    },
-    items,
-    totalPrice: raw.totalPrice ?? raw.order_amount ?? raw.total_amount ?? 0,
-    placedDate: raw.placedDate || formatDate(raw.created_at || raw.order_date),
-    module: "ecommerce",
   };
 };
 

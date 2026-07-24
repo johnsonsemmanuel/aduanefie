@@ -10,7 +10,7 @@ import useGetGroupedCart from "api-manage/hooks/react-query/add-cart/useGetGroup
 import { store } from "redux/store";
 
 // Modules where the floating button is visible
-const ALLOWED_MODULES = new Set(["food", "grocery", "pharmacy", "shop"]);
+const ALLOWED_MODULES = new Set(["grocery"]);
 
 // Next.js route patterns where the button is visible
 const ALLOWED_PATHNAMES = new Set([

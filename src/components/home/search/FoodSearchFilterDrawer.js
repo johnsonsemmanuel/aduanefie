@@ -15,7 +15,6 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
-import { ModuleTypes } from "helper-functions/moduleTypes";
 
 const SORT_OPTIONS = [
   { value: "price_low", label: "Price Low To High" },

@@ -36,6 +36,7 @@ import PaymentMethod from "components/checkout/PaymentMethod";
 import ScrollUpButton from "components/common/ScrollUpButton";
 import IncompleteOrderModal from "components/home/IncompleteOrderModal";
 import Grocery from "./module-wise-components/Grocery";
+import FarmInputs from "./module-wise-components/farmInputs/FarmInputs";
 import Rental from "components/home/module-wise-components/rental/Rental";
 import TaxiSearchPanel from "components/home/module-wise-components/rental/components/global/search/TaxiSearchPanel";
 import { useQuery } from "react-query";
@@ -174,6 +175,8 @@ const HomePageComponents = ({
     switch (getCurrentModuleType()) {
       case ModuleTypes.GROCERY:
         return <Grocery configData={configData} routeSection={routeSection} />;
+      case ModuleTypes.FARM_INPUTS:
+        return <FarmInputs />;
       case ModuleTypes.RENTAL:
         return (
           <Rental configData={configData} landingPageData={landingPageData} />

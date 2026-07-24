@@ -3,6 +3,7 @@ export const ModuleTypes = {
   RENTAL: "rental",
   // RIDE: deprioritized — redirected to community delivery (DEPRECATED — retained for backend data compatibility)
   RIDE: "ride-share" || "rideshare",
+  FARM_INPUTS: "farm_inputs",
 };
 
 export const StoreTypes = {

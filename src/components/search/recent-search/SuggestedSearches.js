@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 
-const NEAR_ME_MODULES = ["food", "grocery", "pharmacy"];
+const NEAR_ME_MODULES = ["grocery"];
 
 // ─── Redirect icon ─────────────────────────────────────────────────────────
 

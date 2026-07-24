@@ -1,7 +1,5 @@
 import { Box, alpha, styled } from "@mui/material";
 import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
-import { getCurrentModuleType } from "../../helper-functions/getCurrentModuleType";
-import { ModuleTypes } from "../../helper-functions/moduleTypes";
 export const StyledFooterBackground = styled(Box)(
 	({ theme, nobottommargin }) => ({
 		//minHeight: '500px',
@@ -16,10 +14,7 @@ export const StyledFooterBackground = styled(Box)(
 );
 
 export const StyledFooterTop = styled(CustomStackFullWidth)(({ theme }) => ({
-	backgroundColor:
-		getCurrentModuleType() === ModuleTypes?.FOOD
-			? alpha(theme.palette.moduleTheme.food, 0.051)
-			: alpha(theme.palette.primary.main, 0.1),
+	backgroundColor: alpha(theme.palette.primary.main, 0.1),
 	width: "100%",
 	[theme.breakpoints.down("md")]: {
 		paddingBottom:"20px"
