@@ -742,6 +742,263 @@ const ProductInformation = ({
           );
         })()}
 
+        {/* Agro info — origin, seasonality, certification, cold chain, dates */}
+        {(() => {
+          const item = state.modalData[0];
+          const seasonality = item?.seasonality
+            ? (Array.isArray(item.seasonality)
+              ? item.seasonality
+              : JSON.parse(item.seasonality || "[]")
+            )
+            : [];
+          const certification = item?.certification;
+          const originFarm = item?.origin_farm;
+          const coldChain = item?.cold_chain_required;
+          const harvestDate = item?.harvest_date;
+          const expiryDate = item?.expiry_date;
+          const perishabilityDays = item?.perishability_days;
+          const minOrderQty = item?.minimum_order_qty;
+
+          const hasAgroInfo =
+            seasonality.length > 0 ||
+            certification ||
+            originFarm ||
+            coldChain ||
+            harvestDate ||
+            expiryDate ||
+            perishabilityDays ||
+            minOrderQty;
+
+          if (!hasAgroInfo) return null;
+
+          const monthNames = {
+            January: t("january"),
+            February: t("february"),
+            March: t("march"),
+            April: t("april"),
+            May: t("may"),
+            June: t("june"),
+            July: t("july"),
+            August: t("august"),
+            September: t("september"),
+            October: t("october"),
+            November: t("november"),
+            December: t("december"),
+          };
+
+          return (
+            <Stack
+              spacing={0.75}
+              sx={{
+                mt: 1,
+                p: { xs: 1.25, md: 1.5 },
+                borderRadius: "10px",
+                border: `1px solid ${alpha(
+                  theme.palette.text.primary,
+                  0.08
+                )}`,
+                backgroundColor: theme.palette.background.paper,
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: { xs: "13px", md: "14px" },
+                  fontWeight: 600,
+                  color: theme.palette.text.primary,
+                }}
+              >
+                {t("Agro Info")}
+              </Typography>
+              <Stack direction="row" spacing={1} alignItems="flex-start" flexWrap="wrap">
+                {originFarm && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        color: theme.palette.text.secondary,
+                        minWidth: { xs: "100px", md: "120px" },
+                      }}
+                    >
+                      {t("Origin Farm")} :
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        fontWeight: 600,
+                        color: theme.palette.text.primary,
+                        flex: 1,
+                      }}
+                    >
+                      {originFarm}
+                    </Typography>
+                  </Stack>
+                )}
+                {seasonality.length > 0 && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        color: theme.palette.text.secondary,
+                        minWidth: { xs: "100px", md: "120px" },
+                      }}
+                    >
+                      {t("Seasonality")} :
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        fontWeight: 600,
+                        color: theme.palette.text.primary,
+                        flex: 1,
+                      }}
+                    >
+                      {seasonality.map((m) => monthNames[m] || m).join(", ")}
+                    </Typography>
+                  </Stack>
+                )}
+                {certification && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        color: theme.palette.text.secondary,
+                        minWidth: { xs: "100px", md: "120px" },
+                      }}
+                    >
+                      {t("Certification")} :
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        fontWeight: 600,
+                        color: theme.palette.text.primary,
+                        flex: 1,
+                      }}
+                    >
+                      {certification}
+                    </Typography>
+                  </Stack>
+                )}
+                {coldChain && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        color: theme.palette.text.secondary,
+                        minWidth: { xs: "100px", md: "120px" },
+                      }}
+                    >
+                      {t("Cold Chain")} :
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        fontWeight: 600,
+                        color: theme.palette.text.primary,
+                        flex: 1,
+                      }}
+                    >
+                      {t("Required")}
+                    </Typography>
+                  </Stack>
+                )}
+                {harvestDate && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        color: theme.palette.text.secondary,
+                        minWidth: { xs: "100px", md: "120px" },
+                      }}
+                    >
+                      {t("Harvest Date")} :
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        fontWeight: 600,
+                        color: theme.palette.text.primary,
+                        flex: 1,
+                      }}
+                    >
+                      {harvestDate}
+                    </Typography>
+                  </Stack>
+                )}
+                {expiryDate && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        color: theme.palette.text.secondary,
+                        minWidth: { xs: "100px", md: "120px" },
+                      }}
+                    >
+                      {t("Expiry Date")} :
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        fontWeight: 600,
+                        color: theme.palette.text.primary,
+                        flex: 1,
+                      }}
+                    >
+                      {expiryDate}
+                    </Typography>
+                  </Stack>
+                )}
+                {perishabilityDays && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        color: theme.palette.text.secondary,
+                        minWidth: { xs: "100px", md: "120px" },
+                      }}
+                    >
+                      {t("Perishability")} :
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        fontWeight: 600,
+                        color: theme.palette.text.primary,
+                        flex: 1,
+                      }}
+                    >
+                      {perishabilityDays} {t("Days")}
+                    </Typography>
+                  </Stack>
+                )}
+                {minOrderQty && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        color: theme.palette.text.secondary,
+                        minWidth: { xs: "100px", md: "120px" },
+                      }}
+                    >
+                      {t("Minimum Order Qty")} :
+                    </Typography>
+                    <Typography
+                      sx={{
+                        fontSize: { xs: "13px", md: "14px" },
+                        fontWeight: 600,
+                        color: theme.palette.text.primary,
+                        flex: 1,
+                      }}
+                    >
+                      {minOrderQty} {item?.unit_type || ""}
+                    </Typography>
+                  </Stack>
+                )}
+              </Stack>
+            </Stack>
+          );
+        })()}
+
         {(state.modalData[0]?.module_type === "pharmacy" ||
           state.modalData[0]?.module?.module_type === "pharmacy") &&
           (() => {
