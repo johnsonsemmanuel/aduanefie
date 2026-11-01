@@ -15,9 +15,12 @@ html[data-theme="dark"] body {
     color: #FFFFFF;
 }
 
+html:not([data-theme]),
+html:not([data-theme]) body,
 html[data-theme="light"],
 html[data-theme="light"] body {
-    background: #F5EFE0;
+    background: #FAF8F5;
+    color: #1C1917;
 }
 
 a {
@@ -33,16 +36,6 @@ a {
     scroll-behavior: auto !important;
 }
 
-@media (prefers-color-scheme: dark) {
-    html:not([data-theme]) {
-        color-scheme: dark;
-    }
-
-    html:not([data-theme]) body {
-        color: white;
-        background: black;
-    }
-}
 
 /* Phone input color */
 .react-tel-input .country-list .search-box {

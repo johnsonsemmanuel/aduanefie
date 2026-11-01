@@ -26,16 +26,11 @@ class CustomDocument extends Document {
                       if (stored) {
                         var parsed = JSON.parse(stored);
                         if (parsed && parsed.theme === "dark") mode = "dark";
-                      } else if (
-                        window.matchMedia &&
-                        window.matchMedia("(prefers-color-scheme: dark)").matches
-                      ) {
-                        mode = "dark";
                       }
                     }
 
                     var root = document.documentElement;
-                    var pageBackground = mode === "dark" ? "#0B0F19" : "#F5EFE0";
+                    var pageBackground = mode === "dark" ? "#0B0F19" : "#FAF8F5";
                     root.setAttribute("data-theme", mode);
                     root.style.colorScheme = mode;
                     root.style.backgroundColor = pageBackground;

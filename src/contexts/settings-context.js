@@ -77,7 +77,7 @@ export const SettingsProvider = (props) => {
     if (typeof document === "undefined") return;
 
     const mode = settings?.theme === "dark" ? "dark" : "light";
-    const pageBackground = mode === "dark" ? "#0B0F19" : "#FFFFFF";
+    const pageBackground = mode === "dark" ? "#0B0F19" : "#FAF8F5";
 
     document.documentElement.setAttribute("data-theme", mode);
     document.documentElement.style.colorScheme = mode;
