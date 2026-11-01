@@ -1,5 +1,5 @@
 import { useTheme } from "@emotion/react";
-import { alpha, Box, Grid, Typography, useMediaQuery } from "@mui/material";
+import { alpha, Box, Grid, Select, MenuItem, Typography, useMediaQuery } from "@mui/material";
 import { Stack } from "@mui/system";
 import { baseUrl } from "api-manage/MainApi";
 import { OrderApi } from "api-manage/another-formated-api/orderApi";
@@ -141,6 +141,8 @@ const ItemCheckout = (props) => {
   const [total_order_amount, setTotalOrderAmount] = useState(0);
   const [deliveryTip, setDeliveryTip] = useState(0);
   const [deliveryFee, setDeliveryFee] = useState(0);
+  const [selectedCurrency, setSelectedCurrency] = useState({ code: "GHS", symbol: "GH₵", name: "Ghanaian Cedi" });
+  const [currencies, setCurrencies] = useState([]);
   const [deliveryFeeBeforeProDiscount, setDeliveryFeeBeforeProDiscount] =
     useState(0);
   const [minDeliveryCharge, setMinDeliveryCharge] = useState(0);
@@ -242,6 +244,26 @@ const ItemCheckout = (props) => {
   useEffect(() => {
     refetchOfflinePaymentOptions();
   }, []);
+
+  useEffect(() => {
+    // Load available currencies for multi-currency support
+    const africanCurrencies = [
+      { code: "GHS", symbol: "GH₵", name: "Ghanaian Cedi" },
+      { code: "NGN", symbol: "₦", name: "Nigerian Naira" },
+      { code: "KES", symbol: "Ksh", name: "Kenyan Shilling" },
+      { code: "XAF", symbol: "FCFA", name: "CFA Franc BEAC" },
+      { code: "XOF", symbol: "CFA", name: "CFA Franc BCEAO" },
+      { code: "ZAR", symbol: "R", name: "South African Rand" },
+      { code: "USD", symbol: "$", name: "US Dollar" },
+      { code: "EUR", symbol: "€", name: "Euro" },
+      { code: "GBP", symbol: "£", name: "British Pound" },
+    ];
+    setCurrencies(africanCurrencies);
+    // Default to store's currency or GHS
+    const storeCurrency = storeData?.currency || "GHS";
+    const found = africanCurrencies.find(c => c.code === storeCurrency);
+    if (found) setSelectedCurrency(found);
+  }, [storeData]);
   useEffect(() => {
     if (storeId) {
       refetch();
@@ -546,6 +568,7 @@ const ItemCheckout = (props) => {
       }
       formData.append("order_amount", totalAmount);
       formData.append("dm_tips", deliveryTip);
+      formData.append("currency_code", selectedCurrency?.code ?? "GHS");
 
       formData.append("address", address?.address);
       formData.append("address_type", address?.address_type);
@@ -1496,6 +1519,29 @@ const ItemCheckout = (props) => {
                     scheduleAt={scheduleAt}
                     currentZoneInfo={currentZoneInfo}
                   />
+
+                  {/* Currency Selector */}
+                  <Box sx={{ mt: 2, mb: 1, px: 1, display: "flex", alignItems: "center", gap: 1 }}>
+                    <Typography variant="body2" fontWeight="600" sx={{ color: "text.secondary", minWidth: "100px" }}>
+                      {t("Currency")}
+                    </Typography>
+                    <Select
+                      value={selectedCurrency.code}
+                      onChange={(e) => {
+                        const found = currencies.find(c => c.code === e.target.value);
+                        if (found) setSelectedCurrency(found);
+                      }}
+                      displayEmpty
+                      MenuProps={{ PaperProps: { style: { maxHeight: 200, overflowY: "auto" } } }}
+                      sx={{ width: 200 }}
+                    >
+                      {currencies.map(c => (
+                        <MenuItem key={c.code} value={c.code}>
+                          {c.code} - {c.name} ({c.symbol})
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Box>
 
                   <PlaceOrder
                     placeOrder={placeOrder}
