@@ -17,7 +17,7 @@ html[data-theme="dark"] body {
 
 html[data-theme="light"],
 html[data-theme="light"] body {
-    background: #FFFFFF;
+    background: #F5EFE0;
 }
 
 a {
@@ -107,7 +107,7 @@ a {
 }
 
 .client-nav {
-    left: -40px;
+    left: 0;
     cursor: pointer;
     position: relative;
     inset: unset;
@@ -136,6 +136,23 @@ a {
     position: relative !important;
     inset: unset;
     transition: all ease 0.5s;
+}
+
+@media (max-width: 768px) {
+    .client-nav,
+    .slider-wrapper .client-nav {
+        left: 0 !important;
+    }
+
+    .imageName {
+        width: auto !important;
+        max-width: 100% !important;
+    }
+
+    html, body {
+        overflow-x: hidden !important;
+        max-width: 100vw !important;
+    }
 }
 
 .slider-wrapper .client-nav:hover {
@@ -266,7 +283,7 @@ video {
 
 .zone-list .item:hover {
     box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.1);
-    color: #039d55;
+    color: #8b9f69;
 }
 
 .zone-list-wrapper {
@@ -305,7 +322,7 @@ video {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #003638;
+    background: #67513a;
 }
 
 .ltr-important *,

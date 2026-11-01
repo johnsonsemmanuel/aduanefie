@@ -18,9 +18,9 @@ const neutral = {
 };
 const moduleTheme = {
   pharmacy: "#31C0F5",
-  ecommerce: "#EEF5FF",
+  ecommerce: "#8B9F69",
   food: "#EF7822",
-  parcel: "#D7EFE4",
+  parcel: "#E8E0C6",
 };
 
 const background = {
@@ -43,23 +43,23 @@ const foodCardColor = neutral[800];
 const roundStackOne = "rgba(255, 255, 255, 0.04)";
 const roundStackTwo = "rgba(255, 255, 255, 0.06)";
 const primary = {
-  main: "#039D55",
-  light: "#909BEF",
-  dark: "#1c6641",
-  deep: "#026034",
+  main: "#8B9F69",
+  light: "#C9D1B6",
+  dark: "#4F3E2C",
+  deep: "#67513A",
   contrastText: neutral[900],
-  semiLight: "#E4FFF3",
+  semiLight: "#E8E0C6",
   overLay: "#000000",
-  customType2: "#3BB77E",
-  lite: "rgba(3, 157, 85, 0.1)",
-  customType3: "#29CE00",
+  customType2: "#8B9F69",
+  lite: "rgba(139, 159, 105, 0.12)",
+  customType3: "#C9D1B6",
   icon: "#ffffff",
 };
 
 const secondary = {
-  main: "#10B981",
-  light: "#3FC79A",
-  dark: "#0B815A",
+  main: "#67513A",
+  light: "#8A7A63",
+  dark: "#4F3E2C",
   contrastText: neutral[900],
 };
 
@@ -116,12 +116,12 @@ const text = {
   link: "#2A61BA",
 };
 const footer = {
-  inputButton: "#BBFFDF",
-  inputButtonHover: "#67907e",
-  bottom: "rgba(0, 98, 52, 0.3)",
+  inputButton: "#E8E0C6",
+  inputButtonHover: "#8B9F69",
+  bottom: "rgba(103, 81, 58, 0.3)",
   foodBottom: "#686B78",
   appDownloadButtonBg: "#1A1A1A",
-  appDownloadButtonBgGray: "#3E594D",
+  appDownloadButtonBgGray: "#67513A",
   foodFooterBg: "#414141",
 };
 const customColor = {
@@ -154,7 +154,7 @@ const whiteContainer = {
 const pink = {
   main: "#FF6D76",
 };
-const toolTipColor = "#88908C";
+const toolTipColor = "#8A7A63";
 const paperBoxShadow = "#E5EAF1";
 const couponBg = {
   pro: "#1a2b3c",

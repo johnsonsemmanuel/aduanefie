@@ -956,7 +956,7 @@ const ReelsModal = ({
                 <VerifiedStoreBadge
                   verified={item.storeVerified}
                   fontSize="13px"
-                  color="#1c6641"
+                  color="#67513A"
                   sx={{ marginInlineStart: "0px", flexShrink: 0 }}
                 />
               </Stack>

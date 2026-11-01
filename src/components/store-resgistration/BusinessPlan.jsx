@@ -228,7 +228,7 @@ const BusinessPlan = ({ formSubmit, isLoading }) => {
               sx={{
                 ".slick-slide": {
                   "&:nth-of-type(3n+1) .plan-item": {
-                    background: "#E2F4EB",
+                    background: "#E8E0C6",
                   },
                   "&:nth-of-type(3n+2) .plan-item": {
                     background: "#E3F5FF",

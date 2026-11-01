@@ -712,7 +712,7 @@ const StoreDetails = ({ storeDetails, configData }) => {
                   onClick={() => setCartDrawerOpen(true)}
                   variant="contained"
                   sx={{
-                    backgroundColor: "#1E9657",
+                    backgroundColor: "#8B9F69",
                     color: "#fff",
                     textTransform: "none",
                     fontWeight: 700,
@@ -722,7 +722,7 @@ const StoreDetails = ({ storeDetails, configData }) => {
                     py: 1.25,
                     boxShadow: "none",
                     "&:hover": {
-                      backgroundColor: "#187C49",
+                      backgroundColor: "#6F8352",
                       boxShadow: "none",
                     },
                   }}

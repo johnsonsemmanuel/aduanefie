@@ -97,6 +97,11 @@ const SEO = ({
     <>
       <DynamicFavicon configData={configData} />
       <Head>
+        {/* Viewport for mobile responsiveness */}
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1"
+        />
         {/* General meta tags */}
         <title>{metaTitle}</title>
         {metaDescription && (

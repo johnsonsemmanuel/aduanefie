@@ -139,7 +139,7 @@ const StoreDetails = ({ storeDetails }) => {
 
   // Figma's `--sds-color-text-default-default` (#1e1e1e light / #e0e0e0 dark)
   // is `theme.palette.neutral[1050]`, not `theme.palette.text.primary` —
-  // this app's `text.primary` is a brand-tinted dark green (#3E594D), a
+  // this app's `text.primary` is a brand-tinted dark green (#67513A), a
   // different color entirely.
   const defaultTextColor =
     theme.palette.neutral?.[1050] ?? theme.palette.text.primary;

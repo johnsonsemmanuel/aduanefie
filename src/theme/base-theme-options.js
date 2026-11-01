@@ -144,7 +144,7 @@ export const baseThemeOptions = {
           pointerEvents: "none",
         },
         "#nprogress .bar": {
-          backgroundColor: "#5048E5",
+          backgroundColor: "#8B9F69",
           height: 3,
           left: 0,
           position: "fixed",

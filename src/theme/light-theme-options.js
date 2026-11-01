@@ -3,63 +3,63 @@
 const neutral = {
   90: "#FFFFFF1A",
   100: "#FFFFFF",
-  200: "#E5E7EB",
-  300: "#F6F7FB",
-  400: "#9CA3AF",
-  450: "#A3A3A3", // Figma: --sds-color-text-default-tertiary (placeholder)
-  500: "#6B7280",
-  600: "#4B5563",
-  700: "#374151",
-  800: "#1F2937",
-  900: "#111827",
-  1000: "#212E28",
-  1050: "#1e1e1e", // Figma: --sds-color-text-default-default
+  200: "#E6DCC4",
+  300: "#F5EFE0",
+  400: "#B3A48D",
+  450: "#A89880", // Figma: --sds-color-text-default-tertiary (placeholder)
+  500: "#8A7A63",
+  600: "#75644E",
+  700: "#5E4E3B",
+  800: "#4A3D2E",
+  900: "#3A2F23",
+  1000: "#67513A",
+  1050: "#3A2F23", // Figma: --sds-color-text-default-default
   1100: "#D6D6D6",
 };
 
 const background = {
-  default: "#F7F7F7", // "#F9FAFC",
+  default: "#F5EFE0", // cream page background
   paper: "#FFFFFF",
-  secondary: "#F2F2F2", // Figma: --sds-color-background-default-secondary
-  custom: "#f1f2f5",
+  secondary: "#EFE7D3", // Figma: --sds-color-background-default-secondary
+  custom: "#F3ECDC",
   custom2: "#FFFFFF",
-  custom3: "#F6F7FB",
+  custom3: "#F5EFE0",
   custom4: "#ffffff",
   footer1: "#9f9f9f1a",
   footer2: "#9f9f9f0d",
-  custom5: "#F4F6F8",
-  custom6: "#FCFCFD",
-  custom7: "#F6F6F6",
+  custom5: "#F1E9D7",
+  custom6: "#FAF7EF",
+  custom7: "#F3ECDC",
 };
 
-const divider = "#E6E8F0";
+const divider = "#E0D6BD";
 
 const primary = {
-  main: "#039D55",
-  deep: "#026034",
-  light: "#EBFDF2",
-  dark: "#1c6641",
-  semiLight: "#E4FFF3",
+  main: "#8B9F69",
+  deep: "#67513A",
+  light: "#E8E0C6",
+  dark: "#4F3E2C",
+  semiLight: "#E8E0C6",
   contrastText: "#FFFFFF",
-  customType1: "#0DCB72",
-  customType2: "#3BB77E",
-  customType3: "#29CE00",
+  customType1: "#8B9F69",
+  customType2: "#A3B585",
+  customType3: "#C9D1B6",
   overLay: "#000000",
-  lite: "rgba(3, 157, 85, 0.1)",
-  icon: "#039D55",
+  lite: "rgba(139, 159, 105, 0.12)",
+  icon: "#8B9F69",
 };
 const moduleTheme = {
-  pharmacy: "#039D55",
-  ecommerce: "#039D55",
-  food: "#039D55",
-  parcel: "#039D55",
+  pharmacy: "#8B9F69",
+  ecommerce: "#8B9F69",
+  food: "#8B9F69",
+  parcel: "#8B9F69",
 };
-const horizontalCardBG = "#E4FFF3";
+const horizontalCardBG = "#E8E0C6";
 
 const secondary = {
-  main: "#10B981",
-  light: "#3FC79A",
-  dark: "#0B815A",
+  main: "#67513A",
+  light: "#8A7A63",
+  dark: "#4F3E2C",
   contrastText: "#FFFFFF",
 };
 
@@ -108,22 +108,22 @@ const error = {
 };
 
 const text = {
-  primary: "#3E594D",
-  secondary: "#93A2AE",
-  disabled: "rgba(55, 65, 81, 0.48)",
-  custom: "#3F3F3F",
-  customText1: "#4B5563",
+  primary: "#67513A",
+  secondary: "#8A7A63",
+  disabled: "rgba(103, 81, 58, 0.48)",
+  custom: "#4A3D2E",
+  customText1: "#6B5B47",
   info: "#3979E0",
   link: "#2A61BA",
 };
 
 const footer = {
-  inputButton: "#BBFFDF",
-  inputButtonHover: "#6dcfa6",
-  bottom: "rgba(0, 98, 52, 0.3)",
+  inputButton: "#E8E0C6",
+  inputButtonHover: "#8B9F69",
+  bottom: "rgba(103, 81, 58, 0.3)",
   foodBottom: "#686B78",
   appDownloadButtonBg: "#1A1A1A",
-  appDownloadButtonBgGray: "#3E594D",
+  appDownloadButtonBgGray: "#67513A",
   appDownloadButtonBgHover: "#4f4f4f",
   foodFooterBg: "#414141",
 };
@@ -136,11 +136,11 @@ const customColor = {
   starAmber: "#F59E0B", // star/rating color
   vegGreen: "#4caf50", // veg indicator green
   vegIcon: "#71B63A", // veg SVG icon fill
-  textNeutral: "#303030", // Figma text-neutral-default (item name)
+  textNeutral: "#4A3D2E", // Figma text-neutral-default (item name)
   newBadge: "#e8b931", // "New" store badge bg (Figma warning)
-  ratingCount: "#949494", // rating review count color (Figma text-neutral-tertiary)
-  deliveryText: "#5a5a5a", // delivery info text (Figma text-neutral-secondary)
-  tagBg: "#e0e0e0", // "+N" overflow badge, dividers (Figma background-default-tertiary)
+  ratingCount: "#9C8E78", // rating review count color (Figma text-neutral-tertiary)
+  deliveryText: "#6B5B47", // delivery info text (Figma text-neutral-secondary)
+  tagBg: "#E6DCC4", // "+N" overflow badge, dividers (Figma background-default-tertiary)
   statusPendingBg: "#DBE9FF",
   statusPendingText: "#224A8A",
   statusReviewBg: "#CFF7D3",
@@ -155,8 +155,8 @@ const whiteContainer = {
 const pink = {
   main: "#FF6D76",
 };
-const foodCardColor = "#FFF6EF";
-const paperBoxShadow = "#E5EAF1";
+const foodCardColor = "#F7F0E1";
+const paperBoxShadow = "#E6DCC4";
 const couponBg = {
 	pro: "#F1F6FD",
 	discount: "#FFFBEB",

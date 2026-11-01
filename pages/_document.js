@@ -35,7 +35,7 @@ class CustomDocument extends Document {
                     }
 
                     var root = document.documentElement;
-                    var pageBackground = mode === "dark" ? "#0B0F19" : "#FFFFFF";
+                    var pageBackground = mode === "dark" ? "#0B0F19" : "#F5EFE0";
                     root.setAttribute("data-theme", mode);
                     root.style.colorScheme = mode;
                     root.style.backgroundColor = pageBackground;
@@ -63,7 +63,7 @@ class CustomDocument extends Document {
             src="https://appleid.cdn-apple.com/appleauth/static/jsapi/appleid/1/en_US/appleid.auth.js"
             async
           />
-          <meta name="theme-color" content="#111827" />
+          <meta name="theme-color" content="#67513A" />
 
           {/* ✅ Analytics scripts */}
           {analyticsConfig.google_tag_manager && (
