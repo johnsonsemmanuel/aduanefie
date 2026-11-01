@@ -324,7 +324,7 @@ const HomePageComponents = ({
               mt:
                 moduleType === "rental" || moduleType === "parcel"
                   ? { xs: 0, md: "34px" }
-                  : { xs: "34px", md: "34px" },
+                  : { xs: "8px", md: "34px" },
             }}
           >
             {getModuleWiseComponents()}

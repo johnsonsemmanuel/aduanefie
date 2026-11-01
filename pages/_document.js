@@ -26,6 +26,11 @@ class CustomDocument extends Document {
                       if (stored) {
                         var parsed = JSON.parse(stored);
                         if (parsed && parsed.theme === "dark") mode = "dark";
+                      } else if (
+                        window.matchMedia &&
+                        window.matchMedia("(prefers-color-scheme: dark)").matches
+                      ) {
+                        mode = "dark";
                       }
                     }
 

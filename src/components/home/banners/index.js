@@ -67,7 +67,8 @@ export const BannersWrapper = styled(Box)(({ theme }) => ({
   },
 
   [theme.breakpoints.down("sm")]: {
-    height: "160px",
+    height: "115px",
+    borderRadius: "12px",
   },
 }));
 
@@ -216,7 +217,7 @@ const Banners = ({ feature }) => {
   };
 
   const settings = {
-    dots: true,
+    dots: false,
     infinite: false,
     slidesToShow: getModuleWiseBanners(),
     slidesToScroll: 1,

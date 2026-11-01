@@ -942,9 +942,9 @@ const MiddleSection = (props) => {
               <Stack
                 direction={{ xs: "column", md: "row" }}
                 alignItems={{ xs: "stretch", md: "center" }}
-                spacing={{ xs: 1, md: 2 }}
+                spacing={{ xs: 0.5, md: 2 }}
                 sx={{
-                  py: { xs: 1, md: 1.25 },
+                  py: { xs: 0.5, md: 1.25 },
                   px: { xs: 1, md: 0 },
                   mx: { xs: -1, md: 0 },
                   backgroundColor: (theme) => theme.palette.background.default,
@@ -959,8 +959,8 @@ const MiddleSection = (props) => {
                     order: { xs: 2, md: 1 },
                     flex: { md: 1 },
                     minWidth: 0,
-                    pt: { xs: 2, md: 0 },
-                    pb: { xs: 2, md: 0 },
+                    pt: { xs: 0.25, md: 0 },
+                    pb: { xs: 0.25, md: 0 },
                   }}
                 >
                   <CategoryTabs
@@ -984,7 +984,7 @@ const MiddleSection = (props) => {
                     sx={{
                       width: { xs: "100%", sm: 200 },
                       flex: { xs: 1, sm: "0 0 auto" },
-                      height: 40,
+                      height: { xs: 36, sm: 40 },
                       borderRadius: "8px",
                       backgroundColor: "background.paper",
                       border: (t) => `1px solid ${t.palette.divider}`,
@@ -1301,11 +1301,11 @@ const MiddleSection = (props) => {
                               <>
                                 <Typography
                                   sx={{
-                                    fontSize: { xs: "16px", md: "18px" },
+                                    fontSize: { xs: "15px", md: "18px" },
                                     fontWeight: 700,
                                     lineHeight: 1.2,
                                     color: theme.palette.text.primary,
-                                    mb: 2,
+                                    mb: { xs: 1.25, md: 2 },
                                   }}
                                 >
                                   {section.title}
@@ -1313,7 +1313,7 @@ const MiddleSection = (props) => {
                                 <Box
                                   sx={{
                                     display: "grid",
-                                    gap: 2,
+                                    gap: { xs: 1.25, sm: 2 },
                                     gridTemplateColumns: {
                                       xs: "1fr",
                                       sm: "repeat(2, 1fr)",
@@ -1340,11 +1340,11 @@ const MiddleSection = (props) => {
                               <>
                                 <Typography
                                   sx={{
-                                    fontSize: { xs: "16px", md: "18px" },
+                                    fontSize: { xs: "15px", md: "18px" },
                                     fontWeight: 700,
                                     lineHeight: 1.2,
                                     color: theme.palette.text.primary,
-                                    mb: 2,
+                                    mb: { xs: 1.25, md: 2 },
                                   }}
                                 >
                                   {section.title}
@@ -1352,7 +1352,7 @@ const MiddleSection = (props) => {
                                 <Box
                                   sx={{
                                     display: "grid",
-                                    gap: 2,
+                                    gap: { xs: 1.25, sm: 2 },
                                     gridTemplateColumns: {
                                       xs: "1fr",
                                       sm: "repeat(2, 1fr)",

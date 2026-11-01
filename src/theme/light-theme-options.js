@@ -3,42 +3,42 @@
 const neutral = {
   90: "#FFFFFF1A",
   100: "#FFFFFF",
-  200: "#EAE4D8",
-  300: "#F4EFE6",
-  400: "#9CA3AF",
-  450: "#8E8C89", // Figma: --sds-color-text-default-tertiary (placeholder)
-  500: "#6B7280",
-  600: "#4B5563",
-  700: "#374151",
-  800: "#1F2937",
-  900: "#111827",
-  1000: "#1C1917",
-  1050: "#1C1917", // Figma: --sds-color-text-default-default
+  200: "#E6DCC4",
+  300: "#FAF8F5",
+  400: "#B3A48D",
+  450: "#A89880", // Figma: --sds-color-text-default-tertiary (placeholder)
+  500: "#8A7A63",
+  600: "#75644E",
+  700: "#5E4E3B",
+  800: "#4A3D2E",
+  900: "#3A2F23",
+  1000: "#67513A",
+  1050: "#3A2F23", // Figma: --sds-color-text-default-default
   1100: "#D6D6D6",
 };
 
 const background = {
   default: "#FAF8F5", // subtle off-white cream page background
   paper: "#FFFFFF",
-  secondary: "#F4EFE6", // Figma: --sds-color-background-default-secondary
-  custom: "#F5F1E8",
+  secondary: "#EFE7D3", // Figma: --sds-color-background-default-secondary
+  custom: "#F3ECDC",
   custom2: "#FFFFFF",
   custom3: "#FAF8F5",
   custom4: "#ffffff",
   footer1: "#9f9f9f1a",
   footer2: "#9f9f9f0d",
-  custom5: "#F5F1E8",
-  custom6: "#FCFAF7",
-  custom7: "#F4EFE6",
+  custom5: "#F1E9D7",
+  custom6: "#FAF7EF",
+  custom7: "#F3ECDC",
 };
 
-const divider = "#EAE4D8";
+const divider = "#E0D6BD";
 
 const primary = {
   main: "#8B9F69",
-  deep: "#4E6233",
-  light: "#EBF1E3",
-  dark: "#5A713C",
+  deep: "#67513A",
+  light: "#E8E0C6",
+  dark: "#4F3E2C",
   semiLight: "#E8E0C6",
   contrastText: "#FFFFFF",
   customType1: "#8B9F69",
@@ -54,7 +54,7 @@ const moduleTheme = {
   food: "#8B9F69",
   parcel: "#8B9F69",
 };
-const horizontalCardBG = "#F4EFE6";
+const horizontalCardBG = "#E8E0C6";
 
 const secondary = {
   main: "#67513A",
@@ -108,11 +108,11 @@ const error = {
 };
 
 const text = {
-  primary: "#1C1917",
-  secondary: "#6B7280",
-  disabled: "rgba(28, 25, 23, 0.48)",
-  custom: "#2D2620",
-  customText1: "#4B5563",
+  primary: "#67513A",
+  secondary: "#8A7A63",
+  disabled: "rgba(103, 81, 58, 0.48)",
+  custom: "#4A3D2E",
+  customText1: "#6B5B47",
   info: "#3979E0",
   link: "#2A61BA",
 };
@@ -136,11 +136,11 @@ const customColor = {
   starAmber: "#F59E0B", // star/rating color
   vegGreen: "#4caf50", // veg indicator green
   vegIcon: "#71B63A", // veg SVG icon fill
-  textNeutral: "#1C1917", // Figma text-neutral-default (item name)
+  textNeutral: "#4A3D2E", // Figma text-neutral-default (item name)
   newBadge: "#e8b931", // "New" store badge bg (Figma warning)
-  ratingCount: "#8E8C89", // rating review count color (Figma text-neutral-tertiary)
-  deliveryText: "#57534E", // delivery info text (Figma text-neutral-secondary)
-  tagBg: "#EAE4D8", // "+N" overflow badge, dividers (Figma background-default-tertiary)
+  ratingCount: "#9C8E78", // rating review count color (Figma text-neutral-tertiary)
+  deliveryText: "#6B5B47", // delivery info text (Figma text-neutral-secondary)
+  tagBg: "#E6DCC4", // "+N" overflow badge, dividers (Figma background-default-tertiary)
   statusPendingBg: "#DBE9FF",
   statusPendingText: "#224A8A",
   statusReviewBg: "#CFF7D3",
@@ -155,8 +155,8 @@ const whiteContainer = {
 const pink = {
   main: "#FF6D76",
 };
-const foodCardColor = "#FAF8F5";
-const paperBoxShadow = "#EAE4D8";
+const foodCardColor = "#F7F0E1";
+const paperBoxShadow = "#E6DCC4";
 const couponBg = {
 	pro: "#F1F6FD",
 	discount: "#FFFBEB",

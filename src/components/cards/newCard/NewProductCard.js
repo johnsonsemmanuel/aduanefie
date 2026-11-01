@@ -747,10 +747,10 @@ export const InfoSection = ({
       ref={nameRef}
       dir="auto"
       sx={{
-        fontSize: { xs: "14px", md: "16px" },
+        fontSize: { xs: "13px", md: "16px" },
         fontWeight: 400,
         color: "customColor.textNeutral",
-        lineHeight: 1.1,
+        lineHeight: 1.15,
         letterSpacing: "-0.48px",
         overflow: "hidden",
         textOverflow: "ellipsis",
@@ -769,8 +769,8 @@ export const InfoSection = ({
     <Stack
       sx={{
         flexDirection: "column",
-        gap: { xs: "6px", md: "8px" },
-        pt: isHorizontal ? 0 : { xs: "8px", md: "8px" },
+        gap: { xs: "4px", md: "8px" },
+        pt: isHorizontal ? 0 : { xs: "6px", md: "8px" },
         px: isHorizontal ? 0 : "4px",
         py: isHorizontal ? "2px" : 0,
         flex: 1,
@@ -803,7 +803,7 @@ export const InfoSection = ({
           }
         }
       />
-      <Stack sx={{ flexDirection: "column", gap: { xs: "4px", md: "6px" } }}>
+      <Stack sx={{ flexDirection: "column", gap: { xs: "3px", md: "6px" } }}>
         {isEllipsed ? (
           <Tooltip title={item?.name} placement="top" arrow>
             {nameTypography}
@@ -816,7 +816,7 @@ export const InfoSection = ({
           gap="4px"
           flexWrap="nowrap"
           sx={{
-            py: "2px",
+            py: "1px",
             overflow: "hidden",
             minWidth: 0,
             width: "100%",
@@ -825,7 +825,7 @@ export const InfoSection = ({
         >
           <Typography
             sx={{
-              fontSize: { xs: "14px", md: "18px" },
+              fontSize: { xs: "13px", md: "18px" },
               fontWeight: 700,
               color: "neutral.1050",
               lineHeight: 1.1,
@@ -2125,7 +2125,7 @@ const NewProductCard = ({
         <Box
           onClick={handleClick}
           sx={{
-            width: cardWidth ?? { xs: "150px", md: "180px" },
+            width: cardWidth ?? { xs: "134px", md: "180px" },
             minWidth: 0,
             flexShrink: 0,
             display: "flex",
@@ -2189,7 +2189,7 @@ const NewProductCard = ({
           sx={{
             width: "100%",
             maxWidth: max_width ?? "398px",
-            height: { xs: "120px", sm: "150px" },
+            height: { xs: "102px", sm: "150px" },
             display: "flex",
             alignItems: "start",
             gap: "8px",
@@ -2197,9 +2197,9 @@ const NewProductCard = ({
             border: "none",
             borderRadius: "12px",
             overflow: "hidden",
-            pl: "12px",
-            pr: "8px",
-            py: "10px",
+            pl: { xs: "10px", sm: "12px" },
+            pr: { xs: "6px", sm: "8px" },
+            py: { xs: "8px", sm: "10px" },
             cursor: "pointer",
             "&:hover .img-gradient-overlay": { opacity: 1 },
             "&:hover": {
@@ -2224,8 +2224,8 @@ const NewProductCard = ({
             variant="horizontal"
             className="card-img-h"
             sx={{
-              width: { xs: "96px", sm: "126px" },
-              height: { xs: "96px", sm: "126px" },
+              width: { xs: "84px", sm: "126px" },
+              height: { xs: "84px", sm: "126px" },
               flexShrink: 0,
             }}
           >
@@ -2269,7 +2269,7 @@ const NewProductCard = ({
         <Box
           onClick={handleClick}
           sx={{
-            width: cardWidth ?? { xs: "150px", md: "180px" },
+            width: cardWidth ?? { xs: "134px", md: "180px" },
             minWidth: 0,
             flexShrink: 0,
             display: "flex",
@@ -2338,7 +2338,7 @@ const NewProductCard = ({
           sx={{
             width: "100%",
             maxWidth: max_width ?? "398px",
-            height: { xs: "120px", sm: "150px" },
+            height: { xs: "102px", sm: "150px" },
             display: "flex",
             alignItems: "start",
             gap: "8px",
@@ -2346,9 +2346,9 @@ const NewProductCard = ({
             border: `1px solid ${theme.palette.neutral[200]}`,
             borderRadius: "12px",
             overflow: "hidden",
-            pl: "12px",
-            pr: "8px",
-            py: "10px",
+            pl: { xs: "10px", sm: "12px" },
+            pr: { xs: "6px", sm: "8px" },
+            py: { xs: "8px", sm: "10px" },
             cursor: "pointer",
             "&:hover .img-gradient-overlay": { opacity: 1 },
             "&:hover": {
@@ -2373,8 +2373,8 @@ const NewProductCard = ({
             variant="horizontal"
             className="card-img-h"
             sx={{
-              width: { xs: "96px", sm: "126px" },
-              height: { xs: "96px", sm: "126px" },
+              width: { xs: "84px", sm: "126px" },
+              height: { xs: "84px", sm: "126px" },
               flexShrink: 0,
             }}
           >

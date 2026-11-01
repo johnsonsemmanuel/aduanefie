@@ -2,7 +2,7 @@ import { Next, Prev } from "../../../popular-items-nearby/SliderSettings";
 import { WhiteNext, WhitePrev } from "../../../visit-again/SliderSettings";
 
 export const settings = {
-  dots: true,
+  dots: false,
   infinite: false,
   speed: 500,
   slidesToShow: 4,

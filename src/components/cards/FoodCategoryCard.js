@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 
 const FeatureImageBox = styled(Stack)(({ theme }) => ({
   width: "100%",
-  paddingTop: "10px",
+  paddingTop: "6px",
   borderRadius: "50%",
   cursor: "pointer",
 }));
@@ -57,8 +57,8 @@ const FoodCategoryCard = (props) => {
         >
           <Box
             sx={{
-              width: { xs: 56, md: 88 },
-              height: { xs: 56, md: 88 },
+              width: { xs: 48, md: 88 },
+              height: { xs: 48, md: 88 },
               borderRadius: "50%",
               overflow: "hidden",
               flexShrink: 0,
@@ -102,14 +102,14 @@ const FoodCategoryCard = (props) => {
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
-              maxWidth: { xs: "56px", md: "88px" },
+              maxWidth: { xs: "52px", md: "88px" },
               textAlign: "center",
               transition: "all ease 0.3s",
               "&:hover": {
                 color: "primary.main",
               },
             }}
-            fontSize={{ xs: "13px", sm: "14px", md: "16px" }}
+            fontSize={{ xs: "11px", sm: "14px", md: "16px" }}
             fontWeight="500"
             component="h4"
           >

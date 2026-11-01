@@ -33,6 +33,9 @@ const CARD_SHADOW =
 
 const CardRoot = styled(Box)(({ theme }) => ({
   width: "min(300px, calc(100vw - 40px))",
+  [theme.breakpoints.down("sm")]: {
+    width: "min(236px, calc(100vw - 48px))",
+  },
   cursor: "pointer",
   "& .store-img img": {
     width: "100%",
@@ -798,7 +801,7 @@ const NewStoreCard = ({
             ) : null}
             <Typography
               sx={{
-                fontSize: "16px",
+                fontSize: { xs: "14px", sm: "16px" },
                 fontWeight: 700,
                 color: "customColor.textNeutral",
                 lineHeight: 1.1,
@@ -825,7 +828,7 @@ const NewStoreCard = ({
               <i
                 className="fi fi-sr-star"
                 style={{
-                  fontSize: "13px",
+                  fontSize: "12px",
                   lineHeight: 1,
                   display: "flex",
                   color: theme.palette.customColor.starAmber,
@@ -833,7 +836,7 @@ const NewStoreCard = ({
               />
               <Typography
                 sx={{
-                  fontSize: "14px",
+                  fontSize: { xs: "12px", sm: "14px" },
                   lineHeight: 1.2,
                   letterSpacing: "-0.42px",
                   color: "neutral.1050",
@@ -845,7 +848,7 @@ const NewStoreCard = ({
               {item?.rating_count > 0 && (
                 <Typography
                   sx={{
-                    fontSize: "14px",
+                    fontSize: { xs: "12px", sm: "14px" },
                     fontWeight: 700,
                     color: "customColor.ratingCount",
                     lineHeight: 1.1,
@@ -864,7 +867,7 @@ const NewStoreCard = ({
         {item?.category_names && item?.category_names?.length ? (
           <Typography
             sx={{
-              fontSize: "12px",
+              fontSize: { xs: "11px", sm: "12px" },
               color: "neutral.500",
               lineHeight: 1.3,
               overflow: "hidden",
@@ -882,13 +885,13 @@ const NewStoreCard = ({
         ) : null}
 
         {/* Row 3: Delivery info */}
-        <Stack direction="row" alignItems="center" gap="8px" sx={{ pb: "6px" }}>
+        <Stack direction="row" alignItems="center" gap="8px" sx={{ pb: "4px" }}>
           {item?.delivery_time && (
             <Stack direction="row" alignItems="center" gap="4px">
               <i
                 className="fi fi-rr-clock"
                 style={{
-                  fontSize: "13px",
+                  fontSize: "12px",
                   lineHeight: 1,
                   display: "flex",
                   color: theme.palette.customColor.deliveryText,
@@ -897,7 +900,7 @@ const NewStoreCard = ({
               <Typography
                 dir="ltr"
                 sx={{
-                  fontSize: "12px",
+                  fontSize: { xs: "11px", sm: "12px" },
                   fontWeight: 600,
                   color: "customColor.deliveryText",
                   lineHeight: 1.3,

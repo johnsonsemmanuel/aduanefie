@@ -423,12 +423,12 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
               direction="row"
               alignItems="center"
               sx={{
-                pl: "16px",
+                pl: "14px",
                 pr: "8px",
-                pt: "12px",
-                pb: "4px",
-                gap: "16px",
-                minHeight: "36px",
+                pt: "8px",
+                pb: "2px",
+                gap: "12px",
+                minHeight: "32px",
               }}
             >
               {/* Address column — title row + subtitle row */}
@@ -441,14 +441,14 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                   cursor: "pointer",
                   display: "flex",
                   flexDirection: "column",
-                  gap: "2px",
+                  gap: "1px",
                 }}
               >
                 <Stack direction="row" alignItems="center" gap="4px">
                   <i
                     className="fi fi-rr-marker"
                     style={{
-                      fontSize: "14px",
+                      fontSize: "13px",
                       lineHeight: 1,
                       display: "flex",
                       color: theme.palette.neutral[1050],
@@ -456,10 +456,10 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                   />
                   <Typography
                     sx={{
-                      fontSize: "14px",
+                      fontSize: "13px",
                       fontWeight: 600,
                       color: theme.palette.neutral[1050],
-                      lineHeight: 1.2,
+                      lineHeight: 1.15,
                       letterSpacing: "-0.42px",
                       whiteSpace: "nowrap",
                       overflow: "hidden",
@@ -472,10 +472,10 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                 <Stack direction="row" alignItems="center" gap="4px">
                   <Typography
                     sx={{
-                      fontSize: "12px",
+                      fontSize: "11px",
                       fontWeight: 400,
                       color: isDark ? theme.palette.text.secondary : "#757575",
-                      lineHeight: 1.2,
+                      lineHeight: 1.15,
                       letterSpacing: "-0.36px",
                       whiteSpace: "nowrap",
                       overflow: "hidden",
@@ -572,9 +572,9 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                 sx={{
                   display: "flex",
                   alignItems: "flex-end",
-                  gap: "6px",
-                  px: "16px",
-                  pt: "12px",
+                  gap: "4px",
+                  px: "14px",
+                  pt: "6px",
                   overflowX: "auto",
                   scrollbarWidth: "none",
                   "&::-webkit-scrollbar": { display: "none" },
@@ -589,8 +589,8 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                       onClick={() => handleSelectModule(mod)}
                       sx={{
                         flexShrink: 0,
-                        px: "16px",
-                        py: "8px",
+                        px: "12px",
+                        py: "6px",
                         cursor: "pointer",
                         whiteSpace: "nowrap",
                         userSelect: "none",
@@ -600,7 +600,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                             ? theme.palette.text.secondary
                             : "#757575",
                         fontWeight: isActive ? 600 : 400,
-                        fontSize: "14px",
+                        fontSize: "13px",
                         borderRadius: "8px 8px 0 0",
                         backgroundColor: isActive
                           ? theme.palette.background.paper
@@ -630,7 +630,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                       <Typography
                         component="span"
                         sx={{
-                          fontSize: "14px",
+                          fontSize: "13px",
                           fontWeight: "inherit",
                           lineHeight: 1.1,
                           letterSpacing: "-0.42px",
@@ -653,10 +653,10 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
           getCurrentModuleType() !== ModuleTypes.RIDE && (
             <Box
               sx={{
-                pt: "12px",
-                pr: "16px",
-                pb: "8px",
-                pl: "16px",
+                pt: "8px",
+                pr: "14px",
+                pb: "6px",
+                pl: "14px",
                 backgroundColor: theme.palette.background.paper,
               }}
             >
@@ -669,8 +669,8 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                   // Constant height: animating it would change the fixed
                   // bar's layout height and shift the page content — the
                   // collapse must stay transform-only.
-                  height: "44px",
-                  px: "16px",
+                  height: "36px",
+                  px: "12px",
                   backgroundColor: theme.palette.background.secondary,
                   borderRadius: "9999px",
                   cursor: "pointer",
@@ -680,7 +680,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                 <i
                   className="fi fi-rr-search"
                   style={{
-                    fontSize: "16px",
+                    fontSize: "14px",
                     lineHeight: 1,
                     display: "flex",
                     color: theme.palette.neutral[1050],
@@ -688,9 +688,9 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                 />
                 <Typography
                   sx={{
-                    fontSize: "14px",
+                    fontSize: "13px",
                     fontWeight: 400,
-                    lineHeight: 1.3,
+                    lineHeight: 1.2,
                     color: theme.palette.neutral[450],
                     whiteSpace: "nowrap",
                     overflow: "hidden",
@@ -708,10 +708,10 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
             router.pathname === "/home/[...slug]") && (
             <Box
               sx={{
-                pl: "16px",
+                pl: "14px",
                 pr: "0px",
-                pb: "12px",
-                pt: "4px",
+                pb: "8px",
+                pt: "2px",
                 backgroundColor: theme.palette.background.paper,
               }}
             >
@@ -719,11 +719,11 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                 sx={{
                   display: "flex",
                   alignItems: "center",
-                  gap: "8px",
+                  gap: "6px",
                   overflowX: "auto",
                   scrollbarWidth: "none",
                   "&::-webkit-scrollbar": { display: "none" },
-                  paddingRight: "16px",
+                  paddingRight: "14px",
                 }}
               >
                 {sectionChips
@@ -736,11 +736,11 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                         flexShrink: 0,
                         display: "inline-flex",
                         alignItems: "center",
-                        gap: "6px",
-                        height: "32px",
+                        gap: "5px",
+                        height: "28px",
                         pl: "8px",
                         pr: "8px",
-                        py: "4px",
+                        py: "2px",
                         backgroundColor: chipBgFor(s),
                         borderRadius: "9999px",
                         cursor: "pointer",
@@ -754,7 +754,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                             alignItems: "center",
                             justifyContent: "center",
                             flexShrink: 0,
-                            p: "2px",
+                            p: "1px",
                           }}
                         >
                           {s.icon}
@@ -762,10 +762,10 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                       )}
                       <Typography
                         sx={{
-                          fontSize: "14px",
+                          fontSize: "12px",
                           fontWeight: 700,
                           lineHeight: 1.1,
-                          letterSpacing: "-0.42px",
+                          letterSpacing: "-0.36px",
                           color: theme.palette.neutral[1050],
                           textTransform: "capitalize",
                           whiteSpace: "nowrap",

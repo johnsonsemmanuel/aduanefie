@@ -96,7 +96,7 @@ const BannerWrapper = styled(Box)(({ theme }) => ({
   overflow: "hidden",
   borderRadius: "16px 0 0 16px",
   [theme.breakpoints.down("md")]: {
-    minHeight: "160px",
+    minHeight: "135px",
     borderRadius: "0 0 8px 8px",
   },
 }));
@@ -715,14 +715,14 @@ const Top2 = (props) => {
               xs={12}
               md={7}
               sx={{
-                p: { xs: 2, sm: 2.5 },
+                p: { xs: 1.5, sm: 2.5 },
                 order: { xs: 2, md: 1 },
                 display: "flex",
                 flexDirection: "column",
               }}
             >
               {/* Breadcrumb */}
-              <Box sx={{ mb: 1.75 }}>
+              <Box sx={{ mb: { xs: 1, sm: 1.75 } }}>
                 <CustomPageBreadCrumb
                   color={theme.palette.neutral?.[400] || "#9CA3AF"}
                   items={[
@@ -777,7 +777,7 @@ const Top2 = (props) => {
                     <Typography
                       ref={heroSentinelRef}
                       sx={{
-                        fontSize: { xs: "18px", sm: "22px" },
+                        fontSize: { xs: "16px", sm: "22px" },
                         fontWeight: 700,
                         color: "neutral.1050",
                         lineHeight: 1.2,
@@ -955,7 +955,12 @@ const Top2 = (props) => {
                 "& > *": { width: "100%" },
               }}
             >
-              <BannerWrapper sx={{ height: 210, minHeight: 210 }}>
+              <BannerWrapper
+                sx={{
+                  height: { xs: 135, md: 210 },
+                  minHeight: { xs: 135, md: 210 },
+                }}
+              >
                 {renderBanner()}
                 {/* Mobile-only back arrow */}
                 <Box

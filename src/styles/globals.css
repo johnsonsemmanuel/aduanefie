@@ -15,12 +15,9 @@ html[data-theme="dark"] body {
     color: #FFFFFF;
 }
 
-html:not([data-theme]),
-html:not([data-theme]) body,
 html[data-theme="light"],
 html[data-theme="light"] body {
     background: #FAF8F5;
-    color: #1C1917;
 }
 
 a {

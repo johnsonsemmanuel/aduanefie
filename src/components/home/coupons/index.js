@@ -22,7 +22,7 @@ const CustomBox = styled(Box)(({ theme }) => ({
   cursor: "pointer",
 }));
 const settings = {
-  dots: true,
+  dots: false,
   infinite: false,
   speed: 500,
   slidesToShow: 1,

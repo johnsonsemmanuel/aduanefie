@@ -54,7 +54,7 @@ const FeaturedCategories = () => {
       {
         breakpoint: 500,
         settings: {
-          slidesToShow: 4.5,
+          slidesToShow: 5.2,
           slidesToScroll: 1,
           swipeToSlide: true,
           infinite: false,
@@ -63,7 +63,7 @@ const FeaturedCategories = () => {
       {
         breakpoint: 400,
         settings: {
-          slidesToShow: 4.5,
+          slidesToShow: 5,
           slidesToScroll: 1,
           swipeToSlide: true,
           infinite: false,
@@ -72,7 +72,7 @@ const FeaturedCategories = () => {
       {
         breakpoint: 350,
         settings: {
-          slidesToShow: 4,
+          slidesToShow: 4.5,
           slidesToScroll: 1,
           swipeToSlide: true,
           infinite: false,
