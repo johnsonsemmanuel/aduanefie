@@ -117,7 +117,7 @@ const Stores = ({ title }) => {
         py="10px"
         sx={{
           position: "sticky",
-          top: { xs: "75px", md: "63px" },
+          top: { xs: "86px", md: "63px" },
           zIndex: 100,
           background: (theme) => theme.palette.background.default,
           width: "100%",

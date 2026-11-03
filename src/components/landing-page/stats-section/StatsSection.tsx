@@ -30,7 +30,7 @@ const StatsCard = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
   backgroundColor: theme.palette.background.paper,
   borderRadius: "10px",
-  boxShadow: "box-shadow: 0px 3px 10px 0px #0000000F",
+  boxShadow: "0px 3px 10px 0px #0000000F",
   transition: "transform 0.3s ease, box-shadow 0.3s ease",
   "&:hover": {
     transform: "translateY(-4px)",

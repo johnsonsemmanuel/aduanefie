@@ -893,7 +893,7 @@ export const InfoSection = ({
                   fontSize: "11px",
                   lineHeight: 1,
                   display: "flex",
-                  color: "error.dangerText",
+                  color: theme.palette.error.dangerText,
                 }}
               />
               <Typography

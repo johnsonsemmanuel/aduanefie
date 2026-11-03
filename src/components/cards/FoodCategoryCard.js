@@ -102,7 +102,7 @@ const FoodCategoryCard = (props) => {
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
-              maxWidth: { xs: "52px", md: "88px" },
+              maxWidth: { xs: "64px", sm: "76px", md: "92px" },
               textAlign: "center",
               transition: "all ease 0.3s",
               "&:hover": {

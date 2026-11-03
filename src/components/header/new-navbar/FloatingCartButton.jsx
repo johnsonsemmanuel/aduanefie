@@ -137,17 +137,26 @@ const FloatingCartButton = () => {
             <Box
               sx={{
                 position: "absolute",
-                top: "-8px",
-                insetInlineEnd: "-8px",
+                top: "-9px",
+                insetInlineEnd: "-10px",
+                minWidth: "18px",
+                height: "18px",
+                px: "4px",
                 borderRadius: "9999px",
                 backgroundColor: theme.palette.primary.main,
                 border: `2px solid ${theme.palette.background.paper}`,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                p: 0,
+                color: "#fff",
+                fontSize: "10px",
+                fontWeight: 700,
+                lineHeight: 1,
+                fontVariantNumeric: "tabular-nums",
               }}
-            ></Box>
+            >
+              {itemCount > 99 ? "99+" : itemCount}
+            </Box>
           </Box>
         </Box>
 
@@ -158,23 +167,29 @@ const FloatingCartButton = () => {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            py: "10px",
+            py: "8px",
+            px: "4px",
             width: "100%",
           }}
         >
           <Typography
             sx={{
-              fontSize: "14px",
+              fontSize: "12px",
               fontWeight: 700,
               color: "#ffff",
               lineHeight: 1.3,
               textAlign: "center",
               fontVariantNumeric: "tabular-nums",
               whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
             }}
           >
-            {itemCount > 99 ? "99+" : itemCount}{" "}
-            {itemCount > 1 ? t("items") : t("item")}
+            {grandTotal > 0
+              ? abbreviateAmount(grandTotal)
+              : `${itemCount > 99 ? "99+" : itemCount} ${
+                  itemCount > 1 ? t("items") : t("item")
+                }`}
           </Typography>
         </Box>
       </Box>

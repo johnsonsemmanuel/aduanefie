@@ -949,7 +949,7 @@ const NewStoreCard = ({
               >
                 {item.minimum_delivery_fee === 0
                   ? t("Free")
-                  : `$${item.minimum_delivery_fee}`}
+                  : getAmountWithSign(item.minimum_delivery_fee)}
               </Typography>
             </Stack>
           )}
