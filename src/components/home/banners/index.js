@@ -244,6 +244,7 @@ const Banners = ({ feature }) => {
       <CustomStackFullWidth
         sx={{
           mt: { xs: 0, sm: bannersData?.length > 0 ? "10px" : 0 },
+          overflow: "hidden",
           "& .slick-track": { marginLeft: 0 },
           "& .slick-list": {
             marginRight: "-16px",

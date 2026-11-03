@@ -139,9 +139,9 @@ a {
         max-width: 100% !important;
     }
 
-    html, body {
-        overflow-x: hidden !important;
-        max-width: 100vw !important;
+    html, body, #__next {
+        overflow-x: clip !important;
+        max-width: 100% !important;
     }
 }
 
@@ -361,4 +361,10 @@ button.gm-ui-hover-effect {
     width: 13px !important;
     height: 9px !important;
     left: 7px !important;
+}
+
+/* Ensure no horizontal scroll on any screen */
+html, body, #__next {
+  overflow-x: clip !important;
+  max-width: 100% !important;
 }

@@ -8,10 +8,11 @@ const FooterTop = (props) => {
   const { t } = useTranslation();
 
   return (
-    <Box>
+    <Box sx={{ width: "100%" }}>
       <Box
         sx={{
           maxWidth: "1312px",
+          width: "100%",
           mx: "auto",
         }}
       >
@@ -20,32 +21,40 @@ const FooterTop = (props) => {
             display: "flex",
             flexDirection: { xs: "column", md: "row" },
             alignItems: { xs: "flex-start", md: "center" },
-            gap: { xs: "20px", md: "50px" },
+            justifyContent: "space-between",
+            gap: { xs: "14px", md: "36px" },
             backgroundColor: "background.secondary",
-            borderRadius: "20px",
-            px: { xs: "24px", md: "40px" },
-            py: "25px",
+            borderRadius: { xs: "14px", md: "20px" },
+            px: { xs: "16px", sm: "24px", md: "40px" },
+            py: { xs: "16px", sm: "20px", md: "24px" },
           }}
         >
           {/* Left: text */}
-          <Stack gap="10px" sx={{ flexShrink: 0, width: { xs: "100%", md: "439px" } }}>
+          <Stack
+            gap="6px"
+            sx={{
+              flex: { xs: "1 1 auto", md: "0 1 420px" },
+              width: { xs: "100%", md: "auto" },
+              minWidth: 0,
+            }}
+          >
             <Typography
               sx={{
-                fontSize: "24px",
+                fontSize: { xs: "18px", sm: "20px", md: "24px" },
                 fontWeight: 700,
                 color: "neutral.1050",
-                lineHeight: 1.1,
-                letterSpacing: "-1.2px",
+                lineHeight: 1.15,
+                letterSpacing: "-0.8px",
               }}
             >
               {landingPageData?.footer_section?.fixed_newsletter_title ?? t("Join Us!")}
             </Typography>
             <Typography
               sx={{
-                fontSize: "14px",
+                fontSize: { xs: "12.5px", md: "14px" },
                 fontWeight: 400,
                 color: "neutral.500",
-                lineHeight: 1.3,
+                lineHeight: 1.35,
               }}
             >
               {landingPageData?.footer_section?.fixed_newsletter_sub_title}
@@ -53,7 +62,7 @@ const FooterTop = (props) => {
           </Stack>
 
           {/* Right: subscribe input */}
-          <Box sx={{ flex: 1, width: { xs: "100%", md: "auto" } }}>
+          <Box sx={{ flex: 1, width: { xs: "100%", md: "auto" }, minWidth: 0 }}>
             <Subscribe />
           </Box>
         </Box>

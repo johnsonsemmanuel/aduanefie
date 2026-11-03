@@ -36,20 +36,21 @@ const Subscribe = () => {
       sx={{
         display: "flex",
         alignItems: "center",
-        gap: "24px",
+        gap: { xs: "8px", sm: "16px", md: "24px" },
         backgroundColor: "background.paper",
-        borderRadius: "12px",
-        pl: "24px",
-        pr: "8px",
-        py: "8px",
+        borderRadius: "10px",
+        pl: { xs: "12px", sm: "18px", md: "24px" },
+        pr: { xs: "6px", md: "8px" },
+        py: { xs: "6px", md: "8px" },
         width: "100%",
+        maxWidth: "100%",
       }}
     >
       <InputBase
         sx={{
           flex: 1,
           minWidth: 0,
-          fontSize: "14px",
+          fontSize: { xs: "13px", md: "14px" },
           fontWeight: 400,
           lineHeight: 1.3,
           "& input::placeholder": { color: "#757575", opacity: 1 },
@@ -67,12 +68,12 @@ const Subscribe = () => {
         disabled={isLoading}
         startIcon={isLoading ? <CircularProgress size={14} color="inherit" /> : undefined}
         sx={{
-          height: "36px",
-          px: "16px",
+          height: { xs: "34px", md: "36px" },
+          px: { xs: "12px", md: "16px" },
           borderRadius: "8px",
-          fontSize: "14px",
+          fontSize: { xs: "12.5px", md: "14px" },
           fontWeight: 600,
-          letterSpacing: "-0.42px",
+          letterSpacing: "-0.3px",
           lineHeight: 1.2,
           textTransform: "none",
           whiteSpace: "nowrap",

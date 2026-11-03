@@ -70,10 +70,10 @@ const FooterBottom = ({ configData }) => {
         display: "flex",
         flexWrap: "wrap",
         alignItems: "center",
-        justifyContent: mobile ? "center" : "flex-end",
-        columnGap: mobile ? "20px" : "40px",
-        rowGap: mobile ? "4px" : "8px",
-        flexShrink: 0,
+        justifyContent: mobile ? "center" : { md: "center", lg: "flex-end" },
+        columnGap: mobile ? "16px" : { md: "20px", lg: "28px" },
+        rowGap: mobile ? "6px" : "8px",
+        maxWidth: "100%",
       }}
     >
       {[
@@ -105,11 +105,11 @@ const FooterBottom = ({ configData }) => {
               key={href}
               onClick={() => handleClickToRoute(href)}
               sx={{
-                fontSize: mobile ? "12px" : "14px",
-                fontWeight: mobile ? 600 : 400,
+                fontSize: mobile ? "12px" : "13px",
+                fontWeight: mobile ? 500 : 400,
                 color: "neutral.1050",
-                lineHeight: 1.2,
-                letterSpacing: mobile ? "-0.24px" : 0,
+                lineHeight: 1.3,
+                letterSpacing: mobile ? "-0.2px" : 0,
                 whiteSpace: "nowrap",
                 cursor: "pointer",
                 "&:hover": { color: "primary.main" },
@@ -124,69 +124,93 @@ const FooterBottom = ({ configData }) => {
 
   return (
     <NoSsr>
-      <Box sx={{ backgroundColor: "background.secondary", width: "100%" }}>
+      <Box
+        sx={{
+          backgroundColor: "background.secondary",
+          width: "100%",
+          maxWidth: "100%",
+          overflowX: "hidden",
+        }}
+      >
         {/* ── MOBILE ── */}
         <Stack
-          gap="20px"
+          gap="14px"
           alignItems="center"
           sx={{
             display: { xs: "flex", md: "none" },
-            py: "20px",
+            py: "16px",
             px: "16px",
+            width: "100%",
           }}
         >
           {socialIcons}
-          <Stack gap="12px" alignItems="center">
+          {policyLinks({ mobile: true })}
+          <Stack gap="8px" alignItems="center" sx={{ width: "100%" }}>
             <CustomImageContainer
               src={configData?.logo_full_url}
               alt={configData?.business_name}
               width="auto"
-              height="16px"
+              height="18px"
               objectfit="contain"
             />
             <Typography
               sx={{
-                fontSize: "12px",
+                fontSize: "11px",
                 fontWeight: 400,
                 color: "neutral.1050",
-                lineHeight: 1.2,
-                letterSpacing: "-0.36px",
-                whiteSpace: "nowrap",
+                lineHeight: 1.4,
+                letterSpacing: "-0.2px",
+                whiteSpace: "normal",
+                wordBreak: "break-word",
                 textAlign: "center",
+                maxWidth: "100%",
+                px: "4px",
               }}
             >
               {configData?.footer_text}
             </Typography>
           </Stack>
-          {policyLinks({ mobile: true })}
         </Stack>
 
         {/* ── DESKTOP ── */}
         <Box
           sx={{
             display: { xs: "none", md: "flex" },
+            flexWrap: "wrap",
             maxWidth: "1312px",
+            width: "100%",
             mx: "auto",
-            px: 0,
-            py: "20px",
+            px: { md: "32px", lg: "40px", xl: "16px" },
+            py: "18px",
             alignItems: "center",
-            gap: "48px",
+            justifyContent: "space-between",
+            columnGap: { md: "24px", lg: "32px" },
+            rowGap: "12px",
           }}
         >
-          {socialIcons}
-
-          <Typography
-            sx={{
-              fontSize: "14px",
-              fontWeight: 400,
-              color: "neutral.1050",
-              lineHeight: 1.3,
-              whiteSpace: "nowrap",
-              flex: 1,
-            }}
+          <Stack
+            direction="row"
+            alignItems="center"
+            gap="20px"
+            sx={{ flex: "1 1 320px", minWidth: 0 }}
           >
-            {configData?.footer_text}
-          </Typography>
+            {socialIcons}
+
+            <Typography
+              sx={{
+                fontSize: "13px",
+                fontWeight: 400,
+                color: "neutral.1050",
+                lineHeight: 1.4,
+                whiteSpace: "normal",
+                wordBreak: "break-word",
+                flex: 1,
+                minWidth: "200px",
+              }}
+            >
+              {configData?.footer_text}
+            </Typography>
+          </Stack>
 
           {policyLinks()}
         </Box>

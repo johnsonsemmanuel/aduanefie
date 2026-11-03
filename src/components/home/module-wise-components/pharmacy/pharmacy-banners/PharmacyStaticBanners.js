@@ -61,6 +61,7 @@ const PharmacyStaticBanners = () => {
       {isLoading ? (
         <CustomStackFullWidth
           sx={{
+            overflow: "hidden",
             "& .slick-list": {
               marginRight: { xs: "-10px", sm: "-20px" },
             },
@@ -81,6 +82,7 @@ const PharmacyStaticBanners = () => {
         data?.length > 0 && (
           <CustomStackFullWidth
             sx={{
+              overflow: "hidden",
               "& .slick-list": {
                 marginRight: { xs: "-10px", sm: "-20px" },
               },

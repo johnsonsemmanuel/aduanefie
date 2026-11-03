@@ -3,5 +3,5 @@ export const google_client_id =
 export const fb_app_id = "380903914182154";
 export const appleLoginCredential = {
   serviceId: "com.sixamtech.sixamMartApp",
-  redirectURI: `https://6ammart-dev-react.6amdev.xyz`,
+  redirectURI: `https://aduanefie-dev-react.6amdev.xyz`,
 };

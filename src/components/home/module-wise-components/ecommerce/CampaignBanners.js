@@ -145,6 +145,7 @@ const CampaignBanners = () => {
         <CustomStackFullWidth
           sx={{
             mt: "30px",
+            overflow: "hidden",
             "& .slick-list": {
               marginRight: { xs: "-10px", sm: "-20px" },
             },
@@ -166,6 +167,7 @@ const CampaignBanners = () => {
           <CustomStackFullWidth
             sx={{
               mt: "30px",
+              overflow: "hidden",
               "& .slick-list": {
                 marginRight: { xs: "-10px", sm: "-20px" },
               },

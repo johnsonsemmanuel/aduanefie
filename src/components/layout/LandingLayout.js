@@ -8,6 +8,9 @@ import { useEffect } from "react";
 export const MainLayoutRoot = styled(Stack)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
   minHeight: "100vh",
+  width: "100%",
+  maxWidth: "100%",
+  overflowX: "clip",
 }));
 
 export const LandingLayout = ({ children, configData, landingPageData }) => {

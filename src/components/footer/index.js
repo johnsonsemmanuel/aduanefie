@@ -25,19 +25,24 @@ const FooterComponent = ({ configData }) => {
         backgroundColor: (theme) => theme.palette.background.default,
         mt: { xs: "1.5rem", sm: "3rem", md: isLandingPage ? "2rem" : "4rem" },
         mb: { xs: mobileBottomMargin, md: 0 },
+        width: "100%",
+        maxWidth: "100%",
+        overflowX: "hidden",
       }}
     >
-      {/* Main white card — top corners 60px rounded */}
+      {/* Main white card — top corners rounded */}
       <Box
         sx={{
           backgroundColor: "background.paper",
-          borderRadius: { xs: "20px 20px 0px 0px", md: "60px 60px 4px 4px" },
-          px: { xs: "20px", md: "64px" },
-          pt: { xs: "20px", md: "64px" },
-          pb: { xs: "20px", md: "48px" },
+          borderRadius: { xs: "20px 20px 0px 0px", md: "40px 40px 4px 4px" },
+          px: { xs: "16px", sm: "24px", md: "40px", lg: "64px" },
+          pt: { xs: "20px", sm: "28px", md: "48px" },
+          pb: { xs: "20px", sm: "28px", md: "40px" },
           display: "flex",
           flexDirection: "column",
-          gap: { xs: "24px", md: "48px" },
+          gap: { xs: "20px", md: "36px" },
+          width: "100%",
+          maxWidth: "100%",
         }}
       >
         <FooterTop landingPageData={landingPageData} />

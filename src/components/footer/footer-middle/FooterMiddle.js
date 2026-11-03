@@ -12,11 +12,18 @@ import RouteLinks from "./RouteLinks";
 import SomeInfo from "./SomeInfo";
 
 const VerticalDivider = () => (
-  <Box sx={{ width: "2px", alignSelf: "stretch", backgroundColor: "divider", flexShrink: 0 }} />
+  <Box
+    sx={{
+      width: "1px",
+      alignSelf: "stretch",
+      backgroundColor: "divider",
+      flexShrink: 0,
+    }}
+  />
 );
 
 const HorizontalDivider = () => (
-  <Box sx={{ width: "100%", height: "2px", backgroundColor: "divider" }} />
+  <Box sx={{ width: "100%", height: "1px", backgroundColor: "divider" }} />
 );
 
 const FooterMiddle = ({ configData, landingPageData }) => {
@@ -42,37 +49,39 @@ const FooterMiddle = ({ configData, landingPageData }) => {
         sx={{
           display: { xs: "flex", md: "none" },
           alignItems: "center",
+          width: "100%",
         }}
       >
         {/* Brand + App */}
-        <Stack gap="16px" alignItems="center" sx={{ width: "100%" }}>
+        <Stack gap="10px" alignItems="center" sx={{ width: "100%" }}>
           <CustomImageContainer
             src={configData?.logo_full_url}
             alt={configData?.business_name}
             width="auto"
-            height="36px"
+            height="34px"
             objectfit="contain"
           />
           <Typography
             sx={{
-              fontSize: "14px",
+              fontSize: "13px",
               fontWeight: 400,
               color: "neutral.500",
-              lineHeight: 1.3,
+              lineHeight: 1.4,
               textAlign: "center",
+              maxWidth: "360px",
             }}
           >
             {landingPageData?.footer_section?.fixed_footer_description}
           </Typography>
         </Stack>
 
-        <Stack gap="8px" alignItems="center" sx={{ width: "100%" }}>
+        <Stack gap="6px" alignItems="center" sx={{ width: "100%" }}>
           <Typography
             sx={{
-              fontSize: "14px",
+              fontSize: "12px",
               fontWeight: 600,
               color: "neutral.500",
-              letterSpacing: "-0.42px",
+              letterSpacing: "-0.2px",
               lineHeight: 1.2,
             }}
           >
@@ -84,37 +93,35 @@ const FooterMiddle = ({ configData, landingPageData }) => {
         <HorizontalDivider />
 
         {/* Quick Links */}
-        <Stack gap="0px" alignItems="center" sx={{ width: "100%" }}>
-          <Box sx={{ py: "8px", height: "36px", display: "flex", alignItems: "center" }}>
-            <Typography
-              sx={{
-                fontSize: "18px",
-                fontWeight: 700,
-                color: "neutral.500",
-                letterSpacing: "-0.54px",
-                lineHeight: 1.1,
-              }}
-            >
-              {t("Quick Links")}
-            </Typography>
-          </Box>
+        <Stack gap="4px" alignItems="center" sx={{ width: "100%" }}>
+          <Typography
+            sx={{
+              fontSize: "15px",
+              fontWeight: 700,
+              color: "neutral.1050",
+              letterSpacing: "-0.3px",
+              lineHeight: 1.2,
+              mb: "2px",
+            }}
+          >
+            {t("Quick Links")}
+          </Typography>
           <RouteLinks configData={configData} centered />
         </Stack>
 
         <HorizontalDivider />
 
-        {/* Contact Info — flex-wrap 2+1 */}
+        {/* Contact Info — compact responsive grid */}
         <Box
           sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "20px",
-            alignItems: "flex-start",
-            justifyContent: "center",
+            display: "grid",
+            gridTemplateColumns: { xs: "repeat(2, minmax(0, 1fr))", sm: "repeat(3, minmax(0, 1fr))" },
+            gap: "12px",
             width: "100%",
+            alignItems: "stretch",
           }}
         >
-          <Box sx={{ flex: "1 0 0", minWidth: "140px" }}>
+          <Box sx={{ minWidth: 0 }}>
             <SomeInfo
               image={ractangle}
               alt="mail"
@@ -124,7 +131,7 @@ const FooterMiddle = ({ configData, landingPageData }) => {
               href={`mailto:${configData?.email}`}
             />
           </Box>
-          <Box sx={{ flex: "1 0 0", minWidth: "140px" }}>
+          <Box sx={{ minWidth: 0 }}>
             <SomeInfo
               image={phone}
               alt="phone"
@@ -134,7 +141,13 @@ const FooterMiddle = ({ configData, landingPageData }) => {
               href={`tel:${configData?.phone}`}
             />
           </Box>
-          <Box sx={{ flex: "1 0 0", minWidth: "140px" }} onClick={() => setOpen(true)}>
+          <Box
+            sx={{
+              minWidth: 0,
+              gridColumn: { xs: "1 / -1", sm: "auto" },
+            }}
+            onClick={() => setOpen(true)}
+          >
             <SomeInfo
               image={magnifying}
               alt="location"
@@ -152,28 +165,38 @@ const FooterMiddle = ({ configData, landingPageData }) => {
         sx={{
           display: { xs: "none", md: "flex" },
           flexDirection: "row",
-          alignItems: "center",
-          gap: "48px",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          gap: { md: "28px", lg: "48px" },
+          width: "100%",
         }}
       >
         {/* Column 1: Brand + App */}
-        <Stack gap="20px" sx={{ width: { md: "240px", lg: "320px" }, flexShrink: 0 }}>
-          <Stack gap="16px">
-            <Box sx={{ img: { transition: "all ease 0.5s" }, "&:hover img": { transform: "scale(1.04)" } }}>
+        <Stack
+          gap="16px"
+          sx={{ width: { md: "240px", lg: "300px" }, flexShrink: 0 }}
+        >
+          <Stack gap="12px" alignItems="flex-start">
+            <Box
+              sx={{
+                img: { transition: "all ease 0.5s" },
+                "&:hover img": { transform: "scale(1.04)" },
+              }}
+            >
               <CustomImageContainer
                 src={configData?.logo_full_url}
                 alt={configData?.business_name}
                 width="auto"
-                height="36px"
+                height="40px"
                 objectfit="contain"
               />
             </Box>
             <Typography
               sx={{
-                fontSize: "14px",
+                fontSize: "13.5px",
                 fontWeight: 400,
                 color: "neutral.500",
-                lineHeight: 1.3,
+                lineHeight: 1.45,
                 letterSpacing: 0,
               }}
             >
@@ -183,10 +206,10 @@ const FooterMiddle = ({ configData, landingPageData }) => {
           <Stack gap="8px">
             <Typography
               sx={{
-                fontSize: "14px",
+                fontSize: "13px",
                 fontWeight: 600,
                 color: "neutral.500",
-                letterSpacing: "-0.42px",
+                letterSpacing: "-0.2px",
                 lineHeight: 1.2,
                 whiteSpace: "nowrap",
               }}
@@ -200,21 +223,20 @@ const FooterMiddle = ({ configData, landingPageData }) => {
         <VerticalDivider />
 
         {/* Column 2: Quick Links */}
-        <Stack gap="0px" sx={{ flexShrink: 0 }}>
-          <Box sx={{ py: "8px", height: "36px", display: "flex", alignItems: "center" }}>
-            <Typography
-              sx={{
-                fontSize: "18px",
-                fontWeight: 700,
-                color: "neutral.500",
-                letterSpacing: "-0.54px",
-                lineHeight: 1.1,
-                whiteSpace: "nowrap",
-              }}
-            >
-              {t("Quick Links")}
-            </Typography>
-          </Box>
+        <Stack gap="6px" sx={{ flexShrink: 0, minWidth: "160px" }}>
+          <Typography
+            sx={{
+              fontSize: "16px",
+              fontWeight: 700,
+              color: "neutral.1050",
+              letterSpacing: "-0.4px",
+              lineHeight: 1.2,
+              whiteSpace: "nowrap",
+              mb: "4px",
+            }}
+          >
+            {t("Quick Links")}
+          </Typography>
           <RouteLinks configData={configData} />
         </Stack>
 
@@ -224,15 +246,14 @@ const FooterMiddle = ({ configData, landingPageData }) => {
         <Box
           sx={{
             flex: 1,
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "space-between",
+            minWidth: 0,
+            display: "grid",
+            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+            gap: { md: "16px", lg: "24px" },
             alignItems: "flex-start",
-            gap: { md: "16px", lg: "0px" },
           }}
         >
-          <Box sx={{ minWidth: "130px", flex: "1 1 130px" }}>
+          <Box sx={{ minWidth: 0 }}>
             <SomeInfo
               image={ractangle}
               alt="mail"
@@ -242,7 +263,7 @@ const FooterMiddle = ({ configData, landingPageData }) => {
               href={`mailto:${configData?.email}`}
             />
           </Box>
-          <Box sx={{ minWidth: "130px", flex: "1 1 130px" }}>
+          <Box sx={{ minWidth: 0 }}>
             <SomeInfo
               image={phone}
               alt="phone"
@@ -252,7 +273,10 @@ const FooterMiddle = ({ configData, landingPageData }) => {
               href={`tel:${configData?.phone}`}
             />
           </Box>
-          <Box onClick={() => setOpen(true)} sx={{ minWidth: "130px", flex: "1 1 130px", cursor: "pointer" }}>
+          <Box
+            onClick={() => setOpen(true)}
+            sx={{ minWidth: 0, cursor: "pointer" }}
+          >
             <SomeInfo
               image={magnifying}
               alt="location"

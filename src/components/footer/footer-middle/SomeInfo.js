@@ -11,26 +11,36 @@ const isLtrValue = (value) =>
 const Inner = ({ image, alt, title, info, t, theme }) => (
   <Stack
     alignItems="center"
-    gap="24px"
+    gap={{ xs: "8px", md: "14px" }}
     sx={{
       flex: 1,
-      px: "8px",
+      px: { xs: "6px", md: "8px" },
+      py: { xs: "8px", md: "4px" },
       cursor: "pointer",
+      minWidth: 0,
+      width: "100%",
       img: { transition: "all ease 0.5s" },
       "&:hover .info-label": { color: theme.palette.primary.main },
       "&:hover .info-value": { color: theme.palette.primary.main },
     }}
   >
-    <CustomImageContainer src={image.src} alt={alt} height={50} width={50} />
-    <Stack gap="4px" alignItems="center" sx={{ width: "100%" }}>
+    <CustomImageContainer
+      src={image.src}
+      alt={alt}
+      height={42}
+      width={42}
+      smheight="34px"
+      sm_width="34px"
+    />
+    <Stack gap="4px" alignItems="center" sx={{ width: "100%", minWidth: 0 }}>
       <Typography
         className="info-label"
         sx={{
-          fontSize: "14px",
+          fontSize: { xs: "12.5px", md: "14px" },
           fontWeight: 600,
           color: "neutral.1050",
-          letterSpacing: "-0.42px",
-          lineHeight: 1.2,
+          letterSpacing: "-0.3px",
+          lineHeight: 1.25,
           textAlign: "center",
           transition: "color 0.2s ease",
         }}
@@ -41,12 +51,15 @@ const Inner = ({ image, alt, title, info, t, theme }) => (
         className="info-value"
         dir={isLtrValue(info) ? "ltr" : undefined}
         sx={{
-          fontSize: "14px",
+          fontSize: { xs: "12px", md: "13px" },
           fontWeight: 400,
           color: "neutral.500",
-          letterSpacing: "-0.42px",
-          lineHeight: 1.2,
+          letterSpacing: "-0.2px",
+          lineHeight: 1.35,
           textAlign: "center",
+          wordBreak: "break-word",
+          overflowWrap: "anywhere",
+          maxWidth: "100%",
           transition: "color 0.2s ease",
           ...(isLtrValue(info) && { unicodeBidi: "isolate" }),
         }}

@@ -14,9 +14,9 @@ import CustomImageContainer from "../../CustomImageContainer";
 import NextImage from "components/NextImage";
 
 export const CustomButton = styled(Button)(({ theme, graybackground }) => ({
-  height: "40px",
-  padding: "px 16px",
-  borderRadius: "5px",
+  height: "38px",
+  padding: "6px 14px",
+  borderRadius: "6px",
   cursor: "pointer",
   backgroundColor:
     graybackground === "true"
@@ -27,7 +27,8 @@ export const CustomButton = styled(Button)(({ theme, graybackground }) => ({
   },
   [theme.breakpoints.down("md")]: {
     maxWidth: "140px",
-    height: "40px",
+    height: "36px",
+    padding: "4px 12px",
   },
 }));
 const AppLinks = (props) => {

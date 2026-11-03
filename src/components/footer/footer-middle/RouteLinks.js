@@ -51,20 +51,27 @@ const RouteLinks = (props) => {
   const isXsmall = useMediaQuery(theme.breakpoints.down("sm"));
 
   const linkSx = {
-    fontSize: "14px",
+    fontSize: { xs: "13px", md: "14px" },
     fontWeight: 400,
     color: "neutral.1050",
-    letterSpacing: "-0.42px",
-    lineHeight: 1.2,
+    letterSpacing: "-0.25px",
+    lineHeight: 1.3,
     whiteSpace: "nowrap",
-    py: "6px",
+    py: { xs: "4px", md: "5px" },
     cursor: "pointer",
     textAlign: centered ? "center" : "left",
     "&:hover": { color: theme.palette.primary.main },
   };
 
   return (
-    <CustomStackFullWidth gap="0px" alignItems={centered ? "center" : "flex-start"}>
+    <CustomStackFullWidth
+      direction={centered ? "row" : "column"}
+      flexWrap={centered ? "wrap" : "nowrap"}
+      justifyContent={centered ? "center" : "flex-start"}
+      columnGap={centered ? "18px" : "0px"}
+      rowGap={centered ? "4px" : "0px"}
+      alignItems={centered ? "center" : "flex-start"}
+    >
       {RouteLinksData.map((item, index) => {
         if (
           (!configData?.toggle_store_registration && item?.value === "restaurant_owner") ||
