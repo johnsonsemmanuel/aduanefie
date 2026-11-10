@@ -95,7 +95,7 @@ const HomeSearch = () => {
       onFocus={() => handleOnFocus()}
       ref={searchRef}
     >
-      {zoneid && router.pathname !== "/" && (
+      {zoneid && router.pathname !== "/welcome" && (
         <>
           <CustomSearch
             label="Search..."

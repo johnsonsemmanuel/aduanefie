@@ -145,6 +145,13 @@ const MobileTopMenu = ({
                   onClick={() => handleRoute("/home")}
                 />
               </ListItemButton>
+              <ListItemButton>
+                <ListItemText
+                  sx={{ fontSize: "12px" }}
+                  primary={t("B2B Trade")}
+                  onClick={() => handleRoute("trade")}
+                />
+              </ListItemButton>
               {location && (
                 <>
                   <CollapsableMenu
@@ -196,7 +203,7 @@ const MobileTopMenu = ({
               </ListItemButton>
               {/*{token && (*/}
               {/*  <>*/}
-              {/*    {router.pathname === "/" && (*/}
+              {/*    {router.pathname === "/welcome" && (*/}
               {/*      <ListItemButton*/}
               {/*        sx={{*/}
               {/*          "&:hover": {*/}

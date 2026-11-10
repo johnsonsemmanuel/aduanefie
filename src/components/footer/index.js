@@ -10,7 +10,7 @@ const FooterComponent = ({ configData }) => {
   const router = useRouter();
   const { data: landingPageData } = useGetLandingPage();
 
-  const isLandingPage = router.pathname === "/";
+  const isLandingPage = router.pathname === "/welcome";
   const isHomePage = router.pathname === "/home";
 
   // /home has ScrollUpButton above the BottomNav → needs more clearance

@@ -11,7 +11,7 @@ import { createTheme } from "theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import { RTL } from "components/rtl";
 import { Toaster } from "react-hot-toast";
-import { getServerSideProps } from "./index";
+import { getServerSideProps } from "./welcome";
 import { SettingsConsumer, SettingsProvider } from "contexts/settings-context";
 import "../src/language/i18n";
 import { QueryClient, QueryClientProvider } from "react-query";

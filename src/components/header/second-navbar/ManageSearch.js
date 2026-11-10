@@ -242,7 +242,7 @@ const ManageSearch = ({
       onFocus={() => handleOnFocus()}
       ref={searchRef}
     >
-      {router.pathname !== "/" && (
+      {router.pathname !== "/welcome" && (
         <>
           {getModuleWiseSearch()}
           {openSearchSuggestions && (

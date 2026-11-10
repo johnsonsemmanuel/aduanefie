@@ -218,3 +218,51 @@ export const cart_discount_eligibility_api =
 export const bogo_cart_add_api = "/api/v1/customer/cart/bogo/add";
 export const bogo_cart_update_api = "/api/v1/customer/cart/bogo/update";
 export const bogo_cart_remove_api = "/api/v1/customer/cart/bogo/remove";
+
+// ============================================================================
+// Intra-African Agricultural Trade API Routes
+// ============================================================================
+export const trade_corridors_api = "/api/v1/trade/corridors";
+export const trade_corridor_detail_api = (origin, destination) => `/api/v1/trade/corridors/${origin}/${destination}`;
+export const trade_corridors_by_bloc_api = (slug) => `/api/v1/trade/blocs/${slug}/corridors`;
+export const trade_customs_duty_calculate_api = "/api/v1/trade/customs-duties/calculate";
+export const trade_blocs_api = "/api/v1/trade/blocs";
+export const trade_bloc_detail_api = (slug) => `/api/v1/trade/blocs/${slug}`;
+export const trade_requests_api = "/api/v1/trade/requests";
+export const trade_request_detail_api = (id) => `/api/v1/trade/requests/${id}`;
+export const trade_request_quotes_api = (id) => `/api/v1/trade/requests/${id}/quotes`;
+export const trade_quote_accept_api = (id) => `/api/v1/trade/quotes/${id}/accept`;
+export const trade_quote_reject_api = (id) => `/api/v1/trade/quotes/${id}/reject`;
+export const trade_documents_upload_api = "/api/v1/trade/documents/upload";
+export const trade_documents_api = (id) => `/api/v1/trade/requests/${id}/documents`;
+export const trade_contract_create_api = "/api/v1/trade/contracts/create";
+export const trade_contract_deposit_api = (id) => `/api/v1/trade/contracts/${id}/deposit`;
+export const trade_contract_confirm_delivery_api = (id) => `/api/v1/trade/contracts/${id}/confirm-delivery`;
+export const trade_contract_verify_docs_api = (id) => `/api/v1/trade/contracts/${id}/verify-documents`;
+export const trade_contract_release_api = (id) => `/api/v1/trade/contracts/${id}/release`;
+export const trade_contract_refund_api = (id) => `/api/v1/trade/contracts/${id}/refund`;
+export const trade_contract_summary_api = (id) => `/api/v1/trade/contracts/${id}/summary`;
+export const trade_contract_view_api = (id) => `/api/v1/trade/contracts/${id}`;
+export const trade_assurance_request_api = (id) => `/api/v1/trade/assurance/${id}/request`;
+export const trade_assurance_inspect_api = (id) => `/api/v1/trade/assurance/${id}/inspect`;
+export const trade_assurance_status_api = (id) => `/api/v1/trade/assurance/${id}/status`;
+export const trade_bulk_tiers_api = (itemId) => `/api/v1/trade/bulk-items/${itemId}/tiers`;
+export const trade_bulk_calculate_price_api = (itemId) => `/api/v1/trade/bulk-items/${itemId}/calculate-price`;
+export const trade_standing_orders_api = "/api/v1/trade/standing-orders";
+export const trade_standing_order_cancel_api = (id) => `/api/v1/trade/standing-orders/${id}/cancel`;
+export const trade_standing_orders_due_api = "/api/v1/trade/standing-orders/due";
+export const trade_sourcing_create_api = "/api/v1/trade/sourcing";
+export const trade_sourcing_list_api = "/api/v1/trade/sourcing";
+export const trade_sourcing_match_sellers_api = (id) => `/api/v1/trade/sourcing/${id}/match-sellers`;
+export const trade_sourcing_my_requests_api = "/api/v1/trade/sourcing/my-requests";
+export const trade_seller_dashboard_api = "/api/v1/trade/seller/dashboard";
+export const trade_seller_rfq_respond_api = (id) => `/api/v1/trade/seller/rfq/${id}/respond`;
+export const trade_seller_upgrade_gold_api = "/api/v1/trade/seller/upgrade-gold";
+export const trade_reports_corridors_api = "/api/v1/trade/reports/corridors";
+export const trade_reports_commodities_api = "/api/v1/trade/reports/commodities";
+export const trade_reports_countries_api = "/api/v1/trade/reports/countries";
+export const trade_integrations_freight_webhook_api = "/api/v1/trade/integrations/freight/webhook";
+export const trade_integrations_customs_submit_api = "/api/v1/trade/integrations/customs/submit";
+export const trade_integrations_bank_payout_api = "/api/v1/trade/integrations/bank/payout";
+export const trade_integrations_payment_webhook_api = (gateway) => `/api/v1/trade/integrations/payment/webhook/${gateway}`;
+export const trade_integrations_gateways_api = "/api/v1/trade/integrations/gateways";

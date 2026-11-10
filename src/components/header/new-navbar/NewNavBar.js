@@ -245,7 +245,7 @@ const NewNavBar = ({ configData }) => {
     disableHysteresis: true,
     threshold: 60,
   });
-  const isLandingPage = router.pathname === "/";
+  const isLandingPage = router.pathname === "/welcome";
   const _moduleType = getCurrentModuleType();
   const isSearchlessModule =
     _moduleType === "ride-share" ||

@@ -6,6 +6,8 @@ const protectedRoutes = ["/rental/cart"];
 // Routes where module parameter should NOT be added automatically
 const excludeModuleRoutes = [
   "/",
+  "/welcome",
+  "/trade",
   "/404",
   "/500",
   "/app-redirect",
@@ -29,6 +31,23 @@ export function middleware(request) {
 
   // Get module parameter from cookie (set on client)
   const moduleFromCookie = request.cookies.get("selectedModule")?.value;
+
+  // Root is a smart entry point: visitors who already picked a module go
+  // straight to the marketplace, everyone else gets the marketing landing
+  // page (now served from /welcome). A rewrite keeps the address bar on the
+  // main domain instead of bouncing through web.aduanefie.com.
+  if (pathname === "/") {
+    const url = request.nextUrl.clone();
+    if (moduleFromCookie) {
+      url.pathname = "/home";
+      if (!url.searchParams.has("module") && !url.searchParams.has("module_id")) {
+        url.searchParams.set("module", moduleFromCookie);
+      }
+    } else {
+      url.pathname = "/welcome";
+    }
+    return NextResponse.rewrite(url);
+  }
 
   // Check if request already has module/module_id param
   const hasModuleParam =

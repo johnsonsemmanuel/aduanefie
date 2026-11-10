@@ -25,6 +25,17 @@ const ZoneGuard = (props) => {
           return null;
         }
       };
+      // The middleware routes `/` to `/home?module=<selectedModule cookie>`,
+      // so a cookie without localStorage (a user who cleared site data) is
+      // still a valid module selection. Without this, every visit would bounce
+      // /home → /welcome until the user picked a module again.
+      const getSelectedModuleCookie = () => {
+        if (typeof document === "undefined") return null;
+        const match = document.cookie.match(
+          /(?:^|;\s*)selectedModule=([^;]*)/
+        );
+        return match ? decodeURIComponent(match[1]) : null;
+      };
       let storedModule = null;
       try {
         storedModule = JSON.parse(safeGetItem("module") || "null");
@@ -34,13 +45,14 @@ const ZoneGuard = (props) => {
       const storedIdentifier =
         safeGetItem("selectedModuleIdentifier") ||
         safeGetItem("selectedModuleId") ||
+        getSelectedModuleCookie() ||
         storedModule?.slug ||
         storedModule?.id;
       if (storedIdentifier) {
         setChecked(true);
       } else {
         setChecked(false);
-        router.push("/", undefined, { shallow: true });
+        router.push("/welcome", undefined, { shallow: true });
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

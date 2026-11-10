@@ -7,6 +7,9 @@ import useReviewReminderCancel from "api-manage/hooks/react-query/review/useRevi
 import { useWishListGet } from "api-manage/hooks/react-query/wish-list/useWishListGet";
 import CashBackPopup from "components/cash-back-popup/CashBackPopup";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
+import { getModuleId } from "helper-functions/getModuleId";
+import { WHOLESALE_MODULE_ID } from "components/trade/tradeData";
+import TradeCtaBanner from "./TradeCtaBanner";
 import { getGuestId, getToken } from "helper-functions/getToken";
 import { ModuleTypes } from "helper-functions/moduleTypes";
 import { t } from "i18next";
@@ -82,7 +85,21 @@ const HomePageComponents = ({
   const router = useRouter();
   const dispatch = useDispatch();
   const token = getToken();
-  const { welcomeModal } = useSelector((state) => state.utilsData);
+  const { welcomeModal, selectedModule } = useSelector(
+    (state) => state.utilsData
+  );
+  // B2B banner visibility must not depend on localStorage alone: on a first
+  // visit `?module=2` is the only signal until ModuleChecker finishes syncing.
+  // Prefer the explicit URL id, then redux, then storage.
+  const moduleIdFromUrl = router.query.module ?? router.query.module_id;
+  const parsedUrlModuleId =
+    moduleIdFromUrl && !Number.isNaN(Number(moduleIdFromUrl))
+      ? Number(moduleIdFromUrl)
+      : undefined;
+  const activeModuleId =
+    parsedUrlModuleId ?? selectedModule?.id ?? getModuleId();
+  const isWholesaleModule =
+    String(activeModuleId) === String(WHOLESALE_MODULE_ID);
   const moduleType = getCurrentModuleType();
   const { refetch: refetchFailedPayment, data: failPayment } =
     useGetFailedPayment("", (res) => {
@@ -327,6 +344,19 @@ const HomePageComponents = ({
                   : { xs: "8px", md: "34px" },
             }}
           >
+            {isWholesaleModule && (
+              <Box
+                sx={{
+                  maxWidth: "1320px",
+                  width: "100%",
+                  mx: "auto",
+                  px: { xs: "16px", md: 0 },
+                  mb: { xs: "10px", md: "20px" },
+                }}
+              >
+                <TradeCtaBanner />
+              </Box>
+            )}
             {getModuleWiseComponents()}
           </Box>
         </CustomStackFullWidth>

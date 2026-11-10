@@ -122,7 +122,7 @@ const AddressReselect = ({ location, setOpenDrawer }) => {
       >
         <Grid item xs={11} align="left">
           {!location ? (
-            router.pathname !== "/" ? (
+            router.pathname !== "/welcome" ? (
               <>
                 <ClickAwayListener onClickAway={handleTooltipClose}>
                   <Tooltip
@@ -218,7 +218,7 @@ const AddressReselect = ({ location, setOpenDrawer }) => {
             </CustomStackFullWidth>
           )}
         </Grid>
-        {router.pathname !== "/" && (
+        {router.pathname !== "/welcome" && (
           <Grid item xs={1}>
             <CustomStackFullWidth>
               <KeyboardArrowDownIcon

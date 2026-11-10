@@ -30,7 +30,7 @@ const MobileModuleSelection = () => {
     <>
       <Tooltip
         title={t("Modules")}
-        sx={{ display: router.pathname === "/" && "none" }}
+        sx={{ display: router.pathname === "/welcome" && "none" }}
       >
         <IconButton
           sx={{

@@ -51,6 +51,10 @@ const FULL_BLEED_MOBILE_ROUTES = new Set([
   "/deliveryman-registration",
   "/help-and-support",
   "/about-us",
+  // Trade (B2B) pages use SimpleMobileHeader instead of the module header
+  "/trade",
+  "/trade/blocs",
+  "/trade/blocs/[slug]",
   // Section + category pages use their own MobileNavBar variant
   "/home/[...slug]",
   "/home/category/[slug]",

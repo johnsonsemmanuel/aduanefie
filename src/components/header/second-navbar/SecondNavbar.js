@@ -424,7 +424,7 @@ const SecondNavBar = ({ configData }) => {
             objectFit="contain"
           />
         )}
-        {!isSmall && (router.pathname !== "/" || location) && (
+        {!isSmall && (router.pathname !== "/welcome" || location) && (
           <NavLinks t={t} zoneid={zoneId} moduleType={moduleType} />
         )}
       </Stack>

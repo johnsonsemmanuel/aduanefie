@@ -23,6 +23,14 @@ const storedModuleMatchesUrl = (identifier, storedModule) => {
   );
 };
 
+// Routes that are not tied to a product module. Adding ?module= to them only
+// pollutes the URL (and on /welcome would make a marketing link look like a
+// marketplace route), so the URL sync is skipped there.
+const isModuleAgnosticRoute = (pathname) =>
+  pathname === "/welcome" ||
+  pathname === "/trade" ||
+  pathname?.startsWith("/trade/");
+
 const ModuleChecker = () => {
   const router = useRouter();
   const dispatch = useDispatch();
@@ -36,6 +44,7 @@ const ModuleChecker = () => {
   // Sync Storage -> URL (keep module param on every route)
   useEffect(() => {
     if (!router.isReady || typeof window === "undefined") return;
+    if (isModuleAgnosticRoute(router.pathname)) return;
 
     const moduleFromUrl = router.query.module;
     const legacyModuleId = router.query.module_id;
@@ -95,7 +104,7 @@ const ModuleChecker = () => {
         toast.error("Selected module is not available");
         localStorage.removeItem("module");
         router.replace(
-          { pathname: "/", query: {} },
+          { pathname: "/welcome", query: {} },
           undefined,
           { shallow: true }
         );

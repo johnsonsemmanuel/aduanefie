@@ -45,8 +45,8 @@ const DrawerMenu = ({ setToggled, openDrawer, setOpenDrawer }) => {
         dispatch(clearWishList(a));
         dispatch(setClearCart());
         dispatch(clearAllCartData());
-        if (router.pathname === "/") {
-          router.push("/", undefined, { shallow: true });
+        if (router.pathname === "/welcome") {
+          router.push("/welcome", undefined, { shallow: true });
         } else {
           router.push("/home", undefined, { shallow: true });
         }

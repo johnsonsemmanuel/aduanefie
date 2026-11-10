@@ -1,5 +1,10 @@
 export const RouteLinksData = [
   {
+    name: "B2B Trade",
+    value: "trade",
+    link: "/trade",
+  },
+  {
     name: "Become a Vendor owner",
     value: "restaurant_owner",
     link: "/store-registration",
