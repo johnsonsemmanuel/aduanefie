@@ -5,11 +5,12 @@ import {
   trade_blocs_api,
   trade_corridors_by_bloc_api,
 } from "../../../ApiRoutes";
-import { findFallbackBloc } from "components/trade/tradeData";
+import { findFallbackBloc, TRADE_API_ENABLED } from "components/trade/tradeData";
 
 // Trade endpoints are read-only and optional in phase one: while the trade
-// service is not deployed some of them answer 404. Fail fast (no retry storm)
-// and let the pages fall back to the seeded bloc copy instead of blocking.
+// service is not deployed, the queries stay disabled so they don't 404 on
+// every page view. Set NEXT_PUBLIC_TRADE_API_ENABLED=true once the backend
+// ships; until then the seeded fallback copy is shown instead.
 const TRADE_QUERY_OPTIONS = {
   retry: 0,
   refetchOnWindowFocus: false,
@@ -22,7 +23,10 @@ const getBlocs = async () => {
 };
 
 export const useTradeBlocs = () =>
-  useQuery(["trade-blocs"], getBlocs, TRADE_QUERY_OPTIONS);
+  useQuery(["trade-blocs"], getBlocs, {
+    ...TRADE_QUERY_OPTIONS,
+    enabled: TRADE_API_ENABLED,
+  });
 
 const getBloc = async (slug) => {
   const { data } = await MainApi.get(trade_bloc_detail_api(slug));
@@ -32,7 +36,7 @@ const getBloc = async (slug) => {
 export const useTradeBloc = (slug) =>
   useQuery(["trade-bloc", slug], () => getBloc(slug), {
     ...TRADE_QUERY_OPTIONS,
-    enabled: Boolean(slug),
+    enabled: TRADE_API_ENABLED && Boolean(slug),
   });
 
 const getBlocCorridors = async (slug) => {
@@ -43,7 +47,7 @@ const getBlocCorridors = async (slug) => {
 export const useTradeBlocCorridors = (slug) =>
   useQuery(["trade-bloc-corridors", slug], () => getBlocCorridors(slug), {
     ...TRADE_QUERY_OPTIONS,
-    enabled: Boolean(slug),
+    enabled: TRADE_API_ENABLED && Boolean(slug),
   });
 
 export const useTradeBlocWithFallback = (slug) => {

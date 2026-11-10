@@ -116,6 +116,13 @@ const AccountMenuPanel = ({
 
   const menuItems = [
     {
+      key: "b2b-trade",
+      label: "B2B Trade",
+      icon: "fi fi-rr-shop",
+      path: "/trade",
+      requireAuth: false,
+    },
+    {
       key: "addresses",
       label: "Addresses",
       icon: "fi fi-rr-map-marker-home",

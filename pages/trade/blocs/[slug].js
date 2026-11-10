@@ -29,6 +29,7 @@ import {
 import {
   getWholesaleMarketHref,
   parseList,
+  TRADE_API_ENABLED,
 } from "components/trade/tradeData";
 
 const money = (value) =>
@@ -44,6 +45,7 @@ const TradeBlocDetail = ({ slug, configData, metaData }) => {
   const { bloc } = useTradeBlocWithFallback(slug);
   const { data: corridors = [], isError: corridorsError } =
     useTradeBlocCorridors(slug);
+  const liveCorridorsUnavailable = !TRADE_API_ENABLED || corridorsError;
 
   const metadata = processMetadata(metaData, {
     title: `${bloc?.name || "Trade bloc"} - ${configData?.business_name}`,
@@ -298,7 +300,7 @@ const TradeBlocDetail = ({ slug, configData, metaData }) => {
                     }}
                   >
                     <Typography sx={{ fontSize: "13.5px", color: "text.secondary" }}>
-                      {corridorsError
+                      {liveCorridorsUnavailable
                         ? t(
                             "Live corridor data is not available yet. It will appear here once the trade service is switched on."
                           )

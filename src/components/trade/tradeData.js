@@ -5,6 +5,13 @@
 
 export const WHOLESALE_MODULE_ID = 2;
 
+// Phase one shows seeded bloc/corridor copy. The read-only trade API exists in
+// the backend codebase but is not deployed on the live host yet, so its calls
+// 404 and only add console noise. Keep them off until the service ships, then
+// set NEXT_PUBLIC_TRADE_API_ENABLED=true and rebuild.
+export const TRADE_API_ENABLED =
+  process.env.NEXT_PUBLIC_TRADE_API_ENABLED === "true";
+
 export const FALLBACK_TRADE_BLOCS = [
   {
     id: "ecowas",
