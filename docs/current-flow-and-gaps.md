@@ -13,7 +13,7 @@
 3. So `store.aduanefie.com` and `logistics.aduanefie.com` are **cosmetic aliases today**. Store owners really log in at `/login/store` and land in `/vendor-panel` — reachable from any of those hosts.
 4. Store self-registration **already works end to end** (React form → `/api/v1/auth/vendor/register` → pending vendor + store → admin approval → `/vendor-panel`).
 5. Riders have **no web portal at all**. Rider registration and login exist only as mobile API endpoints. `/login/delivery-man` is a 404.
-6. There is **no marketer / affiliate / registration-commission system** anywhere. The only referral feature is customer-to-customer wallet credit.
+6. ~~There is **no marketer / affiliate / registration-commission system** anywhere.~~ **Superseded:** a store-owned marketer commission ledger, a partners portal and admin payout screens now exist. See `docs/marketer-implementation.md`.
 7. Cross-border `/trade` is currently **static marketing copy** over a seeded list of four trade blocs. The real trade/RFQ API exists in the Laravel codebase but is **not deployed**, and its tables are **not in the live MySQL database**.
 
 ---
@@ -218,7 +218,16 @@ Then the vendor picks a subscription package (`/api/v1/vendor/package-view`, `bu
 
 ### 5.3 Remote marketers / registration agents
 
-**What exists:** nothing. Only **customer-to-customer referral**:
+> **Built since this audit.** What shipped differs from the recommendation below
+> in three deliberate ways: attribution is **store-owned** (`stores.marketer_id`)
+> rather than a per-registration ref code; the commission is a **share of the
+> platform's per-order commission**, not a fee per registered store; and the
+> portal reuses the **admin guard + MFA** rather than a new `marketer` guard.
+> The admin approval and payout screens exist. The authoritative description,
+> including what is still open, is `docs/marketer-implementation.md`. The text
+> below is the original audit and is kept as the rationale.
+
+**What existed at audit time:** nothing. Only **customer-to-customer referral**:
 
 - `ref_code` on customers, validated in `Api/V1/Auth/CustomerAuthController` (`Referrer code already used`).
 - A `referrer` **wallet transaction** and notifications `customer_referral_bonus_earning`, `customer_new_referral_join`.
