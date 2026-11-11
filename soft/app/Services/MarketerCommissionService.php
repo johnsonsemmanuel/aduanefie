@@ -80,6 +80,7 @@ class MarketerCommissionService
             ->whereHas('store', function ($query) {
                 $query->withoutGlobalScope(ZoneScope::class)
                     ->whereNotNull('marketer_id')
+                    ->whereNotNull('marketer_assigned_at')
                     ->where('store_business_model', 'commission');
             })
             ->whereHas('transaction', function ($query) {
@@ -116,6 +117,21 @@ class MarketerCommissionService
         }
 
         if ($store->store_business_model !== 'commission') {
+            return 0;
+        }
+
+        if (!$store->marketer_assigned_at) {
+            // Attributed but no start date: we cannot tell which orders the
+            // marketer is owed for, and paying history would be a liability
+            // they were never promised.
+            return 0;
+        }
+
+        // Forward-only. Orders delivered before the marketer was attached
+        // belong to whoever ran the store then, not to the new marketer.
+        $deliveredForComparison = $order->delivered ?: $order->updated_at;
+        if ($deliveredForComparison
+            && Carbon::parse($deliveredForComparison)->lt(Carbon::parse($store->marketer_assigned_at))) {
             return 0;
         }
 

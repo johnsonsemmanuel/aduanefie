@@ -144,6 +144,7 @@ class Store extends Model
         'verification_documents',
         'verified_at',
         'marketer_id',
+        'marketer_assigned_at',
     ];
 
     /**
@@ -393,6 +394,27 @@ class Store extends Model
     public function marketer(): BelongsTo
     {
         return $this->belongsTo(Admin::class, 'marketer_id');
+    }
+
+    /**
+     * Attach or detach the store's marketer.
+     *
+     * Commission only accrues for orders delivered after the marketer is
+     * attached, so this is the single place that stamps the start date. Saving
+     * the same marketer again keeps the original date; switching marketers
+     * starts the new one from now.
+     */
+    public function assignMarketer(?int $marketerId): void
+    {
+        $marketerId = $marketerId ?: null;
+
+        if ($this->marketer_id === $marketerId) {
+            return;
+        }
+
+        $this->marketer_id = $marketerId;
+        $this->marketer_assigned_at = $marketerId ? now() : null;
+        $this->save();
     }
 
     public function marketerCommissions(): HasMany
