@@ -158,6 +158,8 @@
                 <!-- End dispatch -->
 
 
+                @include('layouts.admin.partials._sidebar_marketers')
+
                 <li class="nav-item py-5">
 
                 </li>

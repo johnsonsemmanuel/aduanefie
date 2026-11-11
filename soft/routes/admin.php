@@ -46,6 +46,23 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::post('business-overview', 'DashboardController@business_overview')->name('business-overview');
         });
 
+        // Remote-marketer programme: attribution, ledger and payout approval.
+        // Super-admin only (enforced in the controller), because this is the
+        // only place a payout can be approved or recorded as paid.
+        Route::group(['prefix' => 'marketer', 'as' => 'marketer.'], function () {
+            Route::get('/', 'MarketerController@index')->name('index');
+            Route::get('commissions', 'MarketerController@commissions')->name('commissions');
+            Route::get('payouts', 'MarketerController@payouts')->name('payouts');
+            Route::get('payouts/{id}', 'MarketerController@showPayout')->name('payouts.show')->where('id', '[0-9]+');
+            Route::post('payouts/{id}/approve', 'MarketerController@approvePayout')->name('payouts.approve');
+            Route::post('payouts/{id}/reject', 'MarketerController@rejectPayout')->name('payouts.reject');
+            Route::post('payouts/{id}/paid', 'MarketerController@markPayoutPaid')->name('payouts.paid');
+            Route::get('stores', 'MarketerController@stores')->name('stores');
+            Route::post('stores/{id}/assign', 'MarketerController@assignStore')->name('stores.assign');
+            Route::post('rate/{id}', 'MarketerController@updateRate')->name('rate');
+            Route::post('accrue', 'MarketerController@accrue')->name('accrue');
+        });
+
         Route::post('item/variant-price', 'ItemController@variant_price')->name('item.variant-price');
 
         Route::group(['prefix' => 'item', 'as' => 'item.', 'middleware' => ['module:item']], function () {
