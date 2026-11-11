@@ -1,0 +1,97 @@
+# =============================================================================
+# Aduanefie — repository baseline
+#
+# This repo tracks the *working* Laravel application (`soft/`) and `docs/`.
+# Everything else in the workspace is either a duplicate copy of the same app,
+# an upstream CodeCanyon archive, or generated output. Those remain on disk,
+# untracked, so they are never lost — they are simply not part of history.
+#
+# If a root-level item ever needs tracking, add it with `git add -f <path>`.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Workspace root: track only what this project actually owns
+# -----------------------------------------------------------------------------
+/*
+!.gitignore
+!docs/
+!soft/
+
+# Left on disk, deliberately untracked:
+#   Admin panel new install V4.0/     second copy of the app (routes never load)
+#   codecanyon-.../                    upstream React source, has its own .git
+#   vendor/ Modules/ resources/ ...    root-level copy of the same Laravel app
+#   tests/Admin panel new install V4.0/ duplicate, 489 MB
+#   web/                              Flutter build output, 43 MB
+#   aduanefiemarketplace-*.sql        production data dump (contains real PII)
+
+# -----------------------------------------------------------------------------
+# Secrets — never commit
+# -----------------------------------------------------------------------------
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.production.example
+
+# -----------------------------------------------------------------------------
+# Dependencies and tool binaries
+# -----------------------------------------------------------------------------
+**/vendor/
+**/node_modules/
+**/composer.phar
+**/.phpunit.result.cache
+**/Homestead.json
+**/Homestead.yaml
+**/docker-compose.override.yml
+
+# -----------------------------------------------------------------------------
+# Upstream archives and vendor drops inside soft/
+# -----------------------------------------------------------------------------
+soft/oldstuff/
+soft/installation/
+soft/__MACOSX/
+soft/*.zip
+soft/Admin panel update*/
+soft/Admin panel new install*/
+
+# -----------------------------------------------------------------------------
+# Laravel runtime state
+# -----------------------------------------------------------------------------
+**/bootstrap/cache/*.php
+**/storage/*.key
+**/storage/logs/*
+**/storage/framework/cache/data/*
+**/storage/framework/sessions/*
+**/storage/framework/views/*
+**/storage/debugbar/*
+**/storage/tmp/*
+**/storage/app/*
+!**/storage/app/public/
+soft/storage/app/public/*
+!soft/storage/app/public/.gitignore
+**/public/hot
+**/public/storage
+
+# -----------------------------------------------------------------------------
+# Scratch files left at the app root by verification runs (not app code)
+# -----------------------------------------------------------------------------
+soft/spatial.php
+soft/spatial2.php
+soft/smoke.php
+soft/smoke2-staging.php
+soft/smoke-staging.php
+soft/one.php
+soft/api_one.php
+soft/*probe*.php
+soft/app/Providers/*.txt
+
+# -----------------------------------------------------------------------------
+# Editor / OS noise
+# -----------------------------------------------------------------------------
+**/.DS_Store
+**/.idea/
+**/.vscode/
+**/Thumbs.db
+**/error_log
+**/npm-debug.log
+**/yarn-error.log
