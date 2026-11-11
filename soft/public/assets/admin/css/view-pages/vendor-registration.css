@@ -40,6 +40,10 @@
     border-radius: 5px;
 }
 .recap-img{
-    width: 100%;
+    /* Keep the captcha at its natural ratio; width:100% stretched it. */
+    width: auto;
+    max-width: 100%;
+    height: 48px;
+    object-fit: contain;
     border-radius: 4px;
 }

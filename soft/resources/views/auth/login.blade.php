@@ -133,7 +133,7 @@
                                         id="custome_recaptcha" required placeholder="{{translate('Enter recaptcha value')}}" autocomplete="off" value="{{env('APP_MODE')=='dev'? session('six_captcha'):''}}">
                             </div>
                             <div class="col-6 bg-white rounded d-flex">
-                                <img src="<?php echo $custome_recaptcha->inline(); ?>" class="rounded w-100" />
+                                <img src="<?php echo $custome_recaptcha->inline(); ?>" class="rounded captcha-img" />
                                 <div class="p-3 pr-0 capcha-spin reloadCaptcha">
                                     <i class="tio-cached"></i>
                                 </div>
@@ -147,7 +147,7 @@
                                         id="custome_recaptcha" required placeholder="{{translate('Enter recaptcha value')}}" autocomplete="off" value="{{env('APP_MODE')=='dev'? session('six_captcha'):''}}">
                             </div>
                             <div class="col-6 bg-white rounded d-flex">
-                                <img src="<?php echo $custome_recaptcha->inline(); ?>" class="rounded w-100" />
+                                <img src="<?php echo $custome_recaptcha->inline(); ?>" class="rounded captcha-img" />
                                 <div class="p-3 pr-0 capcha-spin reloadCaptcha">
                                     <i class="tio-cached"></i>
                                 </div>

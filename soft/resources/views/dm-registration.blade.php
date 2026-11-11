@@ -214,7 +214,7 @@ $countryCode= strtolower($country?$country->value:'auto');
                                                         id="custome_recaptcha" required placeholder="{{\__('Enter recaptcha value')}}" autocomplete="off" value="{{env('APP_DEBUG')?session('six_captcha'):''}}">
                                             </div>
                                             <div class="col-6" style="background-color: #FFFFFF; border-radius: 5px;">
-                                                <img src="<?php echo $custome_recaptcha->inline(); ?>" style="width: 100%; border-radius: 4px;"/>
+                                                <img src="<?php echo $custome_recaptcha->inline(); ?>" style="width: auto; max-width: 100%; height: 48px; object-fit: contain; border-radius: 4px;"/>
                                             </div>
                                         </div>
                                     @endif

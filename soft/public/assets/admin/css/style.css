@@ -5617,6 +5617,9 @@ div.scroll-down {
     height: 55px;
     width: 55px !important;
     border: 5px solid rgba(128, 128, 128, 0.0705882353);
+    background-color: #fff;
+    -o-object-fit: contain;
+    object-fit: contain;
 }
 
 .fz-15px {
@@ -6668,6 +6671,22 @@ a:hover .text--title {
 .object-cover {
     -o-object-fit: cover;
     object-fit: cover;
+}
+
+/* Uploaded avatars must fill their fixed box without squashing the face. */
+.avatar-img {
+    -o-object-fit: cover;
+    object-fit: cover;
+}
+
+/* Captcha images are small; show them at their natural ratio instead of
+   stretching them across the whole field. */
+.captcha-img {
+    width: auto;
+    max-width: 100%;
+    height: 48px;
+    -o-object-fit: contain;
+    object-fit: contain;
 }
 
 .min-h-90px {
@@ -8156,7 +8175,7 @@ ul.delivery--information-single li:not(:last-child) {
 }
 
 .__nav-item .__nav-link.module--nav-icon {
-    background: linear-gradient(180deg, #0177cd 0%, #0e4da3 100%);
+    background: #0177cd;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -12693,11 +12712,11 @@ label.position-relative {
 }
 
 .success-bg {
-    background: linear-gradient(0deg, #039d55 0%, #039d55 100%), #fff;
+    background: #039d55;
 }
 
 .danger-bg {
-    background: linear-gradient(0deg, #ff6d6d 0%, #ff6d6d 100%), #fff;
+    background: #ff6d6d;
 }
 .danger-bg .btn-light {
     color: #ff6d6d !important;
