@@ -909,6 +909,66 @@ export const InfoSection = ({
               </Typography>
             </DeliveryBadge>
           )}
+          {item?.effective_farming_status === "farming" && (
+            <DeliveryBadge
+              sx={{
+                flexShrink: 0,
+                backgroundColor: alpha(theme.palette.warning.main, 0.14),
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  color: theme.palette.warning.dark,
+                  lineHeight: 1.3,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {item?.pre_order_available ? t("Farming · Pre-Order") : t("Farming")}
+              </Typography>
+            </DeliveryBadge>
+          )}
+          {item?.effective_farming_status === "harvest_ready" && (
+            <DeliveryBadge
+              sx={{
+                flexShrink: 0,
+                backgroundColor: alpha(theme.palette.primary.main, 0.12),
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  color: theme.palette.primary.main,
+                  lineHeight: 1.3,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {t("Harvest Ready")}
+              </Typography>
+            </DeliveryBadge>
+          )}
+          {item?.is_backyard && (
+            <DeliveryBadge
+              sx={{
+                flexShrink: 0,
+                backgroundColor: alpha(theme.palette.success.main, 0.12),
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  color: theme.palette.success.dark,
+                  lineHeight: 1.3,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {t("Backyard")}
+              </Typography>
+            </DeliveryBadge>
+          )}
         </Stack>
       </Stack>
     </Stack>

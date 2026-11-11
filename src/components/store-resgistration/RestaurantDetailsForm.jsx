@@ -346,6 +346,113 @@ const RestaurantDetailsForm = ({
                 />
               </Grid>
             </Grid>
+
+            <Grid item container xs={12} sm={12} md={12} spacing={{ xs: 3, md: 2 }}>
+              <Grid item xs={12} sm={6} md={4}>
+                <CustomSelectWithFormik
+                  labelColor={alpha(theme.palette.neutral[1000], 0.8)}
+                  selectFieldData={[
+                    { label: t("Commercial Farm"), value: "commercial" },
+                    { label: t("Backyard Grower"), value: "backyard" },
+                    { label: t("Farmer Cooperative"), value: "cooperative" },
+                    { label: t("Cross-Border Exporter"), value: "exporter" },
+                    { label: t("Agro Service / Input Supplier"), value: "agribusiness" },
+                  ]}
+                  inputLabel={t("Producer Type")}
+                  placeholder={t("Select Producer Type")}
+                  passSelectedValue={(val) =>
+                    RestaurantJoinFormik.setFieldValue("farm_type", val)
+                  }
+                  touched={RestaurantJoinFormik.touched.farm_type}
+                  errors={RestaurantJoinFormik.errors.farm_type}
+                  fieldProps={RestaurantJoinFormik.getFieldProps("farm_type")}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <CustomSelectWithFormik
+                  labelColor={alpha(theme.palette.neutral[1000], 0.8)}
+                  selectFieldData={[
+                    { label: "Ghana", value: "Ghana" },
+                    { label: "Nigeria", value: "Nigeria" },
+                    { label: "Kenya", value: "Kenya" },
+                    { label: "Côte d'Ivoire", value: "Côte d'Ivoire" },
+                    { label: "Togo", value: "Togo" },
+                    { label: "Burkina Faso", value: "Burkina Faso" },
+                    { label: "Senegal", value: "Senegal" },
+                    { label: "South Africa", value: "South Africa" },
+                  ]}
+                  inputLabel={t("Country")}
+                  placeholder={t("Select Country")}
+                  passSelectedValue={(val) =>
+                    RestaurantJoinFormik.setFieldValue("country", val)
+                  }
+                  touched={RestaurantJoinFormik.touched.country}
+                  errors={RestaurantJoinFormik.errors.country}
+                  fieldProps={RestaurantJoinFormik.getFieldProps("country")}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <CustomTextFieldWithFormik
+                  labelColor={alpha(theme.palette.neutral[1000], 0.8)}
+                  placeholder={t("e.g. MKT-12 (Optional)")}
+                  name="marketer_code"
+                  label={t("Marketer Referral Code")}
+                  touched={RestaurantJoinFormik.touched.marketer_code}
+                  errors={RestaurantJoinFormik.errors.marketer_code}
+                  fieldProps={RestaurantJoinFormik.getFieldProps("marketer_code")}
+                  onChangeHandler={(value) =>
+                    RestaurantJoinFormik.setFieldValue("marketer_code", value)
+                  }
+                  value={RestaurantJoinFormik.values.marketer_code}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <CustomTextFieldWithFormik
+                  labelColor={alpha(theme.palette.neutral[1000], 0.8)}
+                  placeholder={t("e.g. Ashanti, Greater Accra")}
+                  name="region"
+                  label={t("Region / District (Optional)")}
+                  touched={RestaurantJoinFormik.touched.region}
+                  errors={RestaurantJoinFormik.errors.region}
+                  fieldProps={RestaurantJoinFormik.getFieldProps("region")}
+                  onChangeHandler={(value) =>
+                    RestaurantJoinFormik.setFieldValue("region", value)
+                  }
+                  value={RestaurantJoinFormik.values.region}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <CustomTextFieldWithFormik
+                  labelColor={alpha(theme.palette.neutral[1000], 0.8)}
+                  placeholder={t("e.g. 2.5")}
+                  type="number"
+                  name="farm_size_acres"
+                  label={t("Farm Size in Acres (Optional)")}
+                  touched={RestaurantJoinFormik.touched.farm_size_acres}
+                  errors={RestaurantJoinFormik.errors.farm_size_acres}
+                  fieldProps={RestaurantJoinFormik.getFieldProps("farm_size_acres")}
+                  onChangeHandler={(value) =>
+                    RestaurantJoinFormik.setFieldValue("farm_size_acres", value)
+                  }
+                  value={RestaurantJoinFormik.values.farm_size_acres}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6} md={4}>
+                <CustomTextFieldWithFormik
+                  labelColor={alpha(theme.palette.neutral[1000], 0.8)}
+                  placeholder={t("e.g. Tomatoes, Maize, Cocoa")}
+                  name="primary_crops"
+                  label={t("Primary Crops / Produce (Optional)")}
+                  touched={RestaurantJoinFormik.touched.primary_crops}
+                  errors={RestaurantJoinFormik.errors.primary_crops}
+                  fieldProps={RestaurantJoinFormik.getFieldProps("primary_crops")}
+                  onChangeHandler={(value) =>
+                    RestaurantJoinFormik.setFieldValue("primary_crops", value)
+                  }
+                  value={RestaurantJoinFormik.values.primary_crops}
+                />
+              </Grid>
+            </Grid>
           </CustomStackFullWidth>
         </CustomStackFullWidth>
       </Grid>

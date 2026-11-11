@@ -52,6 +52,12 @@ export const generateInitialValues = (languages, allData) => {
     tin: allData?.tin || "",
     tin_expire_date: allData?.tin_expire_date || "",
     tin_certificate_image: allData?.tin_certificate_image || "",
+    farm_type: allData?.farm_type || "commercial",
+    country: allData?.country || "Ghana",
+    region: allData?.region || "",
+    farm_size_acres: allData?.farm_size_acres || "",
+    primary_crops: allData?.primary_crops || "",
+    marketer_code: allData?.marketer_code || "",
   };
 
   // Set initial values for each language

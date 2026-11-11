@@ -56,6 +56,13 @@ const postData = async (storeData) => {
     pickup_zone_id: storeData?.pickup_zone_id
       ? JSON.stringify(storeData?.pickup_zone_id?.map(String))
       : [],
+    ...(storeData?.farm_type && { farm_type: storeData.farm_type }),
+    ...(storeData?.farm_type === "backyard" && { is_backyard: 1 }),
+    ...(storeData?.country && { country: storeData.country }),
+    ...(storeData?.region && { region: storeData.region }),
+    ...(storeData?.farm_size_acres && { farm_size_acres: storeData.farm_size_acres }),
+    ...(storeData?.primary_crops && { primary_crops: storeData.primary_crops }),
+    ...(storeData?.marketer_code && { marketer_code: storeData.marketer_code }),
   };
 
 // ✅ Conditionally add TIN-related fields only if they exist

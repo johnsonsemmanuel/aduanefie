@@ -955,8 +955,43 @@ const NewStoreCard = ({
           )}
         </Stack>
 
-        {/* Row 4: Discount badges */}
+        {/* Row 4: Discount & farm lifecycle badges */}
         <DiscountBadges item={item} theme={theme} t={t} />
+        {(item?.is_backyard ||
+          item?.cultivation_status === "farming" ||
+          item?.cultivation_status === "harvest_ready" ||
+          item?.marketer_verified) && (
+          <Stack direction="row" alignItems="center" gap="4px" flexWrap="wrap" sx={{ mt: "4px" }}>
+            {item?.is_backyard && (
+              <BadgePill bgColor={alpha(theme.palette.success.main, 0.12)}>
+                <Typography sx={{ fontSize: "11px", fontWeight: 600, color: theme.palette.success.dark, lineHeight: 1.3 }}>
+                  {t("Backyard Farm")}
+                </Typography>
+              </BadgePill>
+            )}
+            {item?.cultivation_status === "farming" && (
+              <BadgePill bgColor={alpha(theme.palette.warning.main, 0.14)}>
+                <Typography sx={{ fontSize: "11px", fontWeight: 600, color: theme.palette.warning.dark, lineHeight: 1.3 }}>
+                  {t("Farming")}
+                </Typography>
+              </BadgePill>
+            )}
+            {item?.cultivation_status === "harvest_ready" && (
+              <BadgePill bgColor={alpha(theme.palette.primary.main, 0.12)}>
+                <Typography sx={{ fontSize: "11px", fontWeight: 600, color: theme.palette.primary.main, lineHeight: 1.3 }}>
+                  {t("Harvest Ready")}
+                </Typography>
+              </BadgePill>
+            )}
+            {item?.marketer_verified && (
+              <BadgePill bgColor={alpha(theme.palette.info.main, 0.12)}>
+                <Typography sx={{ fontSize: "11px", fontWeight: 600, color: theme.palette.info.dark, lineHeight: 1.3 }}>
+                  {t("Field Verified")}
+                </Typography>
+              </BadgePill>
+            )}
+          </Stack>
+        )}
       </Box>
     </CardRoot>
   );

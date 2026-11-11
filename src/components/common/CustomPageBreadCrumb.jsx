@@ -5,7 +5,14 @@ import { useRouter } from "next/router";
 // ─── Helpers ───────────────────────────────────────────────────────────────
 
 const parseHref = (href = "") => {
-  const [pathname, search] = href.split("?");
+  if (href && typeof href === "object") {
+    return {
+      pathname: typeof href.pathname === "string" ? href.pathname : "/",
+      query: href.query && typeof href.query === "object" ? href.query : {},
+    };
+  }
+  const safeHref = typeof href === "string" ? href : String(href || "");
+  const [pathname, search] = safeHref.split("?");
   const query = Object.fromEntries(new URLSearchParams(search || ""));
   return { pathname, query };
 };

@@ -3,6 +3,19 @@ import { CustomImageContainerStyled } from "styled-components/CustomStyles.style
 import placeholder from "../../public/static/no-image-found.png";
 import { Box } from "@mui/system";
 
+const resolveImageSrc = (raw) => {
+  if (typeof raw === "string") {
+    const trimmed = raw.trim();
+    return trimmed ? trimmed : placeholder?.src;
+  }
+  if (raw && typeof raw === "object") {
+    if (typeof raw.src === "string" && raw.src.trim()) return raw.src;
+    if (typeof raw.img_full_url === "string" && raw.img_full_url.trim()) return raw.img_full_url;
+    if (typeof raw.image_full_url === "string" && raw.image_full_url.trim()) return raw.image_full_url;
+  }
+  return placeholder?.src;
+};
+
 const CustomImageContainer = ({
   cursor,
   mdHeight,
@@ -28,7 +41,7 @@ const CustomImageContainer = ({
 }) => {
   const [imageFile, setState] = useState(null);
   useEffect(() => {
-    setState(src ? src : placeholder?.src);
+    setState(resolveImageSrc(src));
   }, [src]);
 
   return (

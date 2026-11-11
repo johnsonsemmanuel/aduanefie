@@ -29,7 +29,20 @@ const toBase64 = (str) =>
 // instead of letting next/image throw "Failed to parse src ..." at runtime.
 const sanitizeSrc = (raw, fallback) => {
   if (!raw) return fallback;
-  if (typeof raw !== "string") return raw; // StaticImageData / import — leave as-is
+  if (typeof raw !== "string") {
+    // Only return static image imports (StaticImageData); guard plain objects against [object Object].
+    if (typeof raw === "object" && typeof raw.src === "string" && raw.src.trim()) {
+      return raw;
+    }
+    const candidate =
+      typeof raw?.img_full_url === "string"
+        ? raw.img_full_url
+        : typeof raw?.image_full_url === "string"
+        ? raw.image_full_url
+        : "";
+    if (!candidate) return fallback;
+    raw = candidate;
+  }
   const trimmed = raw.trim();
   if (!trimmed) return fallback;
   if (trimmed.startsWith("/")) return trimmed;

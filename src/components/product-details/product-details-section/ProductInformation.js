@@ -758,6 +758,14 @@ const ProductInformation = ({
           const expiryDate = item?.expiry_date;
           const perishabilityDays = item?.perishability_days;
           const minOrderQty = item?.minimum_order_qty;
+          const effectiveFarmingStatus = item?.effective_farming_status || item?.farming_status;
+          const expectedHarvestDate = item?.expected_harvest_date;
+          const daysToHarvest = item?.days_to_harvest;
+          const cultivationProgress = item?.cultivation_progress_pct;
+          const preOrderAvailable = item?.pre_order_available;
+          const isBackyard = item?.is_backyard;
+          const marketerVerified = item?.marketer_verified;
+          const originCountry = item?.origin_country;
 
           const hasAgroInfo =
             seasonality.length > 0 ||
@@ -767,7 +775,13 @@ const ProductInformation = ({
             harvestDate ||
             expiryDate ||
             perishabilityDays ||
-            minOrderQty;
+            minOrderQty ||
+            (effectiveFarmingStatus && effectiveFarmingStatus !== "in_stock") ||
+            expectedHarvestDate ||
+            preOrderAvailable ||
+            isBackyard ||
+            marketerVerified ||
+            originCountry;
 
           if (!hasAgroInfo) return null;
 
@@ -810,6 +824,68 @@ const ProductInformation = ({
                 {t("Agro Info")}
               </Typography>
               <Stack direction="row" spacing={1} alignItems="flex-start" flexWrap="wrap">
+                {effectiveFarmingStatus && effectiveFarmingStatus !== "in_stock" && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, color: theme.palette.text.secondary, minWidth: { xs: "100px", md: "120px" } }}>
+                      {t("Crop Status")} :
+                    </Typography>
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, fontWeight: 600, color: theme.palette.primary.main, flex: 1 }}>
+                      {effectiveFarmingStatus === "farming"
+                        ? `${t("Currently Farming")}${daysToHarvest != null ? ` (${daysToHarvest} ${t("days left")})` : ""}${cultivationProgress != null ? ` · ${cultivationProgress}%` : ""}`
+                        : t("Harvest Ready")}
+                    </Typography>
+                  </Stack>
+                )}
+                {expectedHarvestDate && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, color: theme.palette.text.secondary, minWidth: { xs: "100px", md: "120px" } }}>
+                      {t("Expected Harvest")} :
+                    </Typography>
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, fontWeight: 600, color: theme.palette.text.primary, flex: 1 }}>
+                      {expectedHarvestDate}
+                    </Typography>
+                  </Stack>
+                )}
+                {preOrderAvailable && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, color: theme.palette.text.secondary, minWidth: { xs: "100px", md: "120px" } }}>
+                      {t("Pre-Order")} :
+                    </Typography>
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, fontWeight: 600, color: theme.palette.success.dark, flex: 1 }}>
+                      {t("Open for Harvest Booking")}
+                    </Typography>
+                  </Stack>
+                )}
+                {isBackyard && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, color: theme.palette.text.secondary, minWidth: { xs: "100px", md: "120px" } }}>
+                      {t("Producer")} :
+                    </Typography>
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, fontWeight: 600, color: theme.palette.success.dark, flex: 1 }}>
+                      {t("Backyard Grower")}{marketerVerified ? ` · ${t("Field Verified")}` : ""}
+                    </Typography>
+                  </Stack>
+                )}
+                {!isBackyard && marketerVerified && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, color: theme.palette.text.secondary, minWidth: { xs: "100px", md: "120px" } }}>
+                      {t("Verification")} :
+                    </Typography>
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, fontWeight: 600, color: theme.palette.info.dark, flex: 1 }}>
+                      {t("Field Verified by Remote Marketer")}
+                    </Typography>
+                  </Stack>
+                )}
+                {originCountry && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, color: theme.palette.text.secondary, minWidth: { xs: "100px", md: "120px" } }}>
+                      {t("Origin Country")} :
+                    </Typography>
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, fontWeight: 600, color: theme.palette.text.primary, flex: 1 }}>
+                      {originCountry}
+                    </Typography>
+                  </Stack>
+                )}
                 {originFarm && (
                   <Stack direction="row" spacing={1} alignItems="flex-start">
                     <Typography

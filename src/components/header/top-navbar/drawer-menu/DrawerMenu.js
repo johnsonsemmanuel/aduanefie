@@ -24,7 +24,8 @@ const DrawerMenu = ({ setToggled, openDrawer, setOpenDrawer }) => {
     setOpenDrawer(openDrawer);
   };
   const handleRoute = (path) => {
-    router.push(`/${path}`, undefined, { shallow: true });
+    const cleanPath = String(path || "").replace(/^\/+/, "");
+    router.push(`/${cleanPath}`, undefined, { shallow: true });
     setOpenDrawer(false);
   };
   const handleLogout = async () => {
