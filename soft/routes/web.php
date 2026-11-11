@@ -50,6 +50,20 @@ Route::post('admin-login', 'AdminAuthController@login')
     ->name('admin.login.submit')
     ->middleware('throttle:admin-login');
 
+// Rider portal on logistics.aduanefie.com. Login is phone + password, matching
+// the mobile API. Status updates are intentionally absent: see
+// RiderDashboardController for why.
+Route::get('rider-login', 'RiderAuthController@showLogin')->name('rider.login');
+Route::post('rider-login', 'RiderAuthController@login')
+    ->name('rider.login.submit')
+    ->middleware('throttle:rider-login');
+Route::post('rider-logout', 'RiderAuthController@logout')->name('rider.logout');
+
+Route::middleware(\App\Http\Middleware\RiderAuthenticated::class)->prefix('rider')->group(function () {
+    Route::get('/', 'RiderDashboardController@index')->name('rider.dashboard');
+    Route::get('earnings', 'RiderDashboardController@earnings')->name('rider.earnings');
+});
+
 Route::get('login/{tab}', 'LoginController@login')->name('login');
 Route::post('external-login-from-drivemond', 'LoginController@externalLoginFromDrivemond');
 Route::post('login_submit', 'LoginController@submit')->name('login_post')->middleware(['actch', 'throttle:web-login']);

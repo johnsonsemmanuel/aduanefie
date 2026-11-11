@@ -104,10 +104,17 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('web-login', function (Request $request) {
             return Limit::perMinute(10)->by($this->loginThrottleKey($request));
         });
+
+        // Riders sign in by phone, so the key has to read the phone field or
+        // every rider would share the empty-string bucket and lock each other
+        // out after five attempts from the same IP.
+        RateLimiter::for('rider-login', function (Request $request) {
+            return Limit::perMinute(5)->by($this->loginThrottleKey($request, 'phone'));
+        });
     }
 
-    private function loginThrottleKey(Request $request): string
+    private function loginThrottleKey(Request $request, string $field = 'email'): string
     {
-        return Str::transliterate(Str::lower((string) $request->input('email')) . '|' . $request->ip());
+        return Str::transliterate(Str::lower((string) $request->input($field)) . '|' . $request->ip());
     }
 }

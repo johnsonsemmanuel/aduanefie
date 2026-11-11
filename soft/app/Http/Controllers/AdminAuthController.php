@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\CentralLogics\Helpers;
+use App\Http\Controllers\Concerns\VerifiesHuman;
 use App\Models\Admin;
-use App\Models\BusinessSetting;
 use App\Models\Module;
-use Brian2694\Toastr\Facades\Toastr;
 use Gregwar\Captcha\CaptchaBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Session;
 
 /**
@@ -24,6 +21,8 @@ use Illuminate\Support\Facades\Session;
  */
 class AdminAuthController extends Controller
 {
+    use VerifiesHuman;
+
     public function showLogin()
     {
         if (Auth::guard('admin')->check()) {
@@ -84,55 +83,4 @@ class AdminAuthController extends Controller
         return redirect()->route('admin.business-settings.business-setup');
     }
 
-    /**
-     * Same two-mode captcha the shared login uses: Google reCAPTCHA when it is
-     * enabled, otherwise the session-backed image captcha. Returns false after
-     * flashing its own error so the caller can simply redirect back.
-     */
-    private function passesHumanCheck(Request $request): bool
-    {
-        $recaptcha = Helpers::get_business_settings('recaptcha');
-
-        if (isset($recaptcha) && $recaptcha['status'] == 1 && !$request->set_default_captcha) {
-            $secretKey = Helpers::get_business_settings('recaptcha')['secret_key'];
-            $response = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-                'secret' => $secretKey,
-                'response' => $request->input('g-recaptcha-response'),
-                'remoteip' => $request->ip(),
-            ]);
-
-            if (!$response->successful()) {
-                Toastr::error(translate('ReCaptcha Failed'));
-                return false;
-            }
-
-            return true;
-        }
-
-        if (strtolower((string) session('six_captcha')) !== strtolower((string) $request->input('custome_recaptcha'))) {
-            Toastr::error(translate('messages.ReCAPTCHA Failed'));
-            return false;
-        }
-
-        return true;
-    }
-
-    private function localeAndDirection(): array
-    {
-        $language = BusinessSetting::where('key', 'system_language')->first();
-        $lang = 'en';
-        $direction = 'ltr';
-
-        if ($language) {
-            foreach (json_decode($language->value, true) ?? [] as $item) {
-                if (!empty($item['default'])) {
-                    $lang = $item['code'];
-                    $direction = $item['direction'];
-                    break;
-                }
-            }
-        }
-
-        return [$lang, $direction];
-    }
 }

@@ -67,13 +67,16 @@ return [
                 'admin-login',
                 'login/admin',
                 'login/admin-*',
+                // The rider portal is not a storefront surface.
+                'rider',
+                'rider/*',
+                'rider-login',
+                'rider-logout',
             ],
         ],
 
         'logistics' => [
-            // No rider portal yet; leaving entry null keeps `/` as-is until
-            // the rider login ships rather than redirecting to a 404.
-            'entry' => null,
+            'entry' => '/rider-login',
             'session_cookie' => 'adf_logistics_session',
             'deny' => [
                 'admin',
@@ -101,6 +104,10 @@ return [
                 'login/admin-*',
                 'login/store',
                 'login/store-*',
+                'rider',
+                'rider/*',
+                'rider-login',
+                'rider-logout',
             ],
         ],
 
@@ -115,6 +122,10 @@ return [
                 'vendor-panel/*',
                 'login/*',
                 'login_submit',
+                'rider',
+                'rider/*',
+                'rider-login',
+                'rider-logout',
             ],
         ],
 
