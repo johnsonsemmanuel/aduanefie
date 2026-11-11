@@ -796,7 +796,22 @@ class OrderController extends Controller
                                 $stock = $product->stock;
                             }
 
-                            if (config('module.' . $product->module->module_type)['stock']) {
+                            $isPreOrderItem = ($product->farming_status ?? 'in_stock') === 'farming'
+                                && (bool) ($product->pre_order_enabled ?? false);
+
+                            if ($isPreOrderItem) {
+                                $order->is_pre_order_flag = true;
+                                if (! empty($product->expected_harvest_date)) {
+                                    $order->pre_order_harvest_date = $product->expected_harvest_date;
+                                }
+                                if ($product->pre_order_limit && $c['quantity'] > (int) $product->pre_order_limit) {
+                                    return response()->json([
+                                        'errors' => [
+                                            ['code' => 'pre_order_limit', 'message' => translate('messages.maximum_cart_quantity_limit_over')]
+                                        ]
+                                    ], 406);
+                                }
+                            } elseif (config('module.' . $product->module->module_type)['stock']) {
                                 if ($c['quantity'] > $stock) {
                                     return response()->json([
                                         'errors' => [
@@ -973,6 +988,14 @@ class OrderController extends Controller
                 ]
             ], 203);
         }
+
+        if (! empty($order->is_pre_order_flag) && \Illuminate\Support\Facades\Schema::hasColumn('orders', 'is_pre_order')) {
+            $order->is_pre_order = true;
+            if (! empty($order->pre_order_harvest_date) && \Illuminate\Support\Facades\Schema::hasColumn('orders', 'expected_harvest_date')) {
+                $order->expected_harvest_date = $order->pre_order_harvest_date;
+            }
+        }
+        unset($order->is_pre_order_flag, $order->pre_order_harvest_date);
 
         try {
             DB::beginTransaction();
@@ -1482,6 +1505,14 @@ class OrderController extends Controller
 
 
         $order->order_amount = $order->order_amount + $order->dm_tips + $order->additional_charge;
+
+        if (! empty($order->is_pre_order_flag) && \Illuminate\Support\Facades\Schema::hasColumn('orders', 'is_pre_order')) {
+            $order->is_pre_order = true;
+            if (! empty($order->pre_order_harvest_date) && \Illuminate\Support\Facades\Schema::hasColumn('orders', 'expected_harvest_date')) {
+                $order->expected_harvest_date = $order->pre_order_harvest_date;
+            }
+        }
+        unset($order->is_pre_order_flag, $order->pre_order_harvest_date);
 
         try {
             DB::beginTransaction();
@@ -2114,5 +2145,44 @@ class OrderController extends Controller
         ];
 
         return response()->json($data, 200);
+    }
+
+    public function get_last_orders(Request $request)
+    {
+        $user = auth('api')->user();
+
+        if (! $user) {
+            return response()->json([], 200);
+        }
+
+        $module_id = $request->header('moduleId') ?? null;
+        $store_id = $request->store_id ?? null;
+
+        $latest_ids = Order::where('user_id', $user->id)
+            ->where('is_guest', 0)
+            ->where('order_status', 'delivered')
+            ->when(isset($module_id), function ($q) use ($module_id) {
+                $q->where('module_id', $module_id);
+            })
+            ->when(isset($store_id), function ($q) use ($store_id) {
+                $q->where('store_id', $store_id);
+            })
+            ->pluck('id');
+
+        if ($latest_ids->isEmpty()) {
+            return response()->json([], 200);
+        }
+
+        $orders = Order::whereIn('id', $latest_ids)
+            ->with([
+                'store:id,name,logo,module_id,zone_id,slug',
+                'details:id,order_id,item_id,quantity,item_campaign_id',
+                'details.item',
+            ])
+            ->latest('id')
+            ->take(10)
+            ->get();
+
+        return response()->json(OrderLogic::format_order_cards($orders), 200);
     }
 }

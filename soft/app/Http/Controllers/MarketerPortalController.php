@@ -40,9 +40,48 @@ class MarketerPortalController extends Controller
 
         $stores = \App\Models\Store::where('marketer_id', $marketer->id)
             ->orderBy('name')
-            ->get(['id', 'name', 'status', 'store_business_model']);
+            ->get();
 
         return view('marketer.dashboard', compact('marketer', 'summary', 'recent', 'payouts', 'stores'));
+    }
+
+    public function verifyStore(Request $request, int $storeId)
+    {
+        $marketer = Auth::guard('admin')->user();
+        $store = \App\Models\Store::where('id', $storeId)
+            ->where('marketer_id', $marketer->id)
+            ->firstOrFail();
+
+        $data = $request->validate([
+            'cultivation_status' => 'nullable|in:active,farming,harvest_ready',
+            'next_harvest_date' => 'nullable|date',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        $storeColumns = \Illuminate\Support\Facades\Schema::getColumnListing('stores');
+        if (in_array('marketer_verified', $storeColumns, true)) {
+            $store->marketer_verified = true;
+            $store->marketer_verified_at = now();
+        }
+        if (! empty($data['cultivation_status']) && in_array('cultivation_status', $storeColumns, true)) {
+            $store->cultivation_status = $data['cultivation_status'];
+        }
+        if (array_key_exists('next_harvest_date', $data) && in_array('next_harvest_date', $storeColumns, true)) {
+            $store->next_harvest_date = $data['next_harvest_date'] ?: null;
+        }
+        if (! empty($data['notes']) && in_array('marketer_verification_notes', $storeColumns, true)) {
+            $store->marketer_verification_notes = $data['notes'];
+        }
+        $store->save();
+
+        if (\Illuminate\Support\Facades\Schema::hasColumn('items', 'marketer_verified')) {
+            \App\Models\Item::where('store_id', $store->id)->update([
+                'marketer_verified' => true,
+                'marketer_verified_at' => now(),
+            ]);
+        }
+
+        return back()->with('status', "Verified active farming status for {$store->name}.");
     }
 
     public function commissions(Request $request)

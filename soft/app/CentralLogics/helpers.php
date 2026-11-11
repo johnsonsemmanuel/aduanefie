@@ -315,6 +315,8 @@ class Helpers
                 $item['allergies_name']= $item?->allergies ?Allergy::whereIn('id',$item?->allergies->pluck('id') )->pluck('allergy') : null;
                 $item['generic_name']= $item?->generic ? GenericName::whereIn('id',$item?->generic->pluck('id') )->pluck('generic_name'): null ;
 
+                self::attachAgroLifecycleFields($item);
+
                 unset($item['nutritions']);
                 unset($item['allergies']);
                 unset($item['generic']);
@@ -401,6 +403,8 @@ class Helpers
             }
 
             $data->store['self_delivery_system'] = (int) $data->store->sub_self_delivery;
+
+            self::attachAgroLifecycleFields($data);
 
             unset($data['pharmacy_item_details']);
             unset($data['store']);
@@ -525,6 +529,8 @@ class Helpers
                 $item['nutritions_name']= $item?->nutritions ? Nutrition::whereIn('id',$item?->nutritions->pluck('id') )->pluck('nutrition') : null;
                 $item['allergies_name']= $item?->allergies ?Allergy::whereIn('id',$item?->allergies->pluck('id') )->pluck('allergy') : null;
                 $item['generic_name']= $item?->generic ? GenericName::whereIn('id',$item?->generic->pluck('id') )->pluck('generic_name'): null ;
+
+                self::attachAgroLifecycleFields($item);
 
                 unset($item['nutritions']);
                 unset($item['allergies']);
@@ -821,6 +827,7 @@ class Helpers
                 }
                 $item['self_delivery_system'] = (int) $item->sub_self_delivery;
                 $item['current_opening_time'] = self::getNextOpeningTime($item['schedules']) ?? 'closed';
+                self::attachStoreAgroFields($item);
                 unset($item['items_count']);
                 unset($item['campaigns_count']);
                 unset($item['storeConfig']);
@@ -851,6 +858,7 @@ class Helpers
             $data['total_items'] = $data['items_count'];
             $data['total_campaigns'] = $data['campaigns_count'];
             $data['current_opening_time'] = self::getNextOpeningTime($data['schedules']) ?? 'closed';
+            self::attachStoreAgroFields($data);
             unset($data['items_count']);
             unset($data['campaigns_count']);
             unset($data['campaigns']);
@@ -859,6 +867,48 @@ class Helpers
         }
 
         return $data;
+    }
+
+    private static function attachAgroLifecycleFields($item): void
+    {
+        if (! is_object($item)) {
+            return;
+        }
+
+        $lifecycle = \App\Services\CropCycleAnalyticsService::analyze($item);
+        foreach ($lifecycle as $key => $value) {
+            $item[$key] = $value;
+        }
+
+        $store = $item->relationLoaded('store') ? $item->store : null;
+        $item['is_backyard'] = (bool) ($item->is_backyard ?? $store?->is_backyard ?? false);
+        $item['marketer_verified'] = (bool) ($item->marketer_verified ?? $store?->marketer_verified ?? false);
+        $item['origin_country'] = $item->origin_country ?? $store?->country ?? 'Ghana';
+        $item['farm_type'] = $store?->farm_type ?? ($item['is_backyard'] ? 'backyard' : 'commercial');
+        $item['cold_chain_required'] = (bool) ($item->cold_chain_required ?? false);
+        $item['minimum_order_qty'] = (int) ($item->minimum_order_qty ?? 1);
+    }
+
+    private static function attachStoreAgroFields($store): void
+    {
+        if (! is_object($store)) {
+            return;
+        }
+
+        $store['farm_type'] = $store->farm_type ?? 'commercial';
+        $store['is_backyard'] = (bool) ($store->is_backyard ?? false);
+        $store['country'] = $store->country ?? 'Ghana';
+        $store['region'] = $store->region ?? null;
+        $store['farm_size_acres'] = $store->farm_size_acres !== null ? (float) $store->farm_size_acres : null;
+        $store['primary_crops'] = $store->primary_crops ?? null;
+        $store['cultivation_status'] = $store->cultivation_status ?? 'active';
+        $store['next_harvest_date'] = $store->next_harvest_date ?? null;
+        $store['marketer_verified'] = (bool) ($store->marketer_verified ?? false);
+        $store['marketer_verified_at'] = $store->marketer_verified_at ?? null;
+        $store['marketer_id'] = $store->marketer_id ?? null;
+        $store['verification_tier'] = $store->verification_tier ?? null;
+        $store['verification_status'] = $store->verification_status ?? 'pending';
+        $store['gold_supplier'] = (bool) ($store->gold_supplier ?? false);
     }
 
     public static function wishlist_data_formatting($data, $multi_data = false)

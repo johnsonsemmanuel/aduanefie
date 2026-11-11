@@ -381,6 +381,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
         Route::group(['prefix' => 'customer', 'middleware' => 'apiGuestCheck'], function () {
             Route::group(['prefix' => 'order'], function () {
                 Route::get('list', 'OrderController@get_order_list');
+                Route::get('last', 'OrderController@get_last_orders');
                 Route::get('running-orders', 'OrderController@get_running_orders');
                 Route::get('details', 'OrderController@get_order_details');
                 Route::post('place', 'OrderController@place_order');
@@ -401,6 +402,13 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
                 Route::post('update', 'CartController@update_cart');
                 Route::delete('remove-item', 'CartController@remove_cart_item');
                 Route::delete('remove', 'CartController@remove_cart');
+            });
+
+            Route::group(['prefix' => 'ai-chat'], function () {
+                Route::post('send', 'AiChatController@send');
+                Route::get('conversations', 'AiChatController@conversations');
+                Route::get('messages', 'AiChatController@messages');
+                Route::delete('conversations/{id}', 'AiChatController@deleteConversation');
             });
 
         });

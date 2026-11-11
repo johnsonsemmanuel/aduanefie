@@ -212,6 +212,53 @@ class VendorLoginController extends Controller
         $store->status = 0;
         $store->store_business_model = 'none';
         $store->pickup_zone_id = $request['pickup_zone_id'] ?? json_encode([]);
+
+        $storeColumns = \Illuminate\Support\Facades\Schema::getColumnListing('stores');
+        $farmType = $request->input('farm_type', 'commercial');
+        if (! in_array($farmType, ['commercial', 'backyard', 'cooperative', 'exporter', 'agribusiness'], true)) {
+            $farmType = 'commercial';
+        }
+        $isBackyard = (bool) ($request->boolean('is_backyard') || $farmType === 'backyard');
+
+        $optionalStoreFields = [
+            'farm_type' => $farmType,
+            'is_backyard' => $isBackyard,
+            'country' => $request->input('country', 'Ghana'),
+            'region' => $request->input('region'),
+            'farm_size_acres' => $request->filled('farm_size_acres') ? (float) $request->input('farm_size_acres') : null,
+            'primary_crops' => $request->input('primary_crops'),
+            'cultivation_status' => in_array($request->input('cultivation_status'), ['active', 'farming', 'harvest_ready'], true)
+                ? $request->input('cultivation_status')
+                : 'active',
+            'next_harvest_date' => $request->input('next_harvest_date') ?: null,
+        ];
+        foreach ($optionalStoreFields as $col => $val) {
+            if (in_array($col, $storeColumns, true)) {
+                $store->{$col} = $val;
+            }
+        }
+
+        if (in_array('marketer_id', $storeColumns, true)) {
+            $marketer = null;
+            if ($request->filled('marketer_id') && is_numeric($request->marketer_id)) {
+                $marketer = Admin::find((int) $request->marketer_id);
+            } elseif ($request->filled('marketer_code')) {
+                $rawCode = trim((string) $request->marketer_code);
+                if (\Illuminate\Support\Facades\Schema::hasColumn('admins', 'marketer_code')) {
+                    $marketer = Admin::whereRaw('LOWER(marketer_code) = ?', [strtolower($rawCode)])->first();
+                }
+                if (! $marketer && preg_match('/^(?:MKT-)?(\d+)$/i', $rawCode, $m)) {
+                    $marketer = Admin::find((int) $m[1]);
+                }
+            }
+            if ($marketer) {
+                $store->marketer_id = $marketer->id;
+                if (in_array('marketer_assigned_at', $storeColumns, true)) {
+                    $store->marketer_assigned_at = now();
+                }
+            }
+        }
+
         $store->save();
         // $store->module->increment('stores_count');
         if(config('module.'.$store->module->module_type)['always_open'])

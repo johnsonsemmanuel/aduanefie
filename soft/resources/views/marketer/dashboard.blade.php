@@ -52,6 +52,10 @@
                 Next commission becomes available on {{ $summary['next_eligible_at'] }}.
             </p>
         @endif
+        <p class="small muted" style="margin-bottom:0;">
+            Your farmer referral code: <strong>{{ $marketer->marketer_code ?? ('MKT-' . $marketer->id) }}</strong>
+            — share this when onboarding commercial farms or backyard growers.
+        </p>
     </div>
 
     <div class="card">
@@ -61,14 +65,30 @@
         @else
             <table>
                 <thead>
-                <tr><th>Store</th><th>Model</th><th>Status</th></tr>
+                <tr><th>Store</th><th>Type</th><th>Cultivation</th><th>Status</th><th>Field verification</th></tr>
                 </thead>
                 <tbody>
                 @foreach($stores as $store)
                     <tr>
                         <td>{{ $store->name }}</td>
-                        <td>{{ $store->store_business_model }}</td>
+                        <td>{{ ($store->is_backyard ?? false) ? 'Backyard Grower' : ucfirst($store->farm_type ?? $store->store_business_model) }}</td>
+                        <td>{{ ucfirst(str_replace('_', ' ', $store->cultivation_status ?? 'active')) }}</td>
                         <td>{{ $store->status ? 'live' : 'not live' }}</td>
+                        <td>
+                            @if($store->marketer_verified ?? false)
+                                <span class="badge paid">Verified</span>
+                            @else
+                                <form method="post" action="{{ route('marketer.stores.verify', $store->id) }}" style="display:inline-flex; gap:6px; align-items:center;">
+                                    @csrf
+                                    <select name="cultivation_status" style="padding:3px 6px; font-size:12px;">
+                                        <option value="farming">Farming</option>
+                                        <option value="harvest_ready">Harvest ready</option>
+                                        <option value="active">Active</option>
+                                    </select>
+                                    <button type="submit" class="btn" style="padding:4px 8px; font-size:12px;">Verify Farming</button>
+                                </form>
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
                 </tbody>

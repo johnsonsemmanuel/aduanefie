@@ -349,6 +349,7 @@ class ItemController extends Controller
         $item->harvest_date = $request->harvest_date ?? null;
         $item->expiry_date = $request->expiry_date ?? null;
         $item->minimum_order_qty = $request->minimum_order_qty ?? null;
+        $this->applyAgroLifecycleFields($item, $request);
         $item->save();
         $item->tags()->sync($tag_ids);
         $item->nutritions()->sync($nutrition_ids);
@@ -1093,6 +1094,7 @@ class ItemController extends Controller
             $item->is_rejected = 0;
         }
 
+        $this->applyAgroLifecycleFields($item, $request);
         $item->save();
         if($request['vendor']->stores[0]->module->module_type == 'pharmacy'){
             DB::table('pharmacy_item_details')
@@ -1284,6 +1286,32 @@ class ItemController extends Controller
         ];
 
         return response()->json($data,200);
+    }
+
+    private function applyAgroLifecycleFields($item, Request $request): void
+    {
+        $cols = \Illuminate\Support\Facades\Schema::getColumnListing('items');
+        $store = $request['vendor']->stores[0] ?? null;
+
+        $candidates = [
+            'origin_country' => $request->input('origin_country', $store?->country ?? 'Ghana'),
+            'farming_status' => in_array($request->input('farming_status'), ['farming', 'harvest_ready', 'in_stock'], true)
+                ? $request->input('farming_status')
+                : 'in_stock',
+            'planting_date' => $request->input('planting_date') ?: null,
+            'expected_harvest_date' => $request->input('expected_harvest_date') ?: null,
+            'crop_cycle_days' => $request->filled('crop_cycle_days') ? (int) $request->input('crop_cycle_days') : null,
+            'pre_order_enabled' => $request->boolean('pre_order_enabled'),
+            'pre_order_limit' => $request->filled('pre_order_limit') ? (int) $request->input('pre_order_limit') : null,
+            'is_backyard' => $request->has('is_backyard') ? $request->boolean('is_backyard') : (bool) ($store?->is_backyard ?? false),
+            'marketer_verified' => (bool) ($store?->marketer_verified ?? false),
+        ];
+
+        foreach ($candidates as $col => $value) {
+            if (in_array($col, $cols, true)) {
+                $item->{$col} = $value;
+            }
+        }
     }
 
 }

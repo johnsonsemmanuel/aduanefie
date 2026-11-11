@@ -33,6 +33,64 @@ class OrderLogic
         return Helpers::order_data_formatting(Order::with(['details', 'delivery_man.rating'])->where(['id' => $order_id])->first(), false);
     }
 
+    public static function format_order_card($order, int $previewLimit = 3): array
+    {
+        $details = collect($order->details ?? []);
+        $items = $details
+            ->map(function ($detail) {
+                if (! $detail->item) {
+                    return null;
+                }
+
+                return [
+                    'id' => (int) $detail->item->id,
+                    'name' => $detail->item->name,
+                    'image_full_url' => $detail->item->image_full_url,
+                    'quantity' => (int) $detail->quantity,
+                ];
+            })
+            ->filter()
+            ->values();
+
+        $preview = $items->take(max(0, $previewLimit))->values();
+        $extra = max(0, $items->count() - $preview->count());
+        $canReorder = $items->isNotEmpty() && $details->every(function ($detail) {
+            if (! $detail->item || (int) $detail->item->status !== 1) {
+                return false;
+            }
+            if ((bool) ($detail->item->pre_order_enabled ?? false)) {
+                return true;
+            }
+            return (int) ($detail->item->stock ?? 1) > 0;
+        });
+
+        return [
+            'order_id' => (int) $order->id,
+            'module_id' => (int) $order->module_id,
+            'order_amount' => (float) $order->order_amount,
+            'created_at' => $order->created_at,
+            'store' => [
+                'id' => (int) ($order->store?->id ?? 0),
+                'module_id' => (int) ($order->store?->module_id ?? 0),
+                'name' => $order->store?->name,
+                'slug' => $order->store?->slug,
+                'logo_full_url' => $order->store?->logo_full_url,
+            ],
+            'items_preview' => $preview,
+            'extra_items_count' => $extra,
+            'item_count' => $items->count(),
+            'can_reorder' => $canReorder,
+        ];
+    }
+
+    public static function format_order_cards($orders, int $previewLimit = 3): array
+    {
+        return collect($orders)
+            ->map(fn ($order) => self::format_order_card($order, $previewLimit))
+            ->values()
+            ->all();
+    }
+
     public static function updated_order_calculation($order)
     {
         return true;
