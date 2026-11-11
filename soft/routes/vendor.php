@@ -44,7 +44,9 @@ Route::group(['namespace' => 'Vendor', 'as' => 'vendor.'], function () {
             Route::get('/subscriber-detail',  [SubscriptionController::class, 'subscriberDetail'])->name('subscriberDetail');
 
             Route::get('/invoice/{id}',  [SubscriptionController::class, 'invoice'])->name('invoice');
-            Route::get('/subscriber-list',  [SubscriptionController::class, 'subscriberList'])->name('subscriberList');
+            // No subscriber-list route: vendors are subscribers, not the party
+            // that lists them, and SubscriptionController has no such method.
+            // The admin panel owns that page.
             Route::post('/cancel-subscription/{id}',  [SubscriptionController::class, 'cancelSubscription'])->name('cancelSubscription');
             Route::post('/switch-to-commission/{id}',  [SubscriptionController::class, 'switchToCommission'])->name('switchToCommission');
             Route::get('/package-view/{id}/{store_id}',  [SubscriptionController::class, 'packageView'])->name('packageView');
@@ -280,12 +282,9 @@ Route::group(['namespace' => 'Vendor', 'as' => 'vendor.'], function () {
             Route::get('disbursement-report-export/{type}', 'ReportController@disbursement_report_export')->name('disbursement-report-export');
         });
 
-        //Trade Requests (RFQ) - Vendor
-        Route::group(['prefix' => 'trade-requests', 'as' => 'trade-requests.'], function () {
-            Route::get('received', '\\App\\Http\\Controllers\\TradeRequestController@received')->name('received');
-            Route::post('{tradeRequest}/quote', '\\App\\Http\\Controllers\\TradeRequestController@quote')->name('quote');
-            Route::post('documents/upload', '\\App\\Http\\Controllers\\TradeRequestController@uploadDocument')->name('documents.upload');
-            Route::get('documents/{tradeRequestId}', '\\App\\Http\\Controllers\\TradeRequestController@documents')->name('documents.list');
-        });
+        // Trade requests (RFQ/escrow) are intentionally absent. The trade_*
+        // tables do not exist and the product decision is catalogue-only until
+        // the RFQ/escrow security review closes. Keeping these routes produced
+        // a 500 on a table that was never created.
     });
 });

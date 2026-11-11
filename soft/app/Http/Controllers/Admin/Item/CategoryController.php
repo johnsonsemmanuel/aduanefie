@@ -65,7 +65,13 @@ class CategoryController extends BaseController
 
         $language = getWebConfig('language');
         $defaultLang = str_replace('_', '-', app()->getLocale());
-        return view($this->categoryService->getViewByPosition($request['position']), compact('categories','language','defaultLang','mainCategories'));
+        // 'position' is an optional query parameter. The add page has no
+        // position in its URL, so treat a missing value as 0 (top-level
+        // categories) instead of passing null into an int parameter.
+        return view(
+            $this->categoryService->getViewByPosition((int) ($request['position'] ?? 0)),
+            compact('categories','language','defaultLang','mainCategories')
+        );
     }
 
     public function add(CategoryAddRequest $request): RedirectResponse

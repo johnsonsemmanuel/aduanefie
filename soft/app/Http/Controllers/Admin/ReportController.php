@@ -39,13 +39,47 @@ use Illuminate\Support\Facades\Config;
 
 class ReportController extends Controller
 {
-    public function order_index()
+    public function order_index(Request $request)
     {
         if (session()->has('from_date') == false) {
             session()->put('from_date', date('Y-m-01'));
             session()->put('to_date', date('Y-m-30'));
         }
-        return view('admin-views.report.order-index');
+
+        // 'order' is the legacy name for the order report; the page itself is
+        // order-report. Redirect so old bookmarks do not 500 on a view that
+        // does not exist, and keep the transactions section on its own prefix.
+        return redirect()->route(
+            $request->is('admin/transactions/*')
+                ? 'admin.transactions.report.order-report'
+                : 'admin.report.order-report'
+        );
+    }
+
+    public function earning_index(Request $request)
+    {
+        // There is no standalone earning page. Earnings are shown on the
+        // day-wise transaction report, which is what the sidebar links to.
+        return redirect()->route(
+            $request->is('admin/transactions/*')
+                ? 'admin.transactions.report.day-wise-report'
+                : 'admin.report.transaction-report'
+        );
+    }
+
+    /**
+     * The limited/low stock report. The routes still carry the older
+     * 'stock-report' name, so delegate rather than keep two copies of the
+     * query and risk them drifting apart.
+     */
+    public function stock_report(Request $request)
+    {
+        return $this->low_stock_report($request);
+    }
+
+    public function stock_search(Request $request)
+    {
+        return $this->low_stock_search($request);
     }
 
     public function day_wise_report(Request $request)
