@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use App\Models\ExternalConfiguration;
-use App\Models\Module;
 use App\Models\Vendor;
 use App\Models\DataSetting;
 use Illuminate\Http\Request;
+use App\Services\AdminMfaService;
 use App\CentralLogics\Helpers;
 use App\Models\VendorEmployee;
 use Illuminate\Support\Carbon;
@@ -98,6 +98,20 @@ class LoginController extends Controller
     {
         $auth = ($role == 'admin_employee' ? 'admin' : $role);
         if (auth($auth)->attempt(['email' => $email, 'password' => $password], $remember)) {
+
+            // Both admin login tabs land on the same guard, so this branch is
+            // the only place the legacy /login/<tab> entry can be gated. The
+            // password-only session is torn down by begin(); 'remember' is
+            // carried in the pending marker and applied after the challenge.
+            if ($auth == 'admin') {
+                $mode = app(AdminMfaService::class)
+                    ->begin(request(), auth('admin')->user(), (bool) $remember);
+
+                return $mode === AdminMfaService::MODE_SETUP
+                    ? 'admin_mfa_setup'
+                    : 'admin_mfa';
+            }
+
             if ($remember) {
                 Cookie::queue('role', $role, 120);
                 Cookie::queue('e_token', Crypt::encryptString($email), 120);
@@ -129,15 +143,17 @@ class LoginController extends Controller
         if ($drivemondBaseUrl != null && $drivemondToken != null && $systemSelfToken != null) {
             $user = Admin::where('role_id', 1)->first();
             if (isset($user)) {
-                if (Auth::guard("admin")->loginUsingId($user->id)) {
-                    $admin = Auth::guard("admin")->user();
-                    $admin->is_logged_in = 1;
-                    $admin->save();
-                    return redirect()->route('admin.dashboard');
-                }
+                // DriveMond SSO would create a master-admin session with no
+                // password, and therefore with no second factor. Under the
+                // mandatory-MFA policy that must not grant panel access. The
+                // bridge now stops at the password step; re-enabling it needs a
+                // second-factor handshake in the DriveMond flow itself.
+                return redirect()->route('admin.login')->withErrors([
+                    'email' => 'Single sign-on cannot complete two-factor verification. Sign in with your password.',
+                ]);
             }
         }
-        return redirect()->route('login');
+        return redirect()->route('admin.login');
     }
 
 
@@ -228,17 +244,15 @@ class LoginController extends Controller
 
         $data = $this->login_attemp($request->role, $request->email, $request->password, $request->remember);
 
-        if ($data == 'admin') {
-            $admin = Admin::find(auth('admin')->id());
-            $admin->is_logged_in = 1;
-            $admin->save();
-            $modules = Module::Active()->get();
-            if (isset($modules) && ($modules->count() > 0)) {
-
-                return redirect()->route('admin.dashboard');
-            }
-            return redirect()->route('admin.business-settings.business-setup');
+        if ($data === 'admin_mfa' || $data === 'admin_mfa_setup') {
+            return redirect()->route(
+                $data === 'admin_mfa_setup' ? 'admin.mfa.setup' : 'admin.mfa.challenge'
+            );
         }
+
+        // There is deliberately no '$data == admin' branch here: both admin
+        // tabs return admin_mfa* above. Re-entering the panel without the
+        // second factor is not a code path that exists.
         if ($data == 'vendor') {
             if ($request->role === 'vendor_employee') {
                 $employee = VendorEmployee::where('email', $request->email)->first();
@@ -474,6 +488,10 @@ class LoginController extends Controller
                 $user_link = Helpers::get_login_url('admin_employee_login_url');
             }
             auth()?->guard('admin')?->logout();
+            session()->forget([
+                AdminMfaService::SESSION_PENDING,
+                AdminMfaService::SESSION_VERIFIED,
+            ]);
         }
         return redirect()->route('login', [$user_link]);
     }

@@ -111,6 +111,16 @@ class RouteServiceProvider extends ServiceProvider
         RateLimiter::for('rider-login', function (Request $request) {
             return Limit::perMinute(5)->by($this->loginThrottleKey($request, 'phone'));
         });
+
+        // The second-factor challenge is a 6-digit space. Key on the pending
+        // admin id (not just the IP) so one account cannot be brute-forced and
+        // one shared office IP cannot lock everyone else out.
+        RateLimiter::for('admin-mfa', function (Request $request) {
+            $pending = $request->session()->get(\App\Services\AdminMfaService::SESSION_PENDING);
+            $id = is_array($pending) ? (string) ($pending['id'] ?? 'guest') : 'guest';
+
+            return Limit::perMinute(6)->by('admin-mfa|' . $id . '|' . $request->ip());
+        });
     }
 
     private function loginThrottleKey(Request $request, string $field = 'email'): string

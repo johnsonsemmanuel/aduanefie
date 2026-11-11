@@ -22,7 +22,12 @@ class AdminMiddleware
             auth()->guard('admin')->logout();
         }
         if (Auth::guard('admin')->check()) {
-            return $next($request);
+            // Mandatory second factor, enforced from the one middleware every
+            // admin route already uses. There are two admin route files
+            // (routes/admin.php and routes/admin/routes.php); putting the check
+            // here rather than in each group means a third file cannot be
+            // added later without the gate. AdminMfa holds the rules.
+            return app(AdminMfa::class)->handle($request, $next);
         }
         return redirect()->route('home');
         // return redirect()->route('login');

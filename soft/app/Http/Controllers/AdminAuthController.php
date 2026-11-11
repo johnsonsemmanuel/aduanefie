@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Concerns\VerifiesHuman;
 use App\Models\Admin;
-use App\Models\Module;
 use Gregwar\Captcha\CaptchaBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
@@ -26,7 +25,14 @@ class AdminAuthController extends Controller
     public function showLogin()
     {
         if (Auth::guard('admin')->check()) {
-            return redirect()->route('admin.dashboard');
+            // Only a completed login counts. A session that exists but has not
+            // passed the second factor is discarded rather than redirected into
+            // the panel, where the admin-mfa middleware would bounce it anyway.
+            if (app(\App\Services\AdminMfaService::class)->isVerifiedFor(Auth::guard('admin')->user())) {
+                return redirect()->route('admin.dashboard');
+            }
+
+            Auth::guard('admin')->logout();
         }
 
         [$lang, $direction] = $this->localeAndDirection();
@@ -63,24 +69,26 @@ class AdminAuthController extends Controller
 
         $admin = Admin::where('email', $request->email)->where('role_id', 1)->first();
 
-        if (!$admin || !Auth::guard('admin')->attempt(
-            ['email' => $request->email, 'password' => $request->password],
-            $request->boolean('remember')
-        )) {
+        if (!$admin || !Auth::guard('admin')->attempt([
+            'email' => $request->email,
+            'password' => $request->password,
+        ], false)) {
             return back()
                 ->withInput($request->only('email', 'remember'))
                 ->withErrors(['email' => 'Credentials does not match.']);
         }
 
-        $admin->is_logged_in = 1;
-        $admin->save();
+        // Password accepted, but that is not a login. begin() destroys the
+        // guard session and sends the admin to the second-factor screen.
+        // "Remember me" is not offered here; the challenge sets it on success.
+        $mode = app(\App\Services\AdminMfaService::class)
+            ->begin($request, $admin, $request->boolean('remember'));
 
-        $modules = Module::Active()->get();
-        if ($modules->count() > 0) {
-            return redirect()->route('admin.dashboard');
-        }
-
-        return redirect()->route('admin.business-settings.business-setup');
+        return redirect()->route(
+            $mode === \App\Services\AdminMfaService::MODE_SETUP
+                ? 'admin.mfa.setup'
+                : 'admin.mfa.challenge'
+        );
     }
 
 }

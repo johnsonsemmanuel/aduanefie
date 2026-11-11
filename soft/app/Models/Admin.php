@@ -58,8 +58,40 @@ class Admin extends Authenticatable
      */
     protected $casts = [
         'is_logged_in' => 'boolean',
+        'two_factor_secret' => 'encrypted',
+        'two_factor_recovery_codes' => 'encrypted:array',
+        'two_factor_confirmed_at' => 'datetime',
+        'two_factor_last_step' => 'integer',
     ];
+
+    /**
+     * Never let the second-factor material leave the server through a JSON
+     * serialisation of the model. recovery codes are stored hashed, but the
+     * TOTP secret is reversible and must not appear in an API payload.
+     */
+    protected $hidden = [
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'two_factor_last_step',
+    ];
+
     protected $appends = ['image_full_url'];
+
+    public function hasConfirmedTwoFactor(): bool
+    {
+        if ($this->two_factor_confirmed_at === null) {
+            return false;
+        }
+
+        try {
+            return !empty($this->two_factor_secret);
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $exception) {
+            // APP_KEY rotated (or the column was tampered with). Treat it as
+            // "not enrolled" so the next login re-enrols instead of 500ing on
+            // every request. This fails closed to enrolment, not to access.
+            return false;
+        }
+    }
 
     /**
      * @return BelongsTo

@@ -7578,4 +7578,5 @@ Smartly or Earn. ',
   'The lng field is required.' => 'The lng field is required.',
   'The selected list type is invalid.' => 'The selected list type is invalid.',
   'Referrer' => 'Referrer',
+  'Two-factor verification is required. Please sign in again.' => 'Two-factor verification is required. Please sign in again.',
 );

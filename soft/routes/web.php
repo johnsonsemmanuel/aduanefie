@@ -50,6 +50,20 @@ Route::post('admin-login', 'AdminAuthController@login')
     ->name('admin.login.submit')
     ->middleware('throttle:admin-login');
 
+// Second factor. These run before the panel is reachable and are deliberately
+// outside the panel's own 'admin' middleware group: the admin is not signed in
+// until the challenge is passed. Identity comes from the pending marker that
+// AdminMfaService writes only after a password has been verified.
+Route::get('admin-mfa', 'AdminMfaController@showChallenge')->name('admin.mfa.challenge');
+Route::post('admin-mfa', 'AdminMfaController@verify')
+    ->name('admin.mfa.verify')
+    ->middleware('throttle:admin-mfa');
+Route::get('admin-mfa/setup', 'AdminMfaController@showSetup')->name('admin.mfa.setup');
+Route::post('admin-mfa/setup', 'AdminMfaController@confirmSetup')
+    ->name('admin.mfa.setup.submit')
+    ->middleware('throttle:admin-mfa');
+Route::get('admin-mfa/recovery-codes', 'AdminMfaController@recoveryCodes')->name('admin.mfa.recovery-codes');
+
 // Rider portal on logistics.aduanefie.com. Login is phone + password, matching
 // the mobile API. Status updates are intentionally absent: see
 // RiderDashboardController for why.

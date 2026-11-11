@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
 
-    Route::group(['middleware' => ['admin', 'current-module']], function () {
+    Route::group(['middleware' => ['admin', 'admin-mfa', 'current-module']], function () {
         Route::get('/test', function () {
         });
         // Route::get('drivemond-panel', 'DriveMondController@drivemondExternalLogin')->name('drivemond-panel');
