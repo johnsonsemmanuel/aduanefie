@@ -210,12 +210,13 @@ join the update (lock was stale at v6.4.0 while root required `^7.0`) and was th
   problem, not a correctness one, and is the main reason to colocate the app with the DB in eu-west-1 and
   to cache/denormalise the worst pages before launch.
 
-### 4.4 Known failures that are **not** caused by the port
+### 4.4 Known failures that were **not** caused by the port
 
-These 6 routes fail identically on MySQL and Postgres, so they are pre-existing code/view drift, not
-Postgres regressions:
+These 6 routes failed identically on MySQL and Postgres, so they were pre-existing code/view drift, not
+Postgres regressions. **Fixed on MySQL in `82edbae`** — see `docs/six-failing-routes-fix.md` for the
+cause, the change and the 18-check HTTP verification. The table is kept as the original finding.
 
-| Route | Failure |
+| Route | Failure (before the fix) |
 |---|---|
 | `/admin/report/order` | `View [admin-views.report.order-index] not found` |
 | `/admin/report/earning` | view `earning_index` missing |

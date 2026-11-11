@@ -120,7 +120,7 @@ What exists in Laravel but is not live:
 - Migrations: `trade_requests`, `trade_request_quotes`, `trade_corridors`, `trade_documents`, `trade_contracts`, `trade_blocs`, `trade_assurances`.
 - Seeders: `TradeBlocSeeder`, `TradeCorridorSeeder`, `AgriTradePositioningSeeder`.
 
-But: **none of the `trade_*` tables exist in the live MySQL snapshot.** That is why `/vendor-panel/trade-requests/received` fails with `relation "trade_requests" does not exist` — one of the 6 known pre-existing failing routes. So the trade surface is code without a database and copy without a backend.
+But: **none of the `trade_*` tables exist in the live MySQL snapshot.** That is why `/vendor-panel/trade-requests/received` failed with `relation "trade_requests" does not exist` — one of the 6 known pre-existing failing routes. The vendor-side routes were removed in `82edbae`; the customer-side routes remain (see §8.2). So the trade surface is code without a database and copy without a backend.
 
 ---
 
@@ -319,11 +319,17 @@ Touches the shared login controller — plan accordingly:
 
 ### 8.2 Still open
 
-1. Marketer payout rails per country, and the holding period length.
-2. Whether `/trade` stays catalogue-only at launch or gets the corridor flow.
-3. Build on the current MySQL host now, or after the Supabase/R2 cutover.
-4. The 6 pre-existing failing routes: fix before or after cutover (`/admin/report/order`, `/admin/report/earning`, `/admin/report/stock-report` are launch-critical).
+1. Marketer payout rails per country (mobile money, per country). **Decided:** commission
+   becomes payable **14 days after delivery**.
+2. Whether `/trade` stays catalogue-only at launch or gets the corridor flow. **Decided:**
+   catalogue-only for now; no RFQ or escrow money path until that security review closes.
+3. Build on the current MySQL host now, or after the Supabase/R2 cutover. **Decided:** build
+   on MySQL first, then port.
+4. ~~The 6 pre-existing failing routes~~ — fixed in `82edbae` on MySQL, before the marketer
+   module. See `docs/six-failing-routes-fix.md`. The customer-side trade routes in
+   `routes/web.php` still reference the absent `trade_*` tables and are still open (item 2).
 5. `git init` in the workspace root before any of this — there is no rollback today.
+   **Done** — the repo exists and tracks `soft/` and `docs/`.
 
 ---
 
