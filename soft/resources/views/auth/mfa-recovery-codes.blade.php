@@ -20,7 +20,7 @@
         reset two-factor authentication for your account.
     </p>
 
-    <a class="mfa-btn" style="text-align:center; text-decoration:none;" href="{{ route('admin.dashboard') }}">
+    <a class="mfa-btn" style="text-align:center; text-decoration:none;" href="{{ $mfaRoutes['dashboard'] ?? route('admin.dashboard') }}">
         I have saved these codes
     </a>
 @endsection

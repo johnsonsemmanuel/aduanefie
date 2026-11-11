@@ -64,6 +64,12 @@ class RouteServiceProvider extends ServiceProvider
                 ->namespace($this->namespace)
                 ->group(base_path('routes/vendor.php'));
 
+            // Remote-marketer portal. No prefix: its own paths are
+            // /marketer-login, /marketer-mfa and /marketer/*.
+            Route::middleware('web')
+                ->namespace($this->namespace)
+                ->group(base_path('routes/marketer.php'));
+
             Route::prefix('api/v1')
                 ->middleware('api')
                 ->namespace($this->namespace)
@@ -103,6 +109,13 @@ class RouteServiceProvider extends ServiceProvider
 
         RateLimiter::for('web-login', function (Request $request) {
             return Limit::perMinute(10)->by($this->loginThrottleKey($request));
+        });
+
+        // Marketer portal login is email based, like the admin one, and gets
+        // the same tight limit. The portal is a door into admin accounts, so it
+        // must not be easier to brute-force than /admin-login.
+        RateLimiter::for('marketer-login', function (Request $request) {
+            return Limit::perMinute(5)->by('marketer|' . $this->loginThrottleKey($request));
         });
 
         // Riders sign in by phone, so the key has to read the phone field or

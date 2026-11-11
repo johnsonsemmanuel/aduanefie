@@ -4,8 +4,8 @@
 @section('heading', 'Set up two-factor authentication')
 @section('subheading')
     Your account has not been enrolled yet. Add the key below to your authenticator app, then
-    enter the current 6-digit code to finish signing in. You cannot reach the admin panel
-    until this is done.
+    enter the current 6-digit code to finish signing in. You cannot reach the
+    {{ $panelLabel ?? 'admin panel' }} until this is done.
 @endsection
 
 @section('content')
@@ -24,7 +24,7 @@
         key above. Time-based codes require the clock on your device to be correct.
     </p>
 
-    <form method="post" action="{{ route('admin.mfa.setup.submit') }}" autocomplete="off" style="margin-top:22px;">
+    <form method="post" action="{{ $mfaRoutes['setup_submit'] ?? route('admin.mfa.setup.submit') }}" autocomplete="off" style="margin-top:22px;">
         @csrf
         <label class="mfa-label" for="code">Code from your authenticator app</label>
         <input class="mfa-input" id="code" name="code" type="text" inputmode="numeric"
@@ -34,5 +34,5 @@
         <button class="mfa-btn" type="submit">Confirm and continue</button>
     </form>
 
-    <a class="mfa-back" href="{{ route('admin.login') }}">Back to sign in</a>
+    <a class="mfa-back" href="{{ $mfaRoutes['login'] ?? route('admin.login') }}">Back to sign in</a>
 @endsection

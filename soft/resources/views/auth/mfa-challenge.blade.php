@@ -8,7 +8,7 @@
 @endsection
 
 @section('content')
-    <form method="post" action="{{ route('admin.mfa.verify') }}" autocomplete="off">
+    <form method="post" action="{{ $mfaRoutes['verify'] ?? route('admin.mfa.verify') }}" autocomplete="off">
         @csrf
         <label class="mfa-label" for="code">Authentication code</label>
         <input class="mfa-input" id="code" name="code" type="text" inputmode="numeric"
@@ -23,5 +23,5 @@
         Each recovery code works once.
     </p>
 
-    <a class="mfa-back" href="{{ route('admin.login') }}">Back to sign in</a>
+    <a class="mfa-back" href="{{ $mfaRoutes['login'] ?? route('admin.login') }}">Back to sign in</a>
 @endsection

@@ -143,6 +143,7 @@ class Store extends Model
         'verification_status',
         'verification_documents',
         'verified_at',
+        'marketer_id',
     ];
 
     /**
@@ -384,6 +385,19 @@ class Store extends Model
     public function vendor(): BelongsTo
     {
         return $this->belongsTo(Vendor::class);
+    }
+
+    /**
+     * The remote marketer credited with this store's order commissions.
+     */
+    public function marketer(): BelongsTo
+    {
+        return $this->belongsTo(Admin::class, 'marketer_id');
+    }
+
+    public function marketerCommissions(): HasMany
+    {
+        return $this->hasMany(MarketerCommission::class, 'store_id');
     }
 
     /**

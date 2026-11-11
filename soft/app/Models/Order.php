@@ -166,6 +166,15 @@ class Order extends Model
         return $this->hasOne(OrderTransaction::class);
     }
 
+    /**
+     * The marketer commission accrued for this order, if any. Unique per order,
+     * so accrual can be retried without double-crediting.
+     */
+    public function marketerCommission()
+    {
+        return $this->hasOne(MarketerCommission::class, 'order_id');
+    }
+
     public function parcel_category()
     {
         return $this->belongsTo(ParcelCategory::class);
@@ -322,6 +331,22 @@ class Order extends Model
         static::addGlobalScope(new ZoneScope);
         static::addGlobalScope('storage', function ($builder) {
             $builder->with('storage');
+        });
+
+        // Stamp the delivery time whenever an order becomes delivered.
+        //
+        // This used to be set only by the POS controller, so orders delivered
+        // through the rider API, the vendor panel or the admin panel left
+        // `delivered` null. The dashboard "delivered today" figures and the
+        // marketer holding period both read this column, so it has to be set in
+        // one place that every status path goes through rather than in each of
+        // the five controllers that can mark an order delivered.
+        static::saving(function (Order $order) {
+            if ($order->order_status === 'delivered'
+                && empty($order->delivered)
+                && $order->isDirty('order_status')) {
+                $order->delivered = now();
+            }
         });
     }
     public function storage()

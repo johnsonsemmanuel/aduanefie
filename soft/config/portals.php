@@ -74,6 +74,12 @@ return [
                 'rider/*',
                 'rider-login',
                 'rider-logout',
+                // The marketer portal is not a storefront surface.
+                'marketer',
+                'marketer/*',
+                'marketer-login',
+                'marketer-mfa',
+                'marketer-mfa/*',
             ],
         ],
 
@@ -92,11 +98,16 @@ return [
                 'login/admin-*',
                 'login/store',
                 'login/store-*',
+                'marketer',
+                'marketer/*',
+                'marketer-login',
+                'marketer-mfa',
+                'marketer-mfa/*',
             ],
         ],
 
         'partners' => [
-            'entry' => null,
+            'entry' => '/marketer-login',
             'session_cookie' => 'adf_partners_session',
             'deny' => [
                 'admin',
@@ -134,6 +145,11 @@ return [
                 'rider/*',
                 'rider-login',
                 'rider-logout',
+                'marketer',
+                'marketer/*',
+                'marketer-login',
+                'marketer-mfa',
+                'marketer-mfa/*',
             ],
         ],
 

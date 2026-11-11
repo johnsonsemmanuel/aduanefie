@@ -5,6 +5,7 @@ namespace App\Models;
 use App\CentralLogics\Helpers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -107,6 +108,42 @@ class Admin extends Authenticatable
     public function zones(): BelongsTo
     {
         return $this->belongsTo(Zone::class,'zone_id');
+    }
+
+    /**
+     * Stores this admin owns as a remote marketer.
+     */
+    public function marketerStores(): HasMany
+    {
+        return $this->hasMany(Store::class, 'marketer_id');
+    }
+
+    public function marketerCommissions(): HasMany
+    {
+        return $this->hasMany(MarketerCommission::class, 'marketer_id');
+    }
+
+    public function marketerPayouts(): HasMany
+    {
+        return $this->hasMany(MarketerPayout::class, 'marketer_id');
+    }
+
+    public function isMarketer(): bool
+    {
+        return (int) $this->role_id === (int) config('marketer.role_id', 5);
+    }
+
+    /**
+     * Share of the platform commission this marketer earns, as a percentage.
+     * A per-marketer value wins over the configured default.
+     */
+    public function marketerCommissionRate(): float
+    {
+        if ($this->marketer_commission_rate !== null && $this->marketer_commission_rate !== '') {
+            return (float) $this->marketer_commission_rate;
+        }
+
+        return (float) config('marketer.default_rate', 20);
     }
     public function getImageFullUrlAttribute(){
         $value = $this->image;
