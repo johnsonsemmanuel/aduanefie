@@ -403,6 +403,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
 
             Route::group(['prefix'=>'cart'], function() {
                 Route::get('list', 'CartController@get_carts');
+                Route::get('discount-eligibility', 'CartController@discount_eligibility');
                 Route::post('add', 'CartController@add_to_cart');
                 Route::post('update', 'CartController@update_cart');
                 Route::delete('remove-item', 'CartController@remove_cart_item');
@@ -479,6 +480,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
             Route::get('featured/items', 'CategoryController@get_featured_category_products');
             Route::get('popular', 'CategoryController@get_popular_category_list');
         });
+        Route::get('store-categories/items', 'ItemController@get_store_categories_items');
 
         Route::group(['prefix' => 'common-condition'], function () {
             Route::get('/', 'CommonConditionController@get_conditions');

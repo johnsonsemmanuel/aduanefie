@@ -257,4 +257,67 @@ class CartController extends Controller
 		});
         return response()->json($carts, 200);
     }
+
+    public function discount_eligibility(Request $request)
+    {
+        $storeId = $request->query('store_id');
+        $store = null;
+        if ($storeId) {
+            $store = is_numeric($storeId)
+                ? \App\Models\Store::with('discount')->find($storeId)
+                : \App\Models\Store::with('discount')->where('slug', $storeId)->first();
+        }
+
+        $storeDiscount = $store ? Helpers::get_store_discount($store) : null;
+        if (!$storeDiscount || (float) ($storeDiscount['discount'] ?? 0) <= 0) {
+            return response()->json([
+                'source' => null,
+                'percentage' => 0,
+                'min_purchase' => 0,
+                'max_discount' => null,
+                'qualifying_amount' => 0,
+                'shortfall' => 0,
+                'is_qualified' => false,
+                'discount_amount' => 0,
+            ], 200);
+        }
+
+        $user_id = $request->user ? $request->user->id : $request->query('guest_id');
+        $is_guest = $request->user ? 0 : 1;
+        $qualifyingAmount = 0.0;
+
+        if ($user_id) {
+            $carts = Cart::where('user_id', $user_id)
+                ->where('is_guest', $is_guest)
+                ->where('item_type', 'App\\Models\\Item')
+                ->get();
+
+            foreach ($carts as $cart) {
+                if ($cart->item && (int) $cart->item->store_id === (int) $store->id) {
+                    $qualifyingAmount += (float) $cart->price * (int) $cart->quantity;
+                }
+            }
+        }
+
+        $percentage = (float) ($storeDiscount['discount'] ?? 0);
+        $minPurchase = (float) ($storeDiscount['min_purchase'] ?? 0);
+        $maxDiscount = $storeDiscount['max_discount'] !== null ? (float) $storeDiscount['max_discount'] : null;
+        $shortfall = max(0.0, $minPurchase - $qualifyingAmount);
+        $isQualified = $minPurchase <= 0 || $qualifyingAmount >= $minPurchase;
+        $discountAmount = $isQualified ? round($qualifyingAmount * ($percentage / 100), 2) : 0.0;
+        if ($maxDiscount !== null && $maxDiscount > 0 && $discountAmount > $maxDiscount) {
+            $discountAmount = $maxDiscount;
+        }
+
+        return response()->json([
+            'source' => 'store_discount',
+            'percentage' => $percentage,
+            'min_purchase' => $minPurchase,
+            'max_discount' => $maxDiscount,
+            'qualifying_amount' => round($qualifyingAmount, 2),
+            'shortfall' => round($shortfall, 2),
+            'is_qualified' => $isQualified,
+            'discount_amount' => $discountAmount,
+        ], 200);
+    }
 }
