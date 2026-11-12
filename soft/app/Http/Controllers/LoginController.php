@@ -23,9 +23,9 @@ namespace App\Http\Controllers;
     use Illuminate\Support\Facades\Mail;
     use App\Mail\PasswordResetRequestMail;
     use Illuminate\Support\Facades\Cookie;
-use Modules\Gateways\Traits\SmsGateway;
-use Illuminate\Validation\Rules\Password;
-use App\Models\Cart;
+    use Modules\Gateways\Traits\SmsGateway;
+    use Illuminate\Validation\Rules\Password;
+    use App\Models\Cart;
 
 class LoginController extends Controller
 {
