@@ -150,6 +150,17 @@ class LoginController extends Controller
     }
 
 
+    /**
+     * Check a password without starting a session.
+     *
+     * Uses the same guard/provider the real login below uses, so a password
+     * accepted here is exactly the password `login_attemp()` will accept.
+     */
+    private function credentialsAreValid(string $guard, $user, string $password): bool
+    {
+        return auth($guard)->getProvider()->validateCredentials($user, ['password' => $password]);
+    }
+
     public function submit(Request $request)
     {
         $request->validate([
@@ -174,6 +185,15 @@ class LoginController extends Controller
         }
         elseif ($request->role == 'vendor') {
             $vendor = Vendor::where('email', $request->email)->first();
+
+            // Verify the password before any account-state gate. The gates
+            // below must never tell an unauthenticated caller whether an
+            // email exists or what state its store is in.
+            if (!$vendor || !$this->credentialsAreValid('vendor', $vendor, $request->password)) {
+                return redirect()->back()->withInput($request->only('email', 'remember'))
+                    ->withErrors(['Credentials does not match.']);
+            }
+
             if ($vendor) {
                 if($vendor?->stores[0]?->module?->module_type == 'rental'){
                     if(!addon_published_status('Rental')){
@@ -200,6 +220,13 @@ class LoginController extends Controller
             }
         } elseif ($request->role == 'vendor_employee') {
             $employee = VendorEmployee::where('email', $request->email)->first();
+
+            // Same ordering rule as the owner branch above.
+            if (!$employee || !$this->credentialsAreValid('vendor_employee', $employee, $request->password)) {
+                return redirect()->back()->withInput($request->only('email', 'remember'))
+                    ->withErrors(['Credentials does not match.']);
+            }
+
                 if($employee?->store?->module?->module_type == 'rental'){
                     if(!addon_published_status('Rental')){
                         return redirect()->back()->withInput($request->only('email', 'remember'))
