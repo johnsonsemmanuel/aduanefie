@@ -68,7 +68,13 @@
                 <div class="nav--tabs">
                     <div class="owl-theme owl-carousel" id="sync2">
                         @foreach ($modules as $key => $item)
-                            <x-ui.category-chip name="{{ $item->module_name }}" slug="{{ $item->slug ?? $item->id }}" active="{{ $key === 0 ? 'true' : 'false' }}" image="{{ $item['icon_full_url'] ?? null }}" />
+                            <div class="item">
+                                <img class="__img-50 onerror-image"
+                                    data-onerror-image="{{ asset('public/assets/admin/img/100x100/2.png') }}"
+                                    src="{{ $item['icon_full_url'] ?? asset('public/assets/admin/img/100x100/2.png') }}"
+                                    alt="image">
+                                <div class="txt d-block">{{ translate("messages.{$item->module_name}") }}</div>
+                            </div>
                         @endforeach
                     </div>
                 </div>
