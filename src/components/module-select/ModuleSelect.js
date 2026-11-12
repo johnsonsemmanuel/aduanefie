@@ -1,4 +1,4 @@
-import { Skeleton, styled, Tooltip } from "@mui/material";
+import { alpha, Skeleton, styled, Tooltip } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import React from "react";
 import { setSelectedModule } from "redux/slices/utils";
@@ -40,13 +40,10 @@ const ModuleContainer = styled(Box)(({ theme, selected }) => ({
   borderColor: selected
     ? theme.palette.primary.main
     : theme.palette.background.paper,
-  background:
-    selected &&
-    "radial-gradient(50% 50% at 50% 50%, rgba(0, 202, 108, 0) 0%, rgba(0, 255, 137, 0.2) 100%)",
+  background: selected ? alpha(theme.palette.primary.main, 0.14) : undefined,
   "&:hover": {
     borderColor: theme.palette.primary.main,
-    background:
-      "radial-gradient(50% 50% at 50% 50%, rgba(0, 202, 108, 0) 0%, rgba(0, 255, 137, 0.2) 100%)",
+    background: alpha(theme.palette.primary.main, 0.14),
     "img, svg": {
       transform: "scale(1.1)",
     },

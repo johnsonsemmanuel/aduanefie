@@ -2,8 +2,8 @@ import ModuleSearchBanner from "../shared/ModuleSearchBanner";
 
 const PharmacySearchBanner = (props) => (
   <ModuleSearchBanner
-    title="Your Health, Delivered Fast"
-    subtitle="Search for authentic medicines and healthcare essentials delivered to your doorstep."
+    title="Trusted Farm Inputs, Delivered to Your Farm"
+    subtitle="Search certified fertilisers, crop protection, seeds, and veterinary supplies from verified agro-dealers."
     {...props}
   />
 );

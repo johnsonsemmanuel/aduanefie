@@ -72,7 +72,7 @@ const SelfCareOTCSection = () => {
                   letterSpacing: "-1.2px",
                 }}
               >
-                {t("Self-Care Medicines")}
+                {t("Essential Farm Inputs")}
               </Typography>
             </Box>
           )

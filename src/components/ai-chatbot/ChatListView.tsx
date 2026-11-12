@@ -378,11 +378,8 @@ const ChatListView = ({
                         alignItems: "center",
                         gap: 1.25,
                         px: 1.5,
-                        backgroundColor: theme.palette.background.paper,
-                        backgroundImage: `linear-gradient(${alpha(
-                          theme.palette.error.main,
-                          0.09
-                        )}, ${alpha(theme.palette.error.main, 0.09)})`,
+                        backgroundColor:
+                          theme.palette.mode === "dark" ? "#2E1A1A" : "#FEECEC",
                         borderLeft: `3px solid ${alpha(
                           theme.palette.error.main,
                           0.55

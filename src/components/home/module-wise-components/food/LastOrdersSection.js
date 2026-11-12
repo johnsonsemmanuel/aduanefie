@@ -59,10 +59,10 @@ const Container = styled(Box)(({ theme }) => ({
     borderRadius: 0,
     boxShadow: "none",
     padding: "20px 0px 20px 16px",
-    background:
+    backgroundColor:
       theme.palette.mode === "dark"
-        ? `linear-gradient(180deg, ${theme.palette.warning.light}22 0%, ${theme.palette.background.default} 100%)`
-        : "linear-gradient(180deg, #FFF1C2 0%, #F7F7F7 100%)",
+        ? theme.palette.background.paper
+        : "#FFF8DF",
   },
 }));
 

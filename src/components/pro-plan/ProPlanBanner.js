@@ -144,7 +144,7 @@ const ProPlanBanner = ({
           fontSize: "14px",
           fontWeight: 700,
           color: "#FFFFFF",
-          background: "linear-gradient(276.64deg, #B58EFF 0%, #A16BFF 100%)",
+          backgroundColor: "#8B5CF6",
           cursor: "pointer",
           whiteSpace: "nowrap",
           px: 1.75,
@@ -156,7 +156,7 @@ const ProPlanBanner = ({
           width: stacked ? "100%" : { xs: "100%", md: "auto" },
           flexShrink: stacked ? 0 : { xs: 0, md: 1 },
           "&:hover": {
-            filter: "brightness(1.05)",
+            backgroundColor: "#7C3AED",
           },
         }}
       >

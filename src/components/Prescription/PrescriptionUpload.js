@@ -25,13 +25,13 @@ const PrescriptionUpload = ({ setPrescriptionImages, prescriptionImages }) => {
     setPrescriptionImages(files);
   };
   const longText = t(
-    "Note Please upload a doctor verified prescription and you can upload jpg, Png"
+    "Note: Upload an agronomist or veterinary note/approval (JPG, PNG, or PDF) if required for restricted inputs."
   );
   return (
     <CustomStackFullWidth spacing={2.5}>
       <Stack direction="row" alignItems="center" spacing={1}>
         <DeliveryCaption const id="demo-row-radio-buttons-group-label">
-          {t("Upload Prescription")}
+          {t("Upload Agronomist / Vet Document")}
         </DeliveryCaption>
         <Tooltip
           title={longText}

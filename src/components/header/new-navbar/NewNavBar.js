@@ -1,7 +1,10 @@
 import DirectionsCarOutlinedIcon from "@mui/icons-material/DirectionsCarOutlined";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import {
   Avatar,
   Box,
+  Button,
   IconButton,
   Stack,
   Toolbar,
@@ -11,6 +14,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import ModeSwitcherModal from "components/module-select/ModeSwitcherModal";
 import { t } from "i18next";
 import cookie from "js-cookie";
 import dynamic from "next/dynamic";
@@ -77,22 +81,8 @@ const ModuleTab = styled(Box)(({ theme, active }) => ({
   backgroundColor: active ? theme.palette.background.default : "transparent",
   position: "relative",
   ...(active && {
-    "&::before": {
-      content: '""',
-      position: "absolute",
-      inset: 0,
-      borderRadius: "8px 8px 0 0",
-      padding: "1px 1px 0 1px",
-      background:
-        theme.palette.mode === "dark"
-          ? "linear-gradient(180deg, #444444 0%, #000000 100%)"
-          : "linear-gradient(180deg, #A3A3A3 0%, #FFFFFF 100%)",
-      WebkitMask:
-        "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-      WebkitMaskComposite: "xor",
-      maskComposite: "exclude",
-      pointerEvents: "none",
-    },
+    border: `1px solid ${theme.palette.divider}`,
+    borderBottom: "none",
   }),
 }));
 
@@ -286,6 +276,7 @@ const NewNavBar = ({ configData }) => {
   const [openSignIn, setOpenSignIn] = useState(false);
   const [modalFor, setModalFor] = useState("sign-in");
   const [toggled, setToggled] = useState(false);
+  const [modeModalOpen, setModeModalOpen] = useState(false);
   const anchorRef = useRef(null);
 
   // ── localStorage (client-side only) ──
@@ -436,6 +427,7 @@ const NewNavBar = ({ configData }) => {
       )}
       {moduleType !== "parcel" &&
         moduleType !== "rental" &&
+        moduleType !== "service" &&
         (location || cartList?.length !== 0) &&
         zoneId && <CartIcon refetch={cartListRefetch} cartData={cartData} />}
       {moduleType === "rental" && (
@@ -609,6 +601,35 @@ const NewNavBar = ({ configData }) => {
         <AddressReselect location={location} />
       </Box>
 
+      {/* Active Mode Switcher Pill (opens modal popup instead of crowded strip) */}
+      {modules?.length > 0 && (
+        <Button
+          onClick={() => setModeModalOpen(true)}
+          startIcon={<SwapHorizIcon sx={{ fontSize: 18 }} />}
+          endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 18 }} />}
+          sx={{
+            ml: "14px",
+            flexShrink: 0,
+            height: "38px",
+            px: "14px",
+            borderRadius: "9999px",
+            bgcolor: (t) => t.palette.background.secondary,
+            color: (t) => t.palette.neutral[1050],
+            border: (t) => `1px solid ${t.palette.divider}`,
+            fontSize: "13px",
+            fontWeight: 600,
+            textTransform: "none",
+            whiteSpace: "nowrap",
+            "&:hover": {
+              borderColor: (t) => t.palette.primary.main,
+              bgcolor: (t) => t.palette.background.paper,
+            },
+          }}
+        >
+          {selectedModule?.module_name || t("Choose Mode")}
+        </Button>
+      )}
+
       {/* Search: grows to fill space, 24px from icons */}
       <Box
         sx={{
@@ -742,9 +763,7 @@ const NewNavBar = ({ configData }) => {
           <Box
             sx={{
               backgroundColor: (theme) => theme.palette.background.paper,
-              // backgroundColor: scrollTrigger
-              //   ? (theme) => theme.palette.background.paper
-              //   : (theme) => theme.palette.background.secondary,
+              borderBottom: (theme) => `1px solid ${theme.palette.divider}`,
               transition: "background-color 0.35s ease",
             }}
           >
@@ -754,7 +773,6 @@ const NewNavBar = ({ configData }) => {
               </Toolbar>
             </CustomContainer>
           </Box>
-          {renderModuleBar()}
         </>
       )}
 
@@ -783,6 +801,11 @@ const NewNavBar = ({ configData }) => {
           <ForgotPassword configData={configData} />
         </CustomModal>
       )}
+
+      <ModeSwitcherModal
+        open={modeModalOpen}
+        onClose={() => setModeModalOpen(false)}
+      />
     </>
   );
 };

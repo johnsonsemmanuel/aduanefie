@@ -16,8 +16,7 @@ const TradeCtaBanner = () => {
         borderRadius: "18px",
         px: { xs: "16px", sm: "22px", md: "28px" },
         py: { xs: "16px", sm: "18px", md: "20px" },
-        background: (theme) =>
-          `linear-gradient(110deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
+        backgroundColor: (theme) => theme.palette.primary.deep,
         color: "#fff",
         display: "flex",
         flexDirection: { xs: "column", sm: "row" },
@@ -45,7 +44,7 @@ const TradeCtaBanner = () => {
         sx={{
           flexShrink: 0,
           bgcolor: "#fff",
-          color: "primary.main",
+          color: "primary.deep",
           fontWeight: 700,
           "&:hover": { bgcolor: "rgba(255,255,255,0.9)" },
         }}

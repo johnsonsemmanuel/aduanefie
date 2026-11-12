@@ -72,17 +72,13 @@ const AiChatBotLauncher = ({
               sx={{
                 width: 56,
                 height: 56,
-                background: `linear-gradient(135deg, ${
-                  theme.palette.primary.main
-                } 0%, ${alpha(theme.palette.primary.main, 0.78)} 100%)`,
+                backgroundColor: theme.palette.primary.main,
                 boxShadow: `0 10px 24px ${alpha(
                   theme.palette.primary.main,
                   0.45,
                 )}`,
                 "&:hover": {
-                  background: `linear-gradient(135deg, ${
-                    theme.palette.primary.dark
-                  } 0%, ${theme.palette.primary.main} 100%)`,
+                  backgroundColor: theme.palette.primary.dark,
                   boxShadow: `0 12px 28px ${alpha(
                     theme.palette.primary.main,
                     0.55,

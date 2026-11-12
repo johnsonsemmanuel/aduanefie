@@ -1,11 +1,15 @@
 import {
   alpha,
   Box,
+  Button,
   IconButton,
   Stack,
   Typography,
   useTheme,
 } from "@mui/material";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
+import ModeSwitcherModal from "components/module-select/ModeSwitcherModal";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -88,6 +92,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [addressPopoverOpen, setAddressPopoverOpen] = useState(false);
   const [address, setAddress] = useState(null);
+  const [modeModalOpen, setModeModalOpen] = useState(false);
   const addressAnchorRef = useRef(null);
   // Single global cart fetch: cart/get-all. Mutations invalidate the
   // "cart-groups" query, triggering auto-refetch.
@@ -497,8 +502,25 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                 </Stack>
               </Box>
 
-              {/* Cart — monochrome stroke icon */}
-              {getCurrentModuleType() === ModuleTypes.PARCEL ? null : (
+              {/* Cart / Bookings — hidden on parcel, shows bookings on service */}
+              {getCurrentModuleType() === ModuleTypes.PARCEL ? null : getCurrentModuleType() === ModuleTypes.SERVICE ? (
+                <IconButton
+                  onClick={() => router.push("/profile?page=my-orders")}
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    borderRadius: "8px",
+                    color: theme.palette.neutral[1050],
+                    flexShrink: 0,
+                    p: "8px",
+                  }}
+                  aria-label={t("My Bookings")}
+                >
+                  <CalendarMonthIcon
+                    sx={{ fontSize: "20px", color: theme.palette.neutral[1050] }}
+                  />
+                </IconButton>
+              ) : (
                 <IconButton
                   onClick={() => {
                     if (getCurrentModuleType() === ModuleTypes.RENTAL) {
@@ -564,85 +586,37 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
             </Stack>
           </Box>
 
-          {/* ── Section 2: Module tabs ── */}
-          {showModuleTabs && (
-            <Box sx={{ overflow: "hidden" }}>
-              <Box
-                ref={moduleTabsRef}
+          {/* ── Section 2: Compact Active Mode Switcher (opens modal popup) ── */}
+          {showModuleTabs && modules?.length > 0 && (
+            <Box sx={{ px: "14px", pt: "4px", pb: "6px" }}>
+              <Button
+                fullWidth
+                onClick={() => setModeModalOpen(true)}
+                startIcon={<SwapHorizIcon sx={{ fontSize: 18, color: theme.palette.primary.main }} />}
                 sx={{
-                  display: "flex",
-                  alignItems: "flex-end",
-                  gap: "4px",
-                  px: "14px",
-                  pt: "6px",
-                  overflowX: "auto",
-                  scrollbarWidth: "none",
-                  "&::-webkit-scrollbar": { display: "none" },
+                  justifyContent: "space-between",
+                  bgcolor: theme.palette.background.paper,
+                  border: `1px solid ${theme.palette.divider}`,
+                  borderRadius: "10px",
+                  px: "12px",
+                  py: "7px",
+                  color: theme.palette.neutral[1050],
+                  textTransform: "none",
                 }}
               >
-                {modules?.map((mod) => {
-                  const isActive = selectedModule?.id === mod?.id;
-                  return (
-                    <Box
-                      key={mod.id}
-                      data-active={isActive}
-                      onClick={() => handleSelectModule(mod)}
-                      sx={{
-                        flexShrink: 0,
-                        px: "12px",
-                        py: "6px",
-                        cursor: "pointer",
-                        whiteSpace: "nowrap",
-                        userSelect: "none",
-                        color: isActive
-                          ? theme.palette.neutral[1050]
-                          : isDark
-                            ? theme.palette.text.secondary
-                            : "#757575",
-                        fontWeight: isActive ? 600 : 400,
-                        fontSize: "13px",
-                        borderRadius: "8px 8px 0 0",
-                        backgroundColor: isActive
-                          ? theme.palette.background.paper
-                          : "transparent",
-                        position: "relative",
-                        transition: "color 0.2s, background-color 0.2s",
-                        ...(isActive && {
-                          "&::before": {
-                            content: '""',
-                            position: "absolute",
-                            inset: 0,
-                            borderRadius: "8px 8px 0 0",
-                            padding: "1px 1px 0 1px",
-                            background:
-                              theme.palette.mode === "dark"
-                                ? "linear-gradient(180deg, #444444 0%, #000000 100%)"
-                                : "linear-gradient(180deg, #A3A3A3 0%, #FFFFFF 100%)",
-                            WebkitMask:
-                              "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                            WebkitMaskComposite: "xor",
-                            maskComposite: "exclude",
-                            pointerEvents: "none",
-                          },
-                        }),
-                      }}
-                    >
-                      <Typography
-                        component="span"
-                        sx={{
-                          fontSize: "13px",
-                          fontWeight: "inherit",
-                          lineHeight: 1.1,
-                          letterSpacing: "-0.42px",
-                          textTransform: "capitalize",
-                        }}
-                      >
-                        {mod?.module_name}
-                      </Typography>
-                    </Box>
-                  );
-                })}
-              </Box>
+                <Typography
+                  component="span"
+                  sx={{ fontSize: "13px", fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+                >
+                  {selectedModule?.module_name || t("Choose Mode")}
+                </Typography>
+                <Typography
+                  component="span"
+                  sx={{ fontSize: "12px", fontWeight: 600, color: theme.palette.primary.deep, flexShrink: 0, ml: 1 }}
+                >
+                  {t("Switch Mode")}
+                </Typography>
+              </Button>
             </Box>
           )}
         </Box>
@@ -811,6 +785,11 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
         setAddress={setAddress}
         token={token}
         currentLatLngForMar={currentLatLngForMar}
+      />
+
+      <ModeSwitcherModal
+        open={modeModalOpen}
+        onClose={() => setModeModalOpen(false)}
       />
     </>
   );

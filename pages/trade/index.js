@@ -50,8 +50,7 @@ const TradeHub = ({ configData, metaData }) => {
                 px: { xs: "20px", sm: "32px", md: "56px" },
                 py: { xs: "28px", sm: "40px", md: "56px" },
                 color: "#fff",
-                background: (theme) =>
-                  `linear-gradient(120deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 55%, ${theme.palette.secondary.main} 100%)`,
+                backgroundColor: (theme) => theme.palette.primary.deep,
               }}
             >
               <Chip
@@ -99,7 +98,7 @@ const TradeHub = ({ configData, metaData }) => {
                   onClick={() => router.push(getWholesaleMarketHref())}
                   sx={{
                     bgcolor: "#fff",
-                    color: "primary.main",
+                    color: "primary.deep",
                     fontWeight: 700,
                     px: "22px",
                     "&:hover": { bgcolor: "rgba(255,255,255,0.9)" },

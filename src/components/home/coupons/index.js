@@ -129,17 +129,13 @@ const Coupons = (props) => {
   useEffect(() => {
     refetch();
   }, []);
-  const background = (theme) =>
-    `linear-gradient(${alpha(theme.palette.primary.main, 0.2)}, ${alpha(
-      theme.palette.primary.main,
-      0.2
-    )}), url(${couponsBG?.src})`;
   return (
     <>
       {data && data?.length > 0 && (
         <Box
           sx={{
-            background: (theme) => background(theme),
+            backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.2),
+            backgroundImage: `url(${couponsBG?.src})`,
             backgroundSize: "cover", // Optional: Adjust the background size to cover the box
             borderRadius: { xs: "0px", md: "5px" },
             padding: { xs: "25px", md: "15px" },

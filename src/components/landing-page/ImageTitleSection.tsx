@@ -50,7 +50,7 @@ const ImageTitleSection: React.FC<ImageTitleSectionProps> = ({
 
             sx={{
                 py: 2,
-                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.main} 100%)`,
+                backgroundColor: theme.palette.primary.main,
                 borderRadius: '1rem',
                 my: { xs: "0", md: 4 },
                 boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',

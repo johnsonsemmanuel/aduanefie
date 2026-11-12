@@ -10,11 +10,11 @@ import { useGetCategories } from "api-manage/hooks/react-query/all-category/all-
 import SectionMobileActionBar from "components/home/section-page/SectionMobileActionBar";
 
 const PHARMACY_BANNER_TITLES = {
-  Offers: "Search Medicine Offers",
-  "Free Delivery": "Find Free Delivery Medicine",
-  "Top Rated": "Search Top Rated Pharmacies",
-  Nearby: "Search Nearby Pharmacies",
-  "Shop By Conditions": "Search by Health Condition",
+  Offers: "Search Input Offers",
+  "Free Delivery": "Find Free Delivery Inputs",
+  "Top Rated": "Search Top Rated Agro-Dealers",
+  Nearby: "Search Nearby Agro-Dealers",
+  "Shop By Conditions": "Search by Crop & Livestock Need",
 };
 
 const PharmacySectionPageWrapper = ({ sectionLabel, enableSearch = true, childHandlesSearch = false, children }) => {

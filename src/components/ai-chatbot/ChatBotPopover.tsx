@@ -681,9 +681,7 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
             sx={{
               px: 2,
               py: 1.25,
-              background: `linear-gradient(135deg, ${
-                theme.palette.primary.main
-              } 0%, ${alpha(theme.palette.primary.main, 0.85)} 100%)`,
+              backgroundColor: theme.palette.primary.main,
               color: "#fff",
             }}
           >

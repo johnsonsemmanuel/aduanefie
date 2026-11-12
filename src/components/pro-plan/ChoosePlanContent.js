@@ -28,8 +28,7 @@ import useGetProFaqs, {
 import ProTermsModal from "./ProTermsModal";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
 
-const PURPLE =
-  "linear-gradient(93.06deg, rgba(255, 255, 255, 0.46) 0.4%, rgba(255, 255, 255, 0.3) 99.81%)";
+const PURPLE = "#8B5CF6";
 const PURPLE_DARK = "#7C3AED";
 const LIGHT_PURPLE = "#EDE7FF";
 const NEUTRAL_BG = "#F3F4F6";
@@ -684,10 +683,8 @@ const ChoosePlanContent = ({
         disabled={!selectedPlan || isSubmitting}
         onClick={() => selectedPlan && onSubscribe?.(selectedPlan)}
         sx={{
-          background:
-            selectedPlan && selectedPlan.price === 0
-              ? "#111827"
-              : `linear-gradient(90deg, ${PURPLE} 0%, #A78BFA 100%)`,
+          backgroundColor:
+            selectedPlan && selectedPlan.price === 0 ? "#111827" : PURPLE,
           width: "100%",
           maxWidth: 270,
           height: "40px",
@@ -700,10 +697,8 @@ const ChoosePlanContent = ({
           boxShadow: "none",
           color: "#fff",
           "&:hover": {
-            background:
-              selectedPlan && selectedPlan.price === 0
-                ? "#000"
-                : `linear-gradient(90deg, ${PURPLE_DARK} 0%, ${PURPLE} 100%)`,
+            backgroundColor:
+              selectedPlan && selectedPlan.price === 0 ? "#000" : PURPLE_DARK,
             boxShadow: "none",
           },
           "&.Mui-disabled": {

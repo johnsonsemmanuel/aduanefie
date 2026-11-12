@@ -21,10 +21,7 @@ export const ComponentTwoContainer = styled(Box)(
     marginTop: ".6rem",
     paddingTop: paddingTop ? paddingTop : "1.5rem",
     paddingBottom: paddingBottom ? paddingBottom : "1rem",
-    background: `linear-gradient(180deg, ${alpha(
-      theme.palette.primary.main,
-      0
-    )} 0%, ${alpha(theme.palette.primary.main, 0.15)} 100%)`,
+    backgroundColor: alpha(theme.palette.primary.main, 0.12),
   })
 );
 

@@ -52,7 +52,7 @@ const HeroSection = ({ landingPageDataheroSection }) => {
           marginTop: calculateTopMargin(),
           borderRadius: "20px",
           position: "relative",
-          background: `linear-gradient(1.02deg, rgba(3, 157, 85, 0.1) -12.87%, rgba(3, 157, 85, 0.02) 99.13%)`,
+          backgroundColor: theme.palette.primary.lite,
           padding: { xs: "13px", md: "30px" },
           display: "flex",
           alignItems: {

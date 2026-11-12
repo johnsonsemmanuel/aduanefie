@@ -53,6 +53,9 @@ import {
 import useMakePayment from "components/home/module-wise-components/rental/rental-api-manage/hooks/react-query/details/useMakePayment";
 import Rental from "components/home/module-wise-components/rental/Rental";
 import ServiceModule from "components/home/module-wise-components/service/Service";
+import ModeSwitcherModal, {
+  MODE_CHOSEN_STORAGE_KEY,
+} from "components/module-select/ModeSwitcherModal";
 import TaxiSearchPanel from "components/home/module-wise-components/rental/components/global/search/TaxiSearchPanel";
 import {
   getDigitalMethodFromZone,
@@ -80,8 +83,10 @@ const HomePageComponents = ({
   const [paymentMethod, setPaymentMethod] = useState(null);
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
   const [dontShowAgain, setDontShowAgain] = useState(false);
+  const [openModeGreeting, setOpenModeGreeting] = useState(false);
 
   const { profileInfo } = useSelector((state) => state.profileInfo);
+  const { modules } = useSelector((state) => state.configData);
   const router = useRouter();
   const dispatch = useDispatch();
   const token = getToken();
@@ -156,6 +161,15 @@ const HomePageComponents = ({
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [router.query.search]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!modules?.length || modules.length < 2) return;
+    const alreadyChosen = localStorage.getItem(MODE_CHOSEN_STORAGE_KEY);
+    if (!alreadyChosen && !welcomeModal && !openIncompleteOrder) {
+      setOpenModeGreeting(true);
+    }
+  }, [modules?.length, welcomeModal, openIncompleteOrder]);
 
   const onSuccessHandler = (response) => {
     setWishListsData(response);
@@ -478,6 +492,11 @@ const HomePageComponents = ({
           />
         </CustomModal>
         <ScrollUpButton />
+        <ModeSwitcherModal
+          open={openModeGreeting}
+          onClose={() => setOpenModeGreeting(false)}
+          isGreeting
+        />
       </NoSsr>
     </PushNotificationLayout>
   );

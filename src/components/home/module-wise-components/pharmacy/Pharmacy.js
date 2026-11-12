@@ -95,7 +95,7 @@ const Pharmacy = ({ configData, routeSection }) => {
             paddingRight: "0 !important",
           }}
         >
-          <CommonConditions title={t("Shop By Conditions")} />
+          <CommonConditions title={t("Shop By Crop & Livestock Need")} />
         </CustomContainer>
       </S>
 
@@ -108,7 +108,7 @@ const Pharmacy = ({ configData, routeSection }) => {
       {token ? (
         <S>
           <CustomContainer noMobilePadding={true}>
-            <LastOrdersSection title={t("Refill Your Medicine")} />
+            <LastOrdersSection title={t("Reorder Farm Inputs")} />
           </CustomContainer>
         </S>
       ) : null}
@@ -132,8 +132,8 @@ const Pharmacy = ({ configData, routeSection }) => {
           }}
         >
           <QuickDeliverySection
-            title={t("Quick & Emergency Delivery")}
-            subtitle={t("Get fastest order from your nearby pharmacies.")}
+            title={t("Fast Agro-Input Dispatch")}
+            subtitle={t("Get urgent fertilisers, seeds, and vet supplies from nearby agro-dealers.")}
             cardVariant="withItems"
           />
         </CustomContainer>
@@ -153,8 +153,8 @@ const Pharmacy = ({ configData, routeSection }) => {
           }}
         >
           <TrendingBites
-            title={t("Health Highlights")}
-            subtitle={t("Essential medicines & health products")}
+            title={t("Crop & Livestock Highlights")}
+            subtitle={t("Certified fertilisers, seeds & veterinary essentials")}
           />
         </CustomContainer>
       </S>
@@ -165,7 +165,7 @@ const Pharmacy = ({ configData, routeSection }) => {
       </S>
       <S>
         <CustomContainer>
-          <RecommendedStore title={t("Recommended Pharmacies")} />
+          <RecommendedStore title={t("Recommended Agro-Dealers")} />
         </CustomContainer>
       </S>
 
@@ -241,7 +241,7 @@ const Pharmacy = ({ configData, routeSection }) => {
 
       <S>
         <CustomContainer>
-          <Stores title={t("Explore Pharmacy")} />
+          <Stores title={t("Explore Agro-Dealers")} />
         </CustomContainer>
       </S>
 

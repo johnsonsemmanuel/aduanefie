@@ -98,7 +98,7 @@ const ProSubscriptionExpiredModal = () => {
             variant="contained"
             onClick={handleSubscribe}
             sx={{
-              background: "linear-gradient(90deg, #8B5CF6 0%, #A78BFA 100%)",
+              backgroundColor: "#8B5CF6",
               height: 44,
               fontWeight: 700,
               fontSize: "14px",
@@ -107,7 +107,7 @@ const ProSubscriptionExpiredModal = () => {
               boxShadow: "none",
               color: "#fff",
               "&:hover": {
-                background: "linear-gradient(90deg, #7C3AED 0%, #8B5CF6 100%)",
+                backgroundColor: "#7C3AED",
                 boxShadow: "none",
               },
             }}

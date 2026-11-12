@@ -13,10 +13,7 @@ import LargerScreen from "./LargerScreen";
 import SmallerScreen from "./SmallerScreen";
 
 const Wrapper = styled(Box)(({ theme }) => ({
-  background: `linear-gradient(112.54deg, rgba(255, 255, 255, 0.2) 0%, rgba(153, 245, 202, 0.2) 33.19%, ${alpha(
-    theme.palette.primary.main,
-    0.2
-  )} 66.37%, rgba(255, 255, 255, 0.2) 99.56%)`,
+  backgroundColor: alpha(theme.palette.primary.main, 0.12),
   width: "100%",
   position: "relative",
 }));
@@ -27,8 +24,11 @@ export const CustomButton = styled(Button)(({ theme }) => ({
   fontSize: "16px",
   fontWeight: 700,
   maxWidth: "400px",
-  background: `linear-gradient(133deg, ${theme.palette.primary.customType1} 0%, ${theme.palette.primary.main} 51.01%)`,
+  backgroundColor: theme.palette.primary.main,
   color: theme.palette.whiteContainer.main,
+  "&:hover": {
+    backgroundColor: theme.palette.primary.dark,
+  },
   [theme.breakpoints.down("md")]: {
     padding: "12px 15px",
     fontSize: "14px",

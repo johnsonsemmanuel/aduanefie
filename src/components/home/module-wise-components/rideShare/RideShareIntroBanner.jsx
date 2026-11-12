@@ -81,13 +81,7 @@ const RideShareIntroBanner = ({ configData, appUrl }) => {
         width: "100%",
         borderRadius: "16px",
         overflow: "hidden",
-        // mobile: gradient bg / desktop: theme bg + shadow
-        background: {
-          xs: (theme) =>
-            `linear-gradient(180deg, ${theme.palette.background.paper} 13%, ${theme.palette.background.default} 23%)`,
-          md: "none",
-        },
-        backgroundColor: { xs: "transparent", md: "background.paper" },
+        backgroundColor: "background.paper",
         boxShadow: {
           xs: "none",
           md: "0px 1px 4px 0px rgba(0,0,0,0.10), 0px 1px 4px 0px rgba(0,0,0,0.05)",
