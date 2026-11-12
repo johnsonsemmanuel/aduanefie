@@ -163,7 +163,6 @@
                                                 <option value="af">Afrikaans</option>
                                                 <option value="sq">Albanian - shqip</option>
                                                 <option value="am">Amharic - አማርኛ</option>
-                                                <option value="ar">Arabic - العربية</option>
                                                 <option value="an">Aragonese - aragonés</option>
                                                 <option value="hy">Armenian - հայերեն</option>
                                                 <option value="ast">Asturian - asturianu</option>

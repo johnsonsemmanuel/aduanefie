@@ -146,8 +146,9 @@ class DashboardController extends Controller
 
         $deliveryMen = Helpers::deliverymen_list_formatting($deliveryMen);
 
-        $module_type = Config::get('module.current_module_type');
-        return view("admin-views.dashboard-{$module_type}", compact('data','reviews','this_month','user_data','neutral_reviews','good_reviews','negative_reviews','positive_reviews','employees','active_deliveryman','deliveryMen','inactive_deliveryman','newly_joined_deliveryman','delivery_man', 'total_sell', 'commission', 'delivery_commission', 'params','module_type', 'customers','active_customers','blocked_customers', 'newly_joined','last_year_users', 'blocked_deliveryman'));
+        $module_type = Config::get('module.current_module_type') ?: 'ecommerce';
+        $viewName = view()->exists("admin-views.dashboard-{$module_type}") ? "admin-views.dashboard-{$module_type}" : 'admin-views.dashboard-ecommerce';
+        return view($viewName, compact('data','reviews','this_month','user_data','neutral_reviews','good_reviews','negative_reviews','positive_reviews','employees','active_deliveryman','deliveryMen','inactive_deliveryman','newly_joined_deliveryman','delivery_man', 'total_sell', 'commission', 'delivery_commission', 'params','module_type', 'customers','active_customers','blocked_customers', 'newly_joined','last_year_users', 'blocked_deliveryman'));
     }
 
     public function transaction_dashboard(Request $request)
@@ -237,7 +238,7 @@ class DashboardController extends Controller
         $commission = $data['commission'];
         $delivery_commission = $data['delivery_commission'];
         $label = $data['label'];
-        $module_type = Config::get('module.current_module_type');
+        $module_type = Config::get('module.current_module_type') ?: 'ecommerce';
         if($module_type == 'settings'){
             return redirect()->route('admin.business-settings.business-setup');
         }
@@ -247,7 +248,8 @@ class DashboardController extends Controller
         if($module_type == 'rental' && addon_published_status('Rental') == 0){
             return view('errors.404');
         }
-        return view("admin-views.dashboard-{$module_type}", compact('data', 'total_sell', 'commission', 'delivery_commission', 'label','params','module_type'));
+        $viewName = view()->exists("admin-views.dashboard-{$module_type}") ? "admin-views.dashboard-{$module_type}" : 'admin-views.dashboard-ecommerce';
+        return view($viewName, compact('data', 'total_sell', 'commission', 'delivery_commission', 'label','params','module_type'));
 
     }
 

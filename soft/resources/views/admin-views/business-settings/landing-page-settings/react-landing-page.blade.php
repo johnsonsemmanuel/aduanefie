@@ -32,9 +32,6 @@
         <li class="nav-item">
             <a class="nav-link lang_link active" data-toggle="tab" href="#en-link">English(EN)</a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link lang_link" data-toggle="tab" href="#ar-link">Arabic - العربية(AR)</a>
-        </li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane fade show active" id="react-header">
