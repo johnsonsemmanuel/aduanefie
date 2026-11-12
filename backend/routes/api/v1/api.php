@@ -448,8 +448,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
                 Route::put('offline-payment', 'OrderController@offline_payment');
                 Route::put('offline-payment-update', 'OrderController@update_offline_payment_info');
                 Route::get('payment-failed', 'CustomerController@orderPaymentFailed');
+                Route::post('get-Tax', 'OrderController@get_tax');
 
             });
+            Route::get('pro-customer/active-offer', 'PromotionController@pro_customer_active_offer');
             Route::get('reels/list', 'CustomerController@reels_list');
 
             Route::group(['prefix'=>'cart'], function() {
@@ -545,6 +547,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
         Route::get('happy-hour/running', 'PromotionController@happy_hour_running');
         Route::get('happy-hour/stores', 'PromotionController@happy_hour_stores');
         Route::get('item/farming-list', 'ItemController@farming_list');
+        Route::get('delivery-charge/coverage-list', 'PromotionController@delivery_charge_coverage_list');
 
         Route::group(['prefix' => 'common-condition'], function () {
             Route::get('/', 'CommonConditionController@get_conditions');

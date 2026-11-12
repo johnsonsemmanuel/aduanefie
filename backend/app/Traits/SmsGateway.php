@@ -616,17 +616,20 @@ trait  SmsGateway
         $response = 'error';
         if (isset($config) && $config['status'] == 1) {
             $api_key = $config['api_key'] ?? '';
-            $api_secret = $config['api_secret'] ?? '';
-            $sender_id = $config['sender_id'] ?? 'INTEKHOST';
-            $url = $config['api_url'] ?? 'https://api.intekhost.com/sms/send';
+            $sender_id = $config['sender_id'] ?? 12;
+            $url = $config['api_url'] ?? 'https://inteksms.top/api/v1/messages/send';
 
             try {
                 $res = Http::post($url, [
-                    'api_key' => $api_key,
-                    'api_secret' => $api_secret,
-                    'from' => $sender_id,
-                    'to' => $receiver,
+                    'sender_id' => $sender_id,
+                    'title' => 'Aduanefie',
                     'message' => $message,
+                    'recipients' => [$receiver],
+                ], [
+                    'headers' => [
+                        'Authorization' => 'Bearer ' . $api_key,
+                        'Content-Type' => 'application/json',
+                    ],
                 ]);
                 if ($res->successful()) {
                     $response = 'success';
