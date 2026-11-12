@@ -92,6 +92,12 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::get('requested/item/view/{id}', 'ItemController@requested_item_view')->name('requested_item_view');
             Route::get('product-gallery', 'ItemController@product_gallery')->name('product_gallery');
 
+            // Ongoing Farming module - shows products currently being farmed
+            Route::get('ongoing-farming', 'ItemController@ongoing_farming')->name('ongoing_farming');
+
+            // Farming calendar - seasonal planting/harvest planning
+            Route::get('farming-calendar', 'ItemController@farming_calendar')->name('farming_calendar');
+
             //ajax request
             Route::get('get-categories', 'ItemController@get_categories')->name('get-categories');
             Route::get('get-items', 'ItemController@get_items')->name('getitems');

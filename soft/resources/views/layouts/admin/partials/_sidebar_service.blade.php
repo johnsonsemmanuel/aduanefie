@@ -217,6 +217,23 @@
                     @endif
 
                     <li class="nav-item">
+                        <small class="nav-subtitle">{{ translate('Farming Production') }}</small>
+                        <small class="tio-more-horizontal nav-subtitle-replacer"></small>
+                    </li>
+
+                    @if (\App\CentralLogics\Helpers::module_permission_check('item'))
+                    <li class="navbar-vertical-aside-has-menu {{ Request::is('admin/item/ongoing-farming') ? 'active' : '' }}">
+                        <a class="js-navbar-vertical-aside-menu-link nav-link" href="{{ route('admin.ongoing_farming') }}" title="{{ translate('messages.ongoing_farming') }}">
+                            <span class="tio-leaf nav-icon"></span>
+                            <span class="text-truncate sidebar--badge-container">
+                                {{ translate('messages.ongoing_farming') }}
+                                <span class="badge badge-soft-success badge-pill ml-1">{{ \App\Models\Item::ongoingFarming()->where('is_approved', 1)->count() }}</span>
+                            </span>
+                        </a>
+                    </li>
+                    @endif
+
+                    <li class="nav-item">
                         <small class="nav-subtitle">{{ translate('Provider Management') }}</small>
                         <small class="tio-more-horizontal nav-subtitle-replacer"></small>
                     </li>

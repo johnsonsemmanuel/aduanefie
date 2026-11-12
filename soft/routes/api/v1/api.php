@@ -274,6 +274,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
             Route::put('reply-update', 'ItemController@update_reply');
             Route::get('recommended', 'ItemController@recommended');
             Route::get('organic', 'ItemController@organic');
+            Route::get('farming-list', 'ItemController@farming_list');
             Route::get('pending/item/list', 'ItemController@pending_item_list');
             Route::get('requested/item/view/{id}', 'ItemController@requested_item_view');
             Route::put('stock-update', 'ItemController@stock_update');

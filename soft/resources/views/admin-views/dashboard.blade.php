@@ -91,6 +91,22 @@
                             <div class="subtxt">566 newly added</div>
                         </div>
                     </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="__dashboard-card-2 bg--farming">
+                            <img src="{{asset('/public/assets/admin/img/dashboard/food/items.svg')}}" alt="dashboard/farming">
+                            <h6 class="name">{{translate('messages.currently_farming')}}</h6>
+                            <h3 class="count">{{App\Models\Item::ongoingFarming()->where('is_approved', 1)->count()}}</h3>
+                            <div class="subtxt">{{translate('messages.products_in_farming_mode')}}</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                        <div class="__dashboard-card-2 bg--backyard">
+                            <img src="{{asset('/public/assets/admin/img/dashboard/food/stores.svg')}}" alt="dashboard/backyard">
+                            <h6 class="name">{{translate('messages.backyard_farms')}}</h6>
+                            <h3 class="count">{{App\Models\Item::backyard()->where('is_approved', 1)->count()}}</h3>
+                            <div class="subtxt">{{translate('messages.backyard_grown_products')}}</div>
+                        </div>
+                    </div>
                     <div class="col-12">
                         <div class="row g-2">
                             <div class="col-sm-6 col-lg-3">
@@ -567,4 +583,28 @@
             window.history.pushState('page2', 'Title', '{{url()->current()}}?' + params);
         }
     </script>
+    <style>
+        .__dashboard-card-2.bg--farming {
+            border: 1px solid var(--primary-clr, #67513A);
+        }
+        .__dashboard-card-2.bg--farming .name,
+        .__dashboard-card-2.bg--farming .count,
+        .__dashboard-card-2.bg--farming .subtxt {
+            color: var(--primary-clr, #67513A);
+        }
+        .__dashboard-card-2.bg--farming .count {
+            font-weight: 800;
+        }
+        .__dashboard-card-2.bg--backyard {
+            border: 1px solid var(--secondary-clr, #8B9F69);
+        }
+        .__dashboard-card-2.bg--backyard .name,
+        .__dashboard-card-2.bg--backyard .count,
+        .__dashboard-card-2.bg--backyard .subtxt {
+            color: var(--secondary-clr, #8B9F69);
+        }
+        .__dashboard-card-2.bg--backyard .count {
+            font-weight: 800;
+        }
+    </style>
 @endpush

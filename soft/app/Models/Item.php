@@ -114,6 +114,27 @@ class Item extends Model
     {
         return $query->orderBy('order_count', 'desc');
     }
+
+    public function scopeFarming($query)
+    {
+        return $query->where('farming_status', 'farming');
+    }
+
+    public function scopeHarvestReady($query)
+    {
+        return $query->where('farming_status', 'harvest_ready');
+    }
+
+    public function scopeBackyard($query)
+    {
+        return $query->where('is_backyard', true);
+    }
+
+    public function scopeOngoingFarming($query)
+    {
+        return $query->whereIn('farming_status', ['farming', 'harvest_ready']);
+    }
+
     public function scopeApproved($query)
     {
         return $query->where('is_approved',1 );

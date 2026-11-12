@@ -82,7 +82,6 @@ Route::get('login/{tab}', 'LoginController@login')->name('login');
 Route::post('external-login-from-drivemond', 'LoginController@externalLoginFromDrivemond');
 Route::post('login_submit', 'LoginController@submit')->name('login_post')->middleware(['actch', 'throttle:web-login']);
 Route::get('logout', 'LoginController@logout')->name('logout');
-Route::get('/reload-captcha', 'LoginController@reloadCaptcha')->name('reload-captcha');
 Route::get('/reset-password', 'LoginController@reset_password_request')->name('reset-password');
 Route::post('/vendor-reset-password', 'LoginController@vendor_reset_password_request')->name('vendor-reset-password');
 Route::get('/password-reset', 'LoginController@reset_password')->name('change-password');

@@ -2047,4 +2047,76 @@ class ItemController extends Controller
     }
 
 
+
+    /**
+     * Ongoing Farming module - lists products currently being farmed
+     * (farming_status = 'farming' or 'harvest_ready').
+     */
+    public function ongoing_farming(Request $request)
+    {
+        $store_id = $request->query('store_id', 'all');
+        $key = explode(' ', $request['search']);
+
+        $items = Item::withoutGlobalScope(StoreScope::class)
+            ->when(is_numeric($store_id), function ($query) use ($store_id) {
+                return $query->where('store_id', $store_id);
+            })
+            ->when($request['search'], function ($query) use ($key) {
+                return $query->where(function ($q) use ($key) {
+                    foreach ($key as $value) {
+                        $q->where('name', 'like', "%{$value}%");
+                    }
+                });
+            })
+            ->ongoingFarming()
+            ->where('is_approved', 1)
+            ->latest()->paginate(config('default_pagination'));
+
+        $farmingCount = Item::ongoingFarming()->where('is_approved', 1)->count();
+        $backyardCount = Item::backyard()->where('is_approved', 1)->count();
+
+        return view('admin-views/product.ongoing_farming', compact(
+            'items',
+            'farmingCount',
+            'backyardCount',
+            'store_id'
+        ));
+    }
+
+    /**
+     * Farming Calendar - seasonal planting/harvest planning view
+     * Groups farming products by month for agricultural planning.
+     */
+    public function farming_calendar(Request $request)
+    {
+        $zone_id = $request->query('zone_id', 'all');
+
+        $items = Item::withoutGlobalScope(StoreScope::class)
+            ->when(is_numeric($zone_id), function ($query) use ($zone_id) {
+                return $query->whereHas('store', function ($q) use ($zone_id) {
+                    return $q->where('zone_id', $zone_id);
+                });
+            })
+            ->ongoingFarming()
+            ->where('is_approved', 1)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $months = [];
+        foreach ($items as $item) {
+            $month = $item->created_at ? \Carbon\Carbon::parse($item->created_at)->format('F Y') : 'Unscheduled';
+            if (!isset($months[$month])) {
+                $months[$month] = [];
+            }
+            $months[$month][] = $item;
+        }
+
+        $zones = \App\Models\Zone::orderBy('name')->get();
+
+        return view('admin-views/product.farming_calendar', compact(
+            'months',
+            'zones',
+            'zone_id'
+        ));
+    }
 }

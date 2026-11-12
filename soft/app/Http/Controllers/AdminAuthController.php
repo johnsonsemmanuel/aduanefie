@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Concerns\VerifiesHuman;
-use App\Models\Admin;
-use Gregwar\Captcha\CaptchaBuilder;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
+    use App\Http\Controllers\Concerns\VerifiesHuman;
+    use App\Models\Admin;
+    use Illuminate\Http\Request;
+    use Illuminate\Support\Facades\App;
+    use Illuminate\Support\Facades\Auth;
+    use Illuminate\Support\Facades\Session;
 
 /**
  * Dedicated admin login.
@@ -41,18 +40,15 @@ class AdminAuthController extends Controller
         $siteDirection = session()?->get('site_direction') ?? $direction;
         App::setLocale($locale);
 
-        $captcha = new CaptchaBuilder;
-        $captcha->build();
-        Session::put('six_captcha', $captcha->getPhrase());
-
         return view('auth.login', [
-            'custome_recaptcha' => $captcha,
             'role' => 'admin',
             'site_direction' => $siteDirection,
             'locale' => $locale,
             'email' => null,
             'password' => null,
             'postRoute' => route('admin.login.submit'),
+            'mfa_required' => session('mfa_required', false),
+            'mfa_mode' => session('mfa_mode', null),
         ]);
     }
 
@@ -78,17 +74,15 @@ class AdminAuthController extends Controller
                 ->withErrors(['email' => 'Credentials does not match.']);
         }
 
-        // Password accepted, but that is not a login. begin() destroys the
-        // guard session and sends the admin to the second-factor screen.
-        // "Remember me" is not offered here; the challenge sets it on success.
+        // Password accepted. begin() creates the MFA pending marker and
+        // destroys the guard session. We then redirect back to this same login
+        // URL so the UI can slide into the 2FA panel instead of loading a new page.
         $mode = app(\App\Services\AdminMfaService::class)
             ->begin($request, $admin, $request->boolean('remember'));
 
-        return redirect()->route(
-            $mode === \App\Services\AdminMfaService::MODE_SETUP
-                ? 'admin.mfa.setup'
-                : 'admin.mfa.challenge'
-        );
+        return redirect()->route('admin.login')
+            ->with('mfa_required', true)
+            ->with('mfa_mode', $mode);
     }
 
 }

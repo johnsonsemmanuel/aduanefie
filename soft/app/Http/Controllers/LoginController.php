@@ -2,34 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Admin;
-use App\Models\ExternalConfiguration;
-use App\Models\Vendor;
-use App\Models\DataSetting;
-use Illuminate\Http\Request;
-use App\Services\AdminMfaService;
-use App\CentralLogics\Helpers;
-use App\Models\VendorEmployee;
-use Illuminate\Support\Carbon;
-use App\Models\BusinessSetting;
-use App\CentralLogics\SMS_module;
-use App\Models\PhoneVerification;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use App\Models\SubscriptionPackage;
-use Gregwar\Captcha\CaptchaBuilder;
-use Illuminate\Support\Facades\App;
-use App\Http\Controllers\Controller;
-use App\Mail\AdminPasswordResetMail;
-use Brian2694\Toastr\Facades\Toastr;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Crypt;
-use App\Mail\PasswordResetRequestMail;
-use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Session;
-use Modules\Gateways\Traits\SmsGateway;
-use Illuminate\Validation\Rules\Password;
+    use App\Models\Admin;
+    use App\Models\ExternalConfiguration;
+    use App\Models\Vendor;
+    use App\Models\DataSetting;
+    use Illuminate\Http\Request;
+    use App\Services\AdminMfaService;
+    use App\CentralLogics\Helpers;
+    use App\Models\VendorEmployee;
+    use Illuminate\Support\Carbon;
+    use App\Models\BusinessSetting;
+    use App\CentralLogics\SMS_module;
+    use App\Models\PhoneVerification;
+    use Illuminate\Support\Facades\Auth;
+    use Illuminate\Support\Facades\DB;
+    use App\Models\SubscriptionPackage;
+    use Illuminate\Support\Facades\App;
+    use App\Mail\AdminPasswordResetMail;
+    use Brian2694\Toastr\Facades\Toastr;
+    use Illuminate\Support\Facades\Mail;
+    use App\Mail\PasswordResetRequestMail;
+    use Illuminate\Support\Facades\Cookie;
+    use Modules\Gateways\Traits\SmsGateway;
+    use Illuminate\Validation\Rules\Password;
 
 class LoginController extends Controller
 {
@@ -80,9 +75,6 @@ class LoginController extends Controller
         $site_direction = $siteDirections[$role];
         $locale = $locals[$role];
         App::setLocale($locale);
-        $custome_recaptcha = new CaptchaBuilder;
-        $custome_recaptcha->build();
-        Session::put('six_captcha', $custome_recaptcha->getPhrase());
 
         $email = null;
         $password = null;
@@ -91,7 +83,7 @@ class LoginController extends Controller
             $password = Crypt::decryptString(Cookie::get('p_token'));
         }
 
-        return view('auth.login', compact('custome_recaptcha', 'email', 'password', 'role', 'site_direction', 'locale'));
+        return view('auth.login', compact('email', 'password', 'role', 'site_direction', 'locale'));
     }
 
     public function login_attemp($role, $email, $password, $remember = false)
@@ -164,29 +156,6 @@ class LoginController extends Controller
             'password' => 'required|min:6',
             'role' => 'required'
         ]);
-
-        $recaptcha = Helpers::get_business_settings('recaptcha');
-        if (isset($recaptcha) && $recaptcha['status'] == 1 && !$request?->set_default_captcha) {
-            $request->validate([
-                'g-recaptcha-response' => [
-                    function ($attribute, $value, $fail) {
-                        $secret_key = Helpers::get_business_settings('recaptcha')['secret_key'];
-                        $gResponse = Http::asForm()->post('https://www.google.com/recaptcha/api/siteverify', [
-                            'secret' => $secret_key,
-                            'response' => $value,
-                            'remoteip' => \request()->ip(),
-                        ]);
-
-                        if (!$gResponse->successful()) {
-                            $fail(translate('ReCaptcha Failed'));
-                        }
-                    },
-                ],
-            ]);
-        } else if (strtolower(session('six_captcha')) != strtolower($request->custome_recaptcha)) {
-            Toastr::error(translate('messages.ReCAPTCHA Failed'));
-            return back();
-        }
 
         if ($request->role == 'admin_employee') {
             $data = Admin::where('email', $request->email)->where('role_id', 1)->exists();
@@ -267,17 +236,6 @@ class LoginController extends Controller
 
         return redirect()->back()->withInput($request->only('email', 'remember'))
             ->withErrors(['Credentials does not match.']);
-    }
-
-    public function reloadCaptcha()
-    {
-        $custome_recaptcha = new CaptchaBuilder;
-        $custome_recaptcha->build();
-        Session::put('six_captcha', $custome_recaptcha->getPhrase());
-
-        return response()->json([
-            'view' => view('auth.custom-captcha', compact('custome_recaptcha'))->render()
-        ], 200);
     }
 
     public function reset_password_request(Request $request)

@@ -86,6 +86,46 @@ class ItemController extends Controller
         return response()->json(['items' => $items], 200);
     }
 
+    public function farming_list(Request $request)
+    {
+        $moduleId = $request->query('module_id', null);
+        $limit = $request->query('limit', 24);
+        $offset = $request->query('offset', 1);
+
+        $query = Item::whereIn('farming_status', ['farming', 'harvest_ready'])
+            ->where('is_approved', 1)
+            ->where('status', 1);
+
+        if ($moduleId) {
+            $query->where('module_id', $moduleId);
+        }
+
+        $items = $query->latest()->offset(($offset - 1) * $limit)->limit($limit)->get()
+            ->map(function ($item) {
+                $store = $item->store;
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'slug' => $item->slug,
+                    'description' => $item->description,
+                    'price' => $item->price,
+                    'unit' => $item->unit,
+                    'farming_status' => $item->farming_status,
+                    'is_backyard' => $item->is_backyard,
+                    'image' => $item->image,
+                    'image_full_url' => $item->image_full_url,
+                    'store_name' => $store?->name,
+                    'store_id' => $store?->id,
+                    'rating' => $item->rating ?? 0,
+                ];
+            });
+
+        return response()->json([
+            'items' => $items,
+            'total' => $query->count(),
+        ], 200);
+    }
+
     public function get_new_products(Request $request)
     {
         if (!$request->hasHeader('zoneId')) {
