@@ -23,8 +23,9 @@ namespace App\Http\Controllers;
     use Illuminate\Support\Facades\Mail;
     use App\Mail\PasswordResetRequestMail;
     use Illuminate\Support\Facades\Cookie;
-    use Modules\Gateways\Traits\SmsGateway;
-    use Illuminate\Validation\Rules\Password;
+use Modules\Gateways\Traits\SmsGateway;
+use Illuminate\Validation\Rules\Password;
+use App\Models\Cart;
 
 class LoginController extends Controller
 {
@@ -217,6 +218,34 @@ class LoginController extends Controller
             return redirect()->route(
                 $data === 'admin_mfa_setup' ? 'admin.mfa.setup' : 'admin.mfa.challenge'
             );
+        }
+
+        // Migrate guest cart items to authenticated user
+        if ($request->role !== 'admin' && $request->has('guest_id')) {
+            $guestId = $request->guest_id;
+            $authUserId = auth($request->role)->id();
+            if ($guestId && $authUserId) {
+                $guestCarts = Cart::where('guest_id', $guestId)->where('is_guest', 1)->get();
+                foreach ($guestCarts as $guestCart) {
+                    $existing = Cart::where('item_id', $guestCart->item_id)
+                        ->where('item_type', $guestCart->item_type)
+                        ->where('variation', $guestCart->variation)
+                        ->where('user_id', $authUserId)
+                        ->where('is_guest', 0)
+                        ->where('module_id', $guestCart->module_id)
+                        ->first();
+
+                    if ($existing) {
+                        $existing->quantity = $existing->quantity + $guestCart->quantity;
+                        $existing->save();
+                        $guestCart->delete();
+                    } else {
+                        $guestCart->user_id = $authUserId;
+                        $guestCart->is_guest = 0;
+                        $guestCart->save();
+                    }
+                }
+            }
         }
 
         // There is deliberately no '$data == admin' branch here: both admin
