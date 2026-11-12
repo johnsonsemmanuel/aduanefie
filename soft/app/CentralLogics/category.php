@@ -241,13 +241,11 @@ class CategoryLogic
             ->whereHas('items.category',function($q)use($category_ids){
                 return $q->whereIn('id',$category_ids)->orWhereIn('parent_id', $category_ids);
             })
-            ->when(config('module.current_module_data'), function($query)use($zone_id){
-                return  $query->whereHas('zone.modules', function($query){
-                    return $query->where('modules.id', config('module.current_module_data')['id']);
-                })->module(config('module.current_module_data')['id']);
-                if(!config('module.current_module_data')['all_zone_service']) {
-                    return  $query->whereIn('zone_id', json_decode($zone_id, true));
-                }
+->when(config('module.current_module_data'), function($query)use($zone_id){
+    $moduleData = config('module.current_module_data');
+    return  $query->whereHas('zone.modules', function($query)use($moduleData){
+        return $query->where('modules.id', optional($moduleData)['id']);
+    })->module(optional($moduleData)['id']);
             })
             ->active()->type($type)
 

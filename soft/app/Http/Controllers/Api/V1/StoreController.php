@@ -35,7 +35,7 @@ class StoreController extends Controller
         $featured = $request->query('featured');
         $cacheKey = 'api_v1_stores_' . md5(json_encode([
             $zone_id,
-            config('module.current_module_data')['id'] ?? 'all',
+            optional(config('module.current_module_data'))['id'] ?? 'all',
             app()->getLocale(),
             $filter_data,
             $type,
@@ -73,7 +73,7 @@ class StoreController extends Controller
         $latitude= $request->header('latitude');
         $cacheKey = 'api_v1_stores_latest_' . md5(json_encode([
             $zone_id,
-            config('module.current_module_data')['id'] ?? 'all',
+            optional(config('module.current_module_data'))['id'] ?? 'all',
             app()->getLocale(),
             $type,
             $request['limit'],
