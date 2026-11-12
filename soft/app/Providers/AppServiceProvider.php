@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 use App\Traits\AddonHelper;
 use Illuminate\Database\Connection;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use App\CentralLogics\Helpers;
 
@@ -47,11 +48,17 @@ class AppServiceProvider extends ServiceProvider
 
         try
         {
-            Config::set('addon_admin_routes',$this->get_addon_admin_routes());
-            Config::set('get_payment_publish_status',$this->get_payment_publish_status());
+            $bootData = Cache::remember('boot_app_provider_v1', now()->addMinutes(3), function () {
+                return [
+                    'addon_admin_routes' => $this->get_addon_admin_routes(),
+                    'get_payment_publish_status' => $this->get_payment_publish_status(),
+                    'view_keys' => Helpers::get_view_keys(),
+                ];
+            });
+            Config::set('addon_admin_routes', $bootData['addon_admin_routes']);
+            Config::set('get_payment_publish_status', $bootData['get_payment_publish_status']);
             Paginator::useBootstrap();
-            foreach(Helpers::get_view_keys() as $key=>$value)
-            {
+            foreach ($bootData['view_keys'] as $key => $value) {
                 view()->share($key, $value);
             }
         }
