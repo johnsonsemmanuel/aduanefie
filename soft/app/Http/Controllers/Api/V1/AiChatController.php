@@ -12,6 +12,7 @@ use App\Models\Store;
 use App\Services\CropCycleAnalyticsService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -48,7 +49,7 @@ class AiChatController extends Controller
         $zoneIds = $this->parseZoneIds($request);
         $primaryZoneId = $zoneIds[0] ?? null;
 
-        $tablesReady = Schema::hasTable('ai_conversations') && Schema::hasTable('ai_messages');
+        $tablesReady = $this->hasAiChatTables();
         $conversation = $tablesReady
             ? $this->resolveConversation($request, $user?->id, $guestId, $moduleId, $primaryZoneId)
             : null;
@@ -104,7 +105,7 @@ class AiChatController extends Controller
             ], 403);
         }
 
-        if (! Schema::hasTable('ai_conversations')) {
+        if (! $this->hasAiChatTables()) {
             return response()->json(['total_size' => 0, 'data' => []], 200);
         }
 
@@ -144,7 +145,7 @@ class AiChatController extends Controller
             ], 403);
         }
 
-        if (! Schema::hasTable('ai_conversations') || ! Schema::hasTable('ai_messages')) {
+        if (! $this->hasAiChatTables()) {
             return response()->json([
                 'total_size' => 0,
                 'limit' => (int) $request->input('limit', 50),
@@ -187,7 +188,7 @@ class AiChatController extends Controller
             ], 403);
         }
 
-        if (! Schema::hasTable('ai_conversations')) {
+        if (! $this->hasAiChatTables()) {
             return response()->json(['message' => 'Conversation archived successfully.'], 200);
         }
 
@@ -199,6 +200,13 @@ class AiChatController extends Controller
         $conversation->update(['status' => 'archived']);
 
         return response()->json(['message' => 'Conversation archived successfully.'], 200);
+    }
+
+    private function hasAiChatTables(): bool
+    {
+        return (bool) Cache::remember('schema_has_ai_chat_tables_v1', now()->addMinutes(5), function () {
+            return Schema::hasTable('ai_conversations') && Schema::hasTable('ai_messages');
+        });
     }
 
     private function findConversation(int $id, ?int $userId, ?string $guestId): ?AiConversation

@@ -22,6 +22,9 @@ fi
 chown www-data:www-data /app/storage/oauth-*.key 2>/dev/null || true
 chmod 600 /app/storage/oauth-*.key 2>/dev/null || true
 
+# Cache static configuration to avoid per-request config bootstrap overhead
+php artisan config:cache 2>/dev/null || true
+
 # Start php-fpm in background
 php-fpm -D
 

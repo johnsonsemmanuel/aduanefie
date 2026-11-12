@@ -33,8 +33,10 @@ RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
         opcache \
         exif
 
-# Copy Nginx configuration
+# Copy Nginx, PHP-FPM & OPcache configuration
 COPY docker-nginx.conf /etc/nginx/conf.d/default.conf
+COPY docker-php-fpm-www.conf /usr/local/etc/php-fpm.d/zz-www-custom.conf
+COPY docker-opcache.ini /usr/local/etc/php/conf.d/zz-opcache-custom.ini
 
 # Set working directory
 WORKDIR /app
