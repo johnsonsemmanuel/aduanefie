@@ -150,40 +150,22 @@ class CategoryController extends Controller
             'name.0.required'=>translate('default_name_is_required'),
         ]);
 
-        $category = Category::find($id);
+        $category = Category::withoutGlobalScope('translate')->findOrFail($id);
+        $previousName = $category->getRawOriginal('name');
         $slug = Str::slug($request->name[array_search('default', $request->lang)]);
         $category->slug = $category->slug? $category->slug :"{$slug}{$category->id}";
         $category->name = $request->name[array_search('default', $request->lang)];
         $category->image = $request->has('image') ? Helpers::update('category/', $category->image, 'png', $request->file('image')) : $category->image;
         $category->save();
-        $default_lang = str_replace('_', '-', app()->getLocale());
-        foreach($request->lang as $index=>$key)
-        {
-            if($default_lang == $key && !($request->name[$index])){
-                if($key != 'default')
-                {
-                    Translation::updateOrInsert(
-                        ['translationable_type'  => 'App\Models\Category',
-                            'translationable_id'    => $category->id,
-                            'locale'                => $key,
-                            'key'                   => 'name'],
-                        ['value'                 => $category->name]
-                    );
-                }
-            }else{
-
-                if($request->name[$index] && $key != 'default')
-                {
-                    Translation::updateOrInsert(
-                        ['translationable_type'  => 'App\Models\Category',
-                            'translationable_id'    => $category->id,
-                            'locale'                => $key,
-                            'key'                   => 'name'],
-                        ['value'                 => $request->name[$index]]
-                    );
-                }
-            }
-        }
+        Helpers::add_or_update_translations(
+            request: $request,
+            key_data: 'name',
+            name_field: 'name',
+            model_name: 'Category',
+            data_id: $category->id,
+            data_value: $category->name,
+            previous_value: $previousName
+        );
         Toastr::success(translate('messages.category_updated_successfully'));
         return back();
     }

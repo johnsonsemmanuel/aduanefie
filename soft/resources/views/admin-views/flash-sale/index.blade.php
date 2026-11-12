@@ -186,7 +186,7 @@
                                         </span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="bg-gradient-light text-dark">{{$flash_sale->start_date?$flash_sale->start_date->format('d/M/Y'). ' - ' .$flash_sale->end_date->format('d/M/Y'): 'N/A'}}</span>
+                                        <span class="bg-light text-dark">{{$flash_sale->start_date?$flash_sale->start_date->format('d/M/Y'). ' - ' .$flash_sale->end_date->format('d/M/Y'): 'N/A'}}</span>
                                     </td>
                                     <td class="text-center">
                                         <span class="font-size-sm text-body mr-3">

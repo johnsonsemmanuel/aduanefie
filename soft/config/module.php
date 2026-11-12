@@ -2,7 +2,7 @@
 
 return [
     'module_type'=>[
-        'grocery', 'food', 'pharmacy', 'ecommerce','parcel','rental'
+        'grocery', 'food', 'pharmacy', 'ecommerce', 'parcel', 'rental', 'service'
     ],
 
     'grocery'=>[
@@ -158,5 +158,32 @@ return [
         'generic _name'=>false,
         'description'=>'',
         'is_rental'=>true,
+    ],
+
+    'service'=>[
+        'order_status'=>['accepted'=>true],
+        'order_place_to_schedule_interval'=>true,
+        'add_on'=>false,
+        'stock'=>false,
+        'veg_non_veg'=>false,
+        'unit'=>true,
+        'order_attachment'=>false,
+        'always_open'=>true,
+        'all_zone_service'=>true,
+        'item_available_time'=>false,
+        'show_restaurant_text'=>false,
+        'is_parcel'=>false,
+        'organic'=>false,
+        'cutlery'=>false,
+        'common_condition'=>false,
+        'nutrition'=>false,
+        'allergy'=>false,
+        'basic'=>false,
+        'halal'=>false,
+        'brand'=>false,
+        'generic_name'=>false,
+        'description'=>'In this type, verified agro-service providers offer mechanization, spraying, harvesting, irrigation, and skilled farm labor without physical product inventory, managed as scheduled service bookings.',
+        'is_rental'=>false,
+        'is_service'=>true,
     ],
 ];

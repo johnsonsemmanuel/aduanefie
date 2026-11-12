@@ -126,6 +126,7 @@ class BannerController extends Controller
             return response()->json(['errors' => Helpers::error_processor($validator)]);
         }
 
+        $previousTitle = $banner->getRawOriginal('title');
         $banner->title = $request->title[array_search('default', $request->lang)];
         $banner->type = $request->banner_type;
         $banner->zone_id = $request->zone_id;
@@ -133,35 +134,15 @@ class BannerController extends Controller
         $banner->data = ($request->banner_type == 'store_wise')?$request->store_id:(($request->banner_type == 'item_wise')?$request->item_id:'');
         $banner->default_link = $request->default_link;
         $banner->save();
-        $default_lang = str_replace('_', '-', app()->getLocale());
-        foreach ($request->lang as $index => $key) {
-            if($default_lang == $key && !($request->title[$index])){
-                if ($key != 'default') {
-                    Translation::updateOrInsert(
-                        [
-                            'translationable_type' => 'App\Models\Banner',
-                            'translationable_id' => $banner->id,
-                            'locale' => $key,
-                            'key' => 'title'
-                        ],
-                        ['value' => $banner->title]
-                    );
-                }
-            }else{
-
-                if ($request->title[$index] && $key != 'default') {
-                    Translation::updateOrInsert(
-                        [
-                            'translationable_type' => 'App\Models\Banner',
-                            'translationable_id' => $banner->id,
-                            'locale' => $key,
-                            'key' => 'title'
-                        ],
-                        ['value' => $request->title[$index]]
-                    );
-                }
-            }
-        }
+        Helpers::add_or_update_translations(
+            request: $request,
+            key_data: 'title',
+            name_field: 'title',
+            model_name: 'Banner',
+            data_id: $banner->id,
+            data_value: $banner->title,
+            previous_value: $previousTitle
+        );
 
         return response()->json([], 200);
     }

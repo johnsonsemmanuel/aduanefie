@@ -39,21 +39,21 @@
                   "labels": ["Jan","Feb","Mar","April","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],
                   "datasets": [{
                     "data": [{{data_get($total_sell, 1, '0')}},{{data_get($total_sell, 2, '0')}},{{data_get($total_sell, 3, '0')}},{{data_get($total_sell, 4, '0')}},{{data_get($total_sell, 5, '0')}},{{data_get($total_sell, 6, '0')}},{{data_get($total_sell, 7, '0')}},{{data_get($total_sell, 8, '0')}},{{data_get($total_sell, 9, '0')}},{{data_get($total_sell, 10, '0')}},{{data_get($total_sell, 11, '0')}},{{data_get($total_sell, 12, '0')}}],
-                    "backgroundColor": "#00AA96",
-                    "hoverBackgroundColor": "#00AA96",
-                    "borderColor": "#00AA96"
+                    "backgroundColor": "#8B9F69",
+                    "hoverBackgroundColor": "#8B9F69",
+                    "borderColor": "#8B9F69"
                   },
                   {
                     "data": [{{data_get($commission,1,'0')}},{{data_get($commission,2,'0')}},{{data_get($commission,3,'0')}},{{data_get($commission,4,'0')}},{{data_get($commission,5,'0')}},{{data_get($commission,6,'0')}},{{data_get($commission,7,'0')}},{{data_get($commission,8,'0')}},{{data_get($commission,9,'0')}},{{data_get($commission,10,'0')}},{{data_get($commission,11,'0')}},{{data_get($commission,12,'0')}}],
-                    "backgroundColor": "#b9e0e0",
-                    "hoverBackgroundColor": "#b9e0e0",
-                    "borderColor": "#b9e0e0"
+                    "backgroundColor": "#C7BA9E",
+                    "hoverBackgroundColor": "#C7BA9E",
+                    "borderColor": "#C7BA9E"
                   },
                   {
                     "data": [{{data_get($delivery_commission,1,'0')}},{{data_get($delivery_commission,2,'0')}},{{data_get($delivery_commission,3,'0')}},{{data_get($delivery_commission,4,'0')}},{{data_get($delivery_commission,5,'0')}},{{data_get($delivery_commission,6,'0')}},{{data_get($delivery_commission,7,'0')}},{{data_get($delivery_commission,8,'0')}},{{data_get($delivery_commission,9,'0')}},{{data_get($delivery_commission,10,'0')}},{{data_get($delivery_commission,11,'0')}},{{data_get($delivery_commission,12,'0')}}],
-                    "backgroundColor": "#005555",
-                    "hoverBackgroundColor": "#005555",
-                    "borderColor": "#005555"
+                    "backgroundColor": "#4F3E2C",
+                    "hoverBackgroundColor": "#4F3E2C",
+                    "borderColor": "#4F3E2C"
                   }
                   ]
                 },

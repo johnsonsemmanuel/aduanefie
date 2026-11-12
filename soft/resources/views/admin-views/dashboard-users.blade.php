@@ -609,10 +609,11 @@
           curve: 'straight',
           width: 2,
         },
-        colors: ['#107980'],
+        colors: ['#67513A'],
         fill: {
-            type: 'gradient',
-            colors: ['#107980'],
+            type: 'solid',
+            opacity: 0.16,
+            colors: ['#8B9F69'],
         },
         xaxis: {
         //   type: 'datetime',

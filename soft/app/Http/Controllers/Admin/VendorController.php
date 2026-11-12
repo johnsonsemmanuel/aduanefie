@@ -271,6 +271,8 @@ class VendorController extends Controller
         $vendor->password = strlen($request->password)>1?bcrypt($request->password):$store->vendor->password;
         $vendor->save();
 
+        $previousName = $store->getRawOriginal('name');
+        $previousAddress = $store->getRawOriginal('address');
         $slug = Str::slug($request->name[array_search('default', $request->lang)]);
         $store->slug = $store->slug? $store->slug :"{$slug}{$store->id}";
         $store->email = $request->email;
@@ -285,58 +287,24 @@ class VendorController extends Controller
         $store->tax = $request->tax;
         $store->delivery_time = $request->minimum_delivery_time .'-'. $request->maximum_delivery_time.' '.$request->delivery_time_type;
         $store->save();
-        $default_lang = str_replace('_', '-', app()->getLocale());
-        foreach($request->lang as $index=>$key)
-        {
-            if($default_lang == $key && !($request->name[$index])){
-                if ($key != 'default') {
-                    Translation::updateOrInsert(
-                        [
-                            'translationable_type' => 'App\Models\Store',
-                            'translationable_id' => $store->id,
-                            'locale' => $key,
-                            'key' => 'name'
-                        ],
-                        ['value' => $store->name]
-                    );
-                }
-            }else{
-
-                if ($request->name[$index] && $key != 'default') {
-                    Translation::updateOrInsert(
-                        ['translationable_type'  => 'App\Models\Store',
-                            'translationable_id'    => $store->id,
-                            'locale'                => $key,
-                            'key'                   => 'name'],
-                        ['value'                 => $request->name[$index]]
-                    );
-                }
-            }
-            if($default_lang == $key && !($request->address[$index])){
-                if ($key != 'default') {
-                    Translation::updateOrInsert(
-                        [
-                            'translationable_type' => 'App\Models\Store',
-                            'translationable_id' => $store->id,
-                            'locale' => $key,
-                            'key' => 'address'
-                        ],
-                        ['value' => $store->address]
-                    );
-                }
-            }else{
-
-                if ($request->address[$index] && $key != 'default') {
-                    Translation::updateOrInsert(
-                        ['translationable_type'  => 'App\Models\Store',
-                            'translationable_id'    => $store->id,
-                            'locale'                => $key,
-                            'key'                   => 'address'],
-                        ['value'                 => $request->address[$index]]
-                    );
-                }
-            }
-        }
+        Helpers::add_or_update_translations(
+            request: $request,
+            key_data: 'name',
+            name_field: 'name',
+            model_name: 'Store',
+            data_id: $store->id,
+            data_value: $store->name,
+            previous_value: $previousName
+        );
+        Helpers::add_or_update_translations(
+            request: $request,
+            key_data: 'address',
+            name_field: 'address',
+            model_name: 'Store',
+            data_id: $store->id,
+            data_value: $store->address,
+            previous_value: $previousAddress
+        );
         if ($vendor->userinfo) {
             $userinfo = $vendor->userinfo;
             $userinfo->f_name = $store->name;

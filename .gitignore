@@ -37,6 +37,8 @@
 # Dependencies and tool binaries
 # -----------------------------------------------------------------------------
 **/vendor/
+!soft/public/**/vendor/
+!soft/public/**/vendor/**
 **/node_modules/
 **/composer.phar
 **/.phpunit.result.cache

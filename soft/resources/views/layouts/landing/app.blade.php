@@ -205,17 +205,10 @@ $countryCode= strtolower($country?$country->value:'auto');
                                 <button class="search-btn" type="submit">
                                     <svg width="46" height="46" viewBox="0 0 46 46" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
-                                        <rect width="46" height="46" rx="23" fill="url(#paint0_linear_28_1864)" />
+                                        <rect width="46" height="46" rx="23" fill="#00D571" />
                                         <path
                                             d="M25.9667 22.997L19.3001 29.2222C19.1353 29.3866 18.8556 29.6667 18.8556 29.6667C18.8556 29.6667 18.691 30.0553 18.8558 30.22L19.3803 30.7443C19.5448 30.9092 19.7648 31 19.9992 31C20.2336 31 20.4533 30.9092 20.618 30.7443L27.7448 23.6176C27.9101 23.4524 28.0006 23.2317 28 22.997C28.0006 22.7613 27.9102 22.5408 27.7448 22.3755L20.6246 15.2557C20.46 15.0908 20.2403 15 20.0057 15C19.7713 15 19.5516 15.0908 19.3868 15.2557L18.8624 15.78C18.5212 16.1212 19.0456 16.4367 19.3868 16.7778L25.9667 22.997Z"
                                             fill="white" />
-                                        <defs>
-                                            <linearGradient id="paint0_linear_28_1864" x1="-2.04694e-07" y1="23.4694"
-                                                x2="47.5207" y2="23.4694" gradientUnits="userSpaceOnUse">
-                                                <stop stop-color="#34DD8E" />
-                                                <stop offset="1" stop-color="#00D571" />
-                                            </linearGradient>
-                                        </defs>
                                     </svg>
                                 </button>
                             </div>

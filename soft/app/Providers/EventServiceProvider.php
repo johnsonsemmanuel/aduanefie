@@ -7,8 +7,10 @@ use App\Models\DataSetting;
 use App\Models\Order;
 use App\Models\Module;
 use App\Models\Banner;
+use App\Models\Category;
 use App\Observers\BusinessSettingObserver;
 use App\Observers\BannerObserver;
+use App\Observers\CategoryObserver;
 use App\Observers\DataSettingObserver;
 use App\Observers\OrderObserver;
 use App\Observers\ModuleObserver;
@@ -39,6 +41,7 @@ class EventServiceProvider extends ServiceProvider
         Order::observe(OrderObserver::class);
         BusinessSetting::observe(BusinessSettingObserver::class);
         Banner::observe(BannerObserver::class);
+        Category::observe(CategoryObserver::class);
         DataSetting::observe(DataSettingObserver::class);
         Module::observe(ModuleObserver::class);
     }

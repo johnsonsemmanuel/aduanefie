@@ -2,23 +2,22 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;600;700&display=swap");
 :root {
-    /* --primary-clr: #24bac3; */
-    --primary-clr: #107980;
-    --secondary-clr: #99a7ba;
-    --primary: #006161;
-    --title-clr: #334257;
-    --dark-clr: #005555;
-    --base-clr: #2aa26a;
-    --base-clr-2: #5affba;
-    --border-clr: #99a7ba45;
-    --warning-clr: #ff7500;
-    --danger-clr: #ff6d6d;
-    --success-clr: #00aa6d;
-    --info-clr: #0096ff;
+    --primary-clr: #67513A;
+    --secondary-clr: #8B9F69;
+    --primary: #67513A;
+    --title-clr: #3D2E1E;
+    --dark-clr: #4F3E2C;
+    --base-clr: #8B9F69;
+    --base-clr-2: #D4E1B8;
+    --border-clr: #E0D6BD;
+    --warning-clr: #d97706;
+    --danger-clr: #c84b31;
+    --success-clr: #5e7042;
+    --info-clr: #67513A;
 }
 
 :root {
-    --theameColor: #045cff;
+    --theameColor: #67513A;
 }
 
 .scroll-bar {
@@ -15105,4 +15104,187 @@ ul.address-info .label {
 .select2-container--default .custom-select.select2-selection--multiple,
 .select2-container--default .form-control.select2-selection--multiple {
     height: 45px;
+}
+
+/* Aduanefie Admin Theme Overrides */
+:root {
+    --aduanefie-olive: #8B9F69;
+    --aduanefie-olive-dark: #5e7042;
+    --aduanefie-olive-soft: #D4E1B8;
+    --aduanefie-earth: #67513A;
+    --aduanefie-deep: #4F3E2C;
+    --aduanefie-cream: #FAF8F5;
+    --aduanefie-sand: #EFE7D3;
+    --aduanefie-border: #E0D6BD;
+    --theme-clr: #67513A;
+    --base: #67513A;
+}
+
+body,
+body.footer-offset,
+main#content.main {
+    background-color: var(--aduanefie-cream) !important;
+}
+
+#header.navbar {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--aduanefie-border);
+}
+
+.navbar-vertical-aside,
+.navbar-vertical-container,
+.navbar-vertical-content.bg--005555,
+.bg--005555,
+.menu-bg {
+    background-color: var(--aduanefie-deep) !important;
+}
+
+.navbar-vertical-aside .navbar-brand-wrapper {
+    background-color: #463626;
+    border-bottom: 1px solid rgba(239, 231, 211, 0.14);
+}
+
+.navbar-vertical-aside .navbar-nav .nav-link {
+    color: #F5EFE2;
+}
+
+.navbar-vertical-aside .navbar-nav .nav-link:hover {
+    color: #ffffff;
+}
+
+.navbar-vertical-aside .nav-subtitle {
+    color: #C7B89E !important;
+}
+
+.navbar-vertical .navbar-nav.nav-tabs .active > .nav-link,
+.navbar-vertical .navbar-nav.nav-tabs .active.nav-link {
+    border-inline-start-color: var(--aduanefie-olive) !important;
+    color: var(--aduanefie-olive-soft) !important;
+}
+
+.navbar-vertical .navbar-nav.nav-tabs .active > .nav-link .text-truncate,
+.navbar-vertical .navbar-nav.nav-tabs .active.nav-link .text-truncate,
+.navbar-vertical .navbar-nav.nav-tabs .active > .nav-link i,
+.navbar-vertical .navbar-nav.nav-tabs .active.nav-link i {
+    color: var(--aduanefie-olive-soft) !important;
+}
+
+.navbar-vertical .navbar-nav.nav-tabs .active > .nav-link::before,
+.navbar-vertical .navbar-nav.nav-tabs .active.nav-link::before {
+    background: rgba(139, 159, 105, 0.22) !important;
+}
+
+.sidebar--search-form .search--form-group .form--control {
+    background-color: rgba(250, 248, 245, 0.1) !important;
+    border-color: rgba(224, 214, 189, 0.24) !important;
+    color: #FAF8F5 !important;
+}
+
+.sidebar--search-form .search--form-group .form--control::placeholder {
+    color: #D7CCB5 !important;
+}
+
+.__nav-item .__nav-link.module--nav-icon {
+    background: var(--aduanefie-earth) !important;
+}
+
+.__nav-item .__nav-link.module--nav-icon:hover {
+    background: var(--aduanefie-deep) !important;
+}
+
+.__nav-item .__nav-link.active,
+.__nav-item .__nav-link:hover,
+.__nav-module-item.active,
+.__nav-module-item:hover {
+    color: var(--aduanefie-earth) !important;
+}
+
+.__nav-module-item.active,
+.__nav-module-item:hover {
+    border-color: var(--aduanefie-olive) !important;
+    background-color: var(--aduanefie-cream) !important;
+}
+
+.btn--primary,
+.btn-primary {
+    background-color: var(--aduanefie-earth) !important;
+    border-color: var(--aduanefie-earth) !important;
+    color: #ffffff !important;
+}
+
+.btn--primary:hover,
+.btn--primary:focus,
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: var(--aduanefie-deep) !important;
+    border-color: var(--aduanefie-deep) !important;
+    color: #ffffff !important;
+}
+
+.btn--primary-light {
+    background-color: rgba(139, 159, 105, 0.14) !important;
+    color: var(--aduanefie-deep) !important;
+}
+
+.toggle-switch-input:checked + .toggle-switch-label {
+    background-color: var(--aduanefie-olive) !important;
+}
+
+.page-item.active .page-link {
+    background-color: var(--aduanefie-earth) !important;
+    border-color: var(--aduanefie-earth) !important;
+}
+
+.card {
+    border-color: var(--aduanefie-border);
+    box-shadow: 0 2px 10px rgba(79, 62, 44, 0.05);
+}
+
+.card-header {
+    border-bottom-color: rgba(224, 214, 189, 0.6);
+}
+
+.table .thead-light th {
+    background-color: var(--aduanefie-sand) !important;
+    color: var(--aduanefie-deep) !important;
+}
+
+.__dashboard-card-2 {
+    border: 1px solid var(--aduanefie-border);
+    box-shadow: 0 2px 8px rgba(79, 62, 44, 0.06);
+}
+
+.order--card {
+    background: var(--aduanefie-cream) !important;
+    border: 1px solid var(--aduanefie-border);
+}
+
+.statistics-btn-grp label input:checked ~ span {
+    background-color: var(--aduanefie-earth) !important;
+    color: #ffffff !important;
+}
+
+.apex-legends div.before-bg-107980::before,
+.chart-bg-1 {
+    background: var(--aduanefie-deep) !important;
+}
+
+.chart-bg-2 {
+    background: var(--aduanefie-olive) !important;
+}
+
+.chart-bg-3 {
+    background: #C7BA9E !important;
+}
+
+.nav-tabs .nav-link.active,
+.nav-pills .nav-link.active {
+    color: var(--aduanefie-earth) !important;
+    border-color: var(--aduanefie-olive) !important;
+}
+
+.form-control:focus,
+.custom-select:focus {
+    border-color: var(--aduanefie-olive) !important;
+    box-shadow: 0 0 0 0.15rem rgba(139, 159, 105, 0.25) !important;
 }

@@ -107,10 +107,10 @@
                                     <a href="{{route('admin.campaign.view',['item',$campaign->id])}}" title="{{ $campaign['title'] }}" class="d-block text-body" >{{Str::limit($campaign['title'],25,'...')}}</a>
                                 </td>
                                 <td>
-                                    <span class="bg-gradient-light text-dark">{{$campaign->start_date? \App\CentralLogics\Helpers::date_format($campaign?->start_date).'-'.  \App\CentralLogics\Helpers::date_format($campaign?->end_date): 'N/A'}}</span>
+                                    <span class="bg-light text-dark">{{$campaign->start_date? \App\CentralLogics\Helpers::date_format($campaign?->start_date).'-'.  \App\CentralLogics\Helpers::date_format($campaign?->end_date): 'N/A'}}</span>
                                 </td>
                                 <td>
-                                    <span class="bg-gradient-light text-dark">{{$campaign->start_time? \App\CentralLogics\Helpers::time_format($campaign?->start_time).'-'.  \App\CentralLogics\Helpers::time_format($campaign?->end_time): 'N/A'}}</span>
+                                    <span class="bg-light text-dark">{{$campaign->start_time? \App\CentralLogics\Helpers::time_format($campaign?->start_time).'-'.  \App\CentralLogics\Helpers::time_format($campaign?->end_time): 'N/A'}}</span>
                                 </td>
                                 <td>{{\App\CentralLogics\Helpers::format_currency($campaign->price)}}</td>
                                 <td>

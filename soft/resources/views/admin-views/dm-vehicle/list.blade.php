@@ -78,17 +78,17 @@
                                         {{ $vehicle->delivery_man_count }}
                                     </td>
                                     <td>
-                                        <span class="bg-gradient-light text-dark">
+                                        <span class="bg-light text-dark">
                                             {{ $vehicle->starting_coverage_area }}
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="bg-gradient-light text-dark">
+                                        <span class="bg-light text-dark">
                                             {{ $vehicle->maximum_coverage_area }}
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="bg-gradient-light text-dark">
+                                        <span class="bg-light text-dark">
                                          {{ \App\CentralLogics\Helpers::format_currency($vehicle->extra_charges) }}
                                         </span>
                                     </td>

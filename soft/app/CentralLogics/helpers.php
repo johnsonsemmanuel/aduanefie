@@ -3532,46 +3532,73 @@ class Helpers
 
 
 
-    public static function add_or_update_translations($request, $key_data,$name_field ,$model_name, $data_id,$data_value , $model_class = false){
-        try{
-
-            if($model_class === true){
-                $model=  $model_name;
-            }else{
-                $model = 'App\\Models\\'.$model_name;
+    public static function add_or_update_translations($request, $key_data, $name_field, $model_name, $data_id, $data_value, $model_class = false, $previous_value = null)
+    {
+        try {
+            if (!is_array($request->lang ?? null)) {
+                return true;
             }
 
+            $model = $model_class === true ? $model_name : 'App\\Models\\' . $model_name;
             $default_lang = str_replace('_', '-', app()->getLocale());
+
+            $existingDefaultTranslation = Translation::where([
+                'translationable_type' => $model,
+                'translationable_id' => $data_id,
+                'locale' => $default_lang,
+                'key' => $key_data,
+            ])->value('value');
+
             foreach ($request->lang as $index => $key) {
-                if ($default_lang == $key && !($request->{$name_field}[$index])) {
-                    if ($key != 'default') {
-                        Translation::updateorcreate(
-                            [
-                                'translationable_type' =>  $model,
-                                'translationable_id' => $data_id,
-                                'locale' => $key,
-                                'key' => $key_data
-                            ],
-                            ['value' => $data_value]
-                        );
-                    }
-                } else {
-                    if ($request->{$name_field}[$index] && $key != 'default') {
-                        Translation::updateorcreate(
-                            [
-                                'translationable_type' => $model,
-                                'translationable_id' => $data_id,
-                                'locale' => $key,
-                                'key' => $key_data
-                            ],
-                            ['value' => $request->{$name_field}[$index]]
-                        );
-                    }
+                if ($key === 'default') {
+                    continue;
+                }
+
+                $submittedValue = $request->{$name_field}[$index] ?? null;
+                // Admin edit forms hide non-default tabs (like `en`), so updating the
+                // visible `default` input leaves the `en` input unchanged. Sync `en`
+                // whenever its submitted value was not explicitly edited away from
+                // the stored translation or previous raw column value.
+                $shouldSyncDefault = $default_lang == $key && (
+                    empty($submittedValue) ||
+                    (
+                        !empty($data_value) &&
+                        (string) $data_value !== (string) $submittedValue &&
+                        (
+                            ($existingDefaultTranslation !== null && (string) $submittedValue === (string) $existingDefaultTranslation) ||
+                            ($previous_value !== null && (string) $submittedValue === (string) $previous_value)
+                        )
+                    )
+                );
+
+                if ($shouldSyncDefault) {
+                    Translation::updateorcreate(
+                        [
+                            'translationable_type' => $model,
+                            'translationable_id' => $data_id,
+                            'locale' => $key,
+                            'key' => $key_data,
+                        ],
+                        ['value' => $data_value]
+                    );
+                } elseif (!empty($submittedValue)) {
+                    Translation::updateorcreate(
+                        [
+                            'translationable_type' => $model,
+                            'translationable_id' => $data_id,
+                            'locale' => $key,
+                            'key' => $key_data,
+                        ],
+                        ['value' => $submittedValue]
+                    );
                 }
             }
+            if ($model === 'App\\Models\\Category') {
+                Cache::forget('all_category_names_by_id_v1');
+            }
             return true;
-        } catch(\Exception $e){
-            info(["line___{$e->getLine()}",$e->getMessage()]);
+        } catch (\Exception $e) {
+            info(["line___{$e->getLine()}", $e->getMessage()]);
             return false;
         }
     }

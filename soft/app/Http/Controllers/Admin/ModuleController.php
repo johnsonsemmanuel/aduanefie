@@ -191,6 +191,8 @@ class ModuleController extends Controller
             'description.0.required'=>translate('default_description_is_required'),
         ]);
         $module = Module::withoutGlobalScope('translate')->findOrFail($id);
+        $previousName = $module->getRawOriginal('module_name');
+        $previousDescription = $module->getRawOriginal('description');
 
         $module->module_name = $request->module_name[array_search('default', $request->lang)];
         $module->icon = $request->has('icon') ? Helpers::update('module/', $module->icon, 'png', $request->file('icon')) : $module->icon;
@@ -200,63 +202,24 @@ class ModuleController extends Controller
         $module->all_zone_service = false;
         $module->save();
 
-        $default_lang = str_replace('_', '-', app()->getLocale());
-
-        foreach ($request->lang as $index => $key) {
-            if($default_lang == $key && !($request->module_name[$index])){
-                if ($key != 'default') {
-                    Translation::updateOrInsert(
-                        [
-                            'translationable_type' => 'App\Models\Module',
-                            'translationable_id' => $module->id,
-                            'locale' => $key,
-                            'key' => 'module_name'
-                        ],
-                        ['value' => $module->module_name]
-                    );
-                }
-            }else{
-
-                if ($request->module_name[$index] && $key != 'default') {
-                    Translation::updateOrInsert(
-                        [
-                            'translationable_type' => 'App\Models\Module',
-                            'translationable_id' => $module->id,
-                            'locale' => $key,
-                            'key' => 'module_name'
-                        ],
-                        ['value' => $request->module_name[$index]]
-                    );
-                }
-            }
-            if($default_lang == $key && !($request->description[$index])){
-                if (isset($module->description) && $key != 'default') {
-                    Translation::updateOrInsert(
-                        [
-                            'translationable_type' => 'App\Models\Module',
-                            'translationable_id' => $module->id,
-                            'locale' => $key,
-                            'key' => 'description'
-                        ],
-                        ['value' => $module->description]
-                    );
-                }
-
-            }else{
-
-                if ($request->description[$index] && $key != 'default') {
-                    Translation::updateOrInsert(
-                        [
-                            'translationable_type' => 'App\Models\Module',
-                            'translationable_id' => $module->id,
-                            'locale' => $key,
-                            'key' => 'description'
-                        ],
-                        ['value' => $request->description[$index]]
-                    );
-                }
-            }
-        }
+        Helpers::add_or_update_translations(
+            request: $request,
+            key_data: 'module_name',
+            name_field: 'module_name',
+            model_name: 'Module',
+            data_id: $module->id,
+            data_value: $module->module_name,
+            previous_value: $previousName
+        );
+        Helpers::add_or_update_translations(
+            request: $request,
+            key_data: 'description',
+            name_field: 'description',
+            model_name: 'Module',
+            data_id: $module->id,
+            data_value: $module->description,
+            previous_value: $previousDescription
+        );
         Toastr::success(translate('messages.module_updated_successfully'));
         return back();
     }
