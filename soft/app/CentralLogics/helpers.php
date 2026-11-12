@@ -41,6 +41,7 @@ use App\Mail\OrderVerificationMail;
 use App\Models\NotificationMessage;
 use App\Models\NotificationSetting;
 
+use App\Models\PriorityList;
 use App\Models\SubscriptionPackage;
 use App\Traits\PaymentGatewayTrait;
 use Illuminate\Support\Facades\App;
@@ -78,9 +79,23 @@ class Helpers
         return $err_keeper;
     }
 
+    public static function cached_business_setting(string $key, $default = null)
+    {
+        return Cache::remember("bs_val_{$key}_v1", now()->addMinutes(3), function () use ($key, $default) {
+            return BusinessSetting::where('key', $key)->value('value') ?? $default;
+        });
+    }
+
+    public static function cached_priority_list(string $name, string $type, $default = '')
+    {
+        return Cache::remember("pl_val_{$name}_{$type}_v1", now()->addMinutes(3), function () use ($name, $type, $default) {
+            return PriorityList::where('name', $name)->where('type', $type)->value('value') ?? $default;
+        });
+    }
+
     public static function schedule_order()
     {
-        return (bool)BusinessSetting::where(['key' => 'schedule_order'])->first()->value;
+        return (bool) self::cached_business_setting('schedule_order', 0);
     }
 
 
@@ -238,7 +253,52 @@ class Helpers
     {
         $storage = [];
         if ($multi_data == true) {
-            foreach ($data as $item) {
+            $itemsCollection = $data instanceof Collection ? $data : Collection::make($data);
+            if ($itemsCollection->isEmpty()) {
+                return [];
+            }
+
+            // Batch-load relations and reference lookups once per page instead of N+1 roundtrips.
+            $itemsCollection->loadMissing([
+                'module',
+                'store.discount',
+                'store.storeConfig',
+                'unit',
+                'pharmacy_item_details',
+                'ecommerce_item_details',
+                'nutritions',
+                'allergies',
+                'generic',
+                'storage',
+                'translations',
+            ]);
+
+            $categoryNames = Cache::remember('all_category_names_by_id_v1', now()->addMinutes(3), function () {
+                return Category::pluck('name', 'id')->all();
+            });
+
+            $allAddonIds = $itemsCollection
+                ->flatMap(function ($item) {
+                    $decoded = is_string($item['add_ons'] ?? null) ? json_decode($item['add_ons'], true) : ($item['add_ons'] ?? []);
+                    return is_array($decoded) ? $decoded : [];
+                })
+                ->filter()
+                ->unique()
+                ->values()
+                ->all();
+
+            $addonsById = empty($allAddonIds)
+                ? collect()
+                : AddOn::whereIn('id', $allAddonIds)->active()->get()->keyBy('id');
+
+            $itemIds = $itemsCollection->pluck('id')->filter()->values()->all();
+            $flashSalesByItemId = empty($itemIds)
+                ? collect()
+                : FlashSaleItem::Active()->whereHas('flashSale', function ($query) {
+                    $query->Active()->Running();
+                })->whereIn('item_id', $itemIds)->get()->keyBy('item_id');
+
+            foreach ($itemsCollection as $item) {
                 $variations = [];
                 if ($item->title) {
                     $item['name'] = $item->title;
@@ -263,14 +323,21 @@ class Helpers
                 }
                 $item['recommended'] =(int) $item->recommended;
                 $categories = [];
-                foreach (json_decode($item['category_ids']) as $value) {
-                    $category_name = Category::where('id',$value->id)->pluck('name');
-                    $categories[] = ['id' => (string)$value->id, 'position' => $value->position, 'name'=>data_get($category_name,'0','NA')];
+                foreach (json_decode($item['category_ids']) ?? [] as $value) {
+                    $categories[] = [
+                        'id' => (string)$value->id,
+                        'position' => $value->position,
+                        'name' => $categoryNames[$value->id] ?? 'NA',
+                    ];
                 }
                 $item['category_ids'] = $categories;
                 $item['attributes'] = json_decode($item['attributes']);
                 $item['choice_options'] = json_decode($item['choice_options']);
-                $item['add_ons'] = self::addon_data_formatting(AddOn::whereIn('id', json_decode($item['add_ons'], true))->active()->get(), true, $trans, $local);
+                $itemAddonIds = is_string($item['add_ons'] ?? null) ? json_decode($item['add_ons'], true) : ($item['add_ons'] ?? []);
+                $itemAddons = is_array($itemAddonIds)
+                    ? collect($itemAddonIds)->map(fn ($id) => $addonsById->get($id))->filter()->values()
+                    : collect();
+                $item['add_ons'] = self::addon_data_formatting($itemAddons, true, $trans, $local);
                 foreach (json_decode($item['variations'], true)?? [] as $var) {
                     array_push($variations, [
                         'type' => $var['type'],
@@ -280,14 +347,11 @@ class Helpers
                 }
                 $item['variations'] = $variations;
                 $item['food_variations'] = $item['food_variations']?json_decode($item['food_variations'], true):'';
-                $item['module_type'] = $item->module->module_type;
+                $item['module_type'] = $item->module?->module_type;
                 $item['store_name'] = $item->store?->name;
                 $item['is_campaign'] = $item->store?->campaigns_count>0?1:0;
                 $item['zone_id'] = $item->store?->zone_id;
-                $running_flash_sale = FlashSaleItem::Active()->whereHas('flashSale', function ($query) {
-                    $query->Active()->Running();
-                })
-                    ->where(['item_id' => $item['id']])->first();
+                $running_flash_sale = $flashSalesByItemId->get($item['id']);
                 $item['flash_sale'] =(int) ((($running_flash_sale && ($running_flash_sale->available_stock > 0)) ? 1 :0));
                 $item['stock'] = ($running_flash_sale && ($running_flash_sale->available_stock > 0)) ? $running_flash_sale->available_stock : $item['stock'];
                 $item['discount'] = ($running_flash_sale && ($running_flash_sale->available_stock > 0)) ? $running_flash_sale->discount : $item['discount'];
@@ -307,13 +371,15 @@ class Helpers
                 $item['brand_id'] =  (int) $item->ecommerce_item_details?->brand_id ?? 0;
                 $item['is_basic'] =  (int) $item->pharmacy_item_details?->is_basic ?? 0;
                 $item['is_prescription_required'] =  (int) $item->pharmacy_item_details?->is_prescription_required ?? 0;
-                $item['halal_tag_status'] =  (int) $item->store->storeConfig?->halal_tag_status??0;
+                $item['halal_tag_status'] =  (int) $item->store?->storeConfig?->halal_tag_status??0;
 
-                $item->store['self_delivery_system'] = (int) $item->store->sub_self_delivery;
+                if ($item->store) {
+                    $item->store['self_delivery_system'] = (int) $item->store->sub_self_delivery;
+                }
 
-                $item['nutritions_name']= $item?->nutritions ? Nutrition::whereIn('id',$item?->nutritions->pluck('id') )->pluck('nutrition') : null;
-                $item['allergies_name']= $item?->allergies ?Allergy::whereIn('id',$item?->allergies->pluck('id') )->pluck('allergy') : null;
-                $item['generic_name']= $item?->generic ? GenericName::whereIn('id',$item?->generic->pluck('id') )->pluck('generic_name'): null ;
+                $item['nutritions_name']= $item->nutritions ? $item->nutritions->pluck('nutrition') : null;
+                $item['allergies_name']= $item->allergies ? $item->allergies->pluck('allergy') : null;
+                $item['generic_name']= $item->generic ? $item->generic->pluck('generic_name') : null;
 
                 self::attachAgroLifecycleFields($item);
 
@@ -804,10 +870,24 @@ class Helpers
     public static function store_data_formatting($data, $multi_data = false)
     {
         $storage = [];
-        if ($multi_data == true) {
-            foreach ($data as $item) {
+        $extra_packaging_raw = self::cached_business_setting('extra_packaging_data', '');
+        $extra_packaging_data = json_decode($extra_packaging_raw, true);
 
-                $item->load('storeConfig');
+        if ($multi_data == true) {
+            $storesCollection = $data instanceof Collection ? $data : Collection::make($data);
+            if ($storesCollection->isEmpty()) {
+                return [];
+            }
+
+            $storesCollection->loadMissing([
+                'storeConfig',
+                'module',
+                'schedules',
+                'storage',
+                'translations',
+            ]);
+
+            foreach ($storesCollection as $item) {
                 $ratings = StoreLogic::calculate_store_rating($item['rating']);
                 $item['ratings'] = $item?->rating ?? [];
                 unset($item['rating']);
@@ -818,10 +898,9 @@ class Helpers
                 $item['total_campaigns'] = $item['campaigns_count'];
                 $item['is_recommended'] = false;
                 $item['halal_tag_status'] =   (bool) $item?->storeConfig?->halal_tag_status;
-                $extra_packaging_data = \App\Models\BusinessSetting::where('key', 'extra_packaging_data')->first()?->value ?? '';
-                $extra_packaging_data =json_decode($extra_packaging_data , true);
-                $item['extra_packaging_status'] =   (bool) (!empty($extra_packaging_data) && data_get($extra_packaging_data,$item->module->module_type)=='1')?$item?->storeConfig?->extra_packaging_status:false;
-                $item['extra_packaging_amount'] =   (float) (!empty($extra_packaging_data) && (data_get($extra_packaging_data,$item->module->module_type)=='1') && ($item?->storeConfig?->extra_packaging_status == '1'))?$item?->storeConfig?->extra_packaging_amount:0;
+                $moduleType = $item->module?->module_type;
+                $item['extra_packaging_status'] =   (bool) (!empty($extra_packaging_data) && $moduleType && data_get($extra_packaging_data, $moduleType)=='1')?$item?->storeConfig?->extra_packaging_status:false;
+                $item['extra_packaging_amount'] =   (float) (!empty($extra_packaging_data) && $moduleType && (data_get($extra_packaging_data, $moduleType)=='1') && ($item?->storeConfig?->extra_packaging_status == '1'))?$item?->storeConfig?->extra_packaging_amount:0;
                 if($item->storeConfig && $item->storeConfig->is_recommended_deleted == 0 ){
                     $item['is_recommended'] = $item->storeConfig->is_recommended;
                 }

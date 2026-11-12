@@ -18,10 +18,10 @@ class StoreLogic
     public static function get_stores( $zone_id, $filter_data, $type, $store_type, $limit = 10, $offset = 1, $featured=false,$longitude=0,$latitude=0,$filter=null,$rating_count=null)
     {
 
-        $all_stores_default_status = BusinessSetting::where('key', 'all_stores_default_status')->first()?->value ?? 1;
-        $all_stores_sort_by_general = PriorityList::where('name', 'all_stores_sort_by_general')->where('type','general')->first()?->value ?? '';
-        $all_stores_sort_by_unavailable = PriorityList::where('name', 'all_stores_sort_by_unavailable')->where('type','unavailable')->first()?->value ?? '';
-        $all_stores_sort_by_temp_closed = PriorityList::where('name', 'all_stores_sort_by_temp_closed')->where('type','temp_closed')->first()?->value ?? '';
+        $all_stores_default_status = Helpers::cached_business_setting('all_stores_default_status', 1);
+        $all_stores_sort_by_general = Helpers::cached_priority_list('all_stores_sort_by_general', 'general', '');
+        $all_stores_sort_by_unavailable = Helpers::cached_priority_list('all_stores_sort_by_unavailable', 'unavailable', '');
+        $all_stores_sort_by_temp_closed = Helpers::cached_priority_list('all_stores_sort_by_temp_closed', 'temp_closed', '');
 
         $query = Store::type($type)->
         WithOpenWithDeliveryTime($longitude??0,$latitude??0)
@@ -144,39 +144,44 @@ class StoreLogic
 
         $paginator = $query->paginate($limit??50, ['*'], 'page', $offset??1);
 
+        $pageStores = collect($paginator->items());
+        $storeIds = $pageStores->pluck('id')->filter()->values()->all();
 
-
-        $paginator->each(function ($store) {
-            $category_ids = DB::table('items')
+        // Batch category-id lookup and discount flag across all stores on the page (2 queries total vs 2N).
+        $storeCategoryRows = empty($storeIds)
+            ? collect()
+            : DB::table('items')
                 ->join('categories', 'items.category_id', '=', 'categories.id')
-                ->selectRaw('
-                categories.id as id,
-                categories.parent_id
-            ')
-                ->where('items.store_id', $store->id)
+                ->select('items.store_id', 'categories.id as id', 'categories.parent_id')
+                ->whereIn('items.store_id', $storeIds)
                 ->where('categories.status', 1)
-                ->groupBy('categories.id', 'categories.parent_id')
-                ->get();
+                ->distinct()
+                ->get()
+                ->groupBy('store_id');
 
-            $data = json_decode($category_ids, true);
+        $discountedStoreIds = empty($storeIds)
+            ? []
+            : DB::table('items')
+                ->whereIn('store_id', $storeIds)
+                ->where('discount', '>', 0)
+                ->distinct()
+                ->pluck('store_id')
+                ->flip()
+                ->all();
 
+        $paginator->each(function ($store) use ($storeCategoryRows, $discountedStoreIds) {
             $mergedIds = [];
-
-            foreach ($data as $item) {
-                if ($item['id'] != 0) {
-                    $mergedIds[] = $item['id'];
+            foreach ($storeCategoryRows->get($store->id, []) as $item) {
+                if ($item->id != 0) {
+                    $mergedIds[] = $item->id;
                 }
-                if ($item['parent_id'] != 0) {
-                    $mergedIds[] = $item['parent_id'];
+                if ($item->parent_id != 0) {
+                    $mergedIds[] = $item->parent_id;
                 }
             }
 
-            $category_ids = array_values(array_unique($mergedIds));
-
-            $store->category_ids = $category_ids;
-
-            $store->discount_status = !empty($store->items->where('discount', '>', 0));
-            unset($store['items']);
+            $store->category_ids = array_values(array_unique($mergedIds));
+            $store->discount_status = isset($discountedStoreIds[$store->id]);
         });
         return [
             'total_size' => $paginator->total(),
@@ -188,10 +193,10 @@ class StoreLogic
 
     public static function get_latest_stores($zone_id, $limit = 50, $offset = 1, $type='all',$longitude=0,$latitude=0)
     {
-    $latest_stores_default_status =BusinessSetting::where('key', 'latest_stores_default_status')->first()?->value ?? 1;
-    $latest_stores_sort_by_general =PriorityList::where('name', 'latest_stores_sort_by_general')->where('type','general')->first()?->value ?? '';
-    $latest_stores_sort_by_unavailable =PriorityList::where('name', 'latest_stores_sort_by_unavailable')->where('type','unavailable')->first()?->value ?? '';
-    $latest_stores_sort_by_temp_closed =PriorityList::where('name', 'latest_stores_sort_by_temp_closed')->where('type','temp_closed')->first()?->value ?? '';
+    $latest_stores_default_status = Helpers::cached_business_setting('latest_stores_default_status', 1);
+    $latest_stores_sort_by_general = Helpers::cached_priority_list('latest_stores_sort_by_general', 'general', '');
+    $latest_stores_sort_by_unavailable = Helpers::cached_priority_list('latest_stores_sort_by_unavailable', 'unavailable', '');
+    $latest_stores_sort_by_temp_closed = Helpers::cached_priority_list('latest_stores_sort_by_temp_closed', 'temp_closed', '');
 
 
 
@@ -268,11 +273,11 @@ class StoreLogic
 
     public static function get_popular_stores($zone_id, $limit = 50, $offset = 1, $type = 'all',$longitude=0,$latitude=0)
     {
-        $popular_store_default_status = BusinessSetting::where('key', 'popular_store_default_status')->first()?->value ?? 1;
-        $popular_store_sort_by_general = PriorityList::where('name', 'popular_store_sort_by_general')->where('type','general')->first()?->value ?? '';
-        $popular_store_sort_by_unavailable = PriorityList::where('name', 'popular_store_sort_by_unavailable')->where('type','unavailable')->first()?->value ??'';
-        $popular_store_sort_by_temp_closed = PriorityList::where('name', 'popular_store_sort_by_temp_closed')->where('type','temp_closed')->first()?->value ??'';
-        $popular_store_sort_by_rating = PriorityList::where('name', 'popular_store_sort_by_rating')->where('type','rating')->first()?->value ??'';
+        $popular_store_default_status = Helpers::cached_business_setting('popular_store_default_status', 1);
+        $popular_store_sort_by_general = Helpers::cached_priority_list('popular_store_sort_by_general', 'general', '');
+        $popular_store_sort_by_unavailable = Helpers::cached_priority_list('popular_store_sort_by_unavailable', 'unavailable', '');
+        $popular_store_sort_by_temp_closed = Helpers::cached_priority_list('popular_store_sort_by_temp_closed', 'temp_closed', '');
+        $popular_store_sort_by_rating = Helpers::cached_priority_list('popular_store_sort_by_rating', 'rating', '');
 
         $query = Store::withOpen($longitude??0,$latitude??0)
             ->withCount(['items','campaigns'])

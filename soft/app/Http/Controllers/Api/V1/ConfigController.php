@@ -493,7 +493,7 @@ class ConfigController extends Controller
     public function react_landing_page()
     {
         $payload = Cache::remember('api_v1_react_landing_page_v1_' . app()->getLocale(), now()->addMinutes(3), function () {
-            $datas = DataSetting::with('translations')->whereIn('type', ['react_landing_page' ,'module_home_page_data','module_vendor_registration_data'])->get();
+            $datas = DataSetting::with(['translations', 'storage'])->whereIn('type', ['react_landing_page' ,'module_home_page_data','module_vendor_registration_data'])->get();
         $data = [];
         foreach ($datas as $key => $value) {
             if (count($value->translations) > 0) {
@@ -533,7 +533,7 @@ class ConfigController extends Controller
             $promotional_banners[] = Helpers::get_full_url('promotional_banner', $value['img'], $value['storage'] ?? 'public');
         }
 
-        $zones= Zone::where('status',1)->get();
+        $zones= Zone::where('status',1)->with('modules:id,module_name')->get();
         $zones = self::zone_format($zones);
 
         return
@@ -656,7 +656,7 @@ class ConfigController extends Controller
             }
         }
 
-        $zones= Zone::where('status',1)->get();
+        $zones= Zone::where('status',1)->with('modules:id,module_name')->get();
         $zones = self::zone_format($zones);
 
         $criterias = FlutterSpecialCriteria::where('status', 1)->get();

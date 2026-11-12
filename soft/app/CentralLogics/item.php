@@ -92,7 +92,7 @@ class ProductLogic
             }
 
             if($latest_items_sort_by_temp_closed == 'remove'){
-                $query = $query->having('temp_available', '>', 0);
+                $query = $query->whereHas('store', fn ($q) => $q->where('active', '>', 0));
             }elseif($latest_items_sort_by_temp_closed == 'last'){
                 $query = $query->orderByDesc('temp_available');
             }
@@ -165,7 +165,7 @@ class ProductLogic
             }
 
             if($latest_items_sort_by_temp_closed == 'remove'){
-                $query = $query->having('temp_available', '>', 0);
+                $query = $query->whereHas('store', fn ($q) => $q->where('active', '>', 0));
             }elseif($latest_items_sort_by_temp_closed == 'last'){
                 $query = $query->orderByDesc('temp_available');
             }
@@ -296,7 +296,7 @@ class ProductLogic
             }
 
             if($latest_items_sort_by_temp_closed == 'remove'){
-                $query = $query->having('temp_available', '>', 0);
+                $query = $query->whereHas('store', fn ($q) => $q->where('active', '>', 0));
             }elseif($latest_items_sort_by_temp_closed == 'last'){
                 $query = $query->orderByDesc('temp_available');
             }
@@ -440,14 +440,10 @@ class ProductLogic
 
     public static function popular_products($zone_id, $limit = null, $offset = null, $type = 'all')
     {
-        $popular_item_default_status = \App\Models\BusinessSetting::where('key', 'popular_item_default_status')->first();
-        $popular_item_default_status = $popular_item_default_status ? $popular_item_default_status->value : 1;
-        $popular_item_sort_by_general = \App\Models\PriorityList::where('name', 'popular_item_sort_by_general')->where('type','general')->first();
-        $popular_item_sort_by_general = $popular_item_sort_by_general ? $popular_item_sort_by_general->value : '';
-        $popular_item_sort_by_unavailable = \App\Models\PriorityList::where('name', 'popular_item_sort_by_unavailable')->where('type','unavailable')->first();
-        $popular_item_sort_by_unavailable = $popular_item_sort_by_unavailable ? $popular_item_sort_by_unavailable->value : '';
-        $popular_item_sort_by_temp_closed = \App\Models\PriorityList::where('name', 'popular_item_sort_by_temp_closed')->where('type','temp_closed')->first();
-        $popular_item_sort_by_temp_closed = $popular_item_sort_by_temp_closed ? $popular_item_sort_by_temp_closed->value : '';
+        $popular_item_default_status = Helpers::cached_business_setting('popular_item_default_status', 1);
+        $popular_item_sort_by_general = Helpers::cached_priority_list('popular_item_sort_by_general', 'general', '');
+        $popular_item_sort_by_unavailable = Helpers::cached_priority_list('popular_item_sort_by_unavailable', 'unavailable', '');
+        $popular_item_sort_by_temp_closed = Helpers::cached_priority_list('popular_item_sort_by_temp_closed', 'temp_closed', '');
 
         if($limit != null && $offset != null)
         {
@@ -483,7 +479,7 @@ class ProductLogic
                 }
 
                 if($popular_item_sort_by_temp_closed == 'remove'){
-                    $query = $query->having('temp_available', '>', 0);
+                    $query = $query->whereHas('store', fn ($q) => $q->where('active', '>', 0));
                 }elseif($popular_item_sort_by_temp_closed == 'last'){
                     $query = $query->orderByDesc('temp_available');
                 }
@@ -545,7 +541,7 @@ class ProductLogic
             }
 
             if($popular_item_sort_by_temp_closed == 'remove'){
-                $query = $query->having('temp_available', '>', 0);
+                $query = $query->whereHas('store', fn ($q) => $q->where('active', '>', 0));
             }elseif($popular_item_sort_by_temp_closed == 'last'){
                 $query = $query->orderByDesc('temp_available');
             }
@@ -580,14 +576,10 @@ class ProductLogic
 
     public static function most_reviewed_products($zone_id, $limit = null, $offset = null, $type = 'all')
     {
-        $best_reviewed_item_default_status = \App\Models\BusinessSetting::where('key', 'best_reviewed_item_default_status')->first();
-        $best_reviewed_item_default_status = $best_reviewed_item_default_status ? $best_reviewed_item_default_status->value : 1;
-        $best_reviewed_item_sort_by_general = \App\Models\PriorityList::where('name', 'best_reviewed_item_sort_by_general')->where('type','general')->first();
-        $best_reviewed_item_sort_by_general = $best_reviewed_item_sort_by_general ? $best_reviewed_item_sort_by_general->value : '';
-        $best_reviewed_item_sort_by_unavailable = \App\Models\PriorityList::where('name', 'best_reviewed_item_sort_by_unavailable')->where('type','unavailable')->first();
-        $best_reviewed_item_sort_by_unavailable = $best_reviewed_item_sort_by_unavailable ? $best_reviewed_item_sort_by_unavailable->value : '';
-        $best_reviewed_item_sort_by_temp_closed = \App\Models\PriorityList::where('name', 'best_reviewed_item_sort_by_temp_closed')->where('type','temp_closed')->first();
-        $best_reviewed_item_sort_by_temp_closed = $best_reviewed_item_sort_by_temp_closed ? $best_reviewed_item_sort_by_temp_closed->value : '';
+        $best_reviewed_item_default_status = Helpers::cached_business_setting('best_reviewed_item_default_status', 1);
+        $best_reviewed_item_sort_by_general = Helpers::cached_priority_list('best_reviewed_item_sort_by_general', 'general', '');
+        $best_reviewed_item_sort_by_unavailable = Helpers::cached_priority_list('best_reviewed_item_sort_by_unavailable', 'unavailable', '');
+        $best_reviewed_item_sort_by_temp_closed = Helpers::cached_priority_list('best_reviewed_item_sort_by_temp_closed', 'temp_closed', '');
 
         if($limit != null && $offset != null)
         {
@@ -609,7 +601,7 @@ class ProductLogic
                     ->whereColumn('stores.id', 'items.store_id');
             }, 'temp_available')
             ->withCount('reviews')->active()->type($type)
-            ->having('reviews_count' ,'>',0);
+            ->has('reviews');
             if ($best_reviewed_item_default_status == '1'){
                 $query = $query->orderBy('reviews_count','desc');
             } else {
@@ -622,7 +614,7 @@ class ProductLogic
             }
 
                 if($best_reviewed_item_sort_by_temp_closed == 'remove'){
-                    $query = $query->having('temp_available', '>', 0);
+                    $query = $query->whereHas('store', fn ($q) => $q->where('active', '>', 0));
                 }elseif($best_reviewed_item_sort_by_temp_closed == 'last'){
                     $query = $query->orderByDesc('temp_available');
                 }
@@ -662,7 +654,7 @@ class ProductLogic
                     ->whereColumn('stores.id', 'items.store_id');
             }, 'temp_available')
             ->withCount('reviews')->active()->type($type)
-            ->having('reviews_count' ,'>',0);
+            ->has('reviews');
         if ($best_reviewed_item_default_status == '1'){
             $query = $query->orderBy('reviews_count','desc');
         } else {
@@ -675,7 +667,7 @@ class ProductLogic
             }
 
             if($best_reviewed_item_sort_by_temp_closed == 'remove'){
-                $query = $query->having('temp_available', '>', 0);
+                $query = $query->whereHas('store', fn ($q) => $q->where('active', '>', 0));
             }elseif($best_reviewed_item_sort_by_temp_closed == 'last'){
                 $query = $query->orderByDesc('temp_available');
             }
@@ -727,12 +719,9 @@ class ProductLogic
 
     public static function discounted_products($zone_id, $limit = null, $offset = null, $type = 'all', $category_ids = null, $filter = null,$min=false, $max=false, $rating_count = null, $brand_ids = null)
     {
-        $special_offer_default_status =BusinessSetting::where('key', 'special_offer_default_status')->first();
-        $special_offer_default_status = $special_offer_default_status ? $special_offer_default_status->value : 1;
-        $special_offer_sort_by_general =PriorityList::where('name', 'special_offer_sort_by_general')->where('type','general')->first();
-        $special_offer_sort_by_general = $special_offer_sort_by_general ? $special_offer_sort_by_general->value : '';
-        $special_offer_sort_by_unavailable =PriorityList::where('name', 'special_offer_sort_by_unavailable')->where('type','unavailable')->first();
-        $special_offer_sort_by_unavailable = $special_offer_sort_by_unavailable ? $special_offer_sort_by_unavailable->value : '';
+        $special_offer_default_status = Helpers::cached_business_setting('special_offer_default_status', 1);
+        $special_offer_sort_by_general = Helpers::cached_priority_list('special_offer_sort_by_general', 'general', '');
+        $special_offer_sort_by_unavailable = Helpers::cached_priority_list('special_offer_sort_by_unavailable', 'unavailable', '');
 
         $category_ids = isset($category_ids)?(is_array($category_ids)?$category_ids:json_decode($category_ids)):[];
         $brand_ids = isset($brand_ids)?(is_array($brand_ids)?$brand_ids:json_decode($brand_ids)):[];
@@ -1254,7 +1243,7 @@ class ProductLogic
             }
 
             if($basic_medicine_sort_by_temp_closed == 'remove'){
-                $query = $query->having('temp_available', '>', 0);
+                $query = $query->whereHas('store', fn ($q) => $q->where('active', '>', 0));
             }elseif($basic_medicine_sort_by_temp_closed == 'last'){
                 $query = $query->orderByDesc('temp_available');
             }
