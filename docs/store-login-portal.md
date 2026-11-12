@@ -28,8 +28,9 @@ page. A store owner was never shown a store login prompt.
 
 ## 2. What changed
 
-Two commits carry this work. `8519202` is a concurrent cleanup commit that captured the first
-four files while they were in the working tree; its message does not describe them.
+Four commits carry this work. `8519202` is a concurrent cleanup commit that captured the first
+four files while they were in the working tree; its message does not describe them. `17dd74b`
+and `7188841` are follow-up fixes; `65f610c` is this document.
 
 | File | Change | Commit |
 |---|---|---|
@@ -41,6 +42,7 @@ four files while they were in the working tree; its message does not describe th
 | `soft/app/Http/Middleware/PortalScope.php` | Retired hosts redirect every `GET`/`HEAD` 301 to the ops host, preserving path and query string, **before** `StartSession`. Non-GET methods 404. | `17dd74b` |
 | `soft/resources/views/auth/login.blade.php` | Admin MFA slide and step dots wrapped in `@if($isAdmin)`. `single-step` CSS collapses the track for store logins. Small owner/employee cross-link. | `17dd74b` |
 | `soft/.env.production.example` | `APP_URL` corrected to `https://admin.aduanefie.com` (the ops/API app), not the Vercel storefront. | `17dd74b` |
+| `soft/routes/web.php` | Removed five route groups (`bulk-trade`, `market`, `sourcing`, `seller`, `api/integrations`) whose controllers `8519202` deleted but whose route definitions it left behind. Every one of those routes would 500 on dispatch, and `route:list` aborted loading the missing classes. No live view calls these names; the only callers are the removed-feature views. | `7188841` |
 
 ## 3. Entry points, enumerated
 
@@ -73,9 +75,14 @@ header to exercise portal scoping.
 | Employee login (temporary fixture) | 302 → `.../vendor-panel`; `is_logged_in = 1` |
 | Wrong password | 302 back to `/store-login`; `/vendor-panel` still 302 to login (not authenticated) |
 
-Route registration was confirmed without `route:list`, because that command instantiates every
-controller and the concurrent `8519202` commit left `routes/web.php` referencing controllers it
-deleted. The registration check used `app('router')->getRoutes()` directly:
+Route registration was confirmed without `route:list`, because that command loads every
+controller class. `8519202` left `routes/web.php` referencing controllers it had deleted;
+`7188841` removed those groups. At the time of writing, `route:list` still aborts — this time on
+six payment-gateway controllers being deleted by a separate, still-uncommitted cleanup in the
+shared working tree (`BkashPaymentController`, `LiqPayController`, `MercadoPagoController`,
+`PaytmController`, `RazorPayController`, `SslCommerzPaymentController`). That pass is not part of
+this change. The registration check below used `app('router')->getRoutes()` directly, which does
+not load controllers:
 
 ```
 GET    store-login           name=store.login                   middleware=web
@@ -116,6 +123,16 @@ Local test artefacts (vendor `9001`, store `9002`, employee `9003`) were deleted
    the master admin and emails the admin, not the store owner. The vendor reset endpoint
    (`POST /vendor-reset-password`) exists but the shared modal does not use it. Existing issue,
    left untouched to keep this diff reviewable.
+8. **`route:list` / `route:cache` requires a clean controller reference set.** Before deploy,
+   `php artisan route:list` must exit 0. At the time of writing it aborts on six payment-gateway
+   controllers being removed by a concurrent, uncommitted change. That change must also delete
+   their route definitions, or the controllers must be restored; `route:cache` fails the same way.
+9. **Orphaned removed-feature views remain.** `resources/views/market/`,
+   `resources/views/seller-dashboard/`, and `resources/views/vendor-views/profile/edit.blade.php`
+   still call route names that no longer exist (`market.*`, `seller.*`). The first two are
+   unreachable. `profile/edit` is unreachable today because no route targets
+   `ProfileController@edit`; if one is ever added it will 500 on `seller.profile.update`, which was
+   already undefined before this change.
 
 ## 6. Required deployment steps (outside this repo)
 
@@ -124,6 +141,7 @@ Local test artefacts (vendor `9001`, store `9002`, employee `9003`) were deleted
 2. Stop the old Apache Laravel install on `185.151.30.164`.
 3. Confirm whether both installs write to the same database; resolve before enabling writes.
 4. Deploy this branch, then run `php artisan config:cache` and `php artisan route:cache`.
+   `php artisan route:list` must exit 0 first (see gap 8).
 5. Verify with a real store account:
    - `https://admin.aduanefie.com/store-login` renders and logs in.
    - `https://admin.aduanefie.com/vendor-panel` loads the dashboard.
