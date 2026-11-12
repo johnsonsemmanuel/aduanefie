@@ -78,6 +78,18 @@ Route::middleware(\App\Http\Middleware\RiderAuthenticated::class)->prefix('rider
     Route::get('earnings', 'RiderDashboardController@earnings')->name('rider.earnings');
 });
 
+// Canonical store-management front door on admin.aduanefie.com. The legacy
+// /login/store and /login/store-employee entries below stay as aliases so old
+// bookmarks, the mobile app and DataSetting.store_login_url keep working.
+Route::get('store-login', 'StoreAuthController@showLogin')->name('store.login');
+Route::post('store-login', 'StoreAuthController@login')
+    ->name('store.login.submit')
+    ->middleware('throttle:store-login');
+Route::get('store-login/employee', 'StoreAuthController@showEmployeeLogin')->name('store.employee.login');
+Route::post('store-login/employee', 'StoreAuthController@loginEmployee')
+    ->name('store.employee.login.submit')
+    ->middleware('throttle:store-login');
+
 Route::get('login/{tab}', 'LoginController@login')->name('login');
 Route::post('external-login-from-drivemond', 'LoginController@externalLoginFromDrivemond');
 Route::post('login_submit', 'LoginController@submit')->name('login_post')->middleware(['actch', 'throttle:web-login']);
@@ -248,50 +260,6 @@ Route::group(['prefix' => 'vendor', 'as' => 'restaurant.'], function () {
 Route::group(['prefix' => 'deliveryman', 'as' => 'deliveryman.'], function () {
     Route::get('apply', 'DeliveryManController@create')->name('create');
     Route::post('apply', 'DeliveryManController@store')->name('store');
-});
-
-//Trade Requests (RFQ) - Customer
-Route::group(['prefix' => 'trade-requests', 'as' => 'trade-requests.'], function () {
-    Route::post('/', 'TradeRequestController@store')->name('store');
-    Route::get('/', 'TradeRequestController@index')->name('index');
-    Route::post('quotes/{quote}/accept', 'TradeRequestController@acceptQuote')->name('quotes.accept');
-    Route::post('quotes/{quote}/reject', 'TradeRequestController@rejectQuote')->name('quotes.reject');
-    Route::post('documents/upload', 'TradeRequestController@uploadDocument')->name('documents.upload');
-    Route::get('documents/{tradeRequestId}', 'TradeRequestController@documents')->name('documents.list');
-});
-
-//Trade Finance / Escrow
-Route::group(['prefix' => 'trade-contracts', 'as' => 'trade-contracts.', 'middleware' => 'throttle:30,1'], function () {
-    Route::post('{tradeRequest}/create', 'TradeFinanceController@createContract')->name('create');
-    Route::post('{contract}/deposit', 'TradeFinanceController@deposit')->name('deposit');
-    Route::post('{contract}/confirm-delivery', 'TradeFinanceController@confirmDelivery')->name('confirm-delivery');
-    Route::post('{contract}/verify-documents', 'TradeFinanceController@verifyDocuments')->name('verify-documents');
-    Route::post('{contract}/release', 'TradeFinanceController@releaseFunds')->name('release');
-    Route::post('{contract}/refund', 'TradeFinanceController@refund')->name('refund');
-    Route::get('{contract}/summary', 'TradeFinanceController@summary')->name('summary');
-    Route::get('{contract}', 'TradeFinanceController@view')->name('view');
-});
-
-//Trade Finance / Escrow - Export
-Route::group(['prefix' => 'trade-contracts/export', 'as' => 'trade-contracts.export.', 'middleware' => 'throttle:60,1'], function () {
-    Route::get('contracts/{type}', 'TradeFinanceController@exportContracts')->name('contracts');
-    Route::get('invoice/{contractId}/{type}', 'TradeFinanceController@exportInvoice')->name('invoice');
-});
-
-//Trade Blocs - Regional Hubs
-Route::group(['prefix' => 'trade-bloc', 'as' => 'trade-bloc.', 'middleware' => 'throttle:60,1'], function () {
-    Route::get('/', 'TradeBlocController@index')->name('index');
-    Route::get('{slug}', 'TradeBlocController@hub')->name('hub');
-    Route::get('reports/corridors', 'TradeBlocController@reportCorridors')->name('reports.corridors');
-    Route::get('reports/commodities', 'TradeBlocController@reportCommodities')->name('reports.commodities');
-    Route::get('reports/countries', 'TradeBlocController@reportCountries')->name('reports.countries');
-});
-
-//Trade Assurance
-Route::group(['prefix' => 'trade-assurance', 'as' => 'trade-assurance.', 'middleware' => 'throttle:30,1'], function () {
-    Route::post('{contract}/request', 'TradeAssuranceController@request')->name('request');
-    Route::post('{assurance}/inspect', 'TradeAssuranceController@recordInspection')->name('inspect');
-    Route::get('{contract}/status', 'TradeAssuranceController@status')->name('status');
 });
 
 //Bulk Trade Tools
