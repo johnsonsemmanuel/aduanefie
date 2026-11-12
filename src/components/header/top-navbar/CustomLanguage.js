@@ -109,7 +109,7 @@ const CustomLanguage = ({ formmobilemenu }) => {
             <Image
               width={20}
               height={21}
-              src={language === "en" ? eng.src : arabicImg.src}
+              src={eng.src}
               alt="Language Image"
               priority={true}
             />
@@ -122,7 +122,7 @@ const CustomLanguage = ({ formmobilemenu }) => {
         }
       >
         <Typography color={theme.palette.neutral[1000]}>
-          {language === "en" ? "English" : "Arabic"}
+          English
         </Typography>
       </TopBarButton>
       <StyledMenu
@@ -150,7 +150,7 @@ const CustomLanguage = ({ formmobilemenu }) => {
               <Image
                 width={20}
                 height={21}
-                src={language === "en" ? eng.src : arabicImg.src}
+                src={eng.src}
                 alt="Language Image"
                 priority={true}
               />

@@ -64,10 +64,19 @@ const CustomLanguage = ({
       let languageSetting = JSON.parse(
         localStorage.getItem("language-setting")
       );
-      localStorage.setItem(
-        "language-setting",
-        JSON.stringify(languageSetting || i18n.language)
+      const isSupported = languageList?.some(
+        (item) => item?.languageCode === languageSetting
       );
+      const normalized = isSupported ? languageSetting : "en";
+      localStorage.setItem("language-setting", JSON.stringify(normalized));
+      if (!isSupported) {
+        cookie.set("languageSetting", "en");
+        dispatch(setLanguage("en"));
+        i18n.changeLanguage("en");
+        if (settings?.direction !== "ltr") {
+          saveSettings({ ...values, direction: "ltr" });
+        }
+      }
     }
   }, []);
 
