@@ -2,7 +2,8 @@
 
 Date: 2026-11-12
 Branch: `fix/store-login-portal`
-Status: **implemented, linted, and exercised against the local SQLite replica. Not deployed.**
+Status: **deployed to Railway production (`aduanefie-backend` / production) at `0d24de9` and
+verified over HTTPS.** Retired-host 301s are live in the app but unreachable until DNS is repointed.
 
 Supersedes the store-specific parts of `docs/portal-scoping-implementation.md` and
 `docs/admin-access-verification.md`. Those documents still describe `/login/store` as the
@@ -28,9 +29,10 @@ page. A store owner was never shown a store login prompt.
 
 ## 2. What changed
 
-Four commits carry this work. `8519202` is a concurrent cleanup commit that captured the first
-four files while they were in the working tree; its message does not describe them. `17dd74b`
-and `7188841` are follow-up fixes; `65f610c` is this document.
+Six commits carry this work. `8519202` and `5acc742` are concurrent cleanup commits that
+captured files while they were in the working tree; their messages describe the cleanup, not
+this feature. `17dd74b` and `7188841` are follow-up fixes, `65f610c` is this document, and
+`0d24de9` repairs the invalid `composer.json` that `5acc742` left behind.
 
 | File | Change | Commit |
 |---|---|---|
@@ -43,6 +45,7 @@ and `7188841` are follow-up fixes; `65f610c` is this document.
 | `soft/resources/views/auth/login.blade.php` | Admin MFA slide and step dots wrapped in `@if($isAdmin)`. `single-step` CSS collapses the track for store logins. Small owner/employee cross-link. | `17dd74b` |
 | `soft/.env.production.example` | `APP_URL` corrected to `https://admin.aduanefie.com` (the ops/API app), not the Vercel storefront. | `17dd74b` |
 | `soft/routes/web.php` | Removed five route groups (`bulk-trade`, `market`, `sourcing`, `seller`, `api/integrations`) whose controllers `8519202` deleted but whose route definitions it left behind. Every one of those routes would 500 on dispatch, and `route:list` aborted loading the missing classes. No live view calls these names; the only callers are the removed-feature views. | `7188841` |
+| `soft/composer.json` | Removed the trailing comma `5acc742` left after `"prefer-stable": true,`. The file is read by `Application::getNamespace()`, so invalid JSON made every artisan command die with "Unable to detect application namespace" and would have broken the Docker build. `composer.lock` was not regenerated; `composer install` warns "lock file is not up to date" but installs. | `0d24de9` |
 
 ## 3. Entry points, enumerated
 
@@ -75,14 +78,8 @@ header to exercise portal scoping.
 | Employee login (temporary fixture) | 302 → `.../vendor-panel`; `is_logged_in = 1` |
 | Wrong password | 302 back to `/store-login`; `/vendor-panel` still 302 to login (not authenticated) |
 
-Route registration was confirmed without `route:list`, because that command loads every
-controller class. `8519202` left `routes/web.php` referencing controllers it had deleted;
-`7188841` removed those groups. At the time of writing, `route:list` still aborts — this time on
-six payment-gateway controllers being deleted by a separate, still-uncommitted cleanup in the
-shared working tree (`BkashPaymentController`, `LiqPayController`, `MercadoPagoController`,
-`PaytmController`, `RazorPayController`, `SslCommerzPaymentController`). That pass is not part of
-this change. The registration check below used `app('router')->getRoutes()` directly, which does
-not load controllers:
+Route registration was confirmed with a full `php artisan route:list`, which now exits 0 with
+1382 routes (`0d24de9`; see gap 8). The targeted routes are:
 
 ```
 GET    store-login           name=store.login                   middleware=web
@@ -96,13 +93,39 @@ GET    vendor-panel          name=vendor.dashboard              middleware=web, 
 Local test artefacts (vendor `9001`, store `9002`, employee `9003`) were deleted, and the
 `check_daily_subscription_validity_check` business setting was restored to `2026-11-09`.
 
+### 4.1 Production verification (after `railway up` from `0d24de9`)
+
+Deployed with `railway up --ci` from `soft/` to project `aduanefie-backend`, environment
+`production`, service `aduanefie-backend`. Build reported `Deploy complete`. Checks were run over
+HTTPS against `admin.aduanefie.com`, which resolves to Railway (`t8ki8ru4.up.railway.app`):
+
+| Check | Before deploy | After deploy |
+|---|---|---|
+| `GET https://admin.aduanefie.com/store-login` | 404 | 200, 12,059 bytes |
+| `GET https://admin.aduanefie.com/store-login/employee` | 404 | 200 |
+| `GET https://admin.aduanefie.com/vendor-panel` (guest) | 302 → `https://admin.aduanefie.com/` | 302 → `https://admin.aduanefie.com/store-login` |
+| `GET https://admin.aduanefie.com/admin-login` | 200 | 200 (MFA markup retained) |
+| `GET https://admin.aduanefie.com/login/store` | 200 | 200 (legacy alias still served) |
+| `GET https://admin.aduanefie.com/login/store-employee` | — | 200 |
+
+Markup checks on the production store-login page: no `#mfaForm`, no `two_factor_verification`, no
+`.step-indicator`; contains "Sign in to your store panel" and the employee cross-link; form action
+is `https://admin.aduanefie.com/store-login`.
+
+The Railway image entrypoint (`soft/docker-entrypoint.sh`) runs `php artisan config:cache` only.
+It does **not** run `route:cache` and does **not** run migrations, so this deploy did not touch the
+database schema. A stale route cache is therefore not a deploy risk here unless someone has cached
+routes manually; if that happens, `route('store.login')` would throw and the fix is to clear
+`bootstrap/cache/routes-*.php`.
+
 ## 5. Known gaps and deliberate deferrals
 
-1. **Not deployed.** The 301 only exists in this codebase. `store.` and `vendor.` still resolve
-   to `185.151.30.164` (old Apache). Until DNS/edge is repointed, users still hit the old app.
-2. **Caches must be rebuilt on Railway** after deploy: `php artisan config:cache` and
-   `php artisan route:cache`. `route('store.login')` in `VendorMiddleware` will throw if a stale
-   route cache is served.
+1. **Retired hosts are not yet cut over at DNS.** `store.` and `vendor.` still resolve to
+   `185.151.30.164` (old Apache), so the 301 implemented in `PortalScope` is unreachable in
+   production. The admin host is fully deployed; only the DNS/edge repoint remains.
+2. **Caches: resolved.** `route:list` exits 0, and the entrypoint rebuilds `config:cache` on every
+   boot. `route:cache` is intentionally not used by the entrypoint; see §4.1 for what to do if a
+   stale route cache is ever introduced.
 3. **Split-brain risk is unresolved.** The old Apache install is still running and may share the
    database with Railway. That must be checked before any write-heavy rollout.
 4. **Authenticated dashboard rendering was not fully exercised locally.** `GET /vendor-panel`
@@ -123,16 +146,21 @@ Local test artefacts (vendor `9001`, store `9002`, employee `9003`) were deleted
    the master admin and emails the admin, not the store owner. The vendor reset endpoint
    (`POST /vendor-reset-password`) exists but the shared modal does not use it. Existing issue,
    left untouched to keep this diff reviewable.
-8. **`route:list` / `route:cache` requires a clean controller reference set.** Before deploy,
-   `php artisan route:list` must exit 0. At the time of writing it aborts on six payment-gateway
-   controllers being removed by a concurrent, uncommitted change. That change must also delete
-   their route definitions, or the controllers must be restored; `route:cache` fails the same way.
+8. **`route:list` / `route:cache`: resolved.** `php artisan route:list` exits 0 with 1382 routes
+   at `0d24de9`. The two causes were the stale `routes/web.php` groups (`7188841`) and the invalid
+   `composer.json` (`0d24de9`). If a future cleanup deletes a controller, it must delete the route
+   definitions in the same commit or `route:list` and `route:cache` abort again.
 9. **Orphaned removed-feature views remain.** `resources/views/market/`,
    `resources/views/seller-dashboard/`, and `resources/views/vendor-views/profile/edit.blade.php`
    still call route names that no longer exist (`market.*`, `seller.*`). The first two are
    unreachable. `profile/edit` is unreachable today because no route targets
    `ProfileController@edit`; if one is ever added it will 500 on `seller.profile.update`, which was
    already undefined before this change.
+10. **`translate()` mutates the language file at request time.** When a key is missing from
+    `resources/lang/{locale}/messages.php`, `app/helpers.php::translate()` appends the readable
+    fallback to that PHP file and writes it back. This explains the recurring uncommitted churn in
+    `messages.php` and means a language file can change as a side effect of serving a page. The new
+    store-login strings rely on this fallback; they render as readable text, not raw keys.
 
 ## 6. Required deployment steps (outside this repo)
 
@@ -140,9 +168,10 @@ Local test artefacts (vendor `9001`, store `9002`, employee `9003`) were deleted
    301 in front of them to `https://admin.aduanefie.com/store-login`.
 2. Stop the old Apache Laravel install on `185.151.30.164`.
 3. Confirm whether both installs write to the same database; resolve before enabling writes.
-4. Deploy this branch, then run `php artisan config:cache` and `php artisan route:cache`.
-   `php artisan route:list` must exit 0 first (see gap 8).
+4. ~~Deploy this branch.~~ Done at `0d24de9`; entrypoint rebuilds `config:cache` on boot. See §4.1.
 5. Verify with a real store account:
-   - `https://admin.aduanefie.com/store-login` renders and logs in.
-   - `https://admin.aduanefie.com/vendor-panel` loads the dashboard.
-   - `https://store.aduanefie.com/` returns 301 to the canonical store login.
+   - `https://admin.aduanefie.com/store-login` renders and logs in. (Renders: confirmed.)
+   - `https://admin.aduanefie.com/vendor-panel` loads the dashboard. (Still to confirm with a real
+     account; see gap 4.)
+   - `https://store.aduanefie.com/` returns 301 to the canonical store login. (App-level 301 is
+     deployed; blocked on step 1.)
