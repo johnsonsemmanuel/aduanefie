@@ -12,7 +12,7 @@
 <button type="{{ $type }}"
         class="btn btn-{{ $size }} btn-block btn--{{ $class }} {{ $block ? 'w-100' : '' }} {{ $disabled ? 'disabled' : '' }} {{ $loading ? 'loading' : '' }}"
         {{ $disabled ? 'disabled' : '' }}
-        {{ $loading ? 'data-loading-text="{{ translate("messages.processing") }}"' : '' }}>
+        @if($loading) data-loading-text="{{ translate('messages.processing') }}" @endif>
     @if($icon) <i class="{{ $icon }} me-2"></i> @endif
     {{ $label }}
 </button>

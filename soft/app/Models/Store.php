@@ -343,29 +343,29 @@ class Store extends Model
         return $this->farm_type ?? 'commercial';
     }
 
-    public function getIsBackyardAttribute(): bool
+    public function getIsBackyardAttribute($value): bool
     {
-        return (bool) ($this->is_backyard ?? false);
+        return (bool) ($value ?? false);
     }
 
-    public function getCultivationStatusAttribute(): string
+    public function getCultivationStatusAttribute($value): string
     {
-        return $this->cultivation_status ?? 'active';
+        return $value ?? 'active';
     }
 
-    public function getNextHarvestDateAttribute()
+    public function getNextHarvestDateAttribute($value)
     {
-        return $this->next_harvest_date;
+        return $value;
     }
 
-    public function getFarmSizeAcresAttribute()
+    public function getFarmSizeAcresAttribute($value)
     {
-        return $this->farm_size_acres;
+        return $value;
     }
 
-    public function getPrimaryCropsAttribute()
+    public function getPrimaryCropsAttribute($value)
     {
-        return $this->primary_crops;
+        return $value;
     }
 
     /**
