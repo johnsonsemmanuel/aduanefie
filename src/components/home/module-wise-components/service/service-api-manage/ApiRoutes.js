@@ -8,3 +8,4 @@ export const get_service_search_page_data = "/api/v1/items/search";
 export const service_providers_list_api = "/api/v1/stores/get-stores/all";
 export const service_popular_items_api = "/api/v1/items/popular";
 export const service_latest_items_api = "/api/v1/items/latest";
+export const service_farming_items_api = "/api/v1/item/farming-list";

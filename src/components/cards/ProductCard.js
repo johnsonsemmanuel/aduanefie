@@ -3,6 +3,7 @@ import {
   alpha,
   Card,
   CardMedia,
+  Chip,
   Typography,
   useMediaQuery,
   useTheme,
@@ -1318,6 +1319,38 @@ const ProductCard = (props) => {
                   <FoodHalalHaram width={30} />
                 ) : (
                   ""
+                )}
+                {item?.farming_status === "harvest_ready" && (
+                  <Chip
+                    size="small"
+                    label={t("Harvest Ready")}
+                    sx={{
+                      position: "absolute",
+                      top: 10,
+                      left: 10,
+                      bgcolor: "#155724",
+                      color: "#FFFFFF",
+                      fontWeight: 700,
+                      borderRadius: "6px",
+                      zIndex: 10,
+                    }}
+                  />
+                )}
+                {item?.is_backyard && (
+                  <Chip
+                    size="small"
+                    label={t("Backyard Grown")}
+                    sx={{
+                      position: "absolute",
+                      top: 10,
+                      right: 10,
+                      bgcolor: "#67513A",
+                      color: "#FFFFFF",
+                      fontWeight: 600,
+                      borderRadius: "6px",
+                      zIndex: 10,
+                    }}
+                  />
                 )}
                 <CustomOverLay hover={state.isTransformed} border_radius="10px">
                   <QuickView

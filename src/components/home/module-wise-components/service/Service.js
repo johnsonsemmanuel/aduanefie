@@ -29,6 +29,7 @@ import { getServiceCardPricing } from "./components/common/ServiceCardPricing";
 import {
   service_popular_items_api,
   service_providers_list_api,
+  service_farming_items_api,
 } from "./service-api-manage/ApiRoutes";
 
 const EARTH_BORDER = "#E0D6BD";
@@ -63,6 +64,17 @@ const ServiceModule = () => {
         `${service_providers_list_api}?offset=1&limit=12&store_type=all`
       );
       return getApiCollection(data, "stores");
+    },
+    { enabled: !!moduleId, staleTime: 1000 * 60 * 3 }
+  );
+
+  const { data: farmingData, isLoading: farmingLoading } = useQuery(
+    ["service-module-farming-products", moduleId],
+    async () => {
+      const { data } = await MainApi.get(
+        `${service_farming_items_api}?limit=12&offset=1&module_id=${moduleId}`
+      );
+      return data?.items ?? [];
     },
     { enabled: !!moduleId, staleTime: 1000 * 60 * 3 }
   );
@@ -399,6 +411,202 @@ const ServiceModule = () => {
                               }}
                             >
                               {t("Book Service")}
+                            </Button>
+                          </Stack>
+                        </CardContent>
+                      </Card>
+                    </Grid>
+                  );
+                })}
+              </Grid>
+            )}
+          </Box>
+
+          {/* Currently Farming Products */}
+          <Box>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              sx={{ mb: 2 }}
+            >
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: EARTH_DARK }}>
+                  {t("Currently Farming")}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {t("Farm produce actively growing or harvest-ready this season")}
+                </Typography>
+              </Box>
+              <Button
+                component={Link}
+                href="/items/farming"
+                variant="text"
+                sx={{ color: EARTH_ACCENT, fontWeight: 700 }}
+              >
+                {t("View All Farming")}
+              </Button>
+            </Stack>
+
+            {farmingLoading ? (
+              <Grid container spacing={2.5}>
+                {[...Array(4)].map((_, idx) => (
+                  <Grid item xs={12} sm={6} md={4} key={idx}>
+                    <Skeleton variant="rounded" height={280} />
+                  </Grid>
+                ))}
+              </Grid>
+            ) : farmingData.length === 0 ? (
+              <Card
+                elevation={0}
+                sx={{
+                  border: `1px solid ${EARTH_BORDER}`,
+                  borderRadius: "16px",
+                  bgcolor: "#FAF8F5",
+                  p: 4,
+                  textAlign: "center",
+                }}
+              >
+                <Typography variant="subtitle1" fontWeight={700} color={EARTH_DARK}>
+                  {t("No products currently in farming mode")}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5, mb: 2 }}>
+                  {t("Check back soon for fresh farm produce")}
+                </Typography>
+              </Card>
+            ) : (
+              <Grid container spacing={2.5}>
+                {farmingData.map((product) => {
+                  const imageSrc =
+                    product?.image_full_url || "/static/no-image-found.png";
+                  const isHarvestReady = product?.farming_status === "harvest_ready";
+                  const isBackyard = product?.is_backyard;
+                  return (
+                    <Grid item xs={12} sm={6} md={4} lg={3} key={product.id}>
+                      <Card
+                        elevation={0}
+                        sx={{
+                          height: "100%",
+                          display: "flex",
+                          flexDirection: "column",
+                          border: `1px solid ${EARTH_BORDER}`,
+                          borderRadius: "16px",
+                          overflow: "hidden",
+                          bgcolor: "#FFFFFF",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            position: "relative",
+                            height: 165,
+                            bgcolor: WARM_SAND,
+                            overflow: "hidden",
+                          }}
+                        >
+                          <img
+                            src={imageSrc}
+                            alt={product.name}
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                          />
+                          {isHarvestReady && (
+                            <Chip
+                              size="small"
+                              label={t("Harvest Ready")}
+                              sx={{
+                                position: "absolute",
+                                top: 10,
+                                left: 10,
+                                bgcolor: "#155724",
+                                color: "#FFFFFF",
+                                fontWeight: 700,
+                                borderRadius: "6px",
+                              }}
+                            />
+                          )}
+                          {isBackyard && (
+                            <Chip
+                              size="small"
+                              label={t("Backyard Grown")}
+                              sx={{
+                                position: "absolute",
+                                top: 10,
+                                right: 10,
+                                bgcolor: EARTH_DARK,
+                                color: "#FFFFFF",
+                                fontWeight: 600,
+                                borderRadius: "6px",
+                              }}
+                            />
+                          )}
+                        </Box>
+
+                        <CardContent
+                          sx={{
+                            flex: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-between",
+                            p: 2,
+                          }}
+                        >
+                          <Box>
+                            <Typography
+                              variant="caption"
+                              sx={{ color: OLIVE_GREEN, fontWeight: 700, display: "block", mb: 0.5 }}
+                            >
+                              {product?.store_name || t("Verified Farm")}
+                            </Typography>
+                            <Typography
+                              variant="subtitle1"
+                              sx={{
+                                fontWeight: 700,
+                                color: EARTH_DARK,
+                                lineHeight: 1.3,
+                                mb: 1,
+                              }}
+                            >
+                              {product.name}
+                            </Typography>
+                            {product?.farming_status && (
+                              <Typography
+                                variant="caption"
+                                sx={{
+                                  color: isHarvestReady ? "#155724" : EARTH_DARK,
+                                  fontWeight: 600,
+                                  textTransform: "uppercase",
+                                  mb: 1.5,
+                                }}
+                              >
+                                {t(product.farming_status)}
+                              </Typography>
+                            )}
+                          </Box>
+
+                          <Stack
+                            direction="row"
+                            justifyContent="space-between"
+                            alignItems="center"
+                            sx={{ pt: 1.5, borderTop: `1px solid ${WARM_SAND}` }}
+                          >
+                            <Box>
+                              <Typography variant="subtitle1" fontWeight={700} color={EARTH_DARK}>
+                                {product.price > 0 ? getAmountWithSign(product.price) : t("Quote")}
+                              </Typography>
+                            </Box>
+                            <Button
+                              component={Link}
+                              href={`/items/details/${product.id}`}
+                              variant="contained"
+                              size="small"
+                              sx={{
+                                bgcolor: isHarvestReady ? "#155724" : OLIVE_GREEN,
+                                color: "#FFFFFF",
+                                fontWeight: 600,
+                                borderRadius: "8px",
+                                "&:hover": { bgcolor: isHarvestReady ? "#0d3b13" : "#778B56" },
+                              }}
+                            >
+                              {t("View Produce")}
                             </Button>
                           </Stack>
                         </CardContent>

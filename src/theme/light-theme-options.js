@@ -53,6 +53,8 @@ const moduleTheme = {
   ecommerce: "#8B9F69",
   food: "#8B9F69",
   parcel: "#8B9F69",
+  service: "#67513A",
+  grocery: "#8B9F69",
 };
 const horizontalCardBG = "#E8E0C6";
 
