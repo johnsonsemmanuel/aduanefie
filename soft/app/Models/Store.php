@@ -196,7 +196,7 @@ class Store extends Model
     /**
      * @var string[]
      */
-    protected $appends = ['gst_status','gst_code','logo_full_url','cover_photo_full_url','meta_image_full_url'];
+    protected $appends = ['gst_status','gst_code','logo_full_url','cover_photo_full_url','meta_image_full_url','farm_type','is_backyard','cultivation_status','next_harvest_date','farm_size_acres','primary_crops'];
 
     /**
      * The attributes that should be hidden for arrays.
@@ -336,6 +336,36 @@ class Store extends Model
         }
 
         return Helpers::get_full_url('store',$value,'public');
+    }
+
+    public function getFarmTypeAttribute(): string
+    {
+        return $this->farm_type ?? 'commercial';
+    }
+
+    public function getIsBackyardAttribute(): bool
+    {
+        return (bool) ($this->is_backyard ?? false);
+    }
+
+    public function getCultivationStatusAttribute(): string
+    {
+        return $this->cultivation_status ?? 'active';
+    }
+
+    public function getNextHarvestDateAttribute()
+    {
+        return $this->next_harvest_date;
+    }
+
+    public function getFarmSizeAcresAttribute()
+    {
+        return $this->farm_size_acres;
+    }
+
+    public function getPrimaryCropsAttribute()
+    {
+        return $this->primary_crops;
     }
 
     /**

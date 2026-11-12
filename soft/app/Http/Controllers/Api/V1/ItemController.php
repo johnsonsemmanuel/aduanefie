@@ -103,6 +103,7 @@ class ItemController extends Controller
         $items = $query->latest()->offset(($offset - 1) * $limit)->limit($limit)->get()
             ->map(function ($item) {
                 $store = $item->store;
+                $analytics = \App\Services\CropCycleAnalyticsService::analyze($item);
                 return [
                     'id' => $item->id,
                     'name' => $item->name,
@@ -111,6 +112,10 @@ class ItemController extends Controller
                     'price' => $item->price,
                     'unit' => $item->unit,
                     'farming_status' => $item->farming_status,
+                    'effective_farming_status' => $analytics['effective_farming_status'] ?? $item->farming_status,
+                    'days_to_harvest' => $analytics['days_to_harvest'] ?? null,
+                    'cultivation_progress_pct' => $analytics['cultivation_progress_pct'] ?? null,
+                    'status_label' => $analytics['status_label'] ?? ucfirst($item->farming_status),
                     'is_backyard' => $item->is_backyard,
                     'image' => $item->image,
                     'image_full_url' => $item->image_full_url,
