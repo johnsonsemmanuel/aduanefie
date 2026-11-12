@@ -2,8 +2,10 @@
 
 Date: 2026-11-12
 Branch: `fix/store-login-portal`
-Status: **deployed to Railway production (`aduanefie-backend` / production) at `0d24de9` and
-verified over HTTPS.** Retired-host 301s are live in the app but unreachable until DNS is repointed.
+Status: **the portal is deployed to Railway production (`aduanefie-backend` / production) at
+`0d24de9` and verified over HTTPS.** The two follow-up fixes (`de7d5c6` legacy submit ordering,
+`22d6969` dead `trade-bloc` nav) are committed and verified locally but **not yet deployed**.
+Retired-host 301s are live in the app but unreachable until DNS is repointed.
 
 Supersedes the store-specific parts of `docs/portal-scoping-implementation.md` and
 `docs/admin-access-verification.md`. Those documents still describe `/login/store` as the
@@ -29,10 +31,12 @@ page. A store owner was never shown a store login prompt.
 
 ## 2. What changed
 
-Six commits carry this work. `8519202` and `5acc742` are concurrent cleanup commits that
+Six commits carry the original feature. `8519202` and `5acc742` are concurrent cleanup commits that
 captured files while they were in the working tree; their messages describe the cleanup, not
 this feature. `17dd74b` and `7188841` are follow-up fixes, `65f610c` is this document, and
-`0d24de9` repairs the invalid `composer.json` that `5acc742` left behind.
+`0d24de9` repairs the invalid `composer.json` that `5acc742` left behind. Two later commits close
+the follow-ups listed in §5: `de7d5c6` fixes the legacy submit ordering and `22d6969` removes the
+dead `trade-bloc` nav that broke the subscription gate.
 
 | File | Change | Commit |
 |---|---|---|
@@ -55,7 +59,7 @@ this feature. `17dd74b` and `7188841` are follow-up fixes, `65f610c` is this doc
 | `GET/POST /store-login/employee` | Canonical store-employee login. |
 | `GET /login/store` | Legacy page, still served by `LoginController@login`. Kept for `DataSetting.store_login_url` and old bookmarks. |
 | `GET /login/store-employee` | Same, employee tab. |
-| `POST /login_submit` with `role=vendor` / `vendor_employee` | Legacy shared submit. **Still uses the old pre-auth gate ordering.** See gap 5. |
+| `POST /login_submit` with `role=vendor` / `vendor_employee` | Legacy shared submit. Verifies the password before the store gates (`de7d5c6`). |
 | `store.aduanefie.com`, `vendor.aduanefie.com` | App-level 301 to `https://admin.aduanefie.com/store-login` (root) or the same path on the admin host (deep links). |
 
 ## 4. Verification actually run
@@ -118,6 +122,23 @@ database schema. A stale route cache is therefore not a deploy risk here unless 
 routes manually; if that happens, `route('store.login')` would throw and the fix is to clear
 `bootstrap/cache/routes-*.php`.
 
+### 4.2 Legacy submit ordering (local HTTP, temporary fixtures)
+
+`POST /login_submit` was exercised with a CSRF token from `/store-login` and a `Referer` pointing
+back at it, against three temporary fixtures: a pending store (status `0`), a store with
+`store_business_model = none`, and an inactive store for an employee. Fixtures were deleted and
+`check_daily_subscription_validity_check` restored to `2026-11-09` afterwards.
+
+| Case | Wrong password | Correct password |
+|---|---|---|
+| Pending owner | 302, "Credentials does not match" | 302, "Admin did not approve your registration yet" |
+| `none` business model owner | 302, "Credentials does not match" | 200, subscription-payment view |
+| Inactive employee | 302, "Credentials does not match" | 302, "Store is inactive" |
+
+Before `de7d5c6` the wrong-password column returned the account-state message/page in each row.
+The correct-password column also caught the `trade-bloc` layout failure described in §5 gap 9,
+which `22d6969` fixed (the same case now renders 200).
+
 ## 5. Known gaps and deliberate deferrals
 
 1. **Retired hosts are not yet cut over at DNS.** `store.` and `vendor.` still resolve to
@@ -133,11 +154,12 @@ routes manually; if that happens, `route('store.login')` would throw and the fix
    (`orders.schedule_at` missing from the partial SQLite dump; `store_subscriptions` is also
    missing). The auth middleware itself passed. Production rendering needs a post-deploy check
    with a real store account.
-5. **Legacy submit path still has the pre-auth gate ordering.** `/login/store` renders through
-   `LoginController@submit`, which checks store state before verifying the password. The new
-   canonical controller fixes this for `/store-login`, but the legacy alias remains leaky. Either
-   retire the legacy alias or port the ordering fix before treating the store surface as fully
-   closed.
+5. **Legacy submit ordering: resolved.** `de7d5c6` verifies the vendor / vendor_employee password
+   through the same guard provider before any account-state gate, and returns the generic
+   credentials error on failure. Verified over HTTP: wrong passwords return only "Credentials does
+   not match" for pending stores, no-subscription stores and inactive stores; correct passwords
+   still reach the original gate responses. The admin tabs in the same method were reviewed but not
+   reordered; they are separately gated by the MFA challenge.
 6. **Captcha is effectively a null pass.** `passesHumanCheck()` compares an empty session
    `six_captcha` against an empty `custome_recaptcha`; the shared login view renders no captcha
    field. This matches the existing admin login. If reCAPTCHA is ever enabled in business
@@ -155,7 +177,9 @@ routes manually; if that happens, `route('store.login')` would throw and the fix
    still call route names that no longer exist (`market.*`, `seller.*`). The first two are
    unreachable. `profile/edit` is unreachable today because no route targets
    `ProfileController@edit`; if one is ever added it will 500 on `seller.profile.update`, which was
-   already undefined before this change.
+   already undefined before this change. The `trade-bloc.*` references in
+   `layouts/landing/app.blade.php` were a live version of the same problem — they 500'd every view
+   extending that layout, including the subscription gate — and are removed in `22d6969`.
 10. **`translate()` mutates the language file at request time.** When a key is missing from
     `resources/lang/{locale}/messages.php`, `app/helpers.php::translate()` appends the readable
     fallback to that PHP file and writes it back. This explains the recurring uncommitted churn in
