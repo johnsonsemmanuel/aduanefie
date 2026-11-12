@@ -417,3 +417,31 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA legacy TO aduanefie_app;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA legacy TO aduanefie_app;
 ALTER DEFAULT PRIVILEGES IN SCHEMA legacy GRANT ALL ON TABLES TO aduanefie_app;
 ALTER DEFAULT PRIVILEGES IN SCHEMA legacy GRANT ALL ON SEQUENCES TO aduanefie_app;
+
+-- Supabase enables Row-Level Security (RLS) by default on newly created tables;
+-- disable RLS on these Laravel-managed backend tables so aduanefie_app can read/write them.
+DO $$
+DECLARE
+    tbl TEXT;
+    rls_tables TEXT[] := ARRAY[
+        'trade_requests',
+        'trade_request_quotes',
+        'trade_corridors',
+        'customs_duties',
+        'trade_documents',
+        'trade_contracts',
+        'trade_blocs',
+        'bulk_pricing_tiers',
+        'standing_orders',
+        'trade_assurances',
+        'buyer_sourcing_requests',
+        'marketer_commissions',
+        'marketer_payouts',
+        'ai_conversations',
+        'ai_messages'
+    ];
+BEGIN
+    FOREACH tbl IN ARRAY rls_tables LOOP
+        EXECUTE format('ALTER TABLE legacy.%I DISABLE ROW LEVEL SECURITY;', tbl);
+    END LOOP;
+END $$;
