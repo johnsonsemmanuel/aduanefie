@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Models\Item;
 use App\Models\Store;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Review;
 use Illuminate\Support\Facades\DB;
@@ -31,8 +32,26 @@ class StoreController extends Controller
         $zone_id= $request->header('zoneId');
         $longitude= $request->header('longitude');
         $latitude= $request->header('latitude');
-        $stores = StoreLogic::get_stores( $zone_id, $filter_data, $type, $store_type, $request['limit'], $request['offset'], $request->query('featured'),$longitude,$latitude);
-        $stores['stores'] = Helpers::store_data_formatting($stores['stores'], true);
+        $featured = $request->query('featured');
+        $cacheKey = 'api_v1_stores_' . md5(json_encode([
+            $zone_id,
+            config('module.current_module_data')['id'] ?? 'all',
+            app()->getLocale(),
+            $filter_data,
+            $type,
+            $store_type,
+            $request['limit'],
+            $request['offset'],
+            $featured,
+            $longitude,
+            $latitude,
+        ]));
+
+        $stores = Cache::remember($cacheKey, now()->addSeconds(90), function () use ($zone_id, $filter_data, $type, $store_type, $request, $featured, $longitude, $latitude) {
+            $result = StoreLogic::get_stores($zone_id, $filter_data, $type, $store_type, $request['limit'], $request['offset'], $featured, $longitude, $latitude);
+            $result['stores'] = Helpers::store_data_formatting($result['stores'], true);
+            return $result;
+        });
 
         return response()->json($stores, 200);
     }
@@ -52,8 +71,22 @@ class StoreController extends Controller
         $zone_id= $request->header('zoneId');
         $longitude= $request->header('longitude');
         $latitude= $request->header('latitude');
-        $stores = StoreLogic::get_latest_stores($zone_id, $request['limit'], $request['offset'], $type,$longitude,$latitude);
-        $stores['stores'] = Helpers::store_data_formatting($stores['stores'], true);
+        $cacheKey = 'api_v1_stores_latest_' . md5(json_encode([
+            $zone_id,
+            config('module.current_module_data')['id'] ?? 'all',
+            app()->getLocale(),
+            $type,
+            $request['limit'],
+            $request['offset'],
+            $longitude,
+            $latitude,
+        ]));
+
+        $stores = Cache::remember($cacheKey, now()->addSeconds(90), function () use ($zone_id, $request, $type, $longitude, $latitude) {
+            $result = StoreLogic::get_latest_stores($zone_id, $request['limit'], $request['offset'], $type, $longitude, $latitude);
+            $result['stores'] = Helpers::store_data_formatting($result['stores'], true);
+            return $result;
+        });
 
         return response()->json($stores, 200);
     }

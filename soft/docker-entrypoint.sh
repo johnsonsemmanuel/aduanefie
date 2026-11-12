@@ -34,6 +34,17 @@ php-fpm -D
     for path in /api/v1/module /api/v1/config /api/v1/react-landing-page /api/v1/banners /api/v1/advertisement/list /api/v1/app-download-section; do
         curl -sf --max-time 25 "http://127.0.0.1:${PORT}${path}" >/dev/null 2>&1 || true
     done
+    for path in \
+        "/api/v1/module" \
+        "/api/v1/banners" \
+        "/api/v1/advertisement/list" \
+        "/api/v1/stores/latest?type=all" \
+        "/api/v1/stores/get-stores/all?offset=1&limit=12&store_type=all" \
+        "/api/v1/items/popular?limit=10&offset=1&type=all" \
+        "/api/v1/items/discounted?limit=15&offset=1" \
+        "/api/v1/items/most-reviewed?type=all"; do
+        curl -sf --max-time 30 -H "zoneId: [1]" -H "moduleId: 2" "http://127.0.0.1:${PORT}${path}" >/dev/null 2>&1 || true
+    done
 ) &
 
 # Start nginx in foreground

@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use App\CentralLogics\Helpers;
 use App\Models\BusinessSetting;
 use App\CentralLogics\StoreLogic;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use App\CentralLogics\ProductLogic;
 use App\CentralLogics\CategoryLogic;
@@ -380,8 +381,21 @@ class ItemController extends Controller
         $type = $request->query('type', 'all');
 
         $zone_id= $request->header('zoneId');
-        $items = ProductLogic::popular_products($zone_id, $request['limit'], $request['offset'], $type);
-        $items['products'] = Helpers::product_data_formatting($items['products'], true, false, app()->getLocale());
+        $cacheKey = 'api_v1_items_popular_' . md5(json_encode([
+            $zone_id,
+            config('module.current_module_data')['id'] ?? 'all',
+            app()->getLocale(),
+            $request['limit'],
+            $request['offset'],
+            $type,
+        ]));
+
+        $items = Cache::remember($cacheKey, now()->addSeconds(90), function () use ($zone_id, $request, $type) {
+            $result = ProductLogic::popular_products($zone_id, $request['limit'], $request['offset'], $type);
+            $result['products'] = Helpers::product_data_formatting($result['products'], true, false, app()->getLocale());
+            return $result;
+        });
+
         return response()->json($items, 200);
     }
 
@@ -398,9 +412,21 @@ class ItemController extends Controller
         $type = $request->query('type', 'all');
 
         $zone_id= $request->header('zoneId');
-        $items = ProductLogic::most_reviewed_products($zone_id, $request['limit'], $request['offset'], $type);
-        $items['categories'] = $items['categories'];
-        $items['products'] = Helpers::product_data_formatting($items['products'], true, false, app()->getLocale());
+        $cacheKey = 'api_v1_items_most_reviewed_' . md5(json_encode([
+            $zone_id,
+            config('module.current_module_data')['id'] ?? 'all',
+            app()->getLocale(),
+            $request['limit'],
+            $request['offset'],
+            $type,
+        ]));
+
+        $items = Cache::remember($cacheKey, now()->addSeconds(90), function () use ($zone_id, $request, $type) {
+            $result = ProductLogic::most_reviewed_products($zone_id, $request['limit'], $request['offset'], $type);
+            $result['products'] = Helpers::product_data_formatting($result['products'], true, false, app()->getLocale());
+            return $result;
+        });
+
         return response()->json($items, 200);
     }
 
@@ -418,8 +444,22 @@ class ItemController extends Controller
         $category_ids = $request->query('category_ids', '');
 
         $zone_id= $request->header('zoneId');
-        $items = ProductLogic::discounted_products($zone_id, $request['limit'], $request['offset'], $type, $category_ids);
-        $items['products'] = Helpers::product_data_formatting($items['products'], true, false, app()->getLocale());
+        $cacheKey = 'api_v1_items_discounted_' . md5(json_encode([
+            $zone_id,
+            config('module.current_module_data')['id'] ?? 'all',
+            app()->getLocale(),
+            $request['limit'],
+            $request['offset'],
+            $type,
+            $category_ids,
+        ]));
+
+        $items = Cache::remember($cacheKey, now()->addSeconds(90), function () use ($zone_id, $request, $type, $category_ids) {
+            $result = ProductLogic::discounted_products($zone_id, $request['limit'], $request['offset'], $type, $category_ids);
+            $result['products'] = Helpers::product_data_formatting($result['products'], true, false, app()->getLocale());
+            return $result;
+        });
+
         return response()->json($items, 200);
     }
 
