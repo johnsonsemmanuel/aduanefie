@@ -1,21 +1,11 @@
 import React, { useMemo } from "react";
 import {
   Box,
-  Button,
-  Card,
-  Chip,
-  Dialog,
-  DialogContent,
   Grid,
-  IconButton,
   Stack,
   Typography,
+  useTheme,
 } from "@mui/material";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import CloseIcon from "@mui/icons-material/Close";
-import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import StorefrontOutlinedIcon from "@mui/icons-material/StorefrontOutlined";
-import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -23,75 +13,29 @@ import { WHOLESALE_MODULE_ID } from "components/trade/tradeData";
 import { filterOutRiderShareModules } from "helper-functions/moduleFilter";
 import { setSelectedModule } from "redux/slices/utils";
 import { getModuleIdentifier, saveModuleParam } from "utils/moduleParamManager";
+import CustomModal from "components/modal";
+import CustomImageContainer from "components/CustomImageContainer";
+import StatusBadge from "components/common/StatusBadge";
 import { zoneWiseModule } from "./ModuleSelect";
-
-const EARTH_DARK = "#4F3E2C";
-const EARTH_ACCENT = "#67513A";
-const OLIVE_GREEN = "#8B9F69";
-const EARTH_BORDER = "#E0D6BD";
-const WARM_SAND = "#EFE7D3";
-const CANVAS = "#FAF8F5";
 
 export const MODE_CHOSEN_STORAGE_KEY = "aduanefie_mode_chosen";
 
-const getModuleCopy = (mod) => {
+const getShortHint = (mod) => {
   const name = (mod?.module_name || "").toLowerCase();
   const type = mod?.module_type;
 
   if (String(mod?.id) === String(WHOLESALE_MODULE_ID) || name.includes("wholesale")) {
-    return {
-      badge: "B2B Commodity & Export",
-      subtitle:
-        "Source bulk grains, produce, livestock & cross-border container lots from verified suppliers.",
-      cta: "Browse Wholesale B2B",
-    };
+    return { tag: "B2B", hint: "Bulk produce & cross-border lots" };
   }
   if (name.includes("nearby") || name.includes("food market") || type === "grocery") {
-    return {
-      badge: "Everyday Retail Market",
-      subtitle:
-        "Shop fresh vegetables, poultry, tubers & farm staples from food vendors around your location.",
-      cta: "Shop Nearby Market",
-    };
+    return { tag: "Local", hint: "Fresh food from nearby vendors" };
   }
-  if (type === "service") {
-    return {
-      badge: "Mechanization & Contractors",
-      subtitle:
-        "Book tractor hiring, spraying teams, soil testing & on-farm agricultural specialists.",
-      cta: "Explore Services",
-    };
-  }
-  if (type === "ecommerce") {
-    return {
-      badge: "Tools & Machinery",
-      subtitle: "Compare farm machinery, irrigation equipment, storage gear & hardware.",
-      cta: "Browse Equipment",
-    };
-  }
-  if (type === "pharmacy") {
-    return {
-      badge: "Agro-Inputs & Vet Care",
-      subtitle: "Order certified fertilisers, seeds, crop protection & livestock medicines.",
-      cta: "Browse Farm Inputs",
-    };
-  }
-  if (type === "parcel") {
-    return {
-      badge: "Freight & Dispatch",
-      subtitle: "Arrange agricultural haulage and point-to-point farm produce delivery.",
-      cta: "Book Freight",
-    };
-  }
-  return {
-    badge: "Specialized Mode",
-    subtitle: "Explore suppliers and listings curated for this marketplace mode.",
-    cta: "Open Mode",
-  };
+  return { tag: null, hint: null };
 };
 
 const ModeSwitcherModal = ({ open, onClose, isGreeting = false }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const router = useRouter();
   const dispatch = useDispatch();
   const { modules } = useSelector((state) => state.configData);
@@ -145,281 +89,210 @@ const ModeSwitcherModal = ({ open, onClose, isGreeting = false }) => {
     );
   };
 
-  const renderPrimaryCard = (mod, variant) => {
+  const renderPrimaryCard = (mod) => {
     if (!mod) return null;
-    const isWholesale = variant === "wholesale";
     const isActive = String(mod.id) === String(selectedModule?.id);
-    const copy = getModuleCopy(mod);
+    const { tag, hint } = getShortHint(mod);
 
     return (
-      <Card
-        key={mod.id}
-        elevation={0}
-        onClick={() => handleSelectMode(mod)}
-        sx={{
-          cursor: "pointer",
-          height: "100%",
-          borderRadius: "16px",
-          p: { xs: 2.2, sm: 2.8 },
-          bgcolor: isWholesale ? EARTH_DARK : WARM_SAND,
-          color: isWholesale ? "#FFFFFF" : EARTH_DARK,
-          border: isActive
-            ? `2px solid ${OLIVE_GREEN}`
-            : `1px solid ${isWholesale ? EARTH_ACCENT : EARTH_BORDER}`,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          transition: "transform 0.15s ease, border-color 0.15s ease",
-          "&:hover": {
-            transform: "translateY(-2px)",
-            borderColor: OLIVE_GREEN,
-          },
-        }}
-      >
-        <Box>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
-            <Chip
-              size="small"
-              icon={
-                isWholesale ? (
-                  <Inventory2OutlinedIcon sx={{ fontSize: 15, color: "#FFFFFF !important" }} />
-                ) : (
-                  <StorefrontOutlinedIcon sx={{ fontSize: 15, color: `${EARTH_DARK} !important` }} />
-                )
-              }
-              label={t(copy.badge)}
-              sx={{
-                bgcolor: isWholesale ? EARTH_ACCENT : "#FFFFFF",
-                color: isWholesale ? "#FAF8F5" : EARTH_DARK,
-                fontWeight: 700,
-              }}
-            />
-            {isActive && (
-              <Chip
-                size="small"
-                icon={<CheckCircleIcon sx={{ fontSize: 14, color: "#FFFFFF !important" }} />}
-                label={t("Active")}
-                sx={{ bgcolor: OLIVE_GREEN, color: "#FFFFFF", fontWeight: 700 }}
-              />
-            )}
-          </Stack>
-
-          <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mb: 1 }}>
-            {mod?.icon_full_url && (
-              <Box
-                component="img"
-                src={mod.icon_full_url}
-                alt={mod.module_name}
-                sx={{
-                  width: 38,
-                  height: 38,
-                  borderRadius: "10px",
-                  objectFit: "cover",
-                  bgcolor: "#FFFFFF",
-                  p: 0.4,
-                }}
-              />
-            )}
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 700,
-                fontSize: { xs: "1.05rem", sm: "1.2rem" },
-                color: isWholesale ? "#FAF8F5" : EARTH_DARK,
-              }}
-            >
-              {mod.module_name}
-            </Typography>
-          </Stack>
-
-          <Typography
-            variant="body2"
-            sx={{
-              color: isWholesale ? "#EFE7D3" : "#5E5042",
-              lineHeight: 1.5,
-              mb: 2,
-            }}
-          >
-            {t(copy.subtitle)}
-          </Typography>
-        </Box>
-
-        <Button
-          fullWidth
-          variant="contained"
+      <Grid item xs={12} sm={6} key={mod.id}>
+        <Box
+          onClick={() => handleSelectMode(mod)}
           sx={{
-            bgcolor: isWholesale ? OLIVE_GREEN : EARTH_DARK,
-            color: "#FFFFFF",
-            fontWeight: 700,
-            borderRadius: "10px",
-            py: 1,
+            cursor: "pointer",
+            height: "100%",
+            p: 2,
+            borderRadius: "12px",
+            bgcolor: isActive ? theme.palette.primary.lite : theme.palette.background.paper,
+            border: "1.5px solid",
+            borderColor: isActive ? theme.palette.primary.main : theme.palette.divider,
+            transition: "border-color 0.15s ease, background-color 0.15s ease",
             "&:hover": {
-              bgcolor: isWholesale ? "#778B56" : EARTH_ACCENT,
+              borderColor: theme.palette.primary.main,
+              bgcolor: theme.palette.primary.lite,
             },
           }}
         >
-          {t(copy.cta)}
-        </Button>
-      </Card>
+          <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1.25 }}>
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: "10px",
+                bgcolor: theme.palette.background.secondary,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                overflow: "hidden",
+                flexShrink: 0,
+              }}
+            >
+              {mod?.icon_full_url && (
+                <CustomImageContainer
+                  src={mod.icon_full_url}
+                  alt={mod.module_name}
+                  width="32px"
+                  height="32px"
+                  objectFit="contain"
+                />
+              )}
+            </Box>
+            {isActive ? (
+              <StatusBadge status="accepted" label={t("Active")} />
+            ) : (
+              tag && <StatusBadge status="returned" label={t(tag)} />
+            )}
+          </Stack>
+
+          <Typography
+            variant="subtitle1"
+            sx={{
+              fontWeight: 700,
+              color: theme.palette.text.primary,
+              lineHeight: 1.3,
+              mb: 0.4,
+            }}
+          >
+            {mod.module_name}
+          </Typography>
+          {hint && (
+            <Typography
+              variant="caption"
+              sx={{
+                color: theme.palette.text.secondary,
+                display: "block",
+                lineHeight: 1.4,
+              }}
+            >
+              {t(hint)}
+            </Typography>
+          )}
+        </Box>
+      </Grid>
     );
   };
 
   return (
-    <Dialog
-      open={open}
-      onClose={handleCloseModal}
-      maxWidth="md"
-      fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: "22px",
-          bgcolor: CANVAS,
-          border: `1px solid ${EARTH_BORDER}`,
-          overflow: "hidden",
-        },
-      }}
+    <CustomModal
+      openModal={open}
+      handleClose={handleCloseModal}
+      closeButton
+      maxWidth="620px"
     >
-      <DialogContent sx={{ p: { xs: 2.5, sm: 3.5 } }}>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="flex-start"
-          spacing={2}
-          sx={{ mb: 2.5 }}
-        >
-          <Box>
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 0.5 }}>
-              <SwapHorizIcon sx={{ color: OLIVE_GREEN, fontSize: 22 }} />
-              <Typography variant="overline" sx={{ color: EARTH_ACCENT, fontWeight: 700 }}>
-                {isGreeting
-                  ? t("Welcome to Aduanefie")
-                  : t("Switch Marketplace Mode")}
-              </Typography>
-            </Stack>
-            <Typography
-              variant="h5"
-              sx={{
-                fontWeight: 700,
-                color: EARTH_DARK,
-                fontSize: { xs: "1.25rem", sm: "1.55rem" },
-              }}
-            >
-              {isGreeting
-                ? t("How would you like to trade or shop today?")
-                : t("Choose what Aduanefie shows you")}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.4 }}>
-              {t(
-                "Pick Wholesale B2B commodities, Nearby Food Market, or jump straight to inputs, equipment, or agro services."
-              )}
-            </Typography>
-          </Box>
-
-          <IconButton
-            onClick={handleCloseModal}
-            aria-label={t("Close")}
-            sx={{ bgcolor: WARM_SAND, color: EARTH_DARK, "&:hover": { bgcolor: EARTH_BORDER } }}
+      <Box sx={{ px: { xs: 2, sm: 3 }, pb: { xs: 2.5, sm: 3 }, pt: 0.5 }}>
+        <Box sx={{ mb: 2 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 700,
+              color: theme.palette.text.primary,
+            }}
           >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        </Stack>
+            {isGreeting ? t("Choose Marketplace") : t("Switch Marketplace")}
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{ color: theme.palette.text.secondary, mt: 0.25 }}
+          >
+            {t("Select how you want to browse Aduanefie.")}
+          </Typography>
+        </Box>
 
-        {/* Primary Decision: Wholesale B2B vs Nearby Food Market */}
         {(wholesaleMod || nearbyMod) && (
-          <Grid container spacing={2} sx={{ mb: secondaryMods.length ? 3 : 0 }}>
-            {wholesaleMod && (
-              <Grid item xs={12} sm={nearbyMod ? 6 : 12}>
-                {renderPrimaryCard(wholesaleMod, "wholesale")}
-              </Grid>
-            )}
-            {nearbyMod && (
-              <Grid item xs={12} sm={wholesaleMod ? 6 : 12}>
-                {renderPrimaryCard(nearbyMod, "nearby")}
-              </Grid>
-            )}
+          <Grid container spacing={1.5} sx={{ mb: secondaryMods.length > 0 ? 2 : 0 }}>
+            {renderPrimaryCard(wholesaleMod)}
+            {renderPrimaryCard(nearbyMod)}
           </Grid>
         )}
 
-        {/* Secondary Specialized Agritech Modes */}
         {secondaryMods.length > 0 && (
           <Box>
             <Typography
-              variant="subtitle2"
-              sx={{ fontWeight: 700, color: EARTH_ACCENT, mb: 1.5 }}
+              variant="caption"
+              sx={{
+                display: "block",
+                fontWeight: 600,
+                color: theme.palette.text.secondary,
+                mb: 1,
+              }}
             >
-              {t("Or explore specialized agricultural marketplaces")}
+              {t("More Marketplaces")}
             </Typography>
-            <Grid container spacing={1.5}>
+            <Grid container spacing={1.25}>
               {secondaryMods.map((mod) => {
                 const isActive = String(mod.id) === String(selectedModule?.id);
-                const copy = getModuleCopy(mod);
                 return (
                   <Grid item xs={12} sm={6} key={mod.id}>
-                    <Card
-                      elevation={0}
+                    <Box
                       onClick={() => handleSelectMode(mod)}
                       sx={{
                         cursor: "pointer",
-                        p: 1.8,
-                        borderRadius: "14px",
-                        bgcolor: "#FFFFFF",
-                        border: isActive
-                          ? `2px solid ${OLIVE_GREEN}`
-                          : `1px solid ${EARTH_BORDER}`,
+                        p: 1.25,
+                        borderRadius: "10px",
+                        bgcolor: isActive
+                          ? theme.palette.primary.lite
+                          : theme.palette.background.paper,
+                        border: "1px solid",
+                        borderColor: isActive
+                          ? theme.palette.primary.main
+                          : theme.palette.divider,
                         display: "flex",
                         alignItems: "center",
-                        gap: 1.5,
-                        transition: "border-color 0.15s ease",
-                        "&:hover": { borderColor: OLIVE_GREEN },
+                        gap: 1.25,
+                        transition: "border-color 0.15s ease, background-color 0.15s ease",
+                        "&:hover": {
+                          borderColor: theme.palette.primary.main,
+                          bgcolor: theme.palette.primary.lite,
+                        },
                       }}
                     >
-                      {mod?.icon_full_url && (
-                        <Box
-                          component="img"
-                          src={mod.icon_full_url}
-                          alt={mod.module_name}
-                          sx={{
-                            width: 44,
-                            height: 44,
-                            borderRadius: "10px",
-                            objectFit: "cover",
-                            bgcolor: WARM_SAND,
-                            p: 0.5,
-                            flexShrink: 0,
-                          }}
-                        />
-                      )}
-                      <Box sx={{ minWidth: 0, flex: 1 }}>
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          <Typography
-                            variant="subtitle2"
-                            fontWeight={700}
-                            color={EARTH_DARK}
-                            noWrap
-                          >
-                            {mod.module_name}
-                          </Typography>
-                          {isActive && (
-                            <CheckCircleIcon sx={{ fontSize: 16, color: OLIVE_GREEN }} />
-                          )}
-                        </Stack>
-                        <Typography
-                          variant="caption"
-                          color="text.secondary"
-                          sx={{ display: "block" }}
-                        >
-                          {t(copy.subtitle)}
-                        </Typography>
+                      <Box
+                        sx={{
+                          width: 34,
+                          height: 34,
+                          borderRadius: "8px",
+                          bgcolor: theme.palette.background.secondary,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0,
+                          overflow: "hidden",
+                        }}
+                      >
+                        {mod?.icon_full_url && (
+                          <CustomImageContainer
+                            src={mod.icon_full_url}
+                            alt={mod.module_name}
+                            width="26px"
+                            height="26px"
+                            objectFit="contain"
+                          />
+                        )}
                       </Box>
-                    </Card>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          flex: 1,
+                          minWidth: 0,
+                          fontWeight: 600,
+                          color: theme.palette.text.primary,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {mod.module_name}
+                      </Typography>
+                      {isActive && <StatusBadge status="accepted" label={t("Active")} />}
+                    </Box>
                   </Grid>
                 );
               })}
             </Grid>
           </Box>
         )}
-      </DialogContent>
-    </Dialog>
+      </Box>
+    </CustomModal>
   );
 };
 
