@@ -15440,3 +15440,40 @@ main#content.main {
     background-color: var(--aduanefie-olive-dark) !important;
     color: #ffffff !important;
 }
+
+/* Auth / Login Left Panel (Agriculture Theme, No Gradients) */
+.auth-wrapper-left {
+    position: relative;
+    background: url(./images/auth-bg-agro.jpg) no-repeat center center/cover !important;
+}
+
+.auth-wrapper-left::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-color: rgba(45, 56, 31, 0.72);
+    z-index: 0;
+}
+
+.auth-wrapper-left .auth-left-cont {
+    position: relative;
+    z-index: 1;
+}
+
+.auth-wrapper-left .auth-left-cont img {
+    background-color: #ffffff;
+    padding: 8px 14px;
+    border-radius: 10px;
+}
+
+.auth-wrapper-left .auth-left-cont .title {
+    color: #FAF8F5 !important;
+}
+
+.auth-wrapper-left .auth-left-cont .title .aduanefie-auth-accent {
+    color: var(--aduanefie-olive-soft) !important;
+}
+
+.auth-wrapper-right .auth-header .title {
+    color: var(--aduanefie-deep) !important;
+}

@@ -12,9 +12,10 @@ $countryCode= strtolower($country?$country->value:'auto');
     <!-- Title -->
     <title>@yield('title')</title>
     <!-- Favicon -->
-    @php($logo=\App\Models\BusinessSetting::where(['key'=>'icon'])->first())
-    <link rel="shortcut icon" href="">
-    <link rel="icon" type="image/x-icon" href="{{\App\CentralLogics\Helpers::get_full_url('business', $logo?->value?? '', $logo?->storage[0]?->value ?? 'public','favicon')}}">
+    @php($logo=\App\Models\BusinessSetting::where(['key'=>'logo'])->first() ?? \App\Models\BusinessSetting::where(['key'=>'icon'])->first())
+    @php($favicon_url = \App\CentralLogics\Helpers::get_full_url('business', $logo?->value?? '', $logo?->storage[0]?->value ?? 'public','favicon'))
+    <link rel="shortcut icon" href="{{ $favicon_url }}">
+    <link rel="icon" type="image/png" href="{{ $favicon_url }}">
     <!-- Font -->
     <link href="{{asset('public/assets/admin/css/fonts.css')}}" rel="stylesheet">
     <!-- CSS Implementing Plugins -->
@@ -27,7 +28,7 @@ $countryCode= strtolower($country?$country->value:'auto');
     <link rel="stylesheet" href="{{asset('public/assets/admin/css/theme.minc619.css?v=1.0')}}">
     <link rel="stylesheet" href="{{asset('public/assets/admin/css/bootstrap-tour-standalone.min.css')}}">
     <link rel="stylesheet" href="{{asset('public/assets/admin/css/emogi-area.css')}}">
-    <link rel="stylesheet" href="{{asset('public/assets/admin/css/style.css?v=2.1')}}">
+    <link rel="stylesheet" href="{{asset('public/assets/admin/css/style.css?v=2.2')}}">
 
     <link rel="stylesheet" href="{{asset('public/assets/admin/intltelinput/css/intlTelInput.css')}}">
 
