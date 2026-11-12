@@ -683,24 +683,6 @@ Route::group(['prefix' => 'trade'], function () {
     // Simple items endpoint for marketplace
     Route::get('items/simple', 'ItemController@get_simple_items');
     });    // Close trade group
-
-    Route::group(['prefix' => 'bogo'], function () {
-        Route::get('home', fn () => response()->json(['is_live' => false, 'offers' => [], 'items' => [], 'stores' => []], 200));
-        Route::get('offers', fn () => response()->json(['items' => [], 'stores' => [], 'data' => [], 'total_size' => 0], 200));
-        Route::get('store-offers', fn () => response()->json(['items' => [], 'stores' => [], 'data' => [], 'total_size' => 0], 200));
-    });
-
-    Route::group(['prefix' => 'bundle'], function () {
-        Route::get('/', fn () => response()->json(['bundles' => [], 'data' => [], 'total_size' => 0], 200));
-        Route::get('home', fn () => response()->json(['bundles' => [], 'data' => [], 'total_size' => 0], 200));
-        Route::get('list', fn () => response()->json(['bundles' => [], 'data' => [], 'total_size' => 0], 200));
-        Route::get('store-bundles', fn () => response()->json(['bundles' => [], 'data' => [], 'total_size' => 0], 200));
-    });
-
-    Route::group(['prefix' => 'happy-hour'], function () {
-        Route::get('running', fn () => response()->json(['is_running' => false, 'happy_hour' => null], 200));
-        Route::get('stores', fn () => response()->json(['stores' => [], 'data' => [], 'total_size' => 0], 200));
-    });
 });    // Close outer Route::group
 
 WebSocketsRouter::webSocket('/delivery-man/live-location', DMLocationSocketHandler::class);
