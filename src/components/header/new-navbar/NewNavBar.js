@@ -601,33 +601,57 @@ const NewNavBar = ({ configData }) => {
         <AddressReselect location={location} />
       </Box>
 
-      {/* Active Mode Switcher Pill (opens modal popup instead of crowded strip) */}
+      {/* Active Mode Switcher — matches AddressReselect inline trigger style */}
       {modules?.length > 0 && (
-        <Button
+        <Stack
+          direction="row"
+          alignItems="center"
           onClick={() => setModeModalOpen(true)}
-          startIcon={<SwapHorizIcon sx={{ fontSize: 18 }} />}
-          endIcon={<KeyboardArrowDownIcon sx={{ fontSize: 18 }} />}
+          spacing={0.75}
           sx={{
-            ml: "14px",
+            ml: "16px",
+            pl: "16px",
+            borderLeft: (t) => `1px solid ${t.palette.divider}`,
             flexShrink: 0,
-            height: "38px",
-            px: "14px",
-            borderRadius: "9999px",
-            bgcolor: (t) => t.palette.background.secondary,
-            color: (t) => t.palette.neutral[1050],
-            border: (t) => `1px solid ${t.palette.divider}`,
-            fontSize: "13px",
-            fontWeight: 600,
-            textTransform: "none",
-            whiteSpace: "nowrap",
+            maxWidth: "220px",
+            cursor: "pointer",
+            color: (t) => t.palette.neutral[1000],
+            transition: "color 0.2s ease",
             "&:hover": {
-              borderColor: (t) => t.palette.primary.main,
-              bgcolor: (t) => t.palette.background.paper,
+              color: (t) => t.palette.primary.main,
             },
           }}
         >
-          {selectedModule?.module_name || t("Choose Mode")}
-        </Button>
+          {selectedModule?.icon_full_url ? (
+            <Box
+              component="img"
+              src={selectedModule.icon_full_url}
+              alt=""
+              sx={{
+                width: 18,
+                height: 18,
+                objectFit: "contain",
+                borderRadius: "4px",
+                flexShrink: 0,
+              }}
+            />
+          ) : (
+            <SwapHorizIcon sx={{ fontSize: 18, flexShrink: 0 }} />
+          )}
+          <Typography
+            noWrap
+            sx={{
+              fontSize: { xs: "12px", sm: "15px" },
+              fontWeight: 500,
+              color: "inherit",
+            }}
+          >
+            {selectedModule?.module_name || t("Choose Mode")}
+          </Typography>
+          <KeyboardArrowDownIcon
+            sx={{ fontSize: { xs: "16px", sm: "20px" }, flexShrink: 0 }}
+          />
+        </Stack>
       )}
 
       {/* Search: grows to fill space, 24px from icons */}
