@@ -37,11 +37,29 @@ import { useDispatch, useSelector } from "react-redux";
 import { setOpenAddressModal } from "../../../redux/slices/addAddress";
 import { getToken } from "helper-functions/getToken";
 
-const getZoneWiseAddresses = (addresses, restaurantId) => {
+const getZoneWiseAddresses = (
+  addresses,
+  restaurantId,
+  { shipsCrossBorder, storeCountry } = {}
+) => {
   const newArray = [];
-  addresses?.forEach(
-    (item) => item.zone_ids.includes(restaurantId) && newArray.push(item)
-  );
+  addresses?.forEach((item) => {
+    const inZone =
+      Array.isArray(item?.zone_ids) &&
+      restaurantId != null &&
+      item.zone_ids.includes(restaurantId);
+    // A cross-border destination is never inside the store's delivery zone, so
+    // filtering purely by zone hides every address the shopper could actually
+    // ship to. Keep those when the store ships abroad, and leave the domestic
+    // filter untouched otherwise.
+    const isCrossBorderDestination =
+      Boolean(shipsCrossBorder) &&
+      Boolean(item?.country_code) &&
+      Boolean(storeCountry) &&
+      String(item.country_code).toUpperCase() !==
+        String(storeCountry).toUpperCase();
+    if (inZone || isCrossBorderDestination) newArray.push(item);
+  });
   return newArray;
 };
 
@@ -58,6 +76,8 @@ const DeliveryAddress = ({
   renderOnNavbar,
   configData,
   storeZoneId,
+  shipsCrossBorder,
+  storeCountry,
   orderType,
   deliveryInstruction,
   setDeliveryInstruction,
@@ -91,10 +111,13 @@ const DeliveryAddress = ({
     ...address,
   };
   const handleSuccess = (addressData) => {
-    if (storeZoneId) {
+    if (storeZoneId || shipsCrossBorder) {
       const newObj = {
         ...addressData,
-        addresses: getZoneWiseAddresses(addressData?.addresses, storeZoneId),
+        addresses: getZoneWiseAddresses(addressData?.addresses, storeZoneId, {
+          shipsCrossBorder,
+          storeCountry,
+        }),
       };
 
       setData(newObj);

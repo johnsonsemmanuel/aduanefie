@@ -24,6 +24,7 @@ import { getToken } from "helper-functions/getToken";
 import LockIcon from "@mui/icons-material/Lock";
 import InstantDelivery from "./InstantDelivery";
 import DeliverySpeedOptions from "./DeliverySpeedOptions";
+import CrossBorderShipping from "./CrossBorderShipping";
 import AreaZipCodeSelect from "components/checkout/AreaZipCodeSelect";
 
 const DeliveryDetails = (props) => {
@@ -60,6 +61,12 @@ const DeliveryDetails = (props) => {
     setSelectedDeliveryOption,
     deliveryOptions,
     areaZip,
+    isCrossBorder,
+    crossBorderQuote,
+    shippingOption,
+    setShippingOption,
+    shippingOptionsLoading,
+    crossBorderUnsupportedReason,
   } = props;
   const { t } = useTranslation();
   const theme = useTheme();
@@ -199,7 +206,7 @@ const DeliveryDetails = (props) => {
           be answered before the fee can be quoted. Renders itself away when the
           zone prices by distance or a fixed amount. */}
       {areaZip ? <AreaZipCodeSelect areaZip={areaZip} /> : null}
-      {!!storeData?.self_delivery_system ? null : (
+      {!!storeData?.self_delivery_system || isCrossBorder ? null : (
         <DeliverySpeedOptions
           storeData={storeData}
           zoneData={zoneData}
@@ -219,6 +226,8 @@ const DeliveryDetails = (props) => {
         address={address}
         configData={configData}
         storeZoneId={storeData?.zone_id}
+        shipsCrossBorder={!!storeData?.ships_cross_border}
+        storeCountry={storeData?.country_code || configData?.country}
         orderType={orderType}
         formik={formik}
         passwordHandler={passwordHandler}
@@ -226,6 +235,17 @@ const DeliveryDetails = (props) => {
         check={check}
         setCheck={setCheck}
       />
+
+      {isCrossBorder && (
+        <CrossBorderShipping
+          orderType={orderType}
+          quote={crossBorderQuote}
+          selectedOption={shippingOption}
+          setSelectedOption={setShippingOption}
+          isLoading={shippingOptionsLoading}
+          unsupportedReason={crossBorderUnsupportedReason}
+        />
+      )}
     </CustomStackFullWidth>
   );
 };

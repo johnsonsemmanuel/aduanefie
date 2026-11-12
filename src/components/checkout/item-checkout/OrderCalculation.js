@@ -27,7 +27,6 @@ import {
   getInfoFromZoneData,
   getProductDiscount,
   getSubTotalPrice,
-  getTaxableTotalPrice,
   handleDistance,
   handlePurchasedAmount,
 } from "utils/CustomFunctions";
@@ -92,12 +91,18 @@ const OrderCalculation = (props) => {
     setSummaryLoading,
     currentZoneInfo,
     setDeliveryOptions,
+    isCrossBorder,
+    crossBorderQuote,
+    shippingOption,
   } = props;
 
   // Express / slightly_delay surcharge from the DeliverySpeedOptions row.
-  // Zero on take-away or when a free-delivery coupon is in effect.
+  // Zero on take-away, when a free-delivery coupon is in effect, or on a
+  // cross-border lane (that row is hidden — freight is priced by the quote).
   const deliveryOptionSurcharge =
-    orderType === "delivery" && couponDiscount?.coupon_type !== "free_delivery"
+    !isCrossBorder &&
+    orderType === "delivery" &&
+    couponDiscount?.coupon_type !== "free_delivery"
       ? Number(selectedDeliveryOption?.surcharge) || 0
       : 0;
 
@@ -201,6 +206,7 @@ const OrderCalculation = (props) => {
   // Eligibility conditions that don't depend on the raw fee — the fee-positive
   // check is folded in below once the server has quoted the fee.
   const proDeliveryConditionsMet =
+    !isCrossBorder &&
     isProActive &&
     proBenefit?.type === "delivery_fee" &&
     orderType === "delivery" &&
@@ -216,23 +222,31 @@ const OrderCalculation = (props) => {
   // sequence the charge is actually billed in. Recomputing any of it here would
   // quote a price the customer is not charged, so every figure below is read
   // back from the response rather than derived.
-  const checkoutSummaryQuery = useGetCheckoutSummary({
-    orderType: orderType === "take_away" ? "take_away" : "delivery",
-    storeId: storeData?.id,
-    orderAmount:
-      getSubTotalPrice(cartList) - getProductDiscount(cartList, storeData),
-    distance: handleDistance(distanceData?.data, origin, destination),
-    latitude: destination?.latitude,
-    longitude: destination?.longitude,
-    deliveryType: selectedDeliveryOption?.deliveryType,
-    scheduleAt: orderType === "schedule_order" ? scheduleAt : undefined,
-    couponCode: couponDiscount?.code,
-    // area_id / zip_code_id — the zone's rule prices off these.
-    ...(areaZipParams || {}),
-  });
+  const checkoutSummaryQuery = useGetCheckoutSummary(
+    {
+      orderType: orderType === "take_away" ? "take_away" : "delivery",
+      storeId: storeData?.id,
+      orderAmount:
+        getSubTotalPrice(cartList) - getProductDiscount(cartList, storeData),
+      distance: handleDistance(distanceData?.data, origin, destination),
+      latitude: destination?.latitude,
+      longitude: destination?.longitude,
+      deliveryType: selectedDeliveryOption?.deliveryType,
+      scheduleAt: orderType === "schedule_order" ? scheduleAt : undefined,
+      couponCode: couponDiscount?.code,
+      // area_id / zip_code_id — the zone's rule prices off these.
+      ...(areaZipParams || {}),
+    },
+    // International lanes are quoted by `cross-border/shipping-options`;
+    // checkout-summary only knows domestic zone pricing and would answer 403
+    // for a foreign address.
+    { enabled: !isCrossBorder },
+  );
   const checkoutSummary = checkoutSummaryQuery?.data;
   const summaryDelivery = checkoutSummary?.delivery;
-  const quoteUnavailable = isQuoteUnavailable(checkoutSummaryQuery);
+  const quoteUnavailable = isCrossBorder
+    ? false
+    : isQuoteUnavailable(checkoutSummaryQuery);
   useEffect(() => {
     setQuoteUnavailable?.(quoteUnavailable);
   }, [quoteUnavailable]);
@@ -246,19 +260,40 @@ const OrderCalculation = (props) => {
   // `customer_note` and `customer_note_status` off it.
   const surgePrice = checkoutSummary?.surge;
 
+  // Cross-border: the selected lane is the only freight figure. Duty/VAT/
+  // excise come from the same quote's landed-cost breakdown, and are re-priced
+  // server-side at placement.
+  const crossBorderLandedCost = isCrossBorder
+    ? shippingOption?.landed_cost ?? null
+    : null;
+  const crossBorderShippingAmount = isCrossBorder
+    ? Number(shippingOption?.amount) || 0
+    : 0;
+  const crossBorderDuty = Number(crossBorderLandedCost?.duty) || 0;
+  const crossBorderVat = Number(crossBorderLandedCost?.vat) || 0;
+  const crossBorderExcise = Number(crossBorderLandedCost?.excise) || 0;
+  const crossBorderImportTaxTotal =
+    crossBorderDuty + crossBorderVat + crossBorderExcise;
+
   // Resolve the raw delivery fee once. Zero result implies the system is
   // already free-delivering for some other reason (free_delivery_over
   // threshold, zone rule, take-away, etc.), in which case the Pro benefit
   // shouldn't double-discount or surface a misleading savings message.
   // The "before" figure — base + surge, ahead of free-delivery and Pro.
-  const rawDeliveryFee = Number(summaryDelivery?.base_delivery_charge) || 0;
+  const rawDeliveryFee = isCrossBorder
+    ? crossBorderShippingAmount
+    : Number(summaryDelivery?.base_delivery_charge) || 0;
   // What the customer actually pays for delivery, with those overrides applied.
-  const quotedDeliveryCharge = Number(summaryDelivery?.delivery_charge) || 0;
-  const quotedProDeliverySavings =
-    Number(summaryDelivery?.pro_customer_savings) || 0;
-  const deliveryFeeBeforeProDiscount =
-    Number(summaryDelivery?.delivery_charge_before_pro_discount) ||
-    rawDeliveryFee;
+  const quotedDeliveryCharge = isCrossBorder
+    ? crossBorderShippingAmount
+    : Number(summaryDelivery?.delivery_charge) || 0;
+  const quotedProDeliverySavings = isCrossBorder
+    ? 0
+    : Number(summaryDelivery?.pro_customer_savings) || 0;
+  const deliveryFeeBeforeProDiscount = isCrossBorder
+    ? crossBorderShippingAmount
+    : Number(summaryDelivery?.delivery_charge_before_pro_discount) ||
+      rawDeliveryFee;
 
   // A slightly-delay discount can never push the delivery fee below the
   // current module's minimum_shipping_charge (zone pivot) — cap the discount
@@ -275,11 +310,12 @@ const OrderCalculation = (props) => {
     summaryDelivery?.min_delivery_charge != null
       ? Number(summaryDelivery.min_delivery_charge)
       : null;
-  const minimumShippingCharge =
-    quotedMinDeliveryCharge ??
-    (Number(zonePivot?.minimum_shipping_charge) ||
-      Number(zonePivot?.minimum_delivery_charge) ||
-      0);
+  const minimumShippingCharge = isCrossBorder
+    ? 0
+    : quotedMinDeliveryCharge ??
+      (Number(zonePivot?.minimum_shipping_charge) ||
+        Number(zonePivot?.minimum_delivery_charge) ||
+        0);
 
   // pro_customer_savings already accounts for admin/vendor free delivery.
   const proDeliveryBenefitActive =
@@ -514,7 +550,80 @@ const OrderCalculation = (props) => {
     customerData?.data?.discount_amount_type,
   );
 
+  // An international lane never calls checkout-summary, so the store tax that
+  // placement adds has to be reproduced here. `place_order` also rounds money
+  // at specific points while it bills, so mirror that arithmetic exactly — a
+  // checkout total that differs from the charged total is a pricing bug, not a
+  // display quirk.
+  const roundUpToDigit = Number.isFinite(
+    Number(configData?.digit_after_decimal_point),
+  )
+    ? Number(configData.digit_after_decimal_point)
+    : 2;
+  const roundMoney = (amount) => {
+    const factor = Math.pow(10, roundUpToDigit);
+    return Math.round((Number(amount) || 0) * factor) / factor;
+  };
+
+  const crossBorderCouponDiscount =
+    isCrossBorder && couponDiscount
+      ? Number(
+          getCouponDiscount(
+            couponDiscount,
+            storeData,
+            cartList,
+            eligibilityDiscountAmount,
+          ),
+        ) || 0
+      : 0;
+
+  // Placement applies the new-customer discount to the goods total before it
+  // rounds, so it belongs inside this sum rather than subtracted at the end.
+  const crossBorderReferDiscount =
+    isCrossBorder && customerData?.data?.is_valid_for_discount
+      ? Number(referDiscount) || 0
+      : 0;
+
+  // Unrounded, matching `$total_price` in `place_order`; the Discount row
+  // rounds only for display, exactly as the stored order does.
+  const crossBorderGoodsAfterDiscounts = isCrossBorder
+    ? getSubTotalPrice(cartList) -
+      eligibilityDiscountAmount -
+      crossBorderCouponDiscount -
+      crossBorderReferDiscount
+    : 0;
+
+  // `tax_included` decides whether the store tax is billed on top of the goods
+  // price (excluded) or is already inside it (included). Placement charges
+  // tax_a = 0 for the included case, so adding the estimate here would overstate
+  // the total by the included-tax amount.
+  const crossBorderTaxIncluded = Number(configData?.tax_included) === 1;
+  const crossBorderStoreTax =
+    isCrossBorder && !crossBorderTaxIncluded
+      ? (crossBorderGoodsAfterDiscounts * (Number(storeData?.tax) || 0)) / 100
+      : 0;
+
   const computeTotalAmount = () => {
+    if (isCrossBorder) {
+      // Import freight and taxes are added explicitly. A `free_delivery`
+      // coupon must not erase an international freight charge, which is why
+      // this does not go through getCalculatedTotal's free-delivery branch.
+      // Rounding follows place_order: goods + store tax + freight first, then
+      // import duty/VAT, then the pass-through lines the server appends last.
+      const subtotal = roundMoney(
+        crossBorderGoodsAfterDiscounts +
+          crossBorderStoreTax +
+          roundMoney(crossBorderShippingAmount),
+      );
+      const withImportTaxes = roundMoney(subtotal + crossBorderImportTaxTotal);
+      return (
+        withImportTaxes +
+        Number(deliveryTip || 0) +
+        Number(additionalCharge || 0) +
+        Number(packagingCharge || 0)
+      );
+    }
+
     let totalAmount = getCalculatedTotal(
       cartList,
       couponDiscount,
@@ -582,9 +691,12 @@ const OrderCalculation = (props) => {
       ? t("Store Discount")
       : "";
   const totalAmountAfterPartial = computedTotalAmount - walletBalance;
-  const finalTotalAmount = profileInfo?.is_valid_for_discount
-    ? computedTotalAmount - referDiscount
-    : computedTotalAmount;
+  // The cross-border total already has the new-customer discount applied, in
+  // the same place placement applies it, so it must not be subtracted twice.
+  const finalTotalAmount =
+    profileInfo?.is_valid_for_discount && !isCrossBorder
+      ? computedTotalAmount - referDiscount
+      : computedTotalAmount;
 
   const text1 = t("After completing the order, you will receive a");
   const text2 = t(
@@ -767,7 +879,8 @@ const OrderCalculation = (props) => {
               </Stack>
             </Grid>
             <Grid item md={4} xs={4} align="right">
-              {couponDiscount.coupon_type === "free_delivery" ? (
+              {couponDiscount.coupon_type === "free_delivery" &&
+              !isCrossBorder ? (
                 <Typography textTransform="capitalize">
                   {t("Free Delivery")}
                 </Typography>
@@ -846,6 +959,120 @@ const OrderCalculation = (props) => {
                 </Typography>
               </Stack>
             </Grid>
+          </>
+        ) : null}
+        {isCrossBorder ? (
+          <>
+            {crossBorderStoreTax > 0 ? (
+              <>
+                <Grid item md={8} xs={8}>
+                  <Stack direction="row" alignItems="center" spacing={0.75}>
+                    <Typography component="span">{t("VAT/TAX")}</Typography>
+                    <Tooltip
+                      title={t(
+                        "Tax applied by the seller on the goods value.",
+                      )}
+                      placement="top"
+                      arrow
+                    >
+                      <i
+                        className="fi fi-br-info"
+                        style={{
+                          fontSize: "11px",
+                          display: "flex",
+                          lineHeight: 1,
+                          cursor: "pointer",
+                        }}
+                      />
+                    </Tooltip>
+                  </Stack>
+                </Grid>
+                <Grid item md={4} xs={4} align="right">
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="flex-end"
+                    spacing={0.5}
+                  >
+                    <Typography>{"(+)"}</Typography>
+                    <Typography>
+                      {getAmountWithSign(crossBorderStoreTax)}
+                    </Typography>
+                  </Stack>
+                </Grid>
+              </>
+            ) : null}
+            {crossBorderDuty > 0 ? (
+              <>
+                <Grid item md={8} xs={8}>
+                  {t("Import Duty")}
+                </Grid>
+                <Grid item md={4} xs={4} align="right">
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="flex-end"
+                    spacing={0.5}
+                  >
+                    <Typography>{"(+)"}</Typography>
+                    <Typography>{getAmountWithSign(crossBorderDuty)}</Typography>
+                  </Stack>
+                </Grid>
+              </>
+            ) : null}
+            {crossBorderVat > 0 ? (
+              <>
+                <Grid item md={8} xs={8}>
+                  {t("Import VAT")}
+                </Grid>
+                <Grid item md={4} xs={4} align="right">
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="flex-end"
+                    spacing={0.5}
+                  >
+                    <Typography>{"(+)"}</Typography>
+                    <Typography>{getAmountWithSign(crossBorderVat)}</Typography>
+                  </Stack>
+                </Grid>
+              </>
+            ) : null}
+            {crossBorderExcise > 0 ? (
+              <>
+                <Grid item md={8} xs={8}>
+                  {t("Excise Duty")}
+                </Grid>
+                <Grid item md={4} xs={4} align="right">
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    justifyContent="flex-end"
+                    spacing={0.5}
+                  >
+                    <Typography>{"(+)"}</Typography>
+                    <Typography>
+                      {getAmountWithSign(crossBorderExcise)}
+                    </Typography>
+                  </Stack>
+                </Grid>
+              </>
+            ) : null}
+            {crossBorderQuote?.warnings?.length > 0 ? (
+              <Grid item xs={12}>
+                <Typography
+                  sx={{
+                    fontSize: { xs: "11px", md: "12px" },
+                    color: theme.palette.warning.dark,
+                    mt: 0.5,
+                  }}
+                >
+                  {t(
+                    "Some import taxes could not be estimated for this destination. The final amount is confirmed by the seller before dispatch.",
+                  )}
+                </Typography>
+              </Grid>
+            ) : null}
           </>
         ) : null}
         {checkoutSummary?.tax?.tax_included !== null &&
@@ -938,9 +1165,12 @@ const OrderCalculation = (props) => {
                     <Grid item xs={8} sx={{ textTransform: "capitalize" }}>
                       <Stack direction="row" alignItems="center" spacing={0.75}>
                         <Typography component="span" align="center">
-                          {t("Delivery fee")}
+                          {isCrossBorder
+                            ? t("International Shipping")
+                            : t("Delivery fee")}
                         </Typography>
-                        {(Number.parseInt(storeData?.self_delivery_system) !==
+                        {!isCrossBorder &&
+                        (Number.parseInt(storeData?.self_delivery_system) !==
                           1 || proDeliveryBenefitActive) &&
                         !(
                           couponDiscount?.coupon_type === "free_delivery" ||
@@ -988,7 +1218,8 @@ const OrderCalculation = (props) => {
                     </Grid>
                     <Grid item xs={4} align="right">
                       {couponDiscount ? (
-                        couponDiscount?.coupon_type === "free_delivery" ? (
+                        couponDiscount?.coupon_type === "free_delivery" &&
+                        !isCrossBorder ? (
                           <Typography>{t("Free")}</Typography>
                         ) : (
                           storeData && handleDeliveryFee()
@@ -1087,7 +1318,9 @@ const OrderCalculation = (props) => {
                     fontWeight="400"
                     color={theme.palette.primary.main}
                   >
-                    {checkoutSummary?.tax?.tax_included === 1 &&
+                    {(isCrossBorder
+                      ? Number(configData?.tax_included) === 1
+                      : checkoutSummary?.tax?.tax_included === 1) &&
                       t("(Vat/Tax incl.)")}
                   </Typography>
                 </Typography>

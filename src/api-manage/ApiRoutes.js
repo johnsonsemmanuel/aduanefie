@@ -220,6 +220,14 @@ export const bogo_cart_update_api = "/api/v1/customer/cart/bogo/update";
 export const bogo_cart_remove_api = "/api/v1/customer/cart/bogo/remove";
 
 // ============================================================================
+// Cross-border checkout
+// ============================================================================
+export const cross_border_countries_api = "/api/v1/cross-border/countries";
+export const cross_border_shipping_options_api =
+  "/api/v1/cross-border/shipping-options";
+export const cross_border_quote_api = "/api/v1/cross-border/quote";
+
+// ============================================================================
 // Intra-African Agricultural Trade API Routes
 // ============================================================================
 export const trade_corridors_api = "/api/v1/trade/corridors";

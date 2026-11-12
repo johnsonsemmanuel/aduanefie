@@ -10,6 +10,8 @@ import { onErrorResponse } from "../../../api-manage/api-error-response/ErrorRes
 import { getLanguage } from "../../../helper-functions/getLanguage";
 import FormSubmitButton from "../../profile/FormSubmitButton";
 import useUpdatedAddress from "../../../api-manage/hooks/react-query/address/useUpdatedAddress";
+import useGetCountries from "../../../api-manage/hooks/react-query/cross-border/useGetCountries";
+import CustomSelectWithFormik from "../../custom-select/CustomSelectWithFormik";
 import { useDispatch, useSelector } from "react-redux";
 import { setGuestUserInfo } from "../../../redux/slices/guestUserInfo";
 import { setOpenAddressModal } from "../../../redux/slices/addAddress";
@@ -58,6 +60,19 @@ const AddressForm = ({
   const { mutate, isLoading } = usePostAddress();
   const { mutate: updateMutate, isLoading: isUpdateLoading } =
     useUpdatedAddress();
+  const { data: countryList = [] } = useGetCountries();
+  const countryOptions = countryList.map((country) => ({
+    value: country.code,
+    label: country.name,
+  }));
+  // Cross-border delivery is driven by the address country, so it has to be
+  // explicit: geocoding alone cannot be trusted to infer it. Default to the
+  // storefront's own country so domestic addresses keep working unchanged.
+  const defaultCountryCode =
+    editAddress?.country_code ||
+    guestUserInfo?.country_code ||
+    configData?.country ||
+    "GH";
 
   const addAddressFormik = useFormik({
     initialValues: {
@@ -100,6 +115,7 @@ const AddressForm = ({
         : "",
       latitude: lat,
       longitude: lng,
+      country_code: defaultCountryCode,
       road: token
         ? editAddress
           ? editAddress?.road
@@ -161,11 +177,9 @@ const AddressForm = ({
         });
       }
     };
-console.log({editAddress,address});
 
     if (token) {
       if (editAddress && editAddress?.address_type) {
-           console.log({values,editAddress});
         // "Selected Address" is the transient checkout address — not yet
         // persisted server-side. Editing it only updates local state.
         if (address?.address_type === "Selected Address" || !editAddress?.id ) {
@@ -261,6 +275,9 @@ console.log({editAddress,address});
   const emailHandler = (value) => {
     addAddressFormik.setFieldValue("email", value);
   };
+  const countryHandler = (value) => {
+    addAddressFormik.setFieldValue("country_code", value);
+  };
   useEffect(() => {
     // Don't overwrite a valid address (e.g. seeded from editAddress) with an
     // empty geocode result while the map is still resolving.
@@ -352,6 +369,18 @@ console.log({editAddress,address});
 
           {!contactInfoOnly && (
             <>
+              <Grid item xs={12} md={12}>
+                <CustomSelectWithFormik
+                  inputLabel={t("Country")}
+                  selectFieldData={countryOptions}
+                  passSelectedValue={countryHandler}
+                  touched={addAddressFormik.touched.country_code}
+                  errors={addAddressFormik.errors.country_code}
+                  fieldProps={addAddressFormik.getFieldProps("country_code")}
+                  value={addAddressFormik.values.country_code}
+                  placeholder={t("Select country")}
+                />
+              </Grid>
               <Grid item xs={12} md={6}>
                 <CustomTextFieldWithFormik
                   type="text"

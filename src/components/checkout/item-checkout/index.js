@@ -53,6 +53,7 @@ import { cod_exceeds_message } from "utils/toasterMessages";
 import useGetOfflinePaymentOptions from "../../../api-manage/hooks/react-query/offlinePayment/useGetOfflinePaymentOptions";
 import useGetVehicleCharge from "../../../api-manage/hooks/react-query/order-place/useGetVehicleCharge";
 import useGetStoreDetails from "../../../api-manage/hooks/react-query/store/useGetStoreDetails";
+import useGetCrossBorderShippingOptions from "../../../api-manage/hooks/react-query/cross-border/useGetCrossBorderShippingOptions";
 import useGetMostTrips from "../../../api-manage/hooks/react-query/useGetMostTrips";
 import CustomModal from "../../modal";
 import { handleValuesFromCartItems } from "../../product-details/product-details-section/helperFunction";
@@ -126,6 +127,11 @@ const ItemCheckout = (props) => {
   const [summaryLoading, setSummaryLoading] = useState(false);
   const [payableAmount, setPayableAmount] = useState(null);
   const [address, setAddress] = useState(undefined);
+  // Lane picked from the cross-border shipping selector. Shape mirrors one
+  // entry of `cross-border/shipping-options` (`shipping_rate_id`,
+  // `shipping_method_id`, `amount`, `landed_cost`, …). Only the ids go back to
+  // the server — the amount is display-only and is re-quoted at placement.
+  const [shippingOption, setShippingOption] = useState(null);
   const { couponInfo } = useSelector((state) => state.profileInfo);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [numberOfDay, setDayNumber] = useState(getDayNumber(today));
@@ -202,6 +208,11 @@ const ItemCheckout = (props) => {
     page === "campaign"
       ? campaignItemList?.[0]?.store_id
       : cartList?.[0]?.store_id;
+  // The same list the order payload is built from, so a quote and a placement
+  // can never be looking at different rows.
+  const checkoutProductList =
+    page === "campaign" ? campaignItemList : cartList;
+  const platformCountry = String(configData?.country || "GH").toUpperCase();
 
   const clearMonthlySubKey = (sid) => {
     if (typeof window === "undefined") return;
@@ -233,6 +244,89 @@ const ItemCheckout = (props) => {
     isLoading: offlineIsLoading,
   } = useGetOfflinePaymentOptions();
   const { mutate: taxMutate, data } = useGetTax();
+
+  const storeCountry = String(
+    storeData?.country_code || platformCountry,
+  ).toUpperCase();
+  // The delivery address is the only geographic truth here: geocoding cannot
+  // tell us which country the shopper actually chose to ship to.
+  const destinationCountry = String(
+    address?.country_code || platformCountry,
+  ).toUpperCase();
+  const isCrossBorder =
+    orderType === "delivery" &&
+    Boolean(storeData?.ships_cross_border) &&
+    Boolean(storeCountry) &&
+    Boolean(destinationCountry) &&
+    storeCountry !== destinationCountry;
+  // Bundles and BOGO rows have no `item_id` the catalogue can re-price, so
+  // they cannot be quoted for an international lane. Surface that instead of
+  // silently dropping them from the freight calculation.
+  const crossBorderUnsupportedReason = useMemo(() => {
+    if (!isCrossBorder) return null;
+    const rows = checkoutProductList || [];
+    if (rows.some((row) => isBogoCartRow(row) || isBundleCartRow(row))) {
+      return t(
+        "This order contains a bundle or buy-one-get-one offer, which can't be shipped internationally yet. Please remove it to continue.",
+      );
+    }
+    return null;
+  }, [isCrossBorder, checkoutProductList, t]);
+  // Quantity only — the server resolves price, HS code and billable weight
+  // from the catalogue, never from this payload.
+  const crossBorderLines = useMemo(() => {
+    if (!isCrossBorder) return [];
+    return (checkoutProductList || [])
+      .filter((row) => !isBogoCartRow(row) && !isBundleCartRow(row))
+      .map((row) => ({
+        item_id: row?.id,
+        quantity: Number(row?.quantity) || 1,
+      }))
+      .filter((line) => Boolean(line.item_id));
+  }, [isCrossBorder, checkoutProductList]);
+  const {
+    data: crossBorderQuote,
+    isLoading: crossBorderQuoteLoading,
+    isFetching: crossBorderQuoteFetching,
+  } = useGetCrossBorderShippingOptions(
+    {
+      store_id: storeData?.id,
+      destination_country: destinationCountry,
+      lines: crossBorderLines,
+    },
+    isCrossBorder && !crossBorderUnsupportedReason,
+  );
+  const crossBorderQuoteReady =
+    crossBorderQuote?.destination_country === destinationCountry;
+  const crossBorderOptions = crossBorderQuoteReady
+    ? crossBorderQuote?.options ?? []
+    : [];
+  // Keep the shopper's lane when it is still offered, otherwise fall back to
+  // the cheapest configured option. A stale option from the previous
+  // destination is never carried over.
+  useEffect(() => {
+    if (!isCrossBorder || !crossBorderQuoteReady) {
+      if (shippingOption) setShippingOption(null);
+      return;
+    }
+    if (crossBorderOptions.length === 0) {
+      if (shippingOption) setShippingOption(null);
+      return;
+    }
+    const stillOffered =
+      shippingOption &&
+      crossBorderOptions.some(
+        (option) =>
+          Number(option.shipping_rate_id) ===
+          Number(shippingOption.shipping_rate_id),
+      );
+    if (!stillOffered) setShippingOption(crossBorderOptions[0]);
+  }, [
+    isCrossBorder,
+    crossBorderQuoteReady,
+    crossBorderOptions,
+    shippingOption,
+  ]);
 
   const passwordHandler = (value) => {
     formik.setFieldValue("password", value);
@@ -516,6 +610,17 @@ const ItemCheckout = (props) => {
       paymentMethod !== ""
         ? "digital_payment"
         : paymentMethod;
+    // The server re-quotes the lane and re-prices duty/VAT from the IDs below.
+    // The displayed amount is never sent back as money.
+    const crossBorderOrderFields =
+      isCrossBorder && shippingOption
+        ? {
+            destination_country: destinationCountry,
+            shipping_rate_id: shippingOption.shipping_rate_id,
+            shipping_method_id: shippingOption.shipping_method_id,
+            incoterm: "DDP",
+          }
+        : {};
 
     const originData = {
       latitude: storeData?.latitude,
@@ -548,6 +653,9 @@ const ItemCheckout = (props) => {
       );
 
       formData.append("store_id", storeData?.id);
+      Object.entries(crossBorderOrderFields).forEach(([key, value]) => {
+        formData.append(key, value);
+      });
       if (couponDiscount?.code) {
         formData.append("coupon_code", couponDiscount?.code);
       }
@@ -659,6 +767,7 @@ const ItemCheckout = (props) => {
         // order_time: scheduleAt,
         payment_method: isDigital,
         order_type: orderType === "schedule_order" ? "delivery" : orderType,
+        ...crossBorderOrderFields,
         store_id: storeId,
         coupon_code: couponDiscount?.code,
         coupon_discount_amount: couponDiscount?.discount,
@@ -996,6 +1105,34 @@ const ItemCheckout = (props) => {
     }
   };
   const placeOrder = () => {
+    // International checkout is priced by the shipping-options quote, not by
+    // checkout-summary. Never let an order through without a lane the server
+    // can re-quote, and never carry a lane from a different destination.
+    if (isCrossBorder) {
+      if (crossBorderUnsupportedReason) {
+        toast.error(crossBorderUnsupportedReason);
+        return;
+      }
+      if (crossBorderQuoteFetching) {
+        toast.error(
+          t("Please wait while we confirm shipping for this destination."),
+        );
+        return;
+      }
+      if (!crossBorderQuoteReady || !shippingOption) {
+        toast.error(t("Please select a shipping method for this destination."));
+        return;
+      }
+      if (
+        paymentMethod === "cash_on_delivery" &&
+        shippingOption?.cod_allowed === false
+      ) {
+        toast.error(
+          t("Cash on delivery is not available for the selected shipping method."),
+        );
+        return;
+      }
+    }
     // The server refused to quote this delivery (e.g. an area/zip the zone no
     // longer covers). The fee reads 0 out of the empty payload, so placing here
     // would bill a price the server never agreed — stop instead.
@@ -1364,6 +1501,14 @@ const ItemCheckout = (props) => {
                 setSelectedDeliveryOption={setSelectedDeliveryOption}
                 deliveryOptions={deliveryOptions}
                 areaZip={areaZip}
+                isCrossBorder={isCrossBorder}
+                crossBorderQuote={crossBorderQuote}
+                shippingOption={shippingOption}
+                setShippingOption={setShippingOption}
+                shippingOptionsLoading={
+                  crossBorderQuoteLoading || crossBorderQuoteFetching
+                }
+                crossBorderUnsupportedReason={crossBorderUnsupportedReason}
               />
 
               {Number.parseInt(configData?.dm_tips_status) === 1 &&
@@ -1518,6 +1663,9 @@ const ItemCheckout = (props) => {
                     setDeliveryOptions={setDeliveryOptions}
                     scheduleAt={scheduleAt}
                     currentZoneInfo={currentZoneInfo}
+                    isCrossBorder={isCrossBorder}
+                    crossBorderQuote={crossBorderQuote}
+                    shippingOption={shippingOption}
                   />
 
                   {/* Currency Selector */}
@@ -1553,7 +1701,11 @@ const ItemCheckout = (props) => {
                     page={page}
                     isLoading={isLoading}
                     totalAmount={totalAmount}
-                    pricingLoading={storeDetailsFetching || summaryLoading}
+                    pricingLoading={
+                      storeDetailsFetching ||
+                      summaryLoading ||
+                      (isCrossBorder && crossBorderQuoteFetching)
+                    }
                   />
                 </Stack>
               </CustomPaperBigCard>
