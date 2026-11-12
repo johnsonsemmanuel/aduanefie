@@ -214,6 +214,17 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
                 Route::delete('{id}', 'FarmerController@delete_plot');
                 Route::get('{id}/items', 'FarmerController@plot_items');
             });
+
+            // Agro-service booking
+            Route::group(['prefix' => 'services'], function () {
+                Route::get('categories', 'FarmerController@service_categories');
+                Route::get('offerings', 'FarmerController@service_offerings');
+                Route::get('offerings/{id}', 'FarmerController@service_offering_details');
+                Route::post('bookings', 'FarmerController@book_service');
+                Route::get('bookings', 'FarmerController@service_bookings');
+                Route::get('bookings/{id}', 'FarmerController@service_booking_details');
+                Route::patch('bookings/{id}/cancel', 'FarmerController@cancel_service_booking');
+            });
         });
 
 

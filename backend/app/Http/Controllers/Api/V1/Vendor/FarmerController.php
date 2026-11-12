@@ -6,6 +6,9 @@ use App\Models\Vendor;
 use App\Models\GrowthUpdate;
 use App\Models\CustomerProductSubscription;
 use App\Models\PestReport;
+use App\Models\FarmPlot;
+use Modules\Service\Entities\Service;
+use Modules\Service\Entities\ServiceBooking;
 use Illuminate\Http\Request;
 use App\CentralLogics\Helpers;
 use App\Http\Controllers\Controller;
@@ -986,15 +989,277 @@ class FarmerController extends Controller
                 ];
             });
 
-        return response()->json([
-            'plot' => [
-                'id' => $plot->id,
-                'plot_code' => $plot->plot_code,
-                'name' => $plot->name,
-                'status' => $plot->status,
-                'status_label' => $plot->status_label,
-            ],
-            'items' => $items,
             'total' => $items->count(),
         ], 200);
     }
+
+    /**
+     * List service categories for agro-services
+     */
+    public function service_categories(Request $request)
+    {
+        $vendor = $request['vendor'];
+
+        $categories = \Modules\Service\Entities\ServiceCategory::where('status', 1)
+            ->orderBy('sort_order', 'asc')
+            ->get();
+
+        return response()->json([
+            'categories' => $categories,
+        ], 200);
+    }
+
+    /**
+     * List service offerings for agro-services
+     */
+    public function service_offerings(Request $request)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        if (!$store) {
+            return response()->json([
+                'errors' => [['code' => 'no_store', 'message' => translate('messages.no_store_found')]]
+            ], 404);
+        }
+
+        $category_id = $request->query('category_id', null);
+        $limit = $request->query('limit', 25);
+        $offset = $request->query('offset', 1);
+
+        $query = Service::where('provider_id', $vendor->id)
+            ->where('status', 1);
+
+        if ($category_id) {
+            $query->where('category_id', $category_id);
+        }
+
+        $total = $query->count();
+        $offerings = $query->orderBy('created_at', 'desc')
+            ->offset(($offset - 1) * $limit)
+            ->limit($limit)
+            ->get();
+
+        return response()->json([
+            'offerings' => $offerings,
+            'total' => $total,
+            'limit' => $limit,
+            'offset' => $offset,
+        ], 200);
+    }
+
+    /**
+     * Get service offering details
+     */
+    public function service_offering_details(Request $request, $id)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        if (!$store) {
+            return response()->json([
+                'errors' => [['code' => 'no_store', 'message' => translate('messages.no_store_found')]]
+            ], 404);
+        }
+
+        $service = Service::where('id', $id)
+            ->where('provider_id', $vendor->id)
+            ->first();
+
+        if (!$service) {
+            return response()->json([
+                'errors' => [['code' => 'service_not_found', 'message' => translate('messages.service_not_found')]]
+            ], 404);
+        }
+
+        return response()->json([
+            'service' => $service,
+        ], 200);
+    }
+
+    /**
+     * Book an agro-service
+     */
+    public function book_service(Request $request)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        if (!$store) {
+            return response()->json([
+                'errors' => [['code' => 'no_store', 'message' => translate('messages.no_store_found')]]
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'service_id' => 'required|integer|exists:services,id',
+            'scheduled_at' => 'required|date|after:now',
+            'address' => 'required|string',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'notes' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => Helpers::error_processor($validator)], 403);
+        }
+
+        $service = Service::where('id', $request->service_id)
+            ->where('provider_id', $vendor->id)
+            ->where('status', 1)
+            ->first();
+
+        if (!$service) {
+            return response()->json([
+                'errors' => [['code' => 'service_not_found', 'message' => translate('messages.service_not_found')]]
+            ], 404);
+        }
+
+        $booking = ServiceBooking::create([
+            'service_id' => $request->service_id,
+            'provider_id' => $vendor->id,
+            'user_id' => $request->user ? $request->user()->id : null,
+            'guest_id' => $request->user ? null : $request->header('guest_id'),
+            'scheduled_at' => $request->scheduled_at,
+            'address' => $request->address,
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'notes' => $request->notes,
+            'status' => 'pending',
+            'total_amount' => $service->price,
+            'currency' => $service->currency ?? 'GHS',
+            'payment_status' => 'unpaid',
+        ]);
+
+        // Send SMS confirmation
+        $phone = $request->header('guest_id') ?? ($request->user ? $request->user()->phone : null);
+        if ($phone) {
+            self::intekhost($phone, sprintf(
+                "🌾 Service booked from %s: %s scheduled for %s. Status: Pending confirmation.",
+                $store->name,
+                $service->title,
+                $request->scheduled_at
+            ));
+        }
+
+        return response()->json([
+            'message' => translate('messages.service_booked'),
+            'booking' => [
+                'id' => $booking->id,
+                'service_id' => $booking->service_id,
+                'provider_id' => $booking->provider_id,
+                'scheduled_at' => $booking->scheduled_at,
+                'status' => $booking->status,
+                'total_amount' => $booking->total_amount,
+                'currency' => $booking->currency,
+                'payment_status' => $booking->payment_status,
+            ],
+        ], 201);
+    }
+
+    /**
+     * List farmer's service bookings
+     */
+    public function service_bookings(Request $request)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        if (!$store) {
+            return response()->json([
+                'errors' => [['code' => 'no_store', 'message' => translate('messages.no_store_found')]]
+            ], 404);
+        }
+
+        $status = $request->query('status', 'all');
+        $limit = $request->query('limit', 25);
+        $offset = $request->query('offset', 1);
+
+        $query = ServiceBooking::where('provider_id', $vendor->id);
+
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $total = $query->count();
+        $bookings = $query->with('service')->latest()->offset(($offset - 1) * $limit)
+            ->limit($limit)
+            ->get();
+
+        return response()->json([
+            'bookings' => $bookings,
+            'total' => $total,
+            'limit' => $limit,
+            'offset' => $offset,
+        ], 200);
+    }
+
+    /**
+     * Get service booking details
+     */
+    public function service_booking_details(Request $request, $id)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        if (!$store) {
+            return response()->json([
+                'errors' => [['code' => 'no_store', 'message' => translate('messages.no_store_found')]]
+            ], 404);
+        }
+
+        $booking = ServiceBooking::where('id', $id)
+            ->where('provider_id', $vendor->id)
+            ->with('service')
+            ->first();
+
+        if (!$booking) {
+            return response()->json([
+                'errors' => [['code' => 'booking_not_found', 'message' => translate('messages.booking_not_found')]]
+            ], 404);
+        }
+
+        return response()->json([
+            'booking' => $booking,
+        ], 200);
+    }
+
+    /**
+     * Cancel a service booking
+     */
+    public function cancel_service_booking(Request $request, $id)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        if (!$store) {
+            return response()->json([
+                'errors' => [['code' => 'no_store', 'message' => translate('messages.no_store_found')]]
+            ], 404);
+        }
+
+        $booking = ServiceBooking::where('id', $id)
+            ->where('provider_id', $vendor->id)
+            ->first();
+
+        if (!$booking) {
+            return response()->json([
+                'errors' => [['code' => 'booking_not_found', 'message' => translate('messages.booking_not_found')]]
+            ], 404);
+        }
+
+        if (!in_array($booking->status, ['pending', 'accepted'])) {
+            return response()->json([
+                'errors' => [['code' => 'cannot_cancel', 'message' => translate('messages.cannot_cancel_booking')]]
+            ], 403);
+        }
+
+        $booking->status = 'cancelled';
+        $booking->save();
+
+        return response()->json([
+            'message' => translate('messages.booking_cancelled'),
+            'booking' => $booking,
+        ], 200);
+    }
+}
