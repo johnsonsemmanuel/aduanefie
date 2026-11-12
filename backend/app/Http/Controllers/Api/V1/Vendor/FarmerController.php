@@ -716,6 +716,285 @@ class FarmerController extends Controller
         $rec = $recommendations[$pestLower] ?? "Apply appropriate pesticide for $pestType. Follow label instructions carefully. Rotate active ingredients to prevent resistance.";
         $sevAdvice = $severityAdvice[$severity] ?? $severityAdvice['medium'];
 
+        $rec = $recommendations[$pestLower] ?? "Apply appropriate pesticide for $pestType. Follow label instructions carefully. Rotate active ingredients to prevent resistance.";
+        $sevAdvice = $severityAdvice[$severity] ?? $severityAdvice['medium'];
+
         return "$rec $sevAdvice";
     }
-}
+
+    /**
+     * List all farm plots for the vendor's store
+     */
+    public function plots(Request $request)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        if (!$store) {
+            return response()->json([
+                'errors' => [['code' => 'no_store', 'message' => translate('messages.no_store_found')]]
+            ], 404);
+        }
+
+        $status = $request->query('status', 'all');
+        $crop_type = $request->query('crop_type', 'all');
+        $limit = $request->query('limit', 25);
+        $offset = $request->query('offset', 1);
+
+        $query = FarmPlot::where('store_id', $store->id);
+
+        if ($status !== 'all') {
+            $query->status($status);
+        }
+
+        if ($crop_type !== 'all') {
+            $query->cropType($crop_type);
+        }
+
+        $total = $query->count();
+        $plots = $query->latest()->offset(($offset - 1) * $limit)
+            ->limit($limit)
+            ->get()
+            ->map(function ($plot) {
+                $itemsCount = $plot->items()->count();
+                return [
+                    'id' => $plot->id,
+                    'plot_code' => $plot->plot_code,
+                    'name' => $plot->name,
+                    'size_acres' => $plot->size_acres,
+                    'crop_type' => $plot->crop_type,
+                    'variety' => $plot->variety,
+                    'planting_date' => $plot->planting_date,
+                    'expected_harvest_date' => $plot->expected_harvest_date,
+                    'status' => $plot->status,
+                    'status_label' => $plot->status_label,
+                    'soil_type' => $plot->soil_type,
+                    'irrigation_method' => $plot->irrigation_method,
+                    'days_to_harvest' => $plot->days_to_harvest,
+                    'cultivation_progress_pct' => $plot->cultivation_progress_pct,
+                    'item_count' => $itemsCount,
+                    'created_at' => $plot->created_at,
+                ];
+            });
+
+        return response()->json([
+            'plots' => $plots,
+            'total' => $total,
+            'limit' => $limit,
+            'offset' => $offset,
+        ], 200);
+    }
+
+    /**
+     * Create a new farm plot
+     */
+    public function create_plot(Request $request)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        if (!$store) {
+            return response()->json([
+                'errors' => [['code' => 'no_store', 'message' => translate('messages.no_store_found')]]
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'plot_code' => 'required|string|max:50|unique:farm_plots,plot_code',
+            'size_acres' => 'nullable|numeric|min:0',
+            'crop_type' => 'nullable|string|max:100',
+            'variety' => 'nullable|string|max:100',
+            'planting_date' => 'nullable|date',
+            'expected_harvest_date' => 'nullable|date|after_or_equal:planting_date',
+            'status' => 'nullable|in:planning,planting,growing,harvest_ready,fallow',
+            'soil_type' => 'nullable|string|max:100',
+            'irrigation_method' => 'nullable|string|max:100',
+            'notes' => 'nullable|string|max:2000',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => Helpers::error_processor($validator)], 403);
+        }
+
+        $plot = FarmPlot::create([
+            'vendor_id' => $vendor->id,
+            'store_id' => $store->id,
+            'name' => $request->name,
+            'plot_code' => $request->plot_code,
+            'size_acres' => $request->size_acres,
+            'crop_type' => $request->crop_type,
+            'variety' => $request->variety,
+            'planting_date' => $request->planting_date,
+            'expected_harvest_date' => $request->expected_harvest_date,
+            'status' => $request->status ?? 'planning',
+            'soil_type' => $request->soil_type,
+            'irrigation_method' => $request->irrigation_method,
+            'notes' => $request->notes,
+        ]);
+
+        return response()->json([
+            'message' => translate('messages.plot_created'),
+            'plot' => [
+                'id' => $plot->id,
+                'plot_code' => $plot->plot_code,
+                'name' => $plot->name,
+                'size_acres' => $plot->size_acres,
+                'crop_type' => $plot->crop_type,
+                'variety' => $plot->variety,
+                'planting_date' => $plot->planting_date,
+                'expected_harvest_date' => $plot->expected_harvest_date,
+                'status' => $plot->status,
+                'status_label' => $plot->status_label,
+                'days_to_harvest' => $plot->days_to_harvest,
+                'cultivation_progress_pct' => $plot->cultivation_progress_pct,
+            ],
+        ], 201);
+    }
+
+    /**
+     * Update an existing farm plot
+     */
+    public function update_plot(Request $request, $id)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        $plot = FarmPlot::where('id', $id)
+            ->where('store_id', $store->id)
+            ->first();
+
+        if (!$plot) {
+            return response()->json([
+                'errors' => [['code' => 'plot_not_found', 'message' => translate('messages.plot_not_found')]]
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|string|max:255',
+            'plot_code' => 'sometimes|string|max:50|unique:farm_plots,plot_code,' . $plot->id,
+            'size_acres' => 'sometimes|numeric|min:0',
+            'crop_type' => 'sometimes|string|max:100',
+            'variety' => 'sometimes|string|max:100',
+            'planting_date' => 'sometimes|date',
+            'expected_harvest_date' => 'sometimes|date|after_or_equal:planting_date',
+            'status' => 'sometimes|in:planning,planting,growing,harvest_ready,fallow',
+            'soil_type' => 'sometimes|string|max:100',
+            'irrigation_method' => 'sometimes|string|max:100',
+            'notes' => 'sometimes|string|max:2000',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => Helpers::error_processor($validator)], 403);
+        }
+
+        $plot->update($request->only([
+            'name', 'plot_code', 'size_acres', 'crop_type', 'variety',
+            'planting_date', 'expected_harvest_date', 'status',
+            'soil_type', 'irrigation_method', 'notes',
+        ]));
+
+        return response()->json([
+            'message' => translate('messages.plot_updated'),
+            'plot' => [
+                'id' => $plot->id,
+                'plot_code' => $plot->plot_code,
+                'name' => $plot->name,
+                'size_acres' => $plot->size_acres,
+                'crop_type' => $plot->crop_type,
+                'variety' => $plot->variety,
+                'planting_date' => $plot->planting_date,
+                'expected_harvest_date' => $plot->expected_harvest_date,
+                'status' => $plot->status,
+                'status_label' => $plot->status_label,
+                'days_to_harvest' => $plot->days_to_harvest,
+                'cultivation_progress_pct' => $plot->cultivation_progress_pct,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Delete a farm plot
+     */
+    public function delete_plot(Request $request, $id)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        $plot = FarmPlot::where('id', $id)
+            ->where('store_id', $store->id)
+            ->first();
+
+        if (!$plot) {
+            return response()->json([
+                'errors' => [['code' => 'plot_not_found', 'message' => translate('messages.plot_not_found')]]
+            ], 404);
+        }
+
+        // Check if plot has items
+        $itemCount = $plot->items()->count();
+        if ($itemCount > 0) {
+            return response()->json([
+                'errors' => [['code' => 'plot_has_items', 'message' => translate('messages.plot_has_items')]]
+            ], 403);
+        }
+
+        $plot->delete();
+
+        return response()->json([
+            'message' => translate('messages.plot_deleted'),
+        ], 200);
+    }
+
+    /**
+     * Get items assigned to a specific plot
+     */
+    public function plot_items(Request $request, $id)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        $plot = FarmPlot::where('id', $id)
+            ->where('store_id', $store->id)
+            ->first();
+
+        if (!$plot) {
+            return response()->json([
+                'errors' => [['code' => 'plot_not_found', 'message' => translate('messages.plot_not_found')]]
+            ], 404);
+        }
+
+        $limit = $request->query('limit', 25);
+        $offset = $request->query('offset', 1);
+
+        $items = Item::where('plot_id', $id)
+            ->where('is_approved', 1)
+            ->where('status', 1)
+            ->latest()
+            ->offset(($offset - 1) * $limit)
+            ->limit($limit)
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'slug' => $item->slug,
+                    'farming_status' => $item->farming_status,
+                    'price' => $item->price,
+                    'image_full_url' => $item->image_full_url,
+                    'status_label' => ucfirst($item->farming_status),
+                ];
+            });
+
+        return response()->json([
+            'plot' => [
+                'id' => $plot->id,
+                'plot_code' => $plot->plot_code,
+                'name' => $plot->name,
+                'status' => $plot->status,
+                'status_label' => $plot->status_label,
+            ],
+            'items' => $items,
+            'total' => $items->count(),
+        ], 200);
+    }

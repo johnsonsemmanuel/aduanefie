@@ -197,8 +197,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
             Route::get('dashboard', 'FarmerController@dashboard');
             Route::get('products', 'FarmerController@products');
             Route::patch('products/{id}/farming-status', 'FarmerController@update_farming_status');
-            Route::patch('products/{id}/dates', 'FarmerController@update_dates');
-            Route::post('products/{id}/growth-update', 'FarmerController@update_growth');
             Route::post('products/{id}/sms-broadcast', 'FarmerController@broadcast_sms');
             Route::get('products/{id}/subscribers', 'FarmerController@get_subscribers');
 
@@ -207,6 +205,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
             Route::get('pest-reports', 'FarmerController@pest_reports');
             Route::patch('pest-reports/{id}/treatment', 'FarmerController@update_pest_treatment');
             Route::post('pest-recommendation', 'FarmerController@get_ai_pest_recommendation');
+
+            // Land allocation & plot management
+            Route::group(['prefix' => 'plots'], function () {
+                Route::get('/', 'FarmerController@plots');
+                Route::post('/', 'FarmerController@create_plot');
+                Route::patch('{id}', 'FarmerController@update_plot');
+                Route::delete('{id}', 'FarmerController@delete_plot');
+                Route::get('{id}/items', 'FarmerController@plot_items');
+            });
         });
 
 
