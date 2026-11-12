@@ -28,6 +28,14 @@ php artisan config:cache 2>/dev/null || true
 # Start php-fpm in background
 php-fpm -D
 
+# Warm critical read caches right after Nginx begins listening to prevent cold-boot bursts
+(
+    sleep 3
+    for path in /api/v1/module /api/v1/config /api/v1/react-landing-page /api/v1/banners /api/v1/advertisement/list /api/v1/app-download-section; do
+        curl -sf --max-time 25 "http://127.0.0.1:${PORT}${path}" >/dev/null 2>&1 || true
+    done
+) &
+
 # Start nginx in foreground
 echo "Starting Nginx on port ${PORT}..."
 exec nginx -g "daemon off;"

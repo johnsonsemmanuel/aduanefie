@@ -807,4 +807,34 @@ class ConfigController extends Controller
         $response = Http::get('https://maps.googleapis.com/maps/api/directions/json?origin=' . $request['origin_lat'] . ',' . $request['origin_lng'] . '&destination=' . $request['destination_lat'] . ',' . $request['destination_lng'] . '&key=' . $this->map_api_key . '&mode=driving');
         return $response->json();
     }
+
+    public function app_settings_download_section()
+    {
+        $payload = Cache::remember('app_settings_download_section_v1', now()->addMinutes(5), function () {
+            $datas = DataSetting::with('translations')
+                ->where('type', 'app_settings')
+                ->whereIn('key', ['download_user_app_section_status', 'download_user_app_title'])
+                ->get();
+
+            $settings = [];
+            foreach ($datas as $value) {
+                if (count($value->translations) > 0) {
+                    $settings[$value->key] = $value->translations[0]['value'];
+                } else {
+                    $settings[$value->key] = $value->value;
+                }
+            }
+
+            return [
+                'download_user_app_section_status' => (int) ($settings['download_user_app_section_status'] ?? 0),
+                'download_user_app_title' => $settings['download_user_app_title'] ?? null,
+                'download_user_app_links' => [
+                    'playstore_url' => Helpers::cached_business_setting('app_url_android'),
+                    'apple_store_url' => Helpers::cached_business_setting('app_url_ios'),
+                ],
+            ];
+        });
+
+        return response()->json($payload, 200);
+    }
 }

@@ -29,7 +29,7 @@ class AdvertisementController extends Controller
                         $query->whereIn('zone_id', $zone_ids);
                     });
                 })
-                ->orderByRaw('ISNULL(priority), priority ASC')
+                ->orderByRaw('priority IS NULL, priority ASC')
                 ->get();
 
             try {

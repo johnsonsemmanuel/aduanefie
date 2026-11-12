@@ -82,11 +82,13 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
 
     // Module
     Route::get('module', 'ModuleController@index');
+    Route::get('module/top-offer', 'ModuleController@topOffer');
 
     Route::post('newsletter/subscribe','NewsletterController@index');
     Route::get('landing-page', 'ConfigController@landing_page');
     Route::get('react-landing-page', 'ConfigController@react_landing_page');
     Route::get('flutter-landing-page', 'ConfigController@flutter_landing_page');
+    Route::get('app-download-section', 'ConfigController@app_settings_download_section');
 
     Route::group(['prefix' => 'delivery-man'], function () {
         Route::get('last-location', 'DeliverymanController@get_last_location');
@@ -393,8 +395,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
                 Route::put('payment-method', 'OrderController@update_payment_method');
                 Route::put('offline-payment', 'OrderController@offline_payment');
                 Route::put('offline-payment-update', 'OrderController@update_offline_payment_info');
+                Route::get('payment-failed', 'CustomerController@orderPaymentFailed');
 
             });
+            Route::get('reels/list', 'CustomerController@reels_list');
 
             Route::group(['prefix'=>'cart'], function() {
                 Route::get('list', 'CartController@get_carts');
@@ -448,6 +452,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
             Route::get('search', 'StoreController@get_searched_stores');
             Route::get('get-data', 'StoreController@get_combined_data');
             Route::get('top-offer-near-me', 'StoreController@get_top_offer_near_me');
+            Route::get('quick-delivery', 'StoreController@get_quick_delivery_stores');
         });
         Route::get('get-combined-data', 'SearchController@get_combined_data');
 
@@ -677,6 +682,24 @@ Route::group(['prefix' => 'trade'], function () {
     // Simple items endpoint for marketplace
     Route::get('items/simple', 'ItemController@get_simple_items');
     });    // Close trade group
+
+    Route::group(['prefix' => 'bogo'], function () {
+        Route::get('home', fn () => response()->json(['is_live' => false, 'offers' => [], 'items' => [], 'stores' => []], 200));
+        Route::get('offers', fn () => response()->json(['items' => [], 'stores' => [], 'data' => [], 'total_size' => 0], 200));
+        Route::get('store-offers', fn () => response()->json(['items' => [], 'stores' => [], 'data' => [], 'total_size' => 0], 200));
+    });
+
+    Route::group(['prefix' => 'bundle'], function () {
+        Route::get('/', fn () => response()->json(['bundles' => [], 'data' => [], 'total_size' => 0], 200));
+        Route::get('home', fn () => response()->json(['bundles' => [], 'data' => [], 'total_size' => 0], 200));
+        Route::get('list', fn () => response()->json(['bundles' => [], 'data' => [], 'total_size' => 0], 200));
+        Route::get('store-bundles', fn () => response()->json(['bundles' => [], 'data' => [], 'total_size' => 0], 200));
+    });
+
+    Route::group(['prefix' => 'happy-hour'], function () {
+        Route::get('running', fn () => response()->json(['is_running' => false, 'happy_hour' => null], 200));
+        Route::get('stores', fn () => response()->json(['stores' => [], 'data' => [], 'total_size' => 0], 200));
+    });
 });    // Close outer Route::group
 
 WebSocketsRouter::webSocket('/delivery-man/live-location', DMLocationSocketHandler::class);

@@ -341,4 +341,15 @@ class StoreController extends Controller
         return response()->json($stores, 200);
     }
 
+    public function get_quick_delivery_stores(Request $request)
+    {
+        return response()->json([
+            'total_size' => 0,
+            'limit' => (int) $request->input('limit', 10),
+            'offset' => (int) $request->input('offset', 1),
+            'stores' => [],
+            'data' => [],
+        ], 200);
+    }
+
 }

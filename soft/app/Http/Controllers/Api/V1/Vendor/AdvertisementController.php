@@ -323,7 +323,7 @@ class AdvertisementController extends Controller
         $advertisement?->delete();
 
         $adds=Advertisement::whereNotNull('priority')->where('module_id',$module_id)
-        ->orderByRaw('ISNULL(priority), priority ASC')->get();
+        ->orderByRaw('priority IS NULL, priority ASC')->get();
 
         $newPriority = 1;
         foreach ($adds as $advertisement) {

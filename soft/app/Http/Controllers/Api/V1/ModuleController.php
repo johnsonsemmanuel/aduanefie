@@ -62,4 +62,13 @@ class ModuleController extends Controller
         return response()->json($modules);
     }
 
+    public function topOffer(Request $request)
+    {
+        return response()->json([
+            'discount' => 0,
+            'discount_type' => 'percent',
+            'modules' => [],
+        ], 200);
+    }
+
 }
