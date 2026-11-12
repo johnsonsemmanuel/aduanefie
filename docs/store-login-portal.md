@@ -2,10 +2,11 @@
 
 Date: 2026-11-12
 Branch: `fix/store-login-portal`
-Status: **the portal is deployed to Railway production (`aduanefie-backend` / production) at
-`0d24de9` and verified over HTTPS.** The two follow-up fixes (`de7d5c6` legacy submit ordering,
-`22d6969` dead `trade-bloc` nav) are committed and verified locally but **not yet deployed**.
-Retired-host 301s are live in the app but unreachable until DNS is repointed.
+Status: **deployed to Railway production and verified over HTTPS.** Production currently runs
+GitHub commit `03203fb` (`johnsonsemmanuel/aduanefie-backend`, branch `main`), which contains both
+follow-up fixes: `de7d5c6` (legacy submit ordering) and `22d6969` (dead `trade-bloc` nav). The
+earlier manual deploy of `HEAD 98e00f3` (Railway deployment `28f51195`) was also verified. See §4.1
+and §4.3. Retired-host 301s are live in the app but unreachable until DNS is repointed.
 
 Supersedes the store-specific parts of `docs/portal-scoping-implementation.md` and
 `docs/admin-access-verification.md`. Those documents still describe `/login/store` as the
@@ -139,6 +140,63 @@ Before `de7d5c6` the wrong-password column returned the account-state message/pa
 The correct-password column also caught the `trade-bloc` layout failure described in §5 gap 9,
 which `22d6969` fixed (the same case now renders 200).
 
+### 4.3 Deploying and verifying the two follow-up fixes
+
+`railway up` could not complete. The CLI compresses the project and POSTs a gzip tarball to
+`/project/{project}/environment/{environment}/up`; on this connection the ~58 MB payload takes about
+30 s and the CLI's request aborts with `operation timed out` at about 33 s. It failed three times at
+that boundary. The deploy was completed by POSTing an equivalent archive with `curl --max-time 900`:
+
+```bash
+token=$(php -r '$c=json_decode(file_get_contents(getenv("HOME")."/.railway/config.json"),true); echo $c["user"]["accessToken"];')
+# archive built from `git archive HEAD:soft` so no uncommitted work is included
+tar -czf /tmp/deploy.tar.gz -C /tmp/deploy-head \
+  --exclude=./vendor --exclude=./node_modules --exclude=./docs --exclude=./tests \
+  --exclude=./.git --exclude='./.env*' --exclude='./storage/logs/*' \
+  --exclude='./storage/framework/cache/data/*' --exclude='./storage/framework/sessions/*' \
+  --exclude='./storage/framework/views/*' --exclude='./storage/tmp/*' --exclude=./public/storage .
+
+curl -sS --max-time 900 -X POST \
+  "https://backboard.railway.com/project/<project>/environment/<env>/up?serviceId=<service>&message=..." \
+  -H "Authorization: Bearer $token" -H "Content-Type: application/gzip" \
+  --data-binary @/tmp/deploy.tar.gz
+```
+
+That returned deployment `28f51195-2d18-46e1-b8ea-d9b501b3c1e8`, which reached `SUCCESS` with
+`builder=DOCKERFILE`.
+
+Shortly afterwards the service's GitHub integration deployed commit `03203fb` ("chore: sync backend
+cleanup, theming, store-login fixes, and API endpoint fixes") from
+`johnsonsemmanuel/aduanefie-backend` branch `main` as deployment
+`d568cd51-9172-4583-bd1d-e12e3b38e88a` (`SUCCESS`, `builder=DOCKERFILE`). **Production now deploys
+from GitHub `main`, not from a local `railway up`.** In that repository the Laravel app is at the
+repo root, so a path written `soft/app/...` here is `app/...` there.
+
+Verification of the deployed commit used the GitHub API (the repo is private) plus HTTPS:
+
+| Check | Result |
+|---|---|
+| `app/Http/Controllers/LoginController.php` at `03203fb` | `credentialsAreValid()` at line 159; the `role == 'vendor'` branch at 186 calls it at 192, **before** the subscription gate at 204 and the approval gate at 218; the `vendor_employee` branch at 221 calls it at 225 |
+| `resources/views/layouts/landing/app.blade.php` at `03203fb` | 0 occurrences of `trade-bloc`, 0 of `regional_markets` |
+| `GET /vendor/apply` (renders `vendor-views.auth.general-info`, which `@extends('layouts.landing.app')`) | 200, ~179 KB, no error page, no dead nav |
+| `GET /deliveryman/apply` (renders `dm-registration`, same layout) | 200, ~81 KB |
+| `GET /store-login`, `/store-login/employee`, `/admin-login` | 200, 200, 200 |
+| `GET /vendor-panel` as a guest | 302 → `https://admin.aduanefie.com/store-login` |
+| `/store-login` markup | no `#mfaForm`, no `<div class="step-indicator">` |
+| `/admin-login` markup | `#mfaForm` present, `step-indicator` present |
+
+The two landing pages are the behavioural proof for `22d6969`: both extend the layout that used to
+call `route('trade-bloc.index')`, so before the fix both returned 500.
+
+`POST /login_submit` with an unknown email returns 302 → `/store-login` with "Credentials does not
+match". That response is identical before and after `de7d5c6` (an unknown email never reaches a
+gate), so it only proves the route is live. The ordering fix itself is established by reading the
+deployed file at `03203fb` (table above) and by the local HTTP matrix in §4.2.
+
+A deployment attempted by a concurrent agent from commit `0d4c322` (`7a3ff324-...`) failed with
+"Failed to create code snapshot". Production never served it; the GitHub-driven `03203fb` deploy is
+the one serving traffic.
+
 ## 5. Known gaps and deliberate deferrals
 
 1. **Retired hosts are not yet cut over at DNS.** `store.` and `vendor.` still resolve to
@@ -192,7 +250,10 @@ which `22d6969` fixed (the same case now renders 200).
    301 in front of them to `https://admin.aduanefie.com/store-login`.
 2. Stop the old Apache Laravel install on `185.151.30.164`.
 3. Confirm whether both installs write to the same database; resolve before enabling writes.
-4. ~~Deploy this branch.~~ Done at `0d24de9`; entrypoint rebuilds `config:cache` on boot. See §4.1.
+4. ~~Deploy this branch.~~ Done. Production runs GitHub `main` @ `03203fb`, which contains the
+   whole change set; the earlier manual deploy of `98e00f3` (deployment `28f51195`) was also
+   verified. Future deploys go through a push to `johnsonsemmanuel/aduanefie-backend` `main`; local
+   `railway up` times out on this payload (see §4.3).
 5. Verify with a real store account:
    - `https://admin.aduanefie.com/store-login` renders and logs in. (Renders: confirmed.)
    - `https://admin.aduanefie.com/vendor-panel` loads the dashboard. (Still to confirm with a real
