@@ -36,9 +36,10 @@
 # -----------------------------------------------------------------------------
 # Dependencies and tool binaries
 # -----------------------------------------------------------------------------
-**/vendor/
-!soft/public/**/vendor/
-!soft/public/**/vendor/**
+/vendor/
+soft/vendor/
+/Admin panel new install V4.0/vendor/
+/tests/Admin panel new install V4.0/vendor/
 **/node_modules/
 **/composer.phar
 **/.phpunit.result.cache
