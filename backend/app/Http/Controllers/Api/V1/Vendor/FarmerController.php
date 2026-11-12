@@ -1,10 +1,11 @@
 use App\Models\Item;
-use App\Models\Store;
-use App\Models\Vendor;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Store;
+use App\Models\Vendor;
 use App\Models\GrowthUpdate;
 use App\Models\CustomerProductSubscription;
+use App\Models\PestReport;
 use Illuminate\Http\Request;
 use App\CentralLogics\Helpers;
 use App\Http\Controllers\Controller;
@@ -474,5 +475,247 @@ class FarmerController extends Controller
             'subscribers' => $subscribers,
             'total' => $subscribers->count(),
         ], 200);
+    }
+
+    /**
+     * Report pest infestation for a farming product
+     */
+    public function report_pest(Request $request, $id)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        $validator = Validator::make($request->all(), [
+            'pest_type' => 'required|string|max:100',
+            'severity' => 'required|in:low,medium,high,critical',
+            'description' => 'required|string|max:2000',
+            'photos' => 'nullable|array',
+            'photos.*' => 'image|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => Helpers::error_processor($validator)], 403);
+        }
+
+        $item = Item::where('id', $id)
+            ->where('store_id', $store->id)
+            ->first();
+
+        if (!$item) {
+            return response()->json([
+                'errors' => [['code' => 'item_not_found', 'message' => translate('messages.item_not_found')]]
+            ], 404);
+        }
+
+        $report = PestReport::create([
+            'product_id' => $item->id,
+            'vendor_id' => $vendor->id,
+            'pest_type' => $request->pest_type,
+            'severity' => $request->severity,
+            'description' => $request->description,
+            'photos' => $request->photos ?? [],
+            'status' => 'reported',
+        ]);
+
+        // Generate AI treatment recommendation
+        $aiRecommendation = $this->getAiPestRecommendation($request->pest_type, $item->name, $request->severity);
+        $report->ai_recommendation = $aiRecommendation;
+        $report->save();
+
+        // Notify subscribed customers about pest issue
+        $subscribers = CustomerProductSubscription::forProduct($item->id)->get();
+        foreach ($subscribers as $sub) {
+            $message = sprintf(
+                "⚠️ Pest alert from %s: %s has been affected by %s (%s). We are treating it. Harvest may be delayed.",
+                $store->name,
+                $item->name,
+                $request->pest_type,
+                ucfirst($request->severity)
+            );
+            self::intekhost($sub->phone, $message);
+        }
+
+        return response()->json([
+            'message' => translate('messages.pest_report_submitted'),
+            'report' => [
+                'id' => $report->id,
+                'product_id' => $report->product_id,
+                'pest_type' => $report->pest_type,
+                'severity' => $report->severity,
+                'severity_label' => $report->severity_label,
+                'status' => $report->status,
+                'status_label' => $report->status_label,
+                'ai_recommendation' => $report->ai_recommendation,
+                'reported_at' => $report->created_at,
+            ],
+        ], 201);
+    }
+
+    /**
+     * Get pest reports for farmer's products
+     */
+    public function pest_reports(Request $request)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        $severity = $request->query('severity', 'all');
+        $status = $request->query('status', 'all');
+        $limit = $request->query('limit', 25);
+        $offset = $request->query('offset', 1);
+
+        $query = PestReport::where('vendor_id', $vendor->id)
+            ->with('product');
+
+        if ($severity !== 'all') {
+            $query->severity($severity);
+        }
+
+        if ($status !== 'all') {
+            $query->status($status);
+        }
+
+        $total = $query->count();
+        $reports = $query->latest()->offset(($offset - 1) * $limit)
+            ->limit($limit)
+            ->get()
+            ->map(function ($report) {
+                return [
+                    'id' => $report->id,
+                    'product_id' => $report->product_id,
+                    'product_name' => $report->product->name ?? 'Unknown',
+                    'pest_type' => $report->pest_type,
+                    'severity' => $report->severity,
+                    'severity_label' => $report->severity_label,
+                    'description' => $report->description,
+                    'photos' => $report->photos,
+                    'status' => $report->status,
+                    'status_label' => $report->status_label,
+                    'ai_recommendation' => $report->ai_recommendation,
+                    'treatment_applied' => $report->treatment_applied,
+                    'treated_at' => $report->treated_at,
+                    'reported_at' => $report->created_at,
+                ];
+            });
+
+        return response()->json([
+            'reports' => $reports,
+            'total' => $total,
+            'limit' => $limit,
+            'offset' => $offset,
+        ], 200);
+    }
+
+    /**
+     * Update pest report treatment status
+     */
+    public function update_pest_treatment(Request $request, $id)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        $validator = Validator::make($request->all(), [
+            'status' => 'required|in:reported,treating,resolved',
+            'treatment_applied' => 'nullable|string|max:1000',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => Helpers::error_processor($validator)], 403);
+        }
+
+        $report = PestReport::where('id', $id)
+            ->where('vendor_id', $vendor->id)
+            ->first();
+
+        if (!$report) {
+            return response()->json([
+                'errors' => [['code' => 'report_not_found', 'message' => translate('messages.report_not_found')]]
+            ], 404);
+        }
+
+        $report->status = $request->status;
+        if ($request->has('treatment_applied')) {
+            $report->treatment_applied = $request->treatment_applied;
+        }
+        if ($request->status === 'resolved') {
+            $report->treated_at = now();
+        }
+        $report->save();
+
+        return response()->json([
+            'message' => translate('messages.pest_report_updated'),
+            'report' => [
+                'id' => $report->id,
+                'status' => $report->status,
+                'status_label' => $report->status_label,
+                'treatment_applied' => $report->treatment_applied,
+                'treated_at' => $report->treated_at,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Get AI treatment recommendation for a pest type
+     */
+    public function get_ai_pest_recommendation(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'pest_type' => 'required|string|max:100',
+            'crop_type' => 'nullable|string|max:100',
+            'severity' => 'nullable|in:low,medium,high,critical',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => Helpers::error_processor($validator)], 403);
+        }
+
+        $recommendation = $this->getAiPestRecommendation(
+            $request->pest_type,
+            $request->crop_type ?? 'crop',
+            $request->severity ?? 'medium'
+        );
+
+        return response()->json([
+            'pest_type' => $request->pest_type,
+            'crop_type' => $request->crop_type,
+            'severity' => $request->severity,
+            'recommendation' => $recommendation,
+        ], 200);
+    }
+
+    /**
+     * Get AI treatment recommendation for a pest type
+     */
+    private function getAiPestRecommendation(string $pestType, string $cropType, string $severity): string
+    {
+        $pestLower = strtolower($pestType);
+        $cropLower = strtolower($cropType);
+
+        // Common pest recommendations
+        $recommendations = [
+            'aphids' => "Apply neem oil or insecticidal soap. Introduce ladybugs as natural predators. Spray early morning or late evening.",
+            'armyworm' => "Apply Bacillus thuringiensis (Bt) or spinosad. Hand-pick larvae. Destroy crop residues after harvest.",
+            'whitefly' => "Use yellow sticky traps. Apply neem oil. Encourage beneficial insects like lacewings.",
+            'mealybug' => "Dab with alcohol-soaked cotton. Apply neem oil or insecticidal soap. Prune heavily infested parts.",
+            'spider mite' => "Increase humidity. Apply neem oil or insecticidal soap. Use predatory mites.",
+            'fruit fly' => "Use pheromone traps. Apply protein bait sprays. Remove and destroy infested fruits.",
+            'blight' => "Apply copper-based fungicide. Ensure good air circulation. Avoid overhead watering.",
+            'powdery mildew' => "Apply sulfur-based fungicide. Prune for air circulation. Avoid excess nitrogen.",
+            'root rot' => "Improve drainage. Reduce watering. Apply beneficial fungi like Trichoderma.",
+            'bacterial wilt' => "Remove and destroy infected plants. Disinfect tools. Rotate crops.",
+            'locust' => "Apply biopesticides containing Metarhizium. Hand-pick and destroy. Community-wide spraying recommended.",
+        ];
+
+        $severityAdvice = [
+            'low' => "Monitor closely. Apply treatment at first sign of spread.",
+            'medium' => "Treat immediately. Isolate affected plants if possible.",
+            'high' => "Treat urgently. Consider removing severely affected plants.",
+            'critical' => "Emergency treatment required. Consider crop loss mitigation. Contact extension officer.",
+        ];
+
+        $rec = $recommendations[$pestLower] ?? "Apply appropriate pesticide for $pestType. Follow label instructions carefully. Rotate active ingredients to prevent resistance.";
+        $sevAdvice = $severityAdvice[$severity] ?? $severityAdvice['medium'];
+
+        return "$rec $sevAdvice";
     }
 }

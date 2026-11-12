@@ -201,6 +201,12 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
             Route::post('products/{id}/growth-update', 'FarmerController@update_growth');
             Route::post('products/{id}/sms-broadcast', 'FarmerController@broadcast_sms');
             Route::get('products/{id}/subscribers', 'FarmerController@get_subscribers');
+
+            // Pest reporting
+            Route::post('products/{id}/pest-report', 'FarmerController@report_pest');
+            Route::get('pest-reports', 'FarmerController@pest_reports');
+            Route::patch('pest-reports/{id}/treatment', 'FarmerController@update_pest_treatment');
+            Route::post('pest-recommendation', 'FarmerController@get_ai_pest_recommendation');
         });
 
 
@@ -323,6 +329,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
     Route::group(['prefix' => 'cross-border'], function () {
         Route::get('countries', 'CrossBorderController@countries');
         Route::get('shipping-options', 'CrossBorderController@shippingOptions');
+        // Cart lines (item_id + quantity per row) are a poor fit for a query
+        // string, so accept the same payload over POST as well.
+        Route::post('shipping-options', 'CrossBorderController@shippingOptions');
         Route::post('quote', 'CrossBorderController@quote');
     });
 
