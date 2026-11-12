@@ -15350,3 +15350,93 @@ main#content.main {
     border-color: var(--aduanefie-olive) !important;
     box-shadow: 0 0 0 0.15rem rgba(139, 159, 105, 0.25) !important;
 }
+
+/* Header dropdowns (Settings & Module switcher) */
+.__nav-module-header .inner {
+    background: rgba(72, 88, 51, 0.92) !important;
+}
+
+.__nav-module.style-2 .__nav-module-header {
+    border-color: var(--aduanefie-border) !important;
+}
+
+.__nav-module.style-2 .__nav-module-header .inner {
+    background: var(--aduanefie-cream) !important;
+    color: var(--aduanefie-deep) !important;
+}
+
+.__nav-module.style-2 .__nav-module-header .inner h4 {
+    color: var(--aduanefie-sidebar) !important;
+}
+
+.__nav-module-body {
+    border-color: var(--aduanefie-border) !important;
+}
+
+.__nav-module-body ul li a {
+    color: var(--aduanefie-deep) !important;
+}
+
+.__nav-module-body ul li a:hover {
+    color: var(--aduanefie-olive-dark) !important;
+}
+
+/* Badges, outline buttons, text accents, controls */
+.badge-soft-primary,
+.badge-soft-success {
+    color: var(--aduanefie-sidebar) !important;
+    background-color: rgba(139, 159, 105, 0.16) !important;
+    border-color: rgba(139, 159, 105, 0.45) !important;
+}
+
+.badge-soft-info {
+    color: var(--aduanefie-earth) !important;
+    background-color: var(--aduanefie-sand) !important;
+    border-color: var(--aduanefie-border) !important;
+}
+
+.btn-outline-primary {
+    color: var(--aduanefie-olive-dark) !important;
+    border-color: var(--aduanefie-olive-dark) !important;
+}
+
+.btn-outline-primary:hover,
+.btn-outline-primary:focus {
+    background-color: var(--aduanefie-olive-dark) !important;
+    border-color: var(--aduanefie-olive-dark) !important;
+    color: #ffffff !important;
+}
+
+.btn--reset,
+.btn-secondary {
+    background-color: var(--aduanefie-sand) !important;
+    color: var(--aduanefie-deep) !important;
+    border-color: var(--aduanefie-border) !important;
+}
+
+.text-primary,
+.text--primary,
+.text--primary-2,
+.text--info {
+    color: var(--aduanefie-olive-dark) !important;
+}
+
+.text-3F8CE8 {
+    color: var(--aduanefie-earth) !important;
+}
+
+.text-title {
+    color: var(--aduanefie-deep) !important;
+}
+
+.custom-control-input:checked ~ .custom-control-label::before {
+    background-color: var(--aduanefie-olive-dark) !important;
+    border-color: var(--aduanefie-olive-dark) !important;
+}
+
+.dropdown-item.active,
+.dropdown-item:active,
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: var(--aduanefie-olive-dark) !important;
+    color: #ffffff !important;
+}
