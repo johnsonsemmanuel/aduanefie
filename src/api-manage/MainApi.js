@@ -47,6 +47,9 @@ MainApi.interceptors.request.use(function (config) {
     })();
   if (zoneidIsValid) {
     config.headers.zoneid = zoneid;
+  } else if (typeof window !== "undefined") {
+    // Default to national Ghana zone [1] so first-time visitors can browse immediately
+    config.headers.zoneid = "[1]";
   }
   if (moduleid && !config.headers.moduleId) config.headers.moduleId = moduleid;
   if (token) config.headers.authorization = `Bearer ${token}`;

@@ -51,8 +51,7 @@ const ZoneGuard = (props) => {
       if (storedIdentifier) {
         setChecked(true);
       } else {
-        setChecked(false);
-        router.push("/welcome", undefined, { shallow: true });
+        setChecked(true);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps

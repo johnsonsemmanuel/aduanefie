@@ -8,12 +8,10 @@ export default function Root() {
 }
 
 export const getServerSideProps = async ({ req }) => {
-  const selectedModule = req.cookies?.selectedModule;
+  const selectedModule = req.cookies?.selectedModule || "2";
   return {
     redirect: {
-      destination: selectedModule
-        ? `/home?module=${encodeURIComponent(selectedModule)}`
-        : "/welcome",
+      destination: `/home?module=${encodeURIComponent(selectedModule)}`,
       permanent: false,
     },
   };

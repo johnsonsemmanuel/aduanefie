@@ -162,15 +162,6 @@ const HomePageComponents = ({
     window.scrollTo(0, 0);
   }, [router.query.search]);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (!modules?.length || modules.length < 2) return;
-    const alreadyChosen = localStorage.getItem(MODE_CHOSEN_STORAGE_KEY);
-    if (!alreadyChosen && !welcomeModal && !openIncompleteOrder) {
-      setOpenModeGreeting(true);
-    }
-  }, [modules?.length, welcomeModal, openIncompleteOrder]);
-
   const onSuccessHandler = (response) => {
     setWishListsData(response);
     dispatch(setWishList(response));

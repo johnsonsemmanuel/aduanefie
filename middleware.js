@@ -28,23 +28,28 @@ const excludeModuleRoutes = [
 
 export function middleware(request) {
   const { pathname, searchParams } = request.nextUrl;
+  const host = (request.headers.get("host") || "").split(":")[0].toLowerCase();
+
+  // Consolidate legacy web.aduanefie.com and www.aduanefie.com onto aduanefie.com
+  if (host === "web.aduanefie.com" || host === "www.aduanefie.com") {
+    const canonicalUrl = new URL(
+      `${pathname}${request.nextUrl.search}`,
+      "https://aduanefie.com"
+    );
+    return NextResponse.redirect(canonicalUrl, 308);
+  }
 
   // Get module parameter from cookie (set on client)
   const moduleFromCookie = request.cookies.get("selectedModule")?.value;
 
-  // Root is a smart entry point: visitors who already picked a module go
-  // straight to the marketplace, everyone else gets the marketing landing
-  // page (now served from /welcome). A rewrite keeps the address bar on the
-  // main domain instead of bouncing through web.aduanefie.com.
+  // Root opens directly into the live marketplace (/home) like Alibaba:
+  // returning visitors get their saved module, first-time visitors land in
+  // module 2 (Wholesale & Cross-Border Trade) with full catalog access.
   if (pathname === "/") {
     const url = request.nextUrl.clone();
-    if (moduleFromCookie) {
-      url.pathname = "/home";
-      if (!url.searchParams.has("module") && !url.searchParams.has("module_id")) {
-        url.searchParams.set("module", moduleFromCookie);
-      }
-    } else {
-      url.pathname = "/welcome";
+    url.pathname = "/home";
+    if (!url.searchParams.has("module") && !url.searchParams.has("module_id")) {
+      url.searchParams.set("module", moduleFromCookie || "2");
     }
     return NextResponse.rewrite(url);
   }
