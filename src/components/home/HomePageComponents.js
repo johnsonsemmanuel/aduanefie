@@ -10,6 +10,7 @@ import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { getModuleId } from "helper-functions/getModuleId";
 import { WHOLESALE_MODULE_ID } from "components/trade/tradeData";
 import TradeCtaBanner from "./TradeCtaBanner";
+import AgroPriceTickerBar from "./AgroPriceTickerBar";
 import { getGuestId, getToken } from "helper-functions/getToken";
 import { ModuleTypes } from "helper-functions/moduleTypes";
 import { t } from "i18next";
@@ -345,10 +346,11 @@ const HomePageComponents = ({
             sx={{
               mt:
                 moduleType === "rental" || moduleType === "parcel"
-                  ? { xs: 0, md: "34px" }
-                  : { xs: "8px", md: "34px" },
+                  ? { xs: 0, md: "12px" }
+                  : { xs: "4px", md: "10px" },
             }}
           >
+            <AgroPriceTickerBar />
             {isWholesaleModule && (
               <Box
                 sx={{
