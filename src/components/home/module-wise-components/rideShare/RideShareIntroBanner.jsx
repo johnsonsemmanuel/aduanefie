@@ -153,7 +153,7 @@ const RideShareIntroBanner = ({ configData, appUrl }) => {
             <br />
             {t("Anytime With")}{" "}
             <Box component="span" sx={{ color: "primary.main" }}>
-              {t("6amMart")}
+              {t("Aduanefie")}
             </Box> */}
             {heroData?.intro?.title || ""}
           </Typography>

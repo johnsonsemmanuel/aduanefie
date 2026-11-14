@@ -77,7 +77,7 @@ const StoreButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const DEFAULT_TITLE = "Download the 6amMart App for Exclusive Rewards!";
+const DEFAULT_TITLE = "Get the Aduanefie App — Trade & Shop Faster!";
 
 const MobileAppBanner = () => {
   const theme = useTheme();
