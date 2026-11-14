@@ -6,6 +6,7 @@ import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
 import IncrementDecrementManager from "./IncrementDecrementManager";
 import ProductInformationBottomSection from "./ProductInformationBottomSection";
 import VariationsManager from "./VariationsManager";
+import InsuranceBadge from "components/badges/InsuranceBadge";
 import { Box } from "@mui/system";
 import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
 import { useAddToWishlist } from "api-manage/hooks/react-query/wish-list/useAddWishList";
@@ -783,7 +784,9 @@ const ProductInformation = ({
             marketerVerified ||
             originCountry;
 
-          if (!hasAgroInfo) return null;
+          if (!hasAgroInfo) {
+            return <InsuranceBadge item={item} variant="card" sx={{ mt: 1.25 }} />;
+          }
 
           const monthNames = {
             January: t("january"),
@@ -801,7 +804,9 @@ const ProductInformation = ({
           };
 
           return (
-            <Stack
+            <>
+              <InsuranceBadge item={item} variant="card" sx={{ mt: 1.25 }} />
+              <Stack
               spacing={0.75}
               sx={{
                 mt: 1,
@@ -1072,6 +1077,7 @@ const ProductInformation = ({
                 )}
               </Stack>
             </Stack>
+            </>
           );
         })()}
 

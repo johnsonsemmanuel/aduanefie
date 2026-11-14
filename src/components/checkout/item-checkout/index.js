@@ -328,6 +328,25 @@ const ItemCheckout = (props) => {
     shippingOption,
   ]);
 
+  const insuranceSettings = configData?.insurance_settings;
+  const hasInsuredItem = useMemo(
+    () => (checkoutProductList || []).some((row) => !!row?.is_insured),
+    [checkoutProductList],
+  );
+  const [insuranceOptIn, setInsuranceOptIn] = useState(false);
+  useEffect(() => {
+    if (insuranceSettings?.status && (isCrossBorder || hasInsuredItem)) {
+      setInsuranceOptIn(true);
+    }
+  }, [insuranceSettings?.status, isCrossBorder, hasInsuredItem]);
+  const isInsuranceLocked = Boolean(
+    insuranceSettings?.status && isCrossBorder && insuranceSettings?.cross_border_auto,
+  );
+  const isInsuranceApplied = Boolean(
+    insuranceSettings?.status &&
+      (isInsuranceLocked || (insuranceOptIn && insuranceSettings?.allow_opt_in)),
+  );
+
   const passwordHandler = (value) => {
     formik.setFieldValue("password", value);
   };
@@ -736,6 +755,7 @@ const ItemCheckout = (props) => {
           : 0
         : 0;
       formData.append("extra_packaging_amount", resolvedPackagingAmount);
+      formData.append("is_insured", isInsuranceApplied ? 1 : 0);
       formData.append("cutlery", cartPrefs?.addCutlery ? 1 : cutlery ? 1 : 0);
       formData.append(
         "unavailable_item_note",
@@ -804,6 +824,7 @@ const ItemCheckout = (props) => {
         floor: token ? address?.floor : guestUserInfo?.floor,
         road: token ? address?.road : guestUserInfo?.road,
         extra_packaging_amount: resolvedPackagingAmount,
+        is_insured: isInsuranceApplied ? 1 : 0,
         ...(cartPrefs?.monthlySubscribe && { monthly_subscribe: 1 }),
         create_new_user: check ? 1 : 0,
         password: formik.values.password,
@@ -1666,6 +1687,10 @@ const ItemCheckout = (props) => {
                     isCrossBorder={isCrossBorder}
                     crossBorderQuote={crossBorderQuote}
                     shippingOption={shippingOption}
+                    isInsuranceApplied={isInsuranceApplied}
+                    insuranceOptIn={insuranceOptIn}
+                    setInsuranceOptIn={setInsuranceOptIn}
+                    isInsuranceLocked={isInsuranceLocked}
                   />
 
                   {/* Currency Selector */}

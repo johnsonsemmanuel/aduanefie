@@ -1,5 +1,6 @@
 import { Box } from "@mui/system";
 import BogoListPage from "components/bogo-list";
+import LiveFarmingSection from "components/home/live-farming/LiveFarmingSection";
 import OffersSectionPage from "components/home/section-page/OffersSectionPage";
 import TabbedSectionPage from "components/home/section-page/TabbedSectionPage";
 import isVerifiedStoreEnabled from "helper-functions/isVerifiedStoreEnabled";
@@ -79,6 +80,15 @@ export const getEcommerceSections = (configData, isBogoLive) =>
     ),
     content: <TabbedSectionPage sectionType="top-rated" />,
     mobileContent: <TabbedSectionPage sectionType="top-rated" />,
+  },
+  {
+    id: "live-farming",
+    label: "Live Farming",
+    icon: (
+      <Box component="img" src="/static/badges/live-farming-badge.svg" alt="Live Farming" sx={{ width: 18, height: 18, borderRadius: "4px" }} />
+    ),
+    content: <LiveFarmingSection limit={24} showViewAll={false} hideIfEmpty={false} />,
+    mobileContent: <LiveFarmingSection limit={24} showViewAll={false} hideIfEmpty={false} />,
   },
   {
     id: "nearby",

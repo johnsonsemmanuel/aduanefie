@@ -3,6 +3,7 @@ import BogoListPage from "components/bogo-list";
 import OffersSectionPage from "components/home/section-page/OffersSectionPage";
 import TabbedSectionPage from "components/home/section-page/TabbedSectionPage";
 import { navigateToBogoList } from "helper-functions/navigateToBogoList";
+import LiveFarmingSection from "components/home/live-farming/LiveFarmingSection";
 
 export const SECTION_GAP = 3;
 
@@ -64,6 +65,15 @@ export const getGrocerySections = (isBogoLive) =>
     ),
     content: <TabbedSectionPage sectionType="top-rated" />,
     mobileContent: <TabbedSectionPage sectionType="top-rated" />,
+  },
+  {
+    id: "live-farming",
+    label: "Live Farming",
+    icon: (
+      <Box component="img" src="/static/badges/live-farming-badge.svg" alt="Live Farming" sx={{ width: 18, height: 18, borderRadius: "4px" }} />
+    ),
+    content: <LiveFarmingSection limit={24} showViewAll={false} hideIfEmpty={false} />,
+    mobileContent: <LiveFarmingSection limit={24} showViewAll={false} hideIfEmpty={false} />,
   },
   {
     id: "nearby",

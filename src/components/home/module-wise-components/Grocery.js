@@ -41,6 +41,7 @@ import QuickDeliverySection from "./food/QuickDeliverySection";
 import TopPicksSection from "./grocery/TopPicksSection";
 import Brands from "../brands";
 import FlashSalesSection from "./ecommerce/FlashSalesSection";
+import LiveFarmingSection from "components/home/live-farming/LiveFarmingSection";
 
 const menus = ["All", "Beauty", "Bread & Juice", "Drinks", "Milks"];
 
@@ -124,6 +125,11 @@ const Grocery = (props) => {
       <S>
         <CustomContainer>
           <Banners />
+        </CustomContainer>
+      </S>
+      <S>
+        <CustomContainer>
+          <LiveFarmingSection limit={8} />
         </CustomContainer>
       </S>
       <S>

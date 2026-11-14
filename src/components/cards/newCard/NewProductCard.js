@@ -12,6 +12,7 @@ import {
   useTheme,
 } from "@mui/material";
 import BadgeWithTooltip from "components/common/BadgeWithTooltip";
+import InsuranceBadge from "components/badges/InsuranceBadge";
 import { styled } from "@mui/material/styles";
 import { keyframes } from "@mui/system";
 import NextImage from "components/NextImage";
@@ -925,10 +926,11 @@ export const InfoSection = ({
                   whiteSpace: "nowrap",
                 }}
               >
-                {item?.pre_order_available ? t("Farming · Pre-Order") : t("Farming")}
+                {item?.pre_order_available ? t("Live Farming · Pre-Order") : t("Live Farming")}
               </Typography>
             </DeliveryBadge>
           )}
+          <InsuranceBadge item={item} variant="compact" />
           {item?.effective_farming_status === "harvest_ready" && (
             <DeliveryBadge
               sx={{

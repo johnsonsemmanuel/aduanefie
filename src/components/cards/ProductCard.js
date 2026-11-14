@@ -13,6 +13,7 @@ import { Box, Stack } from "@mui/system";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
 import { useRouter } from "next/router";
 import { handleProductRedirect } from "helper-functions/handleProductRedirect";
+import InsuranceBadge from "components/badges/InsuranceBadge";
 
 import React, { useEffect, useReducer, useState, useRef } from "react";
 import toast from "react-hot-toast";
@@ -1320,6 +1321,34 @@ const ProductCard = (props) => {
                 ) : (
                   ""
                 )}
+                {item?.farming_status === "farming" && (
+                  <Chip
+                    size="small"
+                    icon={
+                      <Box
+                        component="img"
+                        src="/static/badges/live-farming-badge.svg"
+                        alt={t("Live Farming")}
+                        sx={{ width: 15, height: 15, ml: "4px !important", borderRadius: "4px" }}
+                      />
+                    }
+                    label={
+                      item?.days_to_harvest !== null && item?.days_to_harvest !== undefined
+                        ? t("Live Farming · {{days}}d", { days: item.days_to_harvest })
+                        : t("Live Farming")
+                    }
+                    sx={{
+                      position: "absolute",
+                      top: 10,
+                      left: 10,
+                      bgcolor: "#B45309",
+                      color: "#FFFFFF",
+                      fontWeight: 700,
+                      borderRadius: "6px",
+                      zIndex: 10,
+                    }}
+                  />
+                )}
                 {item?.farming_status === "harvest_ready" && (
                   <Chip
                     size="small"
@@ -1352,6 +1381,11 @@ const ProductCard = (props) => {
                     }}
                   />
                 )}
+                <InsuranceBadge
+                  item={item}
+                  variant="compact"
+                  sx={{ position: "absolute", bottom: 8, left: 8, zIndex: 10 }}
+                />
                 <CustomOverLay hover={state.isTransformed} border_radius="10px">
                   <QuickView
                     quickViewHandleClick={quickViewHandleClick}

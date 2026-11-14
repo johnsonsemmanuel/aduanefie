@@ -36,6 +36,7 @@ import EcommerceSearchBanner from "./EcommerceSearchBanner";
 import { getEcommerceSections } from "./ecommerceSectionsConfig";
 import SinglePoster from "./SinglePoster";
 import TrendingItemsSection from "./TrendingItemsSection";
+import LiveFarmingSection from "components/home/live-farming/LiveFarmingSection";
 const FlashSalesSection = dynamic(() => import("./FlashSalesSection"), {
   ssr: false,
 });
@@ -121,6 +122,12 @@ const Shop = ({ configData, routeSection }) => {
       <S>
         <CustomContainer>
           <TopOfferNHappyHourSection />
+        </CustomContainer>
+      </S>
+
+      <S>
+        <CustomContainer>
+          <LiveFarmingSection limit={8} />
         </CustomContainer>
       </S>
 

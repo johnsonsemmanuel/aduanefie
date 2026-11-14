@@ -94,6 +94,10 @@ const OrderCalculation = (props) => {
     isCrossBorder,
     crossBorderQuote,
     shippingOption,
+    isInsuranceApplied,
+    insuranceOptIn,
+    setInsuranceOptIn,
+    isInsuranceLocked,
   } = props;
 
   // Express / slightly_delay surcharge from the DeliverySpeedOptions row.
@@ -603,6 +607,21 @@ const OrderCalculation = (props) => {
       ? (crossBorderGoodsAfterDiscounts * (Number(storeData?.tax) || 0)) / 100
       : 0;
 
+  const insuranceSettings = configData?.insurance_settings;
+  const computedInsuranceFee = (() => {
+    if (!insuranceSettings?.status || !isInsuranceApplied) return 0;
+    const ratePct = Number(insuranceSettings?.rate_percent ?? 2.5);
+    const minFee = Number(insuranceSettings?.min_fee ?? 0);
+    const maxFee = Number(insuranceSettings?.max_fee ?? 0);
+    const baseAmount = isCrossBorder
+      ? Math.max(0, Number(crossBorderGoodsAfterDiscounts || 0))
+      : Math.max(0, Number(getSubTotalPrice(cartList) || 0));
+    let fee = roundMoney(baseAmount * (ratePct / 100));
+    if (minFee > 0 && fee < minFee) fee = roundMoney(minFee);
+    if (maxFee > 0 && fee > maxFee) fee = roundMoney(maxFee);
+    return fee;
+  })();
+
   const computeTotalAmount = () => {
     if (isCrossBorder) {
       // Import freight and taxes are added explicitly. A `free_delivery`
@@ -620,7 +639,8 @@ const OrderCalculation = (props) => {
         withImportTaxes +
         Number(deliveryTip || 0) +
         Number(additionalCharge || 0) +
-        Number(packagingCharge || 0)
+        Number(packagingCharge || 0) +
+        Number(computedInsuranceFee || 0)
       );
     }
 
@@ -661,7 +681,7 @@ const OrderCalculation = (props) => {
       totalAmount = Number(totalAmount) - proOrderDiscountAmount;
     }
 
-    return totalAmount;
+    return Number(totalAmount) + Number(computedInsuranceFee || 0);
   };
 
   const computedTotalAmount = computeTotalAmount();
@@ -1280,6 +1300,61 @@ const OrderCalculation = (props) => {
             />
           </Grid>
         )} */}
+
+        {insuranceSettings?.status && (isInsuranceLocked || insuranceSettings?.allow_opt_in) && (
+          <Grid item xs={12} sx={{ my: 1 }}>
+            <Box
+              sx={{
+                p: 1.25,
+                borderRadius: "10px",
+                border: "1px solid",
+                borderColor: isInsuranceApplied ? "#F59E0B" : "divider",
+                background: isInsuranceApplied
+                  ? "linear-gradient(135deg, #FFFBEB 0%, #F0FDF4 100%)"
+                  : "transparent",
+              }}
+            >
+              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+                <Stack direction="row" alignItems="center" spacing={1} sx={{ minWidth: 0 }}>
+                  <Box
+                    component="img"
+                    src="/static/badges/trade-insurance-badge.svg"
+                    alt={t("Insurance")}
+                    sx={{ width: 24, height: 24, flexShrink: 0 }}
+                  />
+                  <Box sx={{ minWidth: 0 }}>
+                    <Typography sx={{ fontSize: "12.5px", fontWeight: 700, color: "#92400E" }}>
+                      {insuranceSettings?.provider_name || t("Trade & Crop Insurance")}
+                    </Typography>
+                    <Typography sx={{ fontSize: "11px", color: "text.secondary" }}>
+                      {isInsuranceLocked
+                        ? t("Included for cross-border protection ({{rate}}%)", {
+                            rate: insuranceSettings?.rate_percent ?? 2.5,
+                          })
+                        : t("Protect crop & transit ({{rate}}%)", {
+                            rate: insuranceSettings?.rate_percent ?? 2.5,
+                          })}
+                    </Typography>
+                  </Box>
+                </Stack>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <Typography sx={{ fontSize: "12.5px", fontWeight: 700, color: "#92400E" }}>
+                    {isInsuranceApplied ? getAmountWithSign(computedInsuranceFee) : t("Optional")}
+                  </Typography>
+                  {!isInsuranceLocked && setInsuranceOptIn && (
+                    <input
+                      type="checkbox"
+                      checked={!!insuranceOptIn}
+                      onChange={(e) => setInsuranceOptIn(e.target.checked)}
+                      style={{ width: 16, height: 16, cursor: "pointer", accentColor: "#D97706" }}
+                      aria-label={t("Toggle Trade & Crop Insurance")}
+                    />
+                  )}
+                </Stack>
+              </Stack>
+            </Box>
+          </Grid>
+        )}
 
         <CustomDivider border="1px" />
         <TotalGrid container md={12} xs={12} mt="1rem">
