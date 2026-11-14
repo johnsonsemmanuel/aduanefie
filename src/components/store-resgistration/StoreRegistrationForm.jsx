@@ -141,6 +141,13 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
       setPolygonPaths(format);
     }
   }, [RestaurantJoinFormik?.values?.zoneId, activeStep]);
+
+  useEffect(() => {
+    const refCode = router?.query?.ref || router?.query?.marketer_code;
+    if (refCode && !RestaurantJoinFormik.values.marketer_code) {
+      RestaurantJoinFormik.setFieldValue("marketer_code", String(refCode).trim());
+    }
+  }, [router?.query?.ref, router?.query?.marketer_code]);
   const formSubmitOnSuccess = (values) => {
     setFormValues(values);
 
