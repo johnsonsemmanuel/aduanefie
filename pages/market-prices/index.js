@@ -21,6 +21,7 @@ import {
   TextField,
   Typography,
   alpha,
+  useTheme,
 } from "@mui/material";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
@@ -32,6 +33,7 @@ import { useTranslation } from "react-i18next";
 import { useGetAgroPrices } from "api-manage/hooks/react-query/trade/useGetAgroPrices";
 
 const MarketPricesPage = ({ configData }) => {
+  const theme = useTheme();
   const { t } = useTranslation();
   const [category, setCategory] = useState("all");
   const [marketHub, setMarketHub] = useState("all");
@@ -49,12 +51,13 @@ const MarketPricesPage = ({ configData }) => {
         <CustomContainer>
           <Box sx={{ py: { xs: 3, md: 5 } }}>
             {/* Header */}
-            <Box
+            <Paper
+              elevation={0}
               sx={{
                 p: { xs: 2.5, md: 3.5 },
-                borderRadius: "16px",
-                background: "linear-gradient(135deg, #14532D 0%, #67513A 100%)",
-                color: "#FFFFFF",
+                borderRadius: "12px",
+                bgcolor: theme.palette.background.paper,
+                border: `1px solid ${theme.palette.divider}`,
                 mb: 3,
               }}
             >
@@ -62,25 +65,48 @@ const MarketPricesPage = ({ configData }) => {
                 <Box>
                   <Chip
                     size="small"
+                    variant="outlined"
+                    color="primary"
                     label={t("LIVE GHANA AGRO INTELLIGENCE · GCX · MoFA SRID · ESOKO")}
-                    sx={{ bgcolor: alpha("#FFFFFF", 0.16), color: "#FEF3C7", fontWeight: 700, mb: 1 }}
+                    sx={{ fontWeight: 600, mb: 1.25 }}
                   />
-                  <Typography variant="h4" sx={{ fontWeight: 800, fontSize: { xs: "22px", md: "28px" } }}>
+                  <Typography
+                    variant="h4"
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: { xs: "22px", md: "28px" },
+                      color: theme.palette.text.primary,
+                    }}
+                  >
                     {t("Ghana Agricultural Market Price Index")}
                   </Typography>
-                  <Typography sx={{ opacity: 0.9, mt: 0.75, maxWidth: 740, fontSize: "14px" }}>
+                  <Typography
+                    sx={{
+                      color: theme.palette.text.secondary,
+                      mt: 0.75,
+                      maxWidth: 740,
+                      fontSize: "14px",
+                    }}
+                  >
                     {t("Real-time wholesale and retail commodity benchmarks across Ejura, Techiman, Tamale, Kumasi Central, and Agbogbloshie — built to empower Farmers, Retailers, and Remote Field Marketers.")}
                   </Typography>
                 </Box>
               </Stack>
-            </Box>
+            </Paper>
 
             {/* Stakeholder Value Cards */}
             <Grid container spacing={2} sx={{ mb: 3 }}>
               <Grid item xs={12} md={4}>
-                <Card sx={{ height: "100%", borderRadius: "12px", border: "1px solid", borderColor: alpha("#15803D", 0.2) }}>
+                <Card
+                  elevation={0}
+                  sx={{
+                    height: "100%",
+                    borderRadius: "12px",
+                    border: `1px solid ${theme.palette.divider}`,
+                  }}
+                >
                   <CardContent>
-                    <Typography sx={{ fontWeight: 800, fontSize: "15px", color: "#15803D", mb: 0.5 }}>
+                    <Typography sx={{ fontWeight: 700, fontSize: "15px", color: theme.palette.primary.main, mb: 0.5 }}>
                       {t("For Farmers & Cooperatives")}
                     </Typography>
                     <Typography sx={{ fontSize: "13px", color: "text.secondary" }}>
@@ -90,9 +116,16 @@ const MarketPricesPage = ({ configData }) => {
                 </Card>
               </Grid>
               <Grid item xs={12} md={4}>
-                <Card sx={{ height: "100%", borderRadius: "12px", border: "1px solid", borderColor: alpha("#67513A", 0.2) }}>
+                <Card
+                  elevation={0}
+                  sx={{
+                    height: "100%",
+                    borderRadius: "12px",
+                    border: `1px solid ${theme.palette.divider}`,
+                  }}
+                >
                   <CardContent>
-                    <Typography sx={{ fontWeight: 800, fontSize: "15px", color: "#67513A", mb: 0.5 }}>
+                    <Typography sx={{ fontWeight: 700, fontSize: "15px", color: theme.palette.primary.main, mb: 0.5 }}>
                       {t("For Retailers & Bulk Buyers")}
                     </Typography>
                     <Typography sx={{ fontSize: "13px", color: "text.secondary" }}>
@@ -102,9 +135,16 @@ const MarketPricesPage = ({ configData }) => {
                 </Card>
               </Grid>
               <Grid item xs={12} md={4}>
-                <Card sx={{ height: "100%", borderRadius: "12px", border: "1px solid", borderColor: alpha("#D97706", 0.25) }}>
+                <Card
+                  elevation={0}
+                  sx={{
+                    height: "100%",
+                    borderRadius: "12px",
+                    border: `1px solid ${theme.palette.divider}`,
+                  }}
+                >
                   <CardContent>
-                    <Typography sx={{ fontWeight: 800, fontSize: "15px", color: "#B45309", mb: 0.5 }}>
+                    <Typography sx={{ fontWeight: 700, fontSize: "15px", color: theme.palette.primary.main, mb: 0.5 }}>
                       {t("For Remote Field Marketers")}
                     </Typography>
                     <Typography sx={{ fontSize: "13px", color: "text.secondary" }}>
@@ -116,7 +156,7 @@ const MarketPricesPage = ({ configData }) => {
             </Grid>
 
             {/* Filters */}
-            <Paper sx={{ p: 2, borderRadius: "12px", mb: 2.5 }}>
+            <Paper elevation={0} sx={{ p: 2, borderRadius: "12px", border: `1px solid ${theme.palette.divider}`, mb: 2.5 }}>
               <Grid container spacing={2} alignItems="center">
                 <Grid item xs={12} sm={4}>
                   <TextField
@@ -153,9 +193,9 @@ const MarketPricesPage = ({ configData }) => {
             </Paper>
 
             {/* Price Table */}
-            <TableContainer component={Paper} sx={{ borderRadius: "12px" }}>
+            <TableContainer component={Paper} elevation={0} sx={{ borderRadius: "12px", border: `1px solid ${theme.palette.divider}` }}>
               <Table>
-                <TableHead sx={{ bgcolor: "#FAF8F5" }}>
+                <TableHead sx={{ bgcolor: alpha(theme.palette.primary.main, 0.04) }}>
                   <TableRow>
                     <TableCell sx={{ fontWeight: 700 }}>{t("Commodity")}</TableCell>
                     <TableCell sx={{ fontWeight: 700 }}>{t("Market Hub")}</TableCell>
@@ -199,13 +239,13 @@ const MarketPricesPage = ({ configData }) => {
                           </TableCell>
                           <TableCell sx={{ fontSize: "13px" }}>{row.market_hub}</TableCell>
                           <TableCell sx={{ fontSize: "13px" }}>{row.unit}</TableCell>
-                          <TableCell align="right" sx={{ fontWeight: 700, color: "#15803D" }}>
+                          <TableCell align="right" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
                             GH₵{wholesale.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                           </TableCell>
                           <TableCell align="right" sx={{ fontWeight: 600 }}>
                             GH₵{retail.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                           </TableCell>
-                          <TableCell align="right" sx={{ fontSize: "12.5px", color: "#67513A", fontWeight: 600 }}>
+                          <TableCell align="right" sx={{ fontSize: "12.5px", color: theme.palette.text.secondary, fontWeight: 600 }}>
                             +GH₵{spread.toLocaleString(undefined, { minimumFractionDigits: 2 })} ({spreadPct}%)
                           </TableCell>
                           <TableCell align="center">
