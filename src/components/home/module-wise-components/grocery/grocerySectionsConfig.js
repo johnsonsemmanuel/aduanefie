@@ -70,7 +70,12 @@ export const getGrocerySections = (isBogoLive) =>
     id: "live-farming",
     label: "Live Farming",
     icon: (
-      <Box component="img" src="/static/badges/live-farming-badge.svg" alt="Live Farming" sx={{ width: 18, height: 18, borderRadius: "4px" }} />
+      <Box sx={{ color: "success.main", display: "flex" }}>
+        <i
+          className="fi fi-rr-leaf"
+          style={{ fontSize: "16px", lineHeight: 1, display: "flex" }}
+        />
+      </Box>
     ),
     content: <LiveFarmingSection limit={24} showViewAll={false} hideIfEmpty={false} />,
     mobileContent: <LiveFarmingSection limit={24} showViewAll={false} hideIfEmpty={false} />,

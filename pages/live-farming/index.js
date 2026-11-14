@@ -1,14 +1,38 @@
-import React from "react";
-import { Box } from "@mui/material";
+import React, { useEffect } from "react";
+import { Box, CssBaseline } from "@mui/material";
 import CustomContainer from "components/container";
 import MainLayout from "components/layout/MainLayout";
 import SEO from "components/seo";
 import LiveFarmingSection from "components/home/live-farming/LiveFarmingSection";
+import { getCommonServerSideProps } from "utils/serverSidePropsHelper";
+import { useDispatch } from "react-redux";
+import { useGetConfigData } from "api-manage/hooks/useGetConfigData";
+import { setConfigData } from "redux/slices/configData";
 
 const LiveFarmingPage = ({ configData }) => {
+  const dispatch = useDispatch();
+  const { data: dataConfig, refetch: configRefetch } = useGetConfigData();
+
+  useEffect(() => {
+    if (!configData) {
+      configRefetch();
+    }
+  }, [configData, configRefetch]);
+
+  useEffect(() => {
+    if (dataConfig) {
+      dispatch(setConfigData(dataConfig));
+    }
+  }, [dataConfig, dispatch]);
+
   return (
     <>
-      <SEO title={configData?.business_name ? `Live Farming | ${configData.business_name}` : "Live Farming | Aduanefie"} />
+      <CssBaseline />
+      <SEO
+        title={configData?.business_name ? `Live Farming | ${configData.business_name}` : "Live Farming | Aduanefie"}
+        businessName={configData?.business_name}
+        configData={configData}
+      />
       <MainLayout configData={configData}>
         <CustomContainer>
           <Box sx={{ py: { xs: 3, md: 5 } }}>
@@ -21,3 +45,7 @@ const LiveFarmingPage = ({ configData }) => {
 };
 
 export default LiveFarmingPage;
+
+export const getServerSideProps = async (context) => {
+  return await getCommonServerSideProps(context, "live_farming");
+};

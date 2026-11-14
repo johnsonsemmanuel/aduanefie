@@ -13,6 +13,7 @@ import {
   Tabs,
   Typography,
   alpha,
+  useTheme,
 } from "@mui/material";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
@@ -20,9 +21,8 @@ import { useGetLiveFarmingItems } from "api-manage/hooks/react-query/useGetLiveF
 import { getAmountWithSign } from "helper-functions/CardHelpers";
 import InsuranceBadge from "components/badges/InsuranceBadge";
 
-const LIVE_FARMING_BADGE = "/static/badges/live-farming-badge.svg";
-
 const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true }) => {
+  const theme = useTheme();
   const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState("all");
   const [backyardOnly, setBackyardOnly] = useState(false);
@@ -44,10 +44,9 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
     <Box
       sx={{
         p: { xs: 2, md: 3 },
-        borderRadius: "16px",
-        background: "linear-gradient(135deg, #F0FDF4 0%, #FAF8F5 100%)",
-        border: "1px solid",
-        borderColor: alpha("#15803D", 0.16),
+        borderRadius: "12px",
+        bgcolor: theme.palette.background.paper,
+        border: `1px solid ${theme.palette.divider}`,
       }}
     >
       <Stack
@@ -59,29 +58,38 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
       >
         <Stack direction="row" spacing={1.5} alignItems="center">
           <Box
-            component="img"
-            src={LIVE_FARMING_BADGE}
-            alt={t("Live Farming")}
-            sx={{ width: 40, height: 40, borderRadius: "10px" }}
-          />
+            sx={{
+              width: 36,
+              height: 36,
+              borderRadius: "8px",
+              bgcolor: alpha(theme.palette.success.main, 0.1),
+              color: theme.palette.success.main,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <i className="fi fi-rr-leaf" style={{ fontSize: "18px", lineHeight: 1, display: "flex" }} />
+          </Box>
           <Box>
             <Stack direction="row" spacing={1} alignItems="center">
-              <Typography variant="h6" sx={{ fontWeight: 700, color: "#14532D", lineHeight: 1.2 }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, color: theme.palette.text.primary, lineHeight: 1.2 }}>
                 {t("Live Farming Marketplace")}
               </Typography>
               <Chip
                 size="small"
+                color="success"
+                variant="outlined"
                 label={t("LIVE")}
                 sx={{
                   height: 20,
                   fontSize: "10px",
-                  fontWeight: 800,
-                  bgcolor: "#DC2626",
-                  color: "#FFFFFF",
+                  fontWeight: 700,
                 }}
               />
             </Stack>
-            <Typography sx={{ fontSize: "12.5px", color: "#4B5563", mt: 0.25 }}>
+            <Typography sx={{ fontSize: "12.5px", color: theme.palette.text.secondary, mt: 0.25 }}>
               {t("Track active crops in cultivation, view harvest progress, and reserve or pre-order directly from farms.")}
             </Typography>
           </Box>
@@ -94,12 +102,9 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
             variant="outlined"
             size="small"
             sx={{
-              borderColor: "#15803D",
-              color: "#15803D",
               fontWeight: 600,
               borderRadius: "8px",
               textTransform: "none",
-              "&:hover": { bgcolor: alpha("#15803D", 0.08), borderColor: "#14532D" },
             }}
           >
             {t("View All Live Farms")}
