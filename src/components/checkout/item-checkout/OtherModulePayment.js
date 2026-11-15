@@ -110,6 +110,7 @@ export const BringChangeAmount = ({
   expanded,
   setExpanded,
   paymentMethod,
+  currencySymbol = "GH¢",
 }) => {
   return (
     <Box
@@ -163,7 +164,7 @@ export const BringChangeAmount = ({
                 color={theme.palette.neutral[1000]}
                 fontWeight="500"
               >
-                {`${t("Change Amount")} (${configData?.currency_symbol || "GH¢"})`}
+                {`${t("Change Amount")} (${currencySymbol})`}
               </Typography>
               <TextField
                 sx={{
@@ -575,6 +576,7 @@ const OtherModulePayment = (props) => {
                 expanded={expanded}
                 setExpanded={setExpanded}
                 paymentMethod={paymentMethod}
+                currencySymbol={configData?.currency_symbol || "GH¢"}
               />
             </Box>
           )}
