@@ -58,6 +58,7 @@ const AuthModal = ({
   handleClose,
   setModalFor,
   initialView = "landing",
+  onGuestContinue,
 }) => {
   const { configData } = useSelector((state) => state.configData);
   const [loginInfo, setLoginInfo] = useState({});
@@ -210,7 +211,7 @@ const AuthModal = ({
               handleClose={handleClose}
               onSelectPassword={() => setInternalView("password")}
               onSelectOtp={() => setInternalView("otp")}
-              onGuestContinue={handleClose}
+              onGuestContinue={onGuestContinue || handleClose}
               configData={configData}
               setJwtToken={setJwtToken}
               setUserInfo={setUserInfo}

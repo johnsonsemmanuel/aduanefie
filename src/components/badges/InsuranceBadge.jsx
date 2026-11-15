@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Chip, Stack, Tooltip, Typography, alpha } from "@mui/material";
+import { Box, Chip, Stack, Tooltip, Typography, alpha, useTheme } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -8,6 +8,7 @@ const BADGE_SRC = "/static/badges/trade-insurance-badge.svg";
 
 const InsuranceBadge = ({ item, variant = "compact", sx = {} }) => {
   const { t } = useTranslation();
+  const theme = useTheme();
   const { configData } = useSelector((state) => state.configData);
   const ins = configData?.insurance_settings;
 
@@ -40,9 +41,9 @@ const InsuranceBadge = ({ item, variant = "compact", sx = {} }) => {
           label={t("Insured")}
           sx={{
             height: 22,
-            bgcolor: "#FFFBEB",
-            color: "#92400E",
-            border: "1px solid #F59E0B",
+            bgcolor: alpha(theme.palette.primary.main, 0.08),
+            color: theme.palette.primary.main,
+            border: `1px solid ${alpha(theme.palette.primary.main, 0.35)}`,
             fontWeight: 700,
             fontSize: "11px",
             borderRadius: "6px",
@@ -60,8 +61,8 @@ const InsuranceBadge = ({ item, variant = "compact", sx = {} }) => {
         p: 1.75,
         borderRadius: "10px",
         border: "1px solid",
-        borderColor: alpha("#D97706", 0.35),
-        background: "linear-gradient(135deg, #FFFBEB 0%, #F0FDF4 100%)",
+        borderColor: alpha(theme.palette.primary.main, 0.3),
+        bgcolor: alpha(theme.palette.primary.main, 0.05),
         ...sx,
       }}
     >
@@ -74,7 +75,7 @@ const InsuranceBadge = ({ item, variant = "compact", sx = {} }) => {
         />
         <Box sx={{ flex: 1, minWidth: 0 }}>
           <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={0.5}>
-            <Typography sx={{ fontWeight: 700, fontSize: "13px", color: "#92400E" }}>
+            <Typography sx={{ fontWeight: 700, fontSize: "13px", color: theme.palette.text.primary }}>
               {providerName}
             </Typography>
             <Chip
@@ -84,35 +85,35 @@ const InsuranceBadge = ({ item, variant = "compact", sx = {} }) => {
                 height: 20,
                 fontSize: "10.5px",
                 fontWeight: 700,
-                bgcolor: alpha("#D97706", 0.14),
-                color: "#92400E",
+                bgcolor: alpha(theme.palette.primary.main, 0.12),
+                color: theme.palette.primary.main,
               }}
             />
           </Stack>
-          <Typography sx={{ fontSize: "12px", color: "#4B5563", mt: 0.4, lineHeight: 1.45 }}>
+          <Typography sx={{ fontSize: "12px", color: theme.palette.text.secondary, mt: 0.4, lineHeight: 1.45 }}>
             {summary}
           </Typography>
           <Stack direction="row" flexWrap="wrap" gap={1.25} sx={{ mt: 1 }}>
             {ins?.crop_spoilage !== false && (
               <Stack direction="row" spacing={0.4} alignItems="center">
-                <CheckCircleOutlineIcon sx={{ fontSize: 14, color: "#15803D" }} />
-                <Typography sx={{ fontSize: "11px", fontWeight: 600, color: "#166534" }}>
+                <CheckCircleOutlineIcon sx={{ fontSize: 14, color: theme.palette.primary.main }} />
+                <Typography sx={{ fontSize: "11px", fontWeight: 600, color: theme.palette.text.primary }}>
                   {t("Crop & Spoilage")}
                 </Typography>
               </Stack>
             )}
             {ins?.cross_border_transit !== false && (
               <Stack direction="row" spacing={0.4} alignItems="center">
-                <CheckCircleOutlineIcon sx={{ fontSize: 14, color: "#15803D" }} />
-                <Typography sx={{ fontSize: "11px", fontWeight: 600, color: "#166534" }}>
+                <CheckCircleOutlineIcon sx={{ fontSize: 14, color: theme.palette.primary.main }} />
+                <Typography sx={{ fontSize: "11px", fontWeight: 600, color: theme.palette.text.primary }}>
                   {t("Cross-Border Transit")}
                 </Typography>
               </Stack>
             )}
             {ins?.quality_escrow !== false && (
               <Stack direction="row" spacing={0.4} alignItems="center">
-                <CheckCircleOutlineIcon sx={{ fontSize: 14, color: "#15803D" }} />
-                <Typography sx={{ fontSize: "11px", fontWeight: 600, color: "#166534" }}>
+                <CheckCircleOutlineIcon sx={{ fontSize: 14, color: theme.palette.primary.main }} />
+                <Typography sx={{ fontSize: "11px", fontWeight: 600, color: theme.palette.text.primary }}>
                   {t("Quality & Escrow")}
                 </Typography>
               </Stack>

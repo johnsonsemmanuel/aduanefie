@@ -616,9 +616,9 @@ const OrderCalculation = (props) => {
     const baseAmount = isCrossBorder
       ? Math.max(0, Number(crossBorderGoodsAfterDiscounts || 0))
       : Math.max(0, Number(getSubTotalPrice(cartList) || 0));
-    let fee = roundMoney(baseAmount * (ratePct / 100));
-    if (minFee > 0 && fee < minFee) fee = roundMoney(minFee);
-    if (maxFee > 0 && fee > maxFee) fee = roundMoney(maxFee);
+    let fee = Math.round(baseAmount * (ratePct / 100) * 100) / 100;
+    if (minFee > 0 && fee < minFee) fee = Math.round(minFee * 100) / 100;
+    if (maxFee > 0 && fee > maxFee) fee = Math.round(maxFee * 100) / 100;
     return fee;
   })();
 
@@ -1308,9 +1308,9 @@ const OrderCalculation = (props) => {
                 p: 1.25,
                 borderRadius: "10px",
                 border: "1px solid",
-                borderColor: isInsuranceApplied ? "#F59E0B" : "divider",
-                background: isInsuranceApplied
-                  ? "linear-gradient(135deg, #FFFBEB 0%, #F0FDF4 100%)"
+                borderColor: isInsuranceApplied ? theme.palette.primary.main : "divider",
+                bgcolor: isInsuranceApplied
+                  ? alpha(theme.palette.primary.main, 0.06)
                   : "transparent",
               }}
             >
@@ -1323,7 +1323,7 @@ const OrderCalculation = (props) => {
                     sx={{ width: 24, height: 24, flexShrink: 0 }}
                   />
                   <Box sx={{ minWidth: 0 }}>
-                    <Typography sx={{ fontSize: "12.5px", fontWeight: 700, color: "#92400E" }}>
+                    <Typography sx={{ fontSize: "12.5px", fontWeight: 700, color: theme.palette.text.primary }}>
                       {insuranceSettings?.provider_name || t("Trade & Crop Insurance")}
                     </Typography>
                     <Typography sx={{ fontSize: "11px", color: "text.secondary" }}>
@@ -1338,16 +1338,17 @@ const OrderCalculation = (props) => {
                   </Box>
                 </Stack>
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <Typography sx={{ fontSize: "12.5px", fontWeight: 700, color: "#92400E" }}>
+                  <Typography sx={{ fontSize: "12.5px", fontWeight: 700, color: theme.palette.primary.main }}>
                     {isInsuranceApplied ? getAmountWithSign(computedInsuranceFee) : t("Optional")}
                   </Typography>
                   {!isInsuranceLocked && setInsuranceOptIn && (
-                    <input
-                      type="checkbox"
+                    <Checkbox
+                      size="small"
+                      color="primary"
                       checked={!!insuranceOptIn}
                       onChange={(e) => setInsuranceOptIn(e.target.checked)}
-                      style={{ width: 16, height: 16, cursor: "pointer", accentColor: "#D97706" }}
-                      aria-label={t("Toggle Trade & Crop Insurance")}
+                      inputProps={{ "aria-label": t("Toggle Trade & Crop Insurance") }}
+                      sx={{ p: 0.25 }}
                     />
                   )}
                 </Stack>

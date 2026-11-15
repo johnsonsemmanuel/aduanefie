@@ -123,30 +123,51 @@ export const getItemDataForAddToCart = (
   guest_id
 ) => {
   let totalQty = 0;
-  const selectedAddons =
+  const rawAddons =
     values?.add_ons ?? values?.addons ?? values?.selectedAddons;
+  let selectedAddons = rawAddons;
+  if (typeof rawAddons === "string") {
+    try {
+      selectedAddons = JSON.parse(rawAddons);
+    } catch {
+      selectedAddons = [];
+    }
+  }
+  const safeAddons = Array.isArray(selectedAddons) ? selectedAddons : [];
+  let safeFoodVariations = values?.food_variations;
+  if (typeof safeFoodVariations === "string") {
+    try {
+      safeFoodVariations = JSON.parse(safeFoodVariations);
+    } catch {
+      safeFoodVariations = [];
+    }
+  }
+  const foodVariationsList = Array.isArray(safeFoodVariations)
+    ? safeFoodVariations
+    : [];
+  const selectedOptionList = Array.isArray(values?.selectedOption)
+    ? values.selectedOption
+    : [];
   return {
     guest_id: guest_id,
     cart_id: values?.cartItemId,
     store_id: values?.store_id ?? values?.store?.id,
     model: values?.available_date_starts ? "ItemCampaign" : "Item",
     add_on_ids:
-      selectedAddons?.length > 0
-        ? selectedAddons?.map((add) => {
-            return add.id;
-          })
+      safeAddons.length > 0
+        ? safeAddons.map((add) => add.id)
         : [],
     add_on_qtys:
-      selectedAddons?.length > 0
-        ? selectedAddons?.map((add) => add.quantity)
+      safeAddons.length > 0
+        ? safeAddons.map((add) => add.quantity)
         : [],
     item_id: values?.id,
     price: mainPrice,
     quantity: updateQuantity,
     variation:
       values?.module_type === "food"
-        ? values?.food_variations?.length > 0
-          ? values?.food_variations?.map((variation) => {
+        ? foodVariationsList.length > 0
+          ? foodVariationsList.map((variation) => {
               return {
                 name: variation.name,
                 values: {
@@ -155,8 +176,8 @@ export const getItemDataForAddToCart = (
               };
             })
           : []
-        : values?.selectedOption?.length > 0
-        ? values?.selectedOption
+        : selectedOptionList.length > 0
+        ? selectedOptionList
         : [],
   };
 };

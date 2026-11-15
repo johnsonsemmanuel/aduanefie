@@ -54,7 +54,7 @@ const PlaceOrder = (props) => {
 						color: theme.palette.text.secondary,
 					}}
 				>
-					{t("Subtotal")}
+					{t("Total")}
 				</Typography>
 				<Stack direction="row" alignItems="baseline" gap={1}>
 					<Typography

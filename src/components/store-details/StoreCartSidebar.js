@@ -1635,7 +1635,7 @@ const StoreCartSidebar = ({
                           }}
                         >
                           {unavailableChoice === "remove"
-                            ? t("Remove it form my cart")
+                            ? t("Remove it from my cart")
                             : t("Call me ASAP")}
                         </Typography>
                       </Stack>
@@ -1658,7 +1658,7 @@ const StoreCartSidebar = ({
                         }}
                       >
                         {[
-                          ["remove", t("Remove it form my cart")],
+                          ["remove", t("Remove it from my cart")],
                           ["call", t("Call me ASAP")],
                         ].map(([key, label]) => (
                           <Stack
@@ -2043,6 +2043,10 @@ const StoreCartSidebar = ({
         setModalFor={setModalFor}
         open={authOpen}
         handleClose={() => setAuthOpen(false)}
+        onGuestContinue={() => {
+          setAuthOpen(false);
+          handleGuestRoute();
+        }}
       />
 
       {proFeatureEnabled && proModalOpen && (

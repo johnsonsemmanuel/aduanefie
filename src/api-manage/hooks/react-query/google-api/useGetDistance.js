@@ -15,7 +15,7 @@ const getDistance = async (origin, destination, mode) => {
         destination.lat ? destination.lat : destination?.latitude
       }&destination_lng=${
         destination.lng ? destination.lng : destination?.longitude
-      }&mode=${mode || "WALK"}`
+      }&mode=${mode || "walking"}`
     );
     return getApiContent(data);
   }

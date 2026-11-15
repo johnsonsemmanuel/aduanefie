@@ -163,7 +163,7 @@ export const BringChangeAmount = ({
                 color={theme.palette.neutral[1000]}
                 fontWeight="500"
               >
-                {t("Change Amount ($)")}
+                {`${t("Change Amount")} (${configData?.currency_symbol || "GH¢"})`}
               </Typography>
               <TextField
                 sx={{

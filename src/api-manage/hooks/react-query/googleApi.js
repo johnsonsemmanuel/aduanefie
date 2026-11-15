@@ -44,7 +44,7 @@ export const GoogleApi = {
           destination.lat ? destination.lat : destination?.latitude
         }&destination_lng=${
           destination.lng ? destination.lng : destination?.longitude
-        }&mode=WALK`
+        }&mode=walking`
       )
     );
   },
