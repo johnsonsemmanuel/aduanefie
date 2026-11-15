@@ -25,7 +25,7 @@ import useScrollToTop from "api-manage/hooks/custom-hooks/useScrollToTop";
 
 const DeliveryManComponent = ({
   configData,
-  applicationTitle = "Deliveryman Application",
+  applicationTitle = "Logistics Registration",
 }) => {
   useScrollToTop();
   const router = useRouter();

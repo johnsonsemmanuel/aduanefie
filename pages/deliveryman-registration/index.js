@@ -31,7 +31,7 @@ const Index = ({ metaData }) => {
     }
   }, [dataConfig]);
   const metadata = processMetadata(metaData, {
-    title: metaData?.title || `Deliveryman Registration - ${configData?.business_name}`,
+    title: metaData?.title || `Logistics Registration - ${configData?.business_name}`,
     description: metaData?.description || '',
     image: `${metaData?.image || configData?.logo_full_url}`,
     robotsMeta: metaData?.robotsMeta || ''

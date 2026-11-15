@@ -540,7 +540,7 @@ export const english = {
   "Delivery man tips": "Delivery man tips",
   "Deliveryman App": "Deliveryman App",
   "Deliveryman Application": "Deliveryman Application",
-  "Deliveryman Registration": "Deliveryman Registration",
+  "Deliveryman Registration": "Logistics Registration",
   "Deliveryman Type": "Deliveryman Type",
   "Deliveryman tips": "Deliveryman tips",
   "Denied Note": "Denied Note",

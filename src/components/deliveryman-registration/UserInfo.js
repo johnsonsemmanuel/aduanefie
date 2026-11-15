@@ -174,14 +174,14 @@ const UserInfo = ({
                 <CustomSelectWithFormik
                   required
                   selectFieldData={DELIVERY_MAN_TYPE}
-                  inputLabel={t("Deliveryman Type")}
+                  inputLabel={t("Logistics Partner Type")}
                   passSelectedValue={(value) => {
                     handleFieldChange("earning", value);
                   }}
                   touched={deliveryManFormik.touched.earning}
                   errors={deliveryManFormik.errors.earning}
                   fieldProps={deliveryManFormik.getFieldProps("earning")}
-                  placeholder={t("Select Deliveryman Type")}
+                  placeholder={t("Select Logistics Partner Type")}
                   startIcon={
                     <RoomIcon
                       sx={{
