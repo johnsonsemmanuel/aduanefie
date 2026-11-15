@@ -11,6 +11,7 @@ const CartTotalPrice = ({ cartList }) => {
     const qty = Number(item?.quantity || 1);
     return sum + unitKg * qty;
   }, 0);
+  const hasInsuredItem = (cartList || []).some((item) => Boolean(item?.is_insured));
 
   return (
     <>
@@ -28,10 +29,37 @@ const CartTotalPrice = ({ cartList }) => {
           </Typography>
         </CustomStackFullWidth>
       )}
+      {cartList?.length > 0 && (
+        <CustomStackFullWidth
+          justifyContent="space-between"
+          direction="row"
+          sx={{ padding: "0.45rem 1.4rem 0" }}
+        >
+          <Typography fontSize="12px" color="text.secondary">
+            {t("Est. Delivery")}
+          </Typography>
+          <Typography fontSize="12px" fontWeight="500" color="text.primary">
+            {totalWeightKg > 100
+              ? t("1–3 days · Heavy Cargo Fleet")
+              : t("Same / Next day · Standard Fleet")}
+          </Typography>
+        </CustomStackFullWidth>
+      )}
+      {hasInsuredItem && (
+        <CustomStackFullWidth
+          justifyContent="space-between"
+          direction="row"
+          sx={{ padding: "0.35rem 1.4rem 0" }}
+        >
+          <Typography fontSize="11px" color="primary.main" fontWeight="600">
+            {t("Includes Trade & Crop Insured items")}
+          </Typography>
+        </CustomStackFullWidth>
+      )}
       <CustomStackFullWidth
         justifyContent="space-between"
         direction="row"
-        sx={{ padding: totalWeightKg > 0 ? "0.6rem 1.4rem 1.4rem" : "1.4rem" }}
+        sx={{ padding: cartList?.length > 0 ? "0.6rem 1.4rem 1.4rem" : "1.4rem" }}
       >
         <Typography fontSize="14px" fontWeight="500">
           {t("Subtotal")}

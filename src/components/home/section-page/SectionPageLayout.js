@@ -479,8 +479,27 @@ const SectionPageLayout = ({
       ? t("Medicines")
       : moduleType === "ecommerce"
       ? t("Items")
-      : t("Groceries");
-  const storesLabel = moduleType === "food" ? t("Restaurants") : t("Stores");
+      : t("Produce & Supplies");
+  const storesLabel =
+    moduleType === "food" ? t("Restaurants") : t("Farms & Suppliers");
+
+  const filteredItems = (items || []).filter((item) => {
+    if (filterParams?.is_insured && !item?.is_insured) return false;
+    if (
+      filterParams?.farming_status &&
+      (item?.effective_farming_status || item?.farming_status) !==
+        filterParams.farming_status
+    ) {
+      return false;
+    }
+    if (
+      filterParams?.crop_grade &&
+      item?.crop_grade !== filterParams.crop_grade
+    ) {
+      return false;
+    }
+    return true;
+  });
 
   const handleTabChange = (tab) => {
     onTabChange?.(tab);
@@ -655,7 +674,7 @@ const SectionPageLayout = ({
         {activeTab === TAB_ALL && (
           <>
             <ItemsSlider
-              items={items}
+              items={filteredItems}
               isLoading={itemsLoading}
               label={itemsLabel}
               t={t}
@@ -670,7 +689,7 @@ const SectionPageLayout = ({
         )}
         {activeTab === TAB_ITEMS && (
           <ItemsGrid
-            items={items}
+            items={filteredItems}
             isLoading={itemsLoading}
             label={itemsLabel}
             t={t}

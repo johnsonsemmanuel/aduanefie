@@ -63,6 +63,17 @@ const RATING_OPTIONS = [
   { value: "2_plus", label: "2+ Rating" },
 ];
 
+const FARMING_STATUS_OPTIONS = [
+  { value: "harvest_ready", label: "Harvest Ready" },
+  { value: "farming", label: "Live Farming · Pre-Order" },
+];
+
+const CROP_GRADE_OPTIONS = [
+  { value: "Grade A (Export)", label: "Grade A (Export)" },
+  { value: "Grade B (Market)", label: "Grade B (Market)" },
+  { value: "Organic Certified", label: "Organic Certified" },
+];
+
 const SORT_VALUE_MAP = {
   price_low: "price_low_high",
   price_high: "price_high_low",
@@ -92,6 +103,9 @@ const stateFromFilter = (f = {}) => ({
     ? f.category_ids.split(",").filter(Boolean).map(Number)
     : [],
   rating: f.rating ?? "",
+  isInsured: Boolean(f.is_insured),
+  farmingStatus: f.farming_status ?? "",
+  cropGrade: f.crop_grade ?? "",
 });
 
 const buildOutput = ({
@@ -102,6 +116,9 @@ const buildOutput = ({
   selectedTypes,
   selectedCategoryIds,
   rating,
+  isInsured,
+  farmingStatus,
+  cropGrade,
 }) => {
   const out = {};
   if (sortBy && SORT_VALUE_MAP[sortBy]) out.sort_by = SORT_VALUE_MAP[sortBy];
@@ -114,6 +131,9 @@ const buildOutput = ({
   if (selectedCategoryIds.length)
     out.category_ids = selectedCategoryIds.join(",");
   if (rating) out.rating = rating;
+  if (isInsured) out.is_insured = true;
+  if (farmingStatus) out.farming_status = farmingStatus;
+  if (cropGrade) out.crop_grade = cropGrade;
   return out;
 };
 
@@ -125,6 +145,9 @@ const countSelected = ({
   selectedTypes,
   selectedCategoryIds,
   rating,
+  isInsured,
+  farmingStatus,
+  cropGrade,
 }) =>
   [
     sortBy,
@@ -133,6 +156,9 @@ const countSelected = ({
     selectedTypes.length ? 1 : 0,
     selectedCategoryIds.length ? 1 : 0,
     rating,
+    isInsured,
+    farmingStatus,
+    cropGrade,
   ].filter(Boolean).length;
 
 const SectionLabel = ({ children }) => (
@@ -336,6 +362,12 @@ const FilterContent = ({
   toggleCategory,
   rating,
   setRating,
+  isInsured,
+  setIsInsured,
+  farmingStatus,
+  setFarmingStatus,
+  cropGrade,
+  setCropGrade,
   showFilterBy,
   showSortBy,
   showQuickAction,
@@ -690,6 +722,120 @@ const FilterContent = ({
           />
         )}
 
+        {/* 5b. Agro Quality & Assurance */}
+        <Box sx={{ px: "20px", py: "20px" }}>
+          <SectionLabel>{t("Agro Quality & Assurance")}</SectionLabel>
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ py: "6px", cursor: "pointer" }}
+            onClick={() => setIsInsured(!isInsured)}
+          >
+            <Typography
+              sx={{
+                fontSize: "15px",
+                fontWeight: 400,
+                color: "neutral.1050",
+                letterSpacing: "-0.3px",
+              }}
+            >
+              {t("Trade & Crop Insured")}
+            </Typography>
+            <Checkbox
+              checked={Boolean(isInsured)}
+              size="small"
+              sx={{
+                p: 0,
+                color: theme.palette.neutral[400],
+                "&.Mui-checked": { color: "primary.main" },
+              }}
+            />
+          </Stack>
+
+          <Typography
+            sx={{
+              fontSize: "12px",
+              fontWeight: 600,
+              color: "neutral.500",
+              mt: 1.5,
+              mb: 0.5,
+            }}
+          >
+            {t("Harvest Status")}
+          </Typography>
+          <Stack direction="row" flexWrap="wrap" gap={1}>
+            {FARMING_STATUS_OPTIONS.map((opt) => {
+              const active = farmingStatus === opt.value;
+              return (
+                <Box
+                  key={opt.value}
+                  onClick={() =>
+                    setFarmingStatus(active ? "" : opt.value)
+                  }
+                  sx={{
+                    px: 1.5,
+                    py: 0.6,
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    border: "1px solid",
+                    borderColor: active ? "primary.main" : "divider",
+                    backgroundColor: active
+                      ? "primary.main"
+                      : "background.paper",
+                    color: active ? "#fff" : "neutral.1050",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                  }}
+                >
+                  {t(opt.label)}
+                </Box>
+              );
+            })}
+          </Stack>
+
+          <Typography
+            sx={{
+              fontSize: "12px",
+              fontWeight: 600,
+              color: "neutral.500",
+              mt: 1.5,
+              mb: 0.5,
+            }}
+          >
+            {t("Crop Grade")}
+          </Typography>
+          <Stack direction="row" flexWrap="wrap" gap={1}>
+            {CROP_GRADE_OPTIONS.map((opt) => {
+              const active = cropGrade === opt.value;
+              return (
+                <Box
+                  key={opt.value}
+                  onClick={() => setCropGrade(active ? "" : opt.value)}
+                  sx={{
+                    px: 1.5,
+                    py: 0.6,
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    border: "1px solid",
+                    borderColor: active ? "primary.main" : "divider",
+                    backgroundColor: active
+                      ? "primary.main"
+                      : "background.paper",
+                    color: active ? "#fff" : "neutral.1050",
+                    fontSize: "12px",
+                    fontWeight: 600,
+                  }}
+                >
+                  {t(opt.label)}
+                </Box>
+              );
+            })}
+          </Stack>
+        </Box>
+
+        <RowDivider />
+
         {/* 6. Ratings */}
         <Box sx={{ px: "20px", py: "20px" }}>
           <SectionLabel>{t("Ratings")}</SectionLabel>
@@ -845,6 +991,9 @@ const FoodSearchFilterDrawer = ({
   const [selectedTypes, setSelectedTypes] = useState([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
   const [rating, setRating] = useState("");
+  const [isInsured, setIsInsured] = useState(false);
+  const [farmingStatus, setFarmingStatus] = useState("");
+  const [cropGrade, setCropGrade] = useState("");
 
   // Sync state from filterValue when drawer opens
   useEffect(() => {
@@ -857,6 +1006,9 @@ const FoodSearchFilterDrawer = ({
     setSelectedTypes(s.selectedTypes);
     setSelectedCategoryIds(s.selectedCategoryIds);
     setRating(s.rating);
+    setIsInsured(s.isInsured);
+    setFarmingStatus(s.farmingStatus);
+    setCropGrade(s.cropGrade);
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const currentState = {
@@ -867,6 +1019,9 @@ const FoodSearchFilterDrawer = ({
     selectedTypes,
     selectedCategoryIds,
     rating,
+    isInsured,
+    farmingStatus,
+    cropGrade,
   };
 
   // halal toggles independently; veg/non_veg are mutually exclusive
@@ -896,6 +1051,9 @@ const FoodSearchFilterDrawer = ({
     setSelectedTypes([]);
     setSelectedCategoryIds([]);
     setRating("");
+    setIsInsured(false);
+    setFarmingStatus("");
+    setCropGrade("");
     onApply?.({});
     onClose();
   };
@@ -922,6 +1080,12 @@ const FoodSearchFilterDrawer = ({
     toggleCategory,
     rating,
     setRating,
+    isInsured,
+    setIsInsured,
+    farmingStatus,
+    setFarmingStatus,
+    cropGrade,
+    setCropGrade,
     showFilterBy,
     showSortBy,
     showQuickAction,
