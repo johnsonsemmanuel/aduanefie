@@ -501,47 +501,72 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                 </Stack>
               </Box>
 
-              {/* Compact inline Mode Switcher pill (frees a full header row on mobile) */}
+              {/* Mode Switcher — matches the Location selector layout cleanly on the header background */}
               {showModuleTabs && modules?.length > 0 && (
-                <Button
+                <Box
                   onClick={() => setModeModalOpen(true)}
-                  size="small"
-                  endIcon={
-                    <i
-                      className="fi fi-rr-angle-small-down"
-                      style={{ fontSize: "13px", lineHeight: 1, display: "flex" }}
-                    />
-                  }
                   sx={{
                     flexShrink: 0,
-                    maxWidth: { xs: "112px", sm: "150px" },
-                    height: "30px",
-                    px: { xs: "8px", sm: "10px" },
-                    borderRadius: "9999px",
-                    bgcolor: theme.palette.background.paper,
-                    border: `1px solid ${theme.palette.divider}`,
-                    color: theme.palette.neutral[1050],
-                    textTransform: "none",
-                    gap: "4px",
-                    "& .MuiButton-endIcon": { ml: "1px", mr: "-2px" },
+                    maxWidth: { xs: "120px", sm: "155px" },
+                    minWidth: 0,
+                    cursor: "pointer",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "1px",
                   }}
                 >
-                  <SwapHorizIcon
-                    sx={{ fontSize: 15, color: theme.palette.primary.main, flexShrink: 0 }}
-                  />
-                  <Typography
-                    component="span"
-                    sx={{
-                      fontSize: "12px",
-                      fontWeight: 600,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {selectedModule?.module_name || t("Mode")}
-                  </Typography>
-                </Button>
+                  <Stack direction="row" alignItems="center" gap="4px">
+                    <i
+                      className="fi fi-rr-apps"
+                      style={{
+                        fontSize: "12px",
+                        lineHeight: 1,
+                        display: "flex",
+                        color: theme.palette.neutral[1050],
+                      }}
+                    />
+                    <Typography
+                      sx={{
+                        fontSize: "13px",
+                        fontWeight: 600,
+                        color: theme.palette.neutral[1050],
+                        lineHeight: 1.15,
+                        letterSpacing: "-0.42px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {t("Market")}
+                    </Typography>
+                  </Stack>
+                  <Stack direction="row" alignItems="center" gap="4px">
+                    <Typography
+                      sx={{
+                        fontSize: "11px",
+                        fontWeight: 400,
+                        color: isDark ? theme.palette.text.secondary : "#757575",
+                        lineHeight: 1.15,
+                        letterSpacing: "-0.36px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {selectedModule?.module_name || t("Choose mode")}
+                    </Typography>
+                    <i
+                      className="fi fi-rr-angle-small-down"
+                      style={{
+                        fontSize: "16px",
+                        lineHeight: 1,
+                        display: "flex",
+                        color: theme.palette.neutral[1050],
+                        flexShrink: 0,
+                      }}
+                    />
+                  </Stack>
+                </Box>
               )}
 
               {/* Cart / Bookings — hidden on parcel, shows bookings on service */}
