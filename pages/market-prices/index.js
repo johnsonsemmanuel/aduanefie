@@ -100,13 +100,6 @@ const MarketPricesPage = ({ configData }) => {
             >
               <Stack direction={{ xs: "column", md: "row" }} justifyContent="space-between" spacing={2}>
                 <Box>
-                  <Chip
-                    size="small"
-                    variant="outlined"
-                    color="primary"
-                    label={t("LIVE GHANA AGRO INTELLIGENCE · GCX · MoFA SRID · ESOKO")}
-                    sx={{ fontWeight: 600, mb: 1.25 }}
-                  />
                   <Typography
                     variant="h4"
                     sx={{
@@ -125,7 +118,7 @@ const MarketPricesPage = ({ configData }) => {
                       fontSize: "14px",
                     }}
                   >
-                    {t("Real-time wholesale and retail commodity benchmarks across Ejura, Techiman, Tamale, Kumasi Central, and Agbogbloshie — built to empower Farmers, Retailers, and Remote Field Marketers.")}
+                    {t("Wholesale and retail commodity benchmarks managed from the Aduanefie trade desk across major Ghana market hubs.")}
                   </Typography>
                 </Box>
               </Stack>
@@ -267,7 +260,7 @@ const MarketPricesPage = ({ configData }) => {
                   ) : prices.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={8} align="center" sx={{ py: 4, color: "text.secondary" }}>
-                        {t("No matching market price entries found.")}
+                        {t("No market price data yet.")}
                       </TableCell>
                     </TableRow>
                   ) : (
