@@ -250,7 +250,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
   const goToSection = (s) => {
     const moduleParam = router.query.module;
     router.push({
-      pathname: `/home/${s.id}`,
+      pathname: s.id === "live-farming" ? "/live-farming" : `/home/${s.id}`,
       query: moduleParam ? { module: moduleParam } : undefined,
     });
   };
