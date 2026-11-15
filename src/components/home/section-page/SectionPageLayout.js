@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   CircularProgress,
   Grid,
   Skeleton,
@@ -37,34 +38,59 @@ const TAB_STORES = "stores";
 // ─── Empty state (matches category page) ────────────────────────────────────
 const SearchEmptyState = ({ label }) => {
   const { t } = useTranslation();
+  const router = useRouter();
   return (
     <Stack
       alignItems="center"
       justifyContent="center"
-      spacing={0.5}
-      sx={{ py: { xs: 1.5, md: 2.5 }, width: "100%" }}
+      spacing={1.25}
+      sx={{ py: { xs: 3, md: 5 }, width: "100%" }}
     >
       <Box
         component="img"
         src="/static/nodata.png"
         alt=""
         sx={{
-          width: { xs: 32, md: 44 },
-          height: { xs: 32, md: 44 },
+          width: { xs: 44, md: 56 },
+          height: { xs: 44, md: 56 },
           objectFit: "contain",
-          opacity: 0.5,
+          opacity: 0.55,
         }}
       />
       <Typography
         sx={{
-          fontSize: { xs: "13px", md: "14px" },
-          fontWeight: 500,
-          color: "neutral.500",
+          fontSize: { xs: "14px", md: "16px" },
+          fontWeight: 600,
+          color: "neutral.1050",
           textAlign: "center",
         }}
       >
         {t(label ?? "No results found")}
       </Typography>
+      <Typography
+        sx={{
+          fontSize: { xs: "12px", md: "13px" },
+          color: "neutral.500",
+          textAlign: "center",
+          maxWidth: 340,
+        }}
+      >
+        {t("Try adjusting your search or explore fresh produce across the marketplace.")}
+      </Typography>
+      <Button
+        variant="outlined"
+        color="primary"
+        size="small"
+        onClick={() => router.push("/home")}
+        sx={{
+          mt: 0.5,
+          textTransform: "none",
+          fontWeight: 600,
+          borderRadius: "8px",
+        }}
+      >
+        {t("Browse Marketplace")}
+      </Button>
     </Stack>
   );
 };

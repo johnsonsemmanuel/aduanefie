@@ -221,7 +221,7 @@ const TabbedSectionPage = ({ sectionType, defaultTab }) => {
       ? "Search for Medicine"
       : moduleType === "ecommerce"
       ? "Search for Products"
-      : "Search for Grocery");
+      : "Search Fresh Produce & Farm Supplies");
 
   if (!config) return null;
 

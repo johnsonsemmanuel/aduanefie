@@ -270,7 +270,7 @@ const SectionPageContent = ({ sectionId }) => {
       ? "Search for Medicine"
       : moduleType === "ecommerce"
       ? "Search for Products"
-      : "Search for Grocery";
+      : "Search Fresh Produce & Farm Supplies";
 
   return (
     <Stack spacing={2}>

@@ -274,7 +274,7 @@ const CategoryPageContent = () => {
     ? "Search for Products"
     : moduleType === "service"
     ? "Search for Services"
-    : "Search for Grocery";
+    : "Search Fresh Produce & Farm Supplies";
 
   return (
     <>

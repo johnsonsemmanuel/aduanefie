@@ -72,7 +72,7 @@ const OffersSectionPage = () => {
       ? "Search Medicine Offers"
       : moduleType === "ecommerce"
       ? "Search Product Offers"
-      : "Search Grocery Offers";
+      : "Search Farm & Agro Offers";
 
   return (
     <SectionPageLayout

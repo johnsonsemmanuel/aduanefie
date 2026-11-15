@@ -10,11 +10,11 @@ import { useGetCategories } from "api-manage/hooks/react-query/all-category/all-
 import SectionMobileActionBar from "components/home/section-page/SectionMobileActionBar";
 
 const GROCERY_BANNER_TITLES = {
-  Offers: "Search Grocery Offers",
-  "Free Delivery": "Find Free Delivery Grocery",
-  "Top Rated": "Search Top Rated Grocery Stores",
-  Nearby: "Search Nearby Grocery Stores",
-  "Express Delivery": "Search Express Delivery Grocery",
+  Offers: "Search Farm & Agro Offers",
+  "Free Delivery": "Find Free Delivery Farm Produce",
+  "Top Rated": "Search Top Rated Farms & Suppliers",
+  Nearby: "Search Nearby Farms & Markets",
+  "Express Delivery": "Search Express Delivery Produce",
 };
 
 const GrocerySectionPageWrapper = ({
@@ -121,7 +121,7 @@ const GrocerySectionPageWrapper = ({
       />
       <ModuleSectionPageWrapper
         sectionLabel={sectionLabel}
-        bannerTitle={GROCERY_BANNER_TITLES[sectionLabel] ?? "Search Grocery Items"}
+        bannerTitle={GROCERY_BANNER_TITLES[sectionLabel] ?? "Search Fresh Produce & Farm Supplies"}
         bannerSubtitle="Easy search to easy order & get fast delivery for your need."
         searchComponent={
           enableSearch ? (

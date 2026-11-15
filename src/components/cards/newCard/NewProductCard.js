@@ -837,6 +837,28 @@ export const InfoSection = ({
           >
             {getAmountWithSign(displayPrice)}
           </Typography>
+          {item?.agro_unit && (
+            <Typography
+              sx={{
+                fontSize: { xs: "10px", md: "12px" },
+                fontWeight: 500,
+                color: "neutral.600",
+                lineHeight: 1.2,
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+              }}
+            >
+              / {({
+                kg: "kg",
+                bag_50kg: "50kg Bag",
+                bag_100kg: "100kg Bag",
+                crate: "Crate",
+                bunch: "Bunch",
+                ton: "Ton",
+                box: "Export Box",
+              }[item.agro_unit] || item.agro_unit)}
+            </Typography>
+          )}
           {originalPrice > displayPrice && (
             <Typography
               sx={{
@@ -968,6 +990,46 @@ export const InfoSection = ({
                 }}
               >
                 {t("Backyard")}
+              </Typography>
+            </DeliveryBadge>
+          )}
+          {item?.crop_grade && (
+            <DeliveryBadge
+              sx={{
+                flexShrink: 0,
+                backgroundColor: alpha(theme.palette.primary.main, 0.1),
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  color: theme.palette.primary.main,
+                  lineHeight: 1.3,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {item.crop_grade}
+              </Typography>
+            </DeliveryBadge>
+          )}
+          {Number(item?.moq) > 1 && (
+            <DeliveryBadge
+              sx={{
+                flexShrink: 0,
+                backgroundColor: alpha(theme.palette.text.secondary, 0.1),
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  color: theme.palette.text.primary,
+                  lineHeight: 1.3,
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {t("Min.")} {item.moq}
               </Typography>
             </DeliveryBadge>
           )}
