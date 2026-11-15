@@ -292,6 +292,40 @@ const UserInfo = ({
                 onFieldChange={handleFieldChange}
                 gridProps={{ xs: 12, sm: 4 }}
               />
+              <Grid item xs={12} sm={6}>
+                <CustomSelectWithFormik
+                  selectFieldData={[
+                    { label: t("Up to 100 kg (Bike / Tricycle)"), value: "100" },
+                    { label: t("500 kg – 1 Ton (Van / Pickup)"), value: "1000" },
+                    { label: t("3 – 5 Tons (Light Agro Truck)"), value: "5000" },
+                    { label: t("10+ Tons (Heavy / Cross-Border Truck)"), value: "10000" },
+                  ]}
+                  inputLabel={t("Payload Capacity (Optional)")}
+                  passSelectedValue={(value) => {
+                    handleFieldChange("payload_capacity_kg", value);
+                  }}
+                  touched={deliveryManFormik.touched.payload_capacity_kg}
+                  errors={deliveryManFormik.errors.payload_capacity_kg}
+                  fieldProps={deliveryManFormik.getFieldProps("payload_capacity_kg")}
+                  placeholder={t("Select Payload Capacity")}
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <CustomSelectWithFormik
+                  selectFieldData={[
+                    { label: t("Standard Ambient Transport"), value: "0" },
+                    { label: t("Refrigerated / Cold-Chain (Perishables)"), value: "1" },
+                  ]}
+                  inputLabel={t("Cold-Chain Capability")}
+                  passSelectedValue={(value) => {
+                    handleFieldChange("is_cold_chain", value);
+                  }}
+                  touched={deliveryManFormik.touched.is_cold_chain}
+                  errors={deliveryManFormik.errors.is_cold_chain}
+                  fieldProps={deliveryManFormik.getFieldProps("is_cold_chain")}
+                  placeholder={t("Select Transport Type")}
+                />
+              </Grid>
             </Grid>
           </Grid>
           <Grid

@@ -3,6 +3,8 @@ import {
   Checkbox,
   FormControlLabel,
   Grid,
+  MenuItem,
+  Select,
   Skeleton,
   Stack,
   Tooltip,
@@ -98,6 +100,8 @@ const OrderCalculation = (props) => {
     insuranceOptIn,
     setInsuranceOptIn,
     isInsuranceLocked,
+    recurringFrequency = "one_time",
+    setRecurringFrequency,
   } = props;
 
   // Express / slightly_delay surcharge from the DeliverySpeedOptions row.
@@ -1356,6 +1360,50 @@ const OrderCalculation = (props) => {
                     />
                   )}
                 </Stack>
+              </Stack>
+            </Box>
+          </Grid>
+        )}
+
+        {setRecurringFrequency && (
+          <Grid item xs={12} sx={{ mb: 1 }}>
+            <Box
+              sx={{
+                p: 1.25,
+                borderRadius: "10px",
+                border: "1px solid",
+                borderColor: recurringFrequency !== "one_time" ? theme.palette.primary.main : "divider",
+                bgcolor:
+                  recurringFrequency !== "one_time"
+                    ? alpha(theme.palette.primary.main, 0.05)
+                    : "transparent",
+              }}
+            >
+              <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1}>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography sx={{ fontSize: "12.5px", fontWeight: 700, color: theme.palette.text.primary }}>
+                    {t("Standing Order Schedule")}
+                  </Typography>
+                  <Typography sx={{ fontSize: "11px", color: "text.secondary" }}>
+                    {t("Auto-repeat restock for kitchens & wholesale")}
+                  </Typography>
+                </Box>
+                <Select
+                  size="small"
+                  value={recurringFrequency}
+                  onChange={(e) => setRecurringFrequency(e.target.value)}
+                  sx={{
+                    minWidth: 130,
+                    fontSize: "12px",
+                    height: 32,
+                    bgcolor: theme.palette.background.paper,
+                  }}
+                >
+                  <MenuItem value="one_time">{t("One-time")}</MenuItem>
+                  <MenuItem value="weekly">{t("Weekly")}</MenuItem>
+                  <MenuItem value="biweekly">{t("Bi-Weekly")}</MenuItem>
+                  <MenuItem value="monthly">{t("Monthly")}</MenuItem>
+                </Select>
               </Stack>
             </Box>
           </Grid>

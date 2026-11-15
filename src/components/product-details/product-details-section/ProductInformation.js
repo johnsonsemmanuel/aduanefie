@@ -782,7 +782,11 @@ const ProductInformation = ({
             preOrderAvailable ||
             isBackyard ||
             marketerVerified ||
-            originCountry;
+            originCountry ||
+            item?.agro_unit ||
+            item?.unit_weight_kg ||
+            item?.crop_grade ||
+            item?.harvest_date;
 
           const moq = Number(item?.moq || 1);
           const bulkTiers = Array.isArray(item?.bulk_pricing_tiers) ? item.bulk_pricing_tiers : [];
@@ -869,9 +873,44 @@ const ProductInformation = ({
                   color: theme.palette.text.primary,
                 }}
               >
-                {t("Agro Info")}
+                  {t("Agro Info")}
               </Typography>
               <Stack direction="row" spacing={1} alignItems="flex-start" flexWrap="wrap">
+                {(item?.agro_unit || item?.unit_weight_kg) && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, color: theme.palette.text.secondary, minWidth: { xs: "100px", md: "120px" } }}>
+                      {t("Unit & Weight")} :
+                    </Typography>
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, fontWeight: 600, color: theme.palette.text.primary, flex: 1 }}>
+                      {[
+                        item?.agro_unit,
+                        item?.unit_weight_kg ? `(~${item.unit_weight_kg} kg)` : null,
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                    </Typography>
+                  </Stack>
+                )}
+                {item?.crop_grade && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, color: theme.palette.text.secondary, minWidth: { xs: "100px", md: "120px" } }}>
+                      {t("Quality Grade")} :
+                    </Typography>
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, fontWeight: 600, color: theme.palette.primary.main, flex: 1 }}>
+                      {item.crop_grade}
+                    </Typography>
+                  </Stack>
+                )}
+                {item?.harvest_date && (
+                  <Stack direction="row" spacing={1} alignItems="flex-start">
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, color: theme.palette.text.secondary, minWidth: { xs: "100px", md: "120px" } }}>
+                      {t("Harvested")} :
+                    </Typography>
+                    <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, fontWeight: 600, color: theme.palette.text.primary, flex: 1 }}>
+                      {item.harvest_date}
+                    </Typography>
+                  </Stack>
+                )}
                 {effectiveFarmingStatus && effectiveFarmingStatus !== "in_stock" && (
                   <Stack direction="row" spacing={1} alignItems="flex-start">
                     <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, color: theme.palette.text.secondary, minWidth: { xs: "100px", md: "120px" } }}>

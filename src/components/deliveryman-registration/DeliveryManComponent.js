@@ -47,6 +47,8 @@ const DeliveryManComponent = ({
       region: "",
       district: "",
       sub_district: "",
+      payload_capacity_kg: "",
+      is_cold_chain: "0",
       identity_type: "",
       identity_number: "",
       phone: "",

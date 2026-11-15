@@ -334,6 +334,7 @@ const ItemCheckout = (props) => {
     [checkoutProductList],
   );
   const [insuranceOptIn, setInsuranceOptIn] = useState(false);
+  const [recurringFrequency, setRecurringFrequency] = useState("one_time");
   useEffect(() => {
     if (insuranceSettings?.status && (isCrossBorder || hasInsuredItem)) {
       setInsuranceOptIn(true);
@@ -761,9 +762,10 @@ const ItemCheckout = (props) => {
         "unavailable_item_note",
         cartPrefs?.unavailableChoice ?? unavailable_item_note ?? "",
       );
-      if (cartPrefs?.monthlySubscribe) {
+      if (cartPrefs?.monthlySubscribe || recurringFrequency !== "one_time") {
         formData.append("monthly_subscribe", 1);
       }
+      formData.append("recurring_frequency", recurringFrequency);
       formData.append("create_new_user", check ? 1 : 0);
       formData.append("is_guest", token ? 0 : 1);
       formData.append("password", formik.values.password);
@@ -825,7 +827,10 @@ const ItemCheckout = (props) => {
         road: token ? address?.road : guestUserInfo?.road,
         extra_packaging_amount: resolvedPackagingAmount,
         is_insured: isInsuranceApplied ? 1 : 0,
-        ...(cartPrefs?.monthlySubscribe && { monthly_subscribe: 1 }),
+        recurring_frequency: recurringFrequency,
+        ...((cartPrefs?.monthlySubscribe || recurringFrequency !== "one_time") && {
+          monthly_subscribe: 1,
+        }),
         create_new_user: check ? 1 : 0,
         password: formik.values.password,
         is_guest: token ? 0 : 1,
@@ -1691,6 +1696,8 @@ const ItemCheckout = (props) => {
                     insuranceOptIn={insuranceOptIn}
                     setInsuranceOptIn={setInsuranceOptIn}
                     isInsuranceLocked={isInsuranceLocked}
+                    recurringFrequency={recurringFrequency}
+                    setRecurringFrequency={setRecurringFrequency}
                   />
 
                   {/* Currency Selector */}
