@@ -784,8 +784,50 @@ const ProductInformation = ({
             marketerVerified ||
             originCountry;
 
+          const moq = Number(item?.moq || 1);
+          const bulkTiers = Array.isArray(item?.bulk_pricing_tiers) ? item.bulk_pricing_tiers : [];
+          const bulkBlock = (moq > 1 || bulkTiers.length > 0) ? (
+            <Stack
+              spacing={0.75}
+              sx={{
+                mt: 1,
+                p: { xs: 1.25, md: 1.5 },
+                borderRadius: "10px",
+                border: `1px solid ${theme.palette.divider}`,
+                bgcolor: theme.palette.background.paper,
+              }}
+            >
+              <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
+                <Typography sx={{ fontSize: "12.5px", fontWeight: 700 }}>
+                  {t("Wholesale MOQ & Volume Pricing")}
+                </Typography>
+                {moq > 1 && (
+                  <Chip size="small" variant="outlined" label={`${t("Min Order")}: ${moq}`} />
+                )}
+              </Stack>
+              {bulkTiers.length > 0 && (
+                <Stack direction="row" spacing={1} flexWrap="wrap">
+                  {bulkTiers.map((tier, idx) => (
+                    <Chip
+                      key={idx}
+                      size="small"
+                      variant="outlined"
+                      color="primary"
+                      label={`${tier.min_qty}+ ${t("units")}: ${getAmountWithSign(tier.unit_price)}`}
+                    />
+                  ))}
+                </Stack>
+              )}
+            </Stack>
+          ) : null;
+
           if (!hasAgroInfo) {
-            return <InsuranceBadge item={item} variant="card" sx={{ mt: 1.25 }} />;
+            return (
+              <>
+                <InsuranceBadge item={item} variant="card" sx={{ mt: 1.25 }} />
+                {bulkBlock}
+              </>
+            );
           }
 
           const monthNames = {
@@ -806,6 +848,7 @@ const ProductInformation = ({
           return (
             <>
               <InsuranceBadge item={item} variant="card" sx={{ mt: 1.25 }} />
+              {bulkBlock}
               <Stack
               spacing={0.75}
               sx={{
