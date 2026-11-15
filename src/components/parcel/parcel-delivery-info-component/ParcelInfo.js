@@ -3,6 +3,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import {
   Box,
   Card,
+  Chip,
   Drawer,
   Grid,
   IconButton,
@@ -20,6 +21,7 @@ import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
 import ProSavingsBanner from "components/pro-plan/ProSavingsBanner";
 import CustomImageContainer from "../../CustomImageContainer";
 import useGetParcelCategory from "../../../api-manage/hooks/react-query/percel/usePercelCategory";
+import { useGetParcelVehicles } from "../../../api-manage/hooks/react-query/percel/useGetParcelVehicles";
 import ParcelCategoryCard from "../parcel-category/ParcelCategoryCard";
 import ParcelCategoryShimmer from "../parcel-category/ParcelCategoryShimmer";
 import { getParcelInformationSummary } from "helper-functions/parcelInformationLabel";
@@ -44,6 +46,10 @@ const ParcelInfo = ({
     parcelWeight,
     parcelDimension
   );
+
+  const { data: vehicles = [] } = useGetParcelVehicles();
+  const [selectedVehicleId, setSelectedVehicleId] = useState(null);
+  const effectiveVehicleId = selectedVehicleId ?? vehicles?.[0]?.id ?? null;
 
   useEffect(() => {
     if (open) {
@@ -250,6 +256,46 @@ const ParcelInfo = ({
               amount={proSavingsAmount}
               message={proSavingsMessage}
             />
+          </Box>
+        )}
+
+        {vehicles.length > 0 && (
+          <Box
+            sx={{
+              mt: { xs: 1.5, md: 2 },
+              pt: { xs: 1.25, md: 1.5 },
+              borderTop: `1px solid ${theme.palette.divider}`,
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: "12px",
+                fontWeight: 600,
+                color: theme.palette.text.secondary,
+                mb: 1,
+              }}
+            >
+              {t("Select Vehicle Class")}
+            </Typography>
+            <Stack direction="row" flexWrap="wrap" gap={1}>
+              {vehicles.map((v) => {
+                const active = effectiveVehicleId === v.id;
+                const cap = v.max_weight_kg ? ` · ≤${v.max_weight_kg}kg` : "";
+                const cold = v.is_cold_chain ? ` · ${t("Cold-Chain")}` : "";
+                return (
+                  <Chip
+                    key={v.id}
+                    clickable
+                    size="small"
+                    label={`${v.type}${cap}${cold}`}
+                    onClick={() => setSelectedVehicleId(v.id)}
+                    color={active ? "primary" : "default"}
+                    variant={active ? "filled" : "outlined"}
+                    sx={{ fontWeight: active ? 700 : 500 }}
+                  />
+                );
+              })}
+            </Stack>
           </Box>
         )}
       </Card>
