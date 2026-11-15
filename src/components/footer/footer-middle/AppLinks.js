@@ -42,6 +42,14 @@ const AppLinks = (props) => {
   const goToApp = (href) => {
     window.open(href);
   };
+  const playstoreSrc =
+    typeof playstoreicon === "string"
+      ? playstoreicon
+      : playstoreicon?.src || "/static/footer/playstore.svg";
+  const appleSrc =
+    typeof appleicon === "string"
+      ? appleicon
+      : appleicon?.src || "/static/footer/apple.svg";
   const { t } = useTranslation();
   const googlePlay = () => (
     <CustomButton
@@ -58,7 +66,7 @@ const AppLinks = (props) => {
         spacing={.5}
       >
         <NextImage
-          src={playstoreicon?.src}
+          src={playstoreSrc}
           alt="GooglePlay"
           objectFit="cover"
           height={20}
@@ -102,8 +110,8 @@ const AppLinks = (props) => {
         spacing={0.5}
       >
         <NextImage
-          src={appleicon?.src}
-          alt="GooglePlay"
+          src={appleSrc}
+          alt="AppStore"
           objectFit="cover"
           height={20}
           width={20}

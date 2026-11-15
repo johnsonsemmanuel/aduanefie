@@ -14,10 +14,12 @@ const LiveFarmingPage = ({ configData }) => {
   const { data: dataConfig, refetch: configRefetch } = useGetConfigData();
 
   useEffect(() => {
-    if (!configData) {
+    if (configData) {
+      dispatch(setConfigData(configData));
+    } else {
       configRefetch();
     }
-  }, [configData, configRefetch]);
+  }, [configData, configRefetch, dispatch]);
 
   useEffect(() => {
     if (dataConfig) {
@@ -25,15 +27,17 @@ const LiveFarmingPage = ({ configData }) => {
     }
   }, [dataConfig, dispatch]);
 
+  const effectiveConfig = configData || dataConfig;
+
   return (
     <>
       <CssBaseline />
       <SEO
-        title={configData?.business_name ? `Live Farming | ${configData.business_name}` : "Live Farming | Aduanefie"}
-        businessName={configData?.business_name}
-        configData={configData}
+        title={effectiveConfig?.business_name ? `Live Farming | ${effectiveConfig.business_name}` : "Live Farming | Aduanefie"}
+        businessName={effectiveConfig?.business_name}
+        configData={effectiveConfig}
       />
-      <MainLayout configData={configData}>
+      <MainLayout configData={effectiveConfig}>
         <CustomContainer>
           <Box sx={{ py: { xs: 3, md: 5 } }}>
             <LiveFarmingSection limit={24} showViewAll={false} hideIfEmpty={false} />

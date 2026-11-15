@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Card,
   CardContent,
   Chip,
+  CssBaseline,
   FormControl,
   Grid,
   InputLabel,
@@ -32,9 +33,31 @@ import SEO from "components/seo";
 import { useTranslation } from "react-i18next";
 import { useGetAgroPrices } from "api-manage/hooks/react-query/trade/useGetAgroPrices";
 import { useGetFxRates } from "api-manage/hooks/react-query/trade/useGetFxRates";
+import { getCommonServerSideProps } from "utils/serverSidePropsHelper";
+import { useDispatch } from "react-redux";
+import { useGetConfigData } from "api-manage/hooks/useGetConfigData";
+import { setConfigData } from "redux/slices/configData";
 
 const MarketPricesPage = ({ configData }) => {
   const theme = useTheme();
+  const dispatch = useDispatch();
+  const { data: dataConfig, refetch: configRefetch } = useGetConfigData();
+
+  useEffect(() => {
+    if (configData) {
+      dispatch(setConfigData(configData));
+    } else {
+      configRefetch();
+    }
+  }, [configData, configRefetch, dispatch]);
+
+  useEffect(() => {
+    if (dataConfig) {
+      dispatch(setConfigData(dataConfig));
+    }
+  }, [dataConfig, dispatch]);
+
+  const effectiveConfig = configData || dataConfig;
   const { t } = useTranslation();
   const [category, setCategory] = useState("all");
   const [marketHub, setMarketHub] = useState("all");
@@ -55,8 +78,13 @@ const MarketPricesPage = ({ configData }) => {
 
   return (
     <>
-      <SEO title={`Ghana Agro Market Prices | ${configData?.business_name || "Aduanefie"}`} />
-      <MainLayout configData={configData}>
+      <CssBaseline />
+      <SEO
+        title={`Ghana Agro Market Prices | ${effectiveConfig?.business_name || "Aduanefie"}`}
+        businessName={effectiveConfig?.business_name}
+        configData={effectiveConfig}
+      />
+      <MainLayout configData={effectiveConfig}>
         <CustomContainer>
           <Box sx={{ py: { xs: 3, md: 5 } }}>
             {/* Header */}
@@ -298,3 +326,7 @@ const MarketPricesPage = ({ configData }) => {
 };
 
 export default MarketPricesPage;
+
+export const getServerSideProps = async (context) => {
+  return await getCommonServerSideProps(context, "market_prices");
+};
