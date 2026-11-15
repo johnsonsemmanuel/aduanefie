@@ -105,13 +105,13 @@ const StoreRegistration = () => {
   }, [flag]);
 
   useEffect(() => {
-    if (active === "active") {
+    if (active === "active" || ((activeStep === null || activeStep === undefined) && flag !== "success")) {
       dispatch(setActiveStep(0));
     }
-  }, [active]);
+  }, [active, activeStep, flag]);
 
   const handleActiveStep = () => {
-    if (activeStep === 0) {
+    if (activeStep === 0 || activeStep === null || activeStep === undefined) {
       return (
         <StoreRegistrationForm
           setActiveStep={setActiveStep}
@@ -149,7 +149,7 @@ const StoreRegistration = () => {
           <Typography fontSize={isSmallSize ? "18px" : "36px"} fontWeight="700" textAlign="center">
             {t("Vendor Application")}
           </Typography>
-          <StoreStepper flag={flag} activeStep={activeStep} />
+          <StoreStepper flag={flag} activeStep={activeStep ?? 0} />
           {handleActiveStep()}
         </CustomStackFullWidth>
       </CustomContainer>
