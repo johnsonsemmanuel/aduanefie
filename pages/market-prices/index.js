@@ -31,6 +31,7 @@ import MainLayout from "components/layout/MainLayout";
 import SEO from "components/seo";
 import { useTranslation } from "react-i18next";
 import { useGetAgroPrices } from "api-manage/hooks/react-query/trade/useGetAgroPrices";
+import { useGetFxRates } from "api-manage/hooks/react-query/trade/useGetFxRates";
 
 const MarketPricesPage = ({ configData }) => {
   const theme = useTheme();
@@ -38,8 +39,16 @@ const MarketPricesPage = ({ configData }) => {
   const [category, setCategory] = useState("all");
   const [marketHub, setMarketHub] = useState("all");
   const [search, setSearch] = useState("");
+  const [currency, setCurrency] = useState("GHS");
 
   const { data, isLoading } = useGetAgroPrices({ category, marketHub, search });
+  const { data: fxData } = useGetFxRates();
+  const rate = Number(fxData?.rates?.[currency] || 1);
+  const symbol = fxData?.symbols?.[currency] || "GH₵";
+  const formatFx = (ghsAmount) => {
+    const converted = Number(ghsAmount || 0) * rate;
+    return `${symbol}${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  };
   const prices = data?.prices || [];
   const categories = data?.categories || [];
   const hubs = data?.hubs || [];
@@ -158,7 +167,7 @@ const MarketPricesPage = ({ configData }) => {
             {/* Filters */}
             <Paper elevation={0} sx={{ p: 2, borderRadius: "12px", border: `1px solid ${theme.palette.divider}`, mb: 2.5 }}>
               <Grid container spacing={2} alignItems="center">
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={6} md={3}>
                   <TextField
                     fullWidth
                     size="small"
@@ -167,7 +176,7 @@ const MarketPricesPage = ({ configData }) => {
                     onChange={(e) => setSearch(e.target.value)}
                   />
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={6} md={3}>
                   <FormControl fullWidth size="small">
                     <InputLabel>{t("Category")}</InputLabel>
                     <Select value={category} label={t("Category")} onChange={(e) => setCategory(e.target.value)}>
@@ -178,7 +187,7 @@ const MarketPricesPage = ({ configData }) => {
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={6} md={3}>
                   <FormControl fullWidth size="small">
                     <InputLabel>{t("Market Hub")}</InputLabel>
                     <Select value={marketHub} label={t("Market Hub")} onChange={(e) => setMarketHub(e.target.value)}>
@@ -186,6 +195,19 @@ const MarketPricesPage = ({ configData }) => {
                       {hubs.map((hub) => (
                         <MenuItem key={hub} value={hub}>{hub}</MenuItem>
                       ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel>{t("Currency")}</InputLabel>
+                    <Select value={currency} label={t("Currency")} onChange={(e) => setCurrency(e.target.value)}>
+                      <MenuItem value="GHS">GHS (GH₵)</MenuItem>
+                      <MenuItem value="USD">USD ($)</MenuItem>
+                      <MenuItem value="NGN">NGN (₦)</MenuItem>
+                      <MenuItem value="XOF">XOF (CFA)</MenuItem>
+                      <MenuItem value="KES">KES (KSh)</MenuItem>
+                      <MenuItem value="ZAR">ZAR (R)</MenuItem>
                     </Select>
                   </FormControl>
                 </Grid>
@@ -200,8 +222,8 @@ const MarketPricesPage = ({ configData }) => {
                     <TableCell sx={{ fontWeight: 700 }}>{t("Commodity")}</TableCell>
                     <TableCell sx={{ fontWeight: 700 }}>{t("Market Hub")}</TableCell>
                     <TableCell sx={{ fontWeight: 700 }}>{t("Unit")}</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 700 }}>{t("Wholesale (GH₵)")}</TableCell>
-                    <TableCell align="right" sx={{ fontWeight: 700 }}>{t("Retail (GH₵)")}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>{t("Wholesale")} ({currency})</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700 }}>{t("Retail")} ({currency})</TableCell>
                     <TableCell align="right" sx={{ fontWeight: 700 }}>{t("Retail Spread")}</TableCell>
                     <TableCell align="center" sx={{ fontWeight: 700 }}>{t("Trend")}</TableCell>
                     <TableCell sx={{ fontWeight: 700 }}>{t("Source")}</TableCell>
@@ -240,13 +262,13 @@ const MarketPricesPage = ({ configData }) => {
                           <TableCell sx={{ fontSize: "13px" }}>{row.market_hub}</TableCell>
                           <TableCell sx={{ fontSize: "13px" }}>{row.unit}</TableCell>
                           <TableCell align="right" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
-                            GH₵{wholesale.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                            {formatFx(wholesale)}
                           </TableCell>
                           <TableCell align="right" sx={{ fontWeight: 600 }}>
-                            GH₵{retail.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                            {formatFx(retail)}
                           </TableCell>
                           <TableCell align="right" sx={{ fontSize: "12.5px", color: theme.palette.text.secondary, fontWeight: 600 }}>
-                            +GH₵{spread.toLocaleString(undefined, { minimumFractionDigits: 2 })} ({spreadPct}%)
+                            +{formatFx(spread)} ({spreadPct}%)
                           </TableCell>
                           <TableCell align="center">
                             <Chip

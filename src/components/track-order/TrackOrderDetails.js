@@ -1,7 +1,7 @@
 import { useTheme } from "@emotion/react";
 import AddBusinessIcon from "@mui/icons-material/AddBusiness";
 import PlaceIcon from "@mui/icons-material/Place";
-import { alpha, Button, Typography } from "@mui/material";
+import { alpha, Button, Chip, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import { t } from "i18next";
 import { useRouter } from "next/router";
@@ -167,6 +167,45 @@ const TrackOrderDetails = ({
 					</Button>
 				)}
 			</CustomStackFullWidth>
+			{((trackOrderData?.escrow_status && trackOrderData?.escrow_status !== "none") ||
+				trackOrderData?.phytosanitary_cert_ref ||
+				trackOrderData?.origin_cert_ref ||
+				trackOrderData?.incoterm) && (
+				<Stack
+					direction="row"
+					flexWrap="wrap"
+					gap={1}
+					alignItems="center"
+					sx={{
+						mx: "20px",
+						p: "12px 16px",
+						borderRadius: "8px",
+						border: `1px solid ${theme.palette.divider}`,
+						bgcolor: theme.palette.background.paper,
+					}}
+				>
+					<Typography fontSize="12.5px" fontWeight={700}>
+						{t("Trade Escrow & Compliance")}:
+					</Typography>
+					{trackOrderData?.escrow_status && trackOrderData?.escrow_status !== "none" && (
+						<Chip
+							size="small"
+							color="primary"
+							variant="outlined"
+							label={`${t("Escrow")}: ${String(trackOrderData.escrow_status).replace(/_/g, " ").toUpperCase()}`}
+						/>
+					)}
+					{trackOrderData?.incoterm && (
+						<Chip size="small" variant="outlined" label={`Incoterm: ${trackOrderData.incoterm}`} />
+					)}
+					{trackOrderData?.phytosanitary_cert_ref && (
+						<Chip size="small" variant="outlined" label={`Phytosanitary: ${trackOrderData.phytosanitary_cert_ref}`} />
+					)}
+					{trackOrderData?.origin_cert_ref && (
+						<Chip size="small" variant="outlined" label={`AfCFTA CoO: ${trackOrderData.origin_cert_ref}`} />
+					)}
+				</Stack>
+			)}
 			<CustomStackFullWidth sx={{ paddingTop: { xs: "10px", md: "40px" } }}>
 				<TrackOrder
 					trackOrderData={trackOrderData}
