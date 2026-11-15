@@ -108,6 +108,14 @@ const ModuleHomeSidebarLayout = ({
       section.onClick();
       return;
     }
+    if (section.id === "live-farming") {
+      router.push({ pathname: "/live-farming", query: moduleQuery });
+      return;
+    }
+    if (section.id === "bogo") {
+      router.push({ pathname: "/bogo-list", query: moduleQuery });
+      return;
+    }
     router.push({
       pathname: `/home/${section.id}`,
       query: moduleQuery,

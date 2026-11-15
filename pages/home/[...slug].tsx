@@ -123,6 +123,26 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const sectionId = slugSegments[0];
+  if (sectionId === "live-farming") {
+    return {
+      redirect: {
+        destination: moduleParam
+          ? `/live-farming?module=${encodeURIComponent(moduleParam)}`
+          : "/live-farming",
+        permanent: false,
+      },
+    };
+  }
+  if (sectionId === "bogo") {
+    return {
+      redirect: {
+        destination: moduleParam
+          ? `/bogo-list?module=${encodeURIComponent(moduleParam)}`
+          : "/bogo-list",
+        permanent: false,
+      },
+    };
+  }
   if (!isValidSectionId(moduleKey, sectionId)) {
     return { notFound: true };
   }

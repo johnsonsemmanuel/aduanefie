@@ -10,7 +10,7 @@ export const RouteLinksData = [
     link: "/store-registration",
   },
   {
-    name: "Become a delivery man",
+    name: "Logistics Registration",
     value: "delivery_man",
     link: "/deliveryman-registration",
   },

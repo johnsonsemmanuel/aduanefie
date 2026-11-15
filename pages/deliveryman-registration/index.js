@@ -47,7 +47,7 @@ const Index = ({ metaData }) => {
         configData={configData}
       />
       <MainLayout configData={configData} >
-        <SimpleMobileHeader title="Deliveryman Application" />
+        <SimpleMobileHeader title="Logistics Registration" />
         <NoSsr>
           <CustomContainer>
             <DeliveryManComponent
