@@ -502,6 +502,49 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                 </Stack>
               </Box>
 
+              {/* Compact inline Mode Switcher pill (frees a full header row on mobile) */}
+              {showModuleTabs && modules?.length > 0 && (
+                <Button
+                  onClick={() => setModeModalOpen(true)}
+                  size="small"
+                  endIcon={
+                    <i
+                      className="fi fi-rr-angle-small-down"
+                      style={{ fontSize: "13px", lineHeight: 1, display: "flex" }}
+                    />
+                  }
+                  sx={{
+                    flexShrink: 0,
+                    maxWidth: "145px",
+                    height: "32px",
+                    px: "10px",
+                    borderRadius: "9999px",
+                    bgcolor: theme.palette.background.paper,
+                    border: `1px solid ${theme.palette.divider}`,
+                    color: theme.palette.neutral[1050],
+                    textTransform: "none",
+                    gap: "4px",
+                    "& .MuiButton-endIcon": { ml: "2px", mr: "-2px" },
+                  }}
+                >
+                  <SwapHorizIcon
+                    sx={{ fontSize: 15, color: theme.palette.primary.main, flexShrink: 0 }}
+                  />
+                  <Typography
+                    component="span"
+                    sx={{
+                      fontSize: "12px",
+                      fontWeight: 600,
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {selectedModule?.module_name || t("Mode")}
+                  </Typography>
+                </Button>
+              )}
+
               {/* Cart / Bookings — hidden on parcel, shows bookings on service */}
               {getCurrentModuleType() === ModuleTypes.PARCEL ? null : getCurrentModuleType() === ModuleTypes.SERVICE ? (
                 <IconButton
@@ -585,40 +628,6 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
               )}
             </Stack>
           </Box>
-
-          {/* ── Section 2: Compact Active Mode Switcher (opens modal popup) ── */}
-          {showModuleTabs && modules?.length > 0 && (
-            <Box sx={{ px: "14px", pt: "4px", pb: "6px" }}>
-              <Button
-                fullWidth
-                onClick={() => setModeModalOpen(true)}
-                startIcon={<SwapHorizIcon sx={{ fontSize: 18, color: theme.palette.primary.main }} />}
-                sx={{
-                  justifyContent: "space-between",
-                  bgcolor: theme.palette.background.paper,
-                  border: `1px solid ${theme.palette.divider}`,
-                  borderRadius: "10px",
-                  px: "12px",
-                  py: "7px",
-                  color: theme.palette.neutral[1050],
-                  textTransform: "none",
-                }}
-              >
-                <Typography
-                  component="span"
-                  sx={{ fontSize: "13px", fontWeight: 700, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
-                >
-                  {selectedModule?.module_name || t("Choose Mode")}
-                </Typography>
-                <Typography
-                  component="span"
-                  sx={{ fontSize: "12px", fontWeight: 600, color: theme.palette.primary.deep, flexShrink: 0, ml: 1 }}
-                >
-                  {t("Switch Mode")}
-                </Typography>
-              </Button>
-            </Box>
-          )}
         </Box>
         {/* ── Section 3: Search bar — home only, hidden for rental and parcel */}
         {isHomePage &&

@@ -262,10 +262,9 @@ const MapModal = ({
             window.location.reload();
             handleClose();
           }
-        } else if (location && selectedModule) {
-          window.location.reload();
-          handleClose();
         } else {
+          // Location-first flow: always let the user confirm/choose their module
+          // right after picking or changing their delivery/trade location.
           setOpenModuleSelection(true);
         }
       }

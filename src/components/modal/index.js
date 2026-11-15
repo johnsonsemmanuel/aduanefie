@@ -54,6 +54,8 @@ const CustomModal = (props) => {
         PaperProps={{
           sx: {
             borderRadius: "16px 16px 0 0",
+            pt: 1,
+            pb: "calc(16px + env(safe-area-inset-bottom))",
             ...(disableContentOverflowClip
               ? { overflowY: "visible" }
               : { maxHeight: "90vh", overflowY: "auto" }),
@@ -61,6 +63,17 @@ const CustomModal = (props) => {
           },
         }}
       >
+        <Box
+          sx={{
+            width: 36,
+            height: 4,
+            borderRadius: "9999px",
+            bgcolor: theme.palette.divider,
+            mx: "auto",
+            mb: closeButton ? 0 : 1,
+            flexShrink: 0,
+          }}
+        />
         {closeButtonNode}
         {children}
       </Drawer>

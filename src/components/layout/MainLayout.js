@@ -96,8 +96,8 @@ const getMobileMarginTop = ({ pathname, currentModuleType }) => {
   if (currentModuleType === ModuleTypes.RENTAL) {
     return pathname?.startsWith("/rental") ? "3rem" : "6.3rem";
   }
-  if (currentModuleType === ModuleTypes.PARCEL) return "7.8rem";
-  return "10.5rem";
+  if (currentModuleType === ModuleTypes.PARCEL) return "5.4rem";
+  return "7.6rem";
 };
 
 const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {

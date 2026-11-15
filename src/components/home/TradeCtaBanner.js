@@ -37,20 +37,45 @@ const TradeCtaBanner = () => {
           )}
         </Typography>
       </Stack>
-      <Button
-        variant="contained"
-        size="small"
-        onClick={() => router.push("/trade")}
-        sx={{
-          flexShrink: 0,
-          bgcolor: "#fff",
-          color: "primary.deep",
-          fontWeight: 700,
-          "&:hover": { bgcolor: "rgba(255,255,255,0.9)" },
-        }}
+      <Stack
+        direction="row"
+        alignItems="center"
+        gap="10px"
+        flexWrap="wrap"
+        sx={{ flexShrink: 0 }}
       >
-        {t("Explore B2B Trade")}
-      </Button>
+        <Button
+          variant="outlined"
+          size="small"
+          onClick={() => router.push("/market-prices")}
+          sx={{
+            flexShrink: 0,
+            borderColor: "rgba(255,255,255,0.55)",
+            color: "#fff",
+            fontWeight: 600,
+            "&:hover": {
+              borderColor: "#fff",
+              bgcolor: "rgba(255,255,255,0.12)",
+            },
+          }}
+        >
+          {t("Live Market Prices")}
+        </Button>
+        <Button
+          variant="contained"
+          size="small"
+          onClick={() => router.push("/trade")}
+          sx={{
+            flexShrink: 0,
+            bgcolor: "#fff",
+            color: "primary.deep",
+            fontWeight: 700,
+            "&:hover": { bgcolor: "rgba(255,255,255,0.9)" },
+          }}
+        >
+          {t("Explore B2B Trade")}
+        </Button>
+      </Stack>
     </Box>
   );
 };

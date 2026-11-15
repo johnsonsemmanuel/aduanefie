@@ -42,11 +42,13 @@ import { saveModuleParam } from "utils/moduleParamManager";
 
 export const CustomPaper = styled(Paper)(({ theme }) => ({
   //minWidth: "500px",
-  borderRadius: "4px",
+  borderRadius: "12px",
   padding: "2rem",
   background: theme.palette.neutral[100],
   [theme.breakpoints.down("sm")]: {
-    padding: ".6rem",
+    padding: "1.25rem 1rem",
+    borderRadius: "0px",
+    boxShadow: "none",
     // minWidth: "320px",
   },
 }));
@@ -273,14 +275,23 @@ export const ModuleSelection = ({
               <Typography variant="h6" textAlign="center">
                 {t(module_header)}
               </Typography>
-              <Grid container spacing={isXSmall ? 1 : 2} width="98%">
+              <Grid container spacing={isXSmall ? 1.5 : 2} width="100%">
                 {modulesToShow &&
                   (modulesToShow?.length > 0 ? (
                     modulesToShow?.map((item, index) => {
                       return (
-                        <Grid item xs={4} sm={4} md={4} key={index}>
+                        <Grid item xs={6} sm={4} md={4} key={index}>
                           <CustomChildPaper
-                            elevation={10}
+                            elevation={0}
+                            sx={{
+                              borderRadius: "12px",
+                              border: `1.5px solid ${
+                                isSelected?.module_type === item?.module_type &&
+                                isSelected?.id === item?.id
+                                  ? "primary.main"
+                                  : "divider"
+                              }`,
+                            }}
                             onClick={() => handleItemOnClick(item)}
                             is_previously_selected={
                               isSelected?.module_type === item?.module_type &&
@@ -290,14 +301,14 @@ export const ModuleSelection = ({
                             <CustomStackFullWidth
                               alignItems="center"
                               justifyContent="center"
-                              spacing={1}
+                              spacing={1.25}
                             >
                               <CustomImageContainer
                                 src={item?.icon_full_url}
                                 alt="mobile"
-                                height={isXSmall ? "40px" : "100px"}
-                                width={isXSmall ? "40px" : "100px"}
-                                objectFit="cover"
+                                height={isXSmall ? "48px" : "100px"}
+                                width={isXSmall ? "48px" : "100px"}
+                                objectFit="contain"
                               />
                               <Typography
                                 fontSize={{ xs: "13px", sm: "16px" }}
