@@ -258,8 +258,29 @@ const CartContent = (props) => {
             </Typography>
           )}
           <VariationContent cartItem={cartItem} />
-          <Typography fontSize="11px" color="#93A2AE">
-            {cartItem?.unit_type}
+          <Typography fontSize="11px" color="text.secondary">
+            {[
+              cartItem?.agro_unit
+                ? ({
+                    kg: "kg",
+                    bag_50kg: "50kg Bag",
+                    bag_100kg: "100kg Bag",
+                    crate: "Crate",
+                    bunch: "Bunch",
+                    ton: "Ton",
+                    box: "Export Box",
+                  }[cartItem.agro_unit] || cartItem.agro_unit)
+                : cartItem?.unit_type,
+              cartItem?.crop_grade,
+              Number(cartItem?.unit_weight_kg) > 0
+                ? `${(
+                    Number(cartItem.unit_weight_kg) *
+                    Number(cartItem?.quantity || 1)
+                  ).toFixed(1).replace(/\.0$/, "")} kg`
+                : null,
+            ]
+              .filter(Boolean)
+              .join(" · ")}
           </Typography>
           <Typography fontWeight="500" fontSize={{ xs: "13px", md: "16px" }}>
             {getAmountWithSign(
@@ -286,7 +307,7 @@ const CartContent = (props) => {
           </Typography>
         </Stack>
         <CartIncrementStack>
-          {cartItem?.quantity === 1 ? (
+          {cartItem?.quantity <= Math.max(1, Number(cartItem?.moq || 1)) ? (
             <IconButton
               disabled={removeIsLoading}
               aria-label="delete"

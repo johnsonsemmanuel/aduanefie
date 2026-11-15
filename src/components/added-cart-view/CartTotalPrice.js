@@ -6,12 +6,32 @@ import { getAmountWithSign } from "../../helper-functions/CardHelpers";
 import { cartItemsTotalAmount } from "../../utils/CustomFunctions";
 
 const CartTotalPrice = ({ cartList }) => {
+  const totalWeightKg = (cartList || []).reduce((sum, item) => {
+    const unitKg = Number(item?.unit_weight_kg || 0);
+    const qty = Number(item?.quantity || 1);
+    return sum + unitKg * qty;
+  }, 0);
+
   return (
     <>
+      {totalWeightKg > 0 && (
+        <CustomStackFullWidth
+          justifyContent="space-between"
+          direction="row"
+          sx={{ padding: "0.75rem 1.4rem 0" }}
+        >
+          <Typography fontSize="12px" color="text.secondary">
+            {t("Est. Payload Weight")}
+          </Typography>
+          <Typography fontSize="13px" fontWeight="600" color="text.primary">
+            {totalWeightKg.toFixed(1).replace(/\.0$/, "")} kg
+          </Typography>
+        </CustomStackFullWidth>
+      )}
       <CustomStackFullWidth
         justifyContent="space-between"
         direction="row"
-        sx={{ padding: "1.4rem" }}
+        sx={{ padding: totalWeightKg > 0 ? "0.6rem 1.4rem 1.4rem" : "1.4rem" }}
       >
         <Typography fontSize="14px" fontWeight="500">
           {t("Subtotal")}

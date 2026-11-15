@@ -857,6 +857,11 @@ export const InfoSection = ({
                 ton: "Ton",
                 box: "Export Box",
               }[item.agro_unit] || item.agro_unit)}
+              {Number(item?.unit_weight_kg) > 0 && displayPrice > 0
+                ? ` (${getAmountWithSign(
+                    (displayPrice / Number(item.unit_weight_kg)).toFixed(2)
+                  )}/kg)`
+                : ""}
             </Typography>
           )}
           {originalPrice > displayPrice && (
@@ -1033,6 +1038,27 @@ export const InfoSection = ({
               </Typography>
             </DeliveryBadge>
           )}
+          {Array.isArray(item?.bulk_pricing_tiers) &&
+            item.bulk_pricing_tiers.length > 0 && (
+              <DeliveryBadge
+                sx={{
+                  flexShrink: 0,
+                  backgroundColor: alpha(theme.palette.success.main, 0.12),
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: "11px",
+                    fontWeight: 600,
+                    color: theme.palette.success.dark,
+                    lineHeight: 1.3,
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {t("Bulk Tier")}
+                </Typography>
+              </DeliveryBadge>
+            )}
         </Stack>
       </Stack>
     </Stack>
