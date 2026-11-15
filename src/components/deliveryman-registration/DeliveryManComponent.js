@@ -43,6 +43,7 @@ const DeliveryManComponent = ({
       referral_code: "",
       zone_id: "",
       vehicle_id: "",
+      delivery_scope: "local_farm",
       identity_type: "",
       identity_number: "",
       phone: "",

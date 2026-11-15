@@ -431,28 +431,20 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
           return;
         }
 
-        if (moduleType === ModuleTypes.ECOMMERCE) {
-          if (isCrossModule) {
-            router
-              .push(
-                getProductRedirectURL(
-                  product,
-                  undefined,
-                  getModuleIdentifier(moduleItem)
-                )
+        if (isCrossModule) {
+          router
+            .push(
+              getProductRedirectURL(
+                product,
+                undefined,
+                getModuleIdentifier(moduleItem)
               )
-              .then(() => window.scrollTo({ top: 0, behavior: "smooth" }));
-          } else {
-            handleProductRedirect(product, router);
-          }
-          onClose();
-          return;
+            )
+            .then(() => window.scrollTo({ top: 0, behavior: "smooth" }));
+        } else {
+          handleProductRedirect(product, router);
         }
-
-        setProductModal({
-          product,
-          type: moduleType === ModuleTypes.FOOD ? "food" : "module",
-        });
+        onClose();
       };
 
       // Item is from a different module than what's active (an older chat
@@ -712,17 +704,17 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
                   {activeChat ? activeChat.title : t("AI Assistant")}
                 </Typography>
                 <Stack direction="row" spacing={0.75} alignItems="center">
-                  <Box
-                    sx={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: "50%",
-                      backgroundColor: "#4ade80",
-                      boxShadow: "0 0 0 2px rgba(74, 222, 128, 0.25)",
+                  <i
+                    className="fi fi-rr-bolt"
+                    style={{
+                      fontSize: "11px",
+                      lineHeight: 1,
+                      display: "flex",
+                      opacity: 0.9,
                     }}
                   />
                   <Typography fontSize={11.5} sx={{ opacity: 0.85 }}>
-                    {isTyping ? t("Typing…") : t("Online · replies instantly")}
+                    {isTyping ? t("Typing…") : t("Live · replies instantly")}
                   </Typography>
                 </Stack>
               </Stack>

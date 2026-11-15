@@ -84,20 +84,6 @@ const AiChatBotLauncher = ({
                     0.55,
                   )}`,
                 },
-                "&::after": open
-                  ? {}
-                  : {
-                      content: '""',
-                      position: "absolute",
-                      inset: 0,
-                      borderRadius: "50%",
-                      border: `2px solid ${theme.palette.primary.main}`,
-                      animation: "chatbotPulse 2s ease-out infinite",
-                      "@keyframes chatbotPulse": {
-                        "0%": { transform: "scale(1)", opacity: 0.6 },
-                        "100%": { transform: "scale(1.5)", opacity: 0 },
-                      },
-                    },
               }}
             >
               <Zoom in={!open} unmountOnExit>

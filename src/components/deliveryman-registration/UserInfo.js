@@ -269,6 +269,23 @@ const UserInfo = ({
                   }
                 />
               </Grid>
+              <Grid item xs={12} sm={6}>
+                <CustomSelectWithFormik
+                  selectFieldData={[
+                    { label: t("Local & Farm Truck Delivery"), value: "local_farm" },
+                    { label: t("Cross-Border Logistics & Freight"), value: "cross_border" },
+                    { label: t("Both Local Farm & Cross-Border"), value: "both" },
+                  ]}
+                  inputLabel={t("Delivery & Logistics Scope")}
+                  passSelectedValue={(value) => {
+                    handleFieldChange("delivery_scope", value);
+                  }}
+                  touched={deliveryManFormik.touched.delivery_scope}
+                  errors={deliveryManFormik.errors.delivery_scope}
+                  fieldProps={deliveryManFormik.getFieldProps("delivery_scope")}
+                  placeholder={t("Select Delivery Scope")}
+                />
+              </Grid>
             </Grid>
           </Grid>
           <Grid
