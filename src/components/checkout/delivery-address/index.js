@@ -13,6 +13,7 @@ import {
   InputAdornment,
   MenuItem,
   Select,
+  TextField,
   Typography,
   alpha,
   useTheme,
@@ -35,6 +36,7 @@ import toast from "react-hot-toast";
 import { onErrorResponse } from "../../../api-manage/api-error-response/ErrorResponses";
 import { useDispatch, useSelector } from "react-redux";
 import { setOpenAddressModal } from "../../../redux/slices/addAddress";
+import { setGuestUserInfo } from "../../../redux/slices/guestUserInfo";
 import { getToken } from "helper-functions/getToken";
 
 const getZoneWiseAddresses = (
@@ -101,7 +103,31 @@ const DeliveryAddress = ({
   const [editAddress, setEditAddress] = useState(null);
   const [addressFormMode, setAddressFormMode] = useState("location");
   const [localInstruction, setLocalInstruction] = useState("");
+  const [guestName, setGuestName] = useState(
+    guestUserInfo?.contact_person_name || ""
+  );
+  const [guestPhone, setGuestPhone] = useState(
+    guestUserInfo?.contact_person_number || ""
+  );
+  const [guestEmail, setGuestEmail] = useState(
+    guestUserInfo?.contact_person_email || ""
+  );
   const token = getToken();
+
+  const handleSaveInlineGuestContact = () => {
+    if (!guestName.trim() || !guestPhone.trim()) {
+      toast.error(t("Please enter your name and phone number"));
+      return;
+    }
+    reduxDispatch(
+      setGuestUserInfo({
+        contact_person_name: guestName.trim(),
+        contact_person_number: guestPhone.trim(),
+        contact_person_email: guestEmail.trim(),
+      })
+    );
+    toast.success(t("Contact info saved"));
+  };
 
   const saveAddressModalClose = () => {
     setOpenSaveAddress(false);
@@ -556,7 +582,82 @@ const DeliveryAddress = ({
               gap={{ xs: 1, md: 1.5 }}
             >
               {!isTakeAway && AddressPill}
-              {hasContactInfo ? ContactInfoPill : AddContactInfoButton}
+              {hasContactInfo ? (
+                ContactInfoPill
+              ) : !token ? (
+                <Box
+                  sx={{
+                    flex: 1,
+                    minWidth: 0,
+                    p: 1.5,
+                    borderRadius: "10px",
+                    border: `1px solid ${theme.palette.divider}`,
+                    backgroundColor: theme.palette.background.paper,
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: "12px",
+                      fontWeight: 600,
+                      color: theme.palette.text.primary,
+                      mb: 1,
+                    }}
+                  >
+                    {t("Guest Contact Info")}
+                  </Typography>
+                  <Stack spacing={1}>
+                    <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+                      <TextField
+                        size="small"
+                        fullWidth
+                        required
+                        label={t("Full Name")}
+                        value={guestName}
+                        onChange={(e) => setGuestName(e.target.value)}
+                      />
+                      <TextField
+                        size="small"
+                        fullWidth
+                        required
+                        label={t("Phone Number")}
+                        value={guestPhone}
+                        onChange={(e) => setGuestPhone(e.target.value)}
+                      />
+                    </Stack>
+                    <Stack
+                      direction={{ xs: "column", sm: "row" }}
+                      spacing={1}
+                      alignItems={{ sm: "center" }}
+                    >
+                      <TextField
+                        size="small"
+                        fullWidth
+                        type="email"
+                        label={t("Email (optional)")}
+                        value={guestEmail}
+                        onChange={(e) => setGuestEmail(e.target.value)}
+                      />
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        size="small"
+                        onClick={handleSaveInlineGuestContact}
+                        sx={{
+                          textTransform: "none",
+                          fontWeight: 600,
+                          px: 2.5,
+                          py: 0.9,
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        {t("Save Contact")}
+                      </Button>
+                    </Stack>
+                  </Stack>
+                </Box>
+              ) : (
+                AddContactInfoButton
+              )}
             </Stack>
           )}
 
