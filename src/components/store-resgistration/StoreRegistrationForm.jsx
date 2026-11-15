@@ -276,11 +276,18 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
     RestaurantJoinFormik.setFieldValue("lng", value?.lng);
   };
 
+  const resolvedLatLng =
+    currentLatLng?.lat && currentLatLng?.lng
+      ? currentLatLng
+      : configData?.default_location?.lat && configData?.default_location?.lng
+      ? configData.default_location
+      : null;
+
   const { data: zoneData } = useQuery(
-    ["zoneId"],
-    async () =>
-      GoogleApi.getZoneId(currentLatLng ?? configData?.default_location),
+    ["zoneId", resolvedLatLng?.lat, resolvedLatLng?.lng],
+    async () => GoogleApi.getZoneId(resolvedLatLng),
     {
+      enabled: Boolean(resolvedLatLng?.lat && resolvedLatLng?.lng),
       retry: 1,
     }
   );
@@ -363,10 +370,10 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
     }
   }, [zoneData?.data?.zone_data]);
   useEffect(() => {
-    if (!currentLatLng && zoneData?.data) {
+    if (!currentLatLng && zoneData?.data && configData?.default_location) {
       localStorage.setItem(
         "currentLatLng",
-        JSON.stringify(configData?.default_location)
+        JSON.stringify(configData.default_location)
       );
       localStorage.setItem("zoneid", zoneData?.data?.zone_id);
     }
