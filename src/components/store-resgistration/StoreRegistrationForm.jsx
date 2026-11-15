@@ -272,8 +272,8 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
     RestaurantJoinFormik.setFieldValue("pickup_zone_id", pickupZoneId);
   };
   const handleLocation = (value) => {
-    RestaurantJoinFormik.setFieldValue("lng", value?.lat);
-    RestaurantJoinFormik.setFieldValue("lat", value?.lng);
+    RestaurantJoinFormik.setFieldValue("lat", value?.lat);
+    RestaurantJoinFormik.setFieldValue("lng", value?.lng);
   };
 
   const { data: zoneData } = useQuery(

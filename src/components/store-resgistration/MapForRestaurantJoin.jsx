@@ -34,9 +34,10 @@ const MapForRestaurantJoin = ({
   const { configData } = useSelector((state) => state.configData);
 
   const [locationEnabled, setLocationEnabled] = useState(false);
-  const [location, setLocation] = useState(
-    configData && configData?.default_location
-  );
+  const [location, setLocation] = useState({
+    lat: Number(configData?.default_location?.lat) || 5.6037,
+    lng: Number(configData?.default_location?.lng) || -0.187,
+  });
   const [searchKey, setSearchKey] = useState("");
   const [enabled, setEnabled] = useState(false);
   const [placeDetailsEnabled, setPlaceDetailsEnabled] = useState(true);
@@ -46,10 +47,12 @@ const MapForRestaurantJoin = ({
   const [isModalExpand, setIsModalExpand] = useState(false);
   const { t } = useTranslation();
   useEffect(() => {
-    setLocation({
-      lat: configData?.default_location?.lat,
-      lng: configData?.default_location?.lng,
-    });
+    if (configData?.default_location?.lat && configData?.default_location?.lng) {
+      setLocation({
+        lat: Number(configData.default_location.lat),
+        lng: Number(configData.default_location.lng),
+      });
+    }
   }, [configData?.default_location]);
   const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
     useGeolocated({
