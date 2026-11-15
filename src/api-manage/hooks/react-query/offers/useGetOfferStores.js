@@ -38,10 +38,17 @@ const getData = async (params = {}, moduleType) => {
     ),
   );
 
-  const { data } = await MainApi.get(
-    `${offers_stores_api}?${query.toString()}`,
-  );
-  return getApiCollection(data, ["stores"]);
+  try {
+    const { data } = await MainApi.get(
+      `${offers_stores_api}?${query.toString()}`,
+    );
+    return getApiCollection(data, ["stores"]);
+  } catch (err) {
+    if (err?.response?.status === 404) {
+      return { stores: [] };
+    }
+    throw err;
+  }
 };
 
 const useGetOfferStores = (params = {}, enabled = true) => {
@@ -60,7 +67,7 @@ const useGetOfferStores = (params = {}, enabled = true) => {
       },
       enabled,
       cacheTime: 5 * 60 * 1000,
-      onError: onSingleErrorResponse,
+      retry: false,
     },
   );
 };

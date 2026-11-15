@@ -7,7 +7,7 @@ import IdentityInfo from "./IdentityInfo";
 import AccountInfo from "./AccountInfo";
 import DeliverymanFormWrapper from "./DeliverymanFormWrapper";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePostDeliveryManRegisterInfo } from "api-manage/hooks/react-query/deliveryman-registration/useRegisterDeliveryMan";
 import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
 import toast from "react-hot-toast";
@@ -88,6 +88,13 @@ const DeliveryManComponent = ({
     setImage("");
     setIdentityImage("");
   };
+
+  useEffect(() => {
+    if (deliveryManFormik.submitCount > 0 && !deliveryManFormik.isValid) {
+      const firstErrorEl = document.querySelector('.Mui-error, [aria-invalid="true"]');
+      firstErrorEl?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [deliveryManFormik.submitCount, deliveryManFormik.isValid]);
   return (
     <>
       <TitleTopSection>

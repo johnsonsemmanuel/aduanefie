@@ -386,6 +386,13 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
     setSelectedDates(null);
     dispatch(setInZone(null));
   };
+
+  useEffect(() => {
+    if (RestaurantJoinFormik.submitCount > 0 && !RestaurantJoinFormik.isValid) {
+      const firstErrorEl = document.querySelector('.Mui-error, [aria-invalid="true"]');
+      firstErrorEl?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [RestaurantJoinFormik.submitCount, RestaurantJoinFormik.isValid]);
   useEffect(() => {
     if (showZoneWarning || !inZone) {
       //toast.error("Please select a zone");

@@ -44,8 +44,15 @@ const getData = async (params = {}, moduleType) => {
       ? service_offers_items_api
       : offers_items_api;
 
-  const { data } = await MainApi.get(`${dynamicApiURL}?${query.toString()}`);
-  return getApiCollection(data, ["products", "items"]);
+  try {
+    const { data } = await MainApi.get(`${dynamicApiURL}?${query.toString()}`);
+    return getApiCollection(data, ["products", "items"]);
+  } catch (err) {
+    if (err?.response?.status === 404) {
+      return { products: [], items: [] };
+    }
+    throw err;
+  }
 };
 
 const useGetOfferItems = (params = {}, enabled = true) => {
@@ -66,7 +73,7 @@ const useGetOfferItems = (params = {}, enabled = true) => {
       },
       enabled,
       cacheTime: 5 * 60 * 1000,
-      onError: onSingleErrorResponse,
+      retry: false,
     },
   );
 };

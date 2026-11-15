@@ -1339,7 +1339,11 @@ const OrderCalculation = (props) => {
                 </Stack>
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <Typography sx={{ fontSize: "12.5px", fontWeight: 700, color: theme.palette.primary.main }}>
-                    {isInsuranceApplied ? getAmountWithSign(computedInsuranceFee) : t("Optional")}
+                    {isInsuranceApplied
+                      ? computedInsuranceFee > 0 && !Number.isInteger(computedInsuranceFee)
+                        ? `${configData?.currency_symbol || "GH¢"}${Number(computedInsuranceFee).toFixed(2)}`
+                        : getAmountWithSign(computedInsuranceFee)
+                      : t("Optional")}
                   </Typography>
                   {!isInsuranceLocked && setInsuranceOptIn && (
                     <Checkbox

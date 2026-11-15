@@ -601,6 +601,9 @@ const OtherModulePayment = (props) => {
                   ({t("Faster & secure way to pay bill")})
                 </Typography>
               </Stack>
+              <Typography fontSize="11.5px" color="text.secondary">
+                {t("Supports MTN MoMo, Telecel Cash, AT Money & Visa / Mastercard")}
+              </Typography>
 
               <Stack direction="row" flexWrap="wrap" gap={1.5}>
                 {configData?.active_payment_method_list?.map((item, index) => (
