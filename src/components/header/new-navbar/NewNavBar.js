@@ -346,9 +346,13 @@ const NewNavBar = ({ configData }) => {
     refetch: bookingRefetch,
   } = useGetBookingList(guestId);
 
+  const prevModuleTypeRef = useRef(moduleType);
   useEffect(() => {
     if (moduleType) {
-      dispatch(clearCartGroups());
+      if (prevModuleTypeRef.current && prevModuleTypeRef.current !== moduleType) {
+        dispatch(clearCartGroups());
+      }
+      prevModuleTypeRef.current = moduleType;
       moduleType === "rental" ? bookingRefetch() : cartListRefetch();
     }
   }, [moduleType]);

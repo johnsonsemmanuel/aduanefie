@@ -14,7 +14,39 @@ const mergeFoodVariationsWithSelection = (template, rowVariation) => {
 };
 
 export const normalizeCartGroups = (groups = []) => {
-  if (!Array.isArray(groups)) return [];
+  if (!Array.isArray(groups) || groups.length === 0) return [];
+
+  const isFlatCartRows = groups.some(
+    (g) => !g?.store && !g?.restaurant && !g?.provider && !g?.carts && !g?.items && (g?.item || g?.item_id)
+  );
+
+  if (isFlatCartRows) {
+    const byStore = new Map();
+    groups.forEach((row) => {
+      const item = row?.item ?? row?.service ?? row?.product ?? {};
+      const storeId =
+        row?.store_id ?? row?.provider_id ?? item?.store_id ?? 0;
+      const moduleType =
+        row?.module_type ?? item?.module_type ?? null;
+      if (!byStore.has(storeId)) {
+        byStore.set(storeId, {
+          store: {
+            id: storeId,
+            name: item?.store_name ?? row?.store_name ?? "Store",
+            module_type: moduleType,
+          },
+          carts: [],
+        });
+      }
+      byStore.get(storeId).carts.push({
+        ...row,
+        item,
+        store_id: storeId,
+        module_type: moduleType,
+      });
+    });
+    return Array.from(byStore.values());
+  }
 
   return groups
     .map((g) => {

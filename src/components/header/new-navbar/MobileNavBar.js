@@ -114,9 +114,13 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
   const { data: bookingLists, refetch: bookingRefetch } =
     useGetBookingList(guestId);
   const moduleType = selectedModule?.module_type ?? getCurrentModuleType();
+  const prevModuleTypeRef = useRef(moduleType);
   useEffect(() => {
     if (moduleType) {
-      dispatch(clearCartGroups());
+      if (prevModuleTypeRef.current && prevModuleTypeRef.current !== moduleType) {
+        dispatch(clearCartGroups());
+      }
+      prevModuleTypeRef.current = moduleType;
       if (moduleType === ModuleTypes.RENTAL) {
         bookingRefetch();
       } else {
