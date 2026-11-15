@@ -17,6 +17,7 @@ import { useTheme } from "@emotion/react";
 import InputLabel from "@mui/material/InputLabel";
 import PeopleIcon from '@mui/icons-material/People';
 import { toast } from "react-hot-toast";
+import GhanaRegionDistrictFields from "components/common/GhanaRegionDistrictFields";
 
 const UserInfo = ({
   deliveryManFormik,
@@ -286,6 +287,11 @@ const UserInfo = ({
                   placeholder={t("Select Delivery Scope")}
                 />
               </Grid>
+              <GhanaRegionDistrictFields
+                formik={deliveryManFormik}
+                onFieldChange={handleFieldChange}
+                gridProps={{ xs: 12, sm: 4 }}
+              />
             </Grid>
           </Grid>
           <Grid

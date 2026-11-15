@@ -12,6 +12,7 @@ import LangTab from "components/store-resgistration/LanTab";
 import { useSelector } from "react-redux";
 import CustomMultiSelect from "components/custom-multi-select/CustomMultiSelect";
 import HailIcon from '@mui/icons-material/Hail';
+import GhanaRegionDistrictFields from "components/common/GhanaRegionDistrictFields";
 
 export const checkTaxiModule = (value, moduleOption) => {
   const moduleObj = moduleOption?.find((item) => item.value === value);
@@ -406,21 +407,10 @@ const RestaurantDetailsForm = ({
                   value={RestaurantJoinFormik.values.marketer_code}
                 />
               </Grid>
-              <Grid item xs={12} sm={6} md={4}>
-                <CustomTextFieldWithFormik
-                  labelColor={alpha(theme.palette.neutral[1000], 0.8)}
-                  placeholder={t("e.g. Ashanti, Greater Accra")}
-                  name="region"
-                  label={t("Region / District (Optional)")}
-                  touched={RestaurantJoinFormik.touched.region}
-                  errors={RestaurantJoinFormik.errors.region}
-                  fieldProps={RestaurantJoinFormik.getFieldProps("region")}
-                  onChangeHandler={(value) =>
-                    RestaurantJoinFormik.setFieldValue("region", value)
-                  }
-                  value={RestaurantJoinFormik.values.region}
-                />
-              </Grid>
+              <GhanaRegionDistrictFields
+                formik={RestaurantJoinFormik}
+                gridProps={{ xs: 12, sm: 6, md: 4 }}
+              />
               <Grid item xs={12} sm={6} md={4}>
                 <CustomTextFieldWithFormik
                   labelColor={alpha(theme.palette.neutral[1000], 0.8)}

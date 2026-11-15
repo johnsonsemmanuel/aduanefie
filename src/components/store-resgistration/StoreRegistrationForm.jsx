@@ -55,6 +55,8 @@ export const generateInitialValues = (languages, allData) => {
     farm_type: allData?.farm_type || "commercial",
     country: allData?.country || "Ghana",
     region: allData?.region || "",
+    district: allData?.district || "",
+    sub_district: allData?.sub_district || "",
     farm_size_acres: allData?.farm_size_acres || "",
     primary_crops: allData?.primary_crops || "",
     marketer_code: allData?.marketer_code || "",
