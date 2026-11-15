@@ -13,6 +13,7 @@ import {
   FALLBACK_TRADE_BLOCS,
   getWholesaleMarketHref,
 } from "components/trade/tradeData";
+import TradeRfqSection from "components/trade/TradeRfqSection";
 
 const TradeHub = ({ configData, metaData }) => {
   const { t } = useTranslation();
@@ -253,35 +254,8 @@ const TradeHub = ({ configData, metaData }) => {
               </Stack>
             </Box>
 
-            {/* Coming next */}
-            <Box
-              sx={{
-                mt: { xs: "28px", md: "44px" },
-                p: { xs: "20px", md: "28px" },
-                borderRadius: "20px",
-                bgcolor: "background.secondary",
-              }}
-            >
-              <Typography sx={{ fontSize: "18px", fontWeight: 700 }}>
-                {t("Coming next")}
-              </Typography>
-              <Box
-                component="ul"
-                sx={{
-                  m: 0,
-                  mt: "10px",
-                  pl: "20px",
-                  display: "grid",
-                  gap: "6px",
-                  color: "text.secondary",
-                  fontSize: "14px",
-                }}
-              >
-                <li>{t("Request-for-quote (RFQ) from multiple sellers")}</li>
-                <li>{t("Escrow-protected trade contracts and documents")}</li>
-                <li>{t("Logistics, inspection and sourcing support")}</li>
-              </Box>
-            </Box>
+            {/* Live Bulk RFQ & Supplier Quotes */}
+            <TradeRfqSection />
           </Box>
         </CustomContainer>
       </MainLayout>

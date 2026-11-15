@@ -41,6 +41,20 @@ const FooterMiddle = ({ configData, landingPageData }) => {
       landingPageData?.user_app_download_section?.download_user_app_links?.playstore_url_status,
   };
 
+  const marketLinks = configData?.footer_links?.markets || [
+    { label: "B2B Cross-Border Trade", href: "/trade", active: true },
+    { label: "Live Farming", href: "/live-farming", active: true },
+    { label: "Ghana Agro Index", href: "/market-prices", active: true },
+    { label: "Track Order", href: "/track-order", active: true },
+  ];
+
+  const partnerLinks = configData?.footer_links?.partners || [
+    { label: "Register Your Farm", href: "/store-registration", active: true, key: "restaurant_owner" },
+    { label: "Logistics Partner", href: "/deliveryman-registration", active: true, key: "delivery_man" },
+    { label: "About Us", href: "/about-us", active: true },
+    { label: "Help & Support", href: "/help-and-support", active: true },
+  ];
+
   return (
     <Box sx={{ width: "100%", maxWidth: "1312px", mx: "auto", px: 0 }}>
       {/* ── MOBILE LAYOUT ── */}
@@ -93,7 +107,7 @@ const FooterMiddle = ({ configData, landingPageData }) => {
         <HorizontalDivider />
 
         {/* Quick Links */}
-        <Stack gap="4px" alignItems="center" sx={{ width: "100%" }}>
+        <Stack gap="10px" alignItems="center" sx={{ width: "100%" }}>
           <Typography
             sx={{
               fontSize: "15px",
@@ -101,12 +115,24 @@ const FooterMiddle = ({ configData, landingPageData }) => {
               color: "neutral.1050",
               letterSpacing: "-0.3px",
               lineHeight: 1.2,
-              mb: "2px",
             }}
           >
-            {t("Quick Links")}
+            {t("Agro Markets")}
           </Typography>
-          <RouteLinks configData={configData} centered />
+          <RouteLinks configData={configData} links={marketLinks} centered />
+          <Typography
+            sx={{
+              fontSize: "15px",
+              fontWeight: 700,
+              color: "neutral.1050",
+              letterSpacing: "-0.3px",
+              lineHeight: 1.2,
+              mt: "4px",
+            }}
+          >
+            {t("Trade & Partners")}
+          </Typography>
+          <RouteLinks configData={configData} links={partnerLinks} centered />
         </Stack>
 
         <HorizontalDivider />
@@ -222,8 +248,8 @@ const FooterMiddle = ({ configData, landingPageData }) => {
 
         <VerticalDivider />
 
-        {/* Column 2: Quick Links */}
-        <Stack gap="6px" sx={{ flexShrink: 0, minWidth: "160px" }}>
+        {/* Column 2: Agro Markets */}
+        <Stack gap="6px" sx={{ flexShrink: 0, minWidth: "155px" }}>
           <Typography
             sx={{
               fontSize: "16px",
@@ -235,9 +261,29 @@ const FooterMiddle = ({ configData, landingPageData }) => {
               mb: "4px",
             }}
           >
-            {t("Quick Links")}
+            {t("Agro Markets")}
           </Typography>
-          <RouteLinks configData={configData} />
+          <RouteLinks configData={configData} links={marketLinks} />
+        </Stack>
+
+        <VerticalDivider />
+
+        {/* Column 3: Trade & Partners */}
+        <Stack gap="6px" sx={{ flexShrink: 0, minWidth: "155px" }}>
+          <Typography
+            sx={{
+              fontSize: "16px",
+              fontWeight: 700,
+              color: "neutral.1050",
+              letterSpacing: "-0.4px",
+              lineHeight: 1.2,
+              whiteSpace: "nowrap",
+              mb: "4px",
+            }}
+          >
+            {t("Trade & Partners")}
+          </Typography>
+          <RouteLinks configData={configData} links={partnerLinks} />
         </Stack>
 
         <VerticalDivider />
