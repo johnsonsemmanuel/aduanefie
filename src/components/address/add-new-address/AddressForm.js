@@ -463,7 +463,11 @@ const AddressForm = ({
               reset={t("Reset")}
               margin="8px"
               submit={
-                token
+                contactInfoOnly
+                  ? guestUserInfo || (token && editAddress?.contact_person_name)
+                    ? t("Update Contact Info")
+                    : t("Save Contact Info")
+                  : token
                   ? editAddress && editAddress?.address_type
                     ? t("Update Address")
                     : t("Add Address")

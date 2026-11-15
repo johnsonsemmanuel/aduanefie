@@ -154,7 +154,7 @@ export const BringChangeAmount = ({
                 color={theme.palette.neutral[600]}
                 fontWeight="400"
               >
-                {t("Insert amount if you need deliveryman to bring")}
+                {t("Insert amount if you need the rider to bring change")}
               </Typography>
             </Stack>
             <Stack>

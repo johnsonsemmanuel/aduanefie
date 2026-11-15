@@ -107,7 +107,6 @@ const DeliveryInfo = ({
   const handleCheckbox = (e) => {
     setCheck(e.target.checked);
   };
-  console.log({ zoneData });
   const handlePartialPayment = () => {
     return;
     // if (payableAmount > customerData?.data?.wallet_balance) {

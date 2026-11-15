@@ -72,7 +72,6 @@ const InstantDelivery = (props) => {
     }
     setScheduleOpen(true);
   };
-  console.log({ orderType });
 
   const handleScheduleClose = () => setScheduleOpen(false);
 

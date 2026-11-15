@@ -201,7 +201,6 @@ const CartContent = (props) => {
       return cartItem?.totalPrice;
     }
   };
-  console.log({ cartItem });
 
   return (
     <>

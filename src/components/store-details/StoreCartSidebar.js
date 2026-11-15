@@ -760,7 +760,6 @@ const StoreCartSidebar = ({
       ? cartList
       : [];
   const { configData } = useSelector((state) => state.configData);
-  console.log({ cartList, storeCartList, storeScopedCart });
 
   // Free delivery is set up per (zone, module) now, not a single admin-wide
   // setting — same lookup the header already fires (same react-query key,
@@ -1104,7 +1103,6 @@ const StoreCartSidebar = ({
       onError: onErrorResponse,
     });
   };
-  console.log("ddd", configData);
 
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
