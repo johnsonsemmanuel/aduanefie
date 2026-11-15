@@ -46,9 +46,10 @@ export const CustomPaper = styled(Paper)(({ theme }) => ({
   padding: "2rem",
   background: theme.palette.neutral[100],
   [theme.breakpoints.down("sm")]: {
-    padding: "1.25rem 1rem",
+    padding: "0.75rem 0.25rem",
     borderRadius: "0px",
     boxShadow: "none",
+    background: "transparent",
     // minWidth: "320px",
   },
 }));
@@ -275,7 +276,7 @@ export const ModuleSelection = ({
               <Typography variant="h6" textAlign="center">
                 {t(module_header)}
               </Typography>
-              <Grid container spacing={isXSmall ? 1.5 : 2} width="100%">
+              <Grid container spacing={isXSmall ? 1.25 : 2} sx={{ width: "100%", mx: 0 }}>
                 {modulesToShow &&
                   (modulesToShow?.length > 0 ? (
                     modulesToShow?.map((item, index) => {
@@ -284,6 +285,7 @@ export const ModuleSelection = ({
                           <CustomChildPaper
                             elevation={0}
                             sx={{
+                              p: { xs: "10px 8px", sm: "14px" },
                               borderRadius: "12px",
                               border: `1.5px solid ${
                                 isSelected?.module_type === item?.module_type &&
@@ -301,13 +303,13 @@ export const ModuleSelection = ({
                             <CustomStackFullWidth
                               alignItems="center"
                               justifyContent="center"
-                              spacing={1.25}
+                              spacing={0.75}
                             >
                               <CustomImageContainer
                                 src={item?.icon_full_url}
                                 alt="mobile"
-                                height={isXSmall ? "48px" : "100px"}
-                                width={isXSmall ? "48px" : "100px"}
+                                height={isXSmall ? "38px" : "88px"}
+                                width={isXSmall ? "38px" : "88px"}
                                 objectFit="contain"
                               />
                               <Typography

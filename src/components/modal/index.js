@@ -53,12 +53,17 @@ const CustomModal = (props) => {
         sx={{ zIndex: 1500 }}
         PaperProps={{
           sx: {
-            borderRadius: "16px 16px 0 0",
+            width: "calc(100% - 16px)",
+            maxWidth: "540px",
+            mx: "auto",
+            mb: "calc(8px + env(safe-area-inset-bottom))",
+            borderRadius: "18px",
             pt: 1,
-            pb: "calc(16px + env(safe-area-inset-bottom))",
+            px: { xs: 1.5, sm: 2 },
+            pb: 2,
             ...(disableContentOverflowClip
               ? { overflowY: "visible" }
-              : { maxHeight: "90vh", overflowY: "auto" }),
+              : { maxHeight: "85dvh", overflowY: "auto" }),
             ...(drawerHeight && { height: drawerHeight }),
           },
         }}

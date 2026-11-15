@@ -428,12 +428,11 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
               direction="row"
               alignItems="center"
               sx={{
-                pl: "14px",
-                pr: "8px",
+                px: "14px",
                 pt: "8px",
-                pb: "2px",
-                gap: "12px",
-                minHeight: "32px",
+                pb: "4px",
+                gap: "8px",
+                minHeight: "36px",
               }}
             >
               {/* Address column — title row + subtitle row */}
@@ -515,16 +514,16 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                   }
                   sx={{
                     flexShrink: 0,
-                    maxWidth: "145px",
-                    height: "32px",
-                    px: "10px",
+                    maxWidth: { xs: "112px", sm: "150px" },
+                    height: "30px",
+                    px: { xs: "8px", sm: "10px" },
                     borderRadius: "9999px",
                     bgcolor: theme.palette.background.paper,
                     border: `1px solid ${theme.palette.divider}`,
                     color: theme.palette.neutral[1050],
                     textTransform: "none",
                     gap: "4px",
-                    "& .MuiButton-endIcon": { ml: "2px", mr: "-2px" },
+                    "& .MuiButton-endIcon": { ml: "1px", mr: "-2px" },
                   }}
                 >
                   <SwapHorizIcon
