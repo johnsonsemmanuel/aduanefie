@@ -7,7 +7,7 @@ import IdentityInfo from "./IdentityInfo";
 import AccountInfo from "./AccountInfo";
 import DeliverymanFormWrapper from "./DeliverymanFormWrapper";
 import { useFormik } from "formik";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePostDeliveryManRegisterInfo } from "api-manage/hooks/react-query/deliveryman-registration/useRegisterDeliveryMan";
 import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
 import toast from "react-hot-toast";
@@ -22,6 +22,8 @@ import {
 import { objectToFormData } from "helper-functions/objectToFormData";
 import { FORM_TITLE } from "./constants";
 import useScrollToTop from "api-manage/hooks/custom-hooks/useScrollToTop";
+
+const FLEET_REG_DRAFT_KEY = "aduanefie_fleet_reg_draft_v1";
 
 const DeliveryManComponent = ({
   configData,
@@ -69,6 +71,9 @@ const DeliveryManComponent = ({
             toast.success(res.message, {
               id: res.message,
             });
+            try {
+              sessionStorage.removeItem(FLEET_REG_DRAFT_KEY);
+            } catch (e) {}
             helpers.resetForm();
             setImage("");
             setIdentityImage("");
@@ -81,11 +86,56 @@ const DeliveryManComponent = ({
       }
     },
   });
+  const fleetDraftLoadedRef = useRef(false);
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(FLEET_REG_DRAFT_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object") {
+          deliveryManFormik.setValues((prev) => ({
+            ...prev,
+            ...parsed,
+          }));
+        }
+      }
+    } catch (e) {}
+    fleetDraftLoadedRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    if (!fleetDraftLoadedRef.current) return;
+    try {
+      const v = deliveryManFormik.values;
+      const draftPayload = {
+        f_name: v.f_name,
+        l_name: v.l_name,
+        email: v.email,
+        earning: v.earning,
+        referral_code: v.referral_code,
+        zone_id: v.zone_id,
+        vehicle_id: v.vehicle_id,
+        delivery_scope: v.delivery_scope,
+        region: v.region,
+        district: v.district,
+        sub_district: v.sub_district,
+        payload_capacity_kg: v.payload_capacity_kg,
+        is_cold_chain: v.is_cold_chain,
+        identity_type: v.identity_type,
+        identity_number: v.identity_number,
+        phone: v.phone,
+      };
+      sessionStorage.setItem(FLEET_REG_DRAFT_KEY, JSON.stringify(draftPayload));
+    } catch (e) {}
+  }, [deliveryManFormik.values]);
   const handleFieldChange = (field, value) => {
     deliveryManFormik.setFieldValue(field, value);
   };
 
   const handleReset = () => {
+    try {
+      sessionStorage.removeItem(FLEET_REG_DRAFT_KEY);
+    } catch (e) {}
     deliveryManFormik.resetForm();
     setImage("");
     setIdentityImage("");

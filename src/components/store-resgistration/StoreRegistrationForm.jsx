@@ -29,6 +29,8 @@ import { ActonButtonsSection } from "components/deliveryman-registration/CustomS
 import BusinessTin from "components/store-resgistration/BusinessTin";
 import { shadows } from "@mui/system";
 
+const STORE_REG_DRAFT_KEY = "aduanefie_store_reg_draft_v1";
+
 export const generateInitialValues = (languages, allData) => {
   const initialValues = {
     restaurant_name: {},
@@ -111,6 +113,53 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
       } catch (err) { }
     },
   });
+  const storeDraftLoadedRef = useRef(false);
+  useEffect(() => {
+    try {
+      if (!allData || Object.keys(allData).length === 0) {
+        const raw = sessionStorage.getItem(STORE_REG_DRAFT_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === "object") {
+            RestaurantJoinFormik.setValues((prev) => ({
+              ...prev,
+              ...parsed,
+            }));
+          }
+        }
+      }
+    } catch (e) {}
+    storeDraftLoadedRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => {
+    if (!storeDraftLoadedRef.current) return;
+    try {
+      const v = RestaurantJoinFormik.values;
+      const draftPayload = {
+        restaurant_name: v.restaurant_name,
+        restaurant_address: v.restaurant_address,
+        min_delivery_time: v.min_delivery_time,
+        max_delivery_time: v.max_delivery_time,
+        delivery_time_type: v.delivery_time_type,
+        f_name: v.f_name,
+        l_name: v.l_name,
+        phone: v.phone,
+        email: v.email,
+        farm_type: v.farm_type,
+        country: v.country,
+        region: v.region,
+        district: v.district,
+        sub_district: v.sub_district,
+        farm_size_acres: v.farm_size_acres,
+        primary_crops: v.primary_crops,
+        marketer_code: v.marketer_code,
+        tin: v.tin,
+        tin_expire_date: v.tin_expire_date,
+      };
+      sessionStorage.setItem(STORE_REG_DRAFT_KEY, JSON.stringify(draftPayload));
+    } catch (e) {}
+  }, [RestaurantJoinFormik.values]);
   const { data, refetch } = useGetModuleByZone(
     RestaurantJoinFormik?.values?.zoneId
   );
@@ -151,6 +200,9 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
     }
   }, [router?.query?.ref, router?.query?.marketer_code]);
   const formSubmitOnSuccess = (values) => {
+    try {
+      sessionStorage.removeItem(STORE_REG_DRAFT_KEY);
+    } catch (e) {}
     setFormValues(values);
 
     dispatch(setActiveStep(1));
@@ -380,6 +432,9 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
   }, [configData?.default_location, zoneData?.data]);
 
   const handleReset = () => {
+    try {
+      sessionStorage.removeItem(STORE_REG_DRAFT_KEY);
+    } catch (e) {}
     setFile(null);
     setPreview(null);
     RestaurantJoinFormik.resetForm();
