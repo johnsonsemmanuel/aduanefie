@@ -42,6 +42,8 @@ const RouteLinks = (props) => {
         undefined,
         { shallow: true }
       );
+    } else if (href && (href.startsWith("http://") || href.startsWith("https://"))) {
+      window.location.href = href;
     } else {
       router.push(href, undefined, { shallow: true });
     }

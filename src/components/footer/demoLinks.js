@@ -15,6 +15,11 @@ export const RouteLinksData = [
     link: "/deliveryman-registration",
   },
   {
+    name: "Field Marketer Portal",
+    value: "marketer_portal",
+    link: "https://api.aduanefie.com/marketer-login",
+  },
+  {
     name: "Help & Support",
     value: "help-and-support",
     link: "/help-and-support",
