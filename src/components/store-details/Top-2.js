@@ -821,6 +821,27 @@ const Top2 = (props) => {
                       </Typography>
                     </Stack>
                   )}
+                  {(storeDetails?.region ||
+                    storeDetails?.district ||
+                    storeDetails?.farm_type) && (
+                    <Typography
+                      sx={{
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        color: "primary.main",
+                      }}
+                    >
+                      {[
+                        storeDetails?.region,
+                        storeDetails?.district,
+                        storeDetails?.farm_type
+                          ? `${String(storeDetails.farm_type).replace(/_/g, " ")} farm`
+                          : null,
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </Typography>
+                  )}
                 </Stack>
               </Stack>
 

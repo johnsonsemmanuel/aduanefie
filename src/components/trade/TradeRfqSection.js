@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import {
   Box,
   Button,
@@ -51,7 +52,32 @@ const INITIAL_FORM = {
 const TradeRfqSection = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const router = useRouter();
   const [form, setForm] = useState(INITIAL_FORM);
+
+  useEffect(() => {
+    if (!router?.isReady) return;
+    const qCommodity =
+      typeof router.query?.commodity === "string"
+        ? router.query.commodity.trim()
+        : "";
+    const qUnit =
+      typeof router.query?.unit === "string" ? router.query.unit.trim() : "";
+    if (qCommodity || qUnit) {
+      const unitMap = {
+        kg: "kg",
+        bag_50kg: "50 kg bag",
+        bag_100kg: "100 kg bag",
+        crate: "crate",
+        ton: "metric ton",
+      };
+      setForm((prev) => ({
+        ...prev,
+        ...(qCommodity ? { commodity: qCommodity } : {}),
+        ...(qUnit ? { unit: unitMap[qUnit] || qUnit } : {}),
+      }));
+    }
+  }, [router?.isReady, router?.query?.commodity, router?.query?.unit]);
   const [quoteModalRfq, setQuoteModalRfq] = useState(null);
   const [quoteForm, setQuoteForm] = useState({
     supplier_name: "",

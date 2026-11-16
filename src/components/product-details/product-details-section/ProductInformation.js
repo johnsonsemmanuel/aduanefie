@@ -814,9 +814,9 @@ const ProductInformation = ({
                   variant="outlined"
                   onClick={() =>
                     router.push(
-                      `/b2b-rfq?commodity=${encodeURIComponent(
+                      `/trade?commodity=${encodeURIComponent(
                         item?.name || ""
-                      )}&unit=${encodeURIComponent(item?.agro_unit || "")}`
+                      )}&unit=${encodeURIComponent(item?.agro_unit || "")}#rfq`
                     )
                   }
                   sx={{ cursor: "pointer", fontWeight: 600 }}

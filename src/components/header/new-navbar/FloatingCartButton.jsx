@@ -19,6 +19,8 @@ const ALLOWED_PATHNAMES = new Set([
   "/home/wishlist",
   "/home/[...slug]", // covers /home/offers, /home/free-delivery, /home/top-rated, /home/nearby
   "/home/category/[slug]", // /home/category/...
+  "/store/[id]",
+  "/all-stores",
 ]);
 
 /** Abbreviate a number with currency symbol — e.g. 1200 → "$ 1.2k" */
@@ -85,6 +87,18 @@ const FloatingCartButton = () => {
     return cartItems.reduce((s, ci) => s + lineTotal(ci), 0);
   }, [cartGroups, cartItems]);
 
+  const totalWeightKg = useMemo(
+    () =>
+      cartItems.reduce(
+        (sum, ci) =>
+          sum +
+          Number(ci?.unit_weight_kg ?? ci?.item?.unit_weight_kg ?? 0) *
+            Number(ci?.quantity ?? 1),
+        0
+      ),
+    [cartItems]
+  );
+
   if (!itemCount || !isAllowedModule || !isAllowedPage) return null;
 
   return (
@@ -95,10 +109,14 @@ const FloatingCartButton = () => {
         aria-label={t("Cart")}
         sx={{
           position: "fixed",
-          top: "215px",
+          top: { xs: "auto", md: "215px" },
+          bottom: {
+            xs: router.pathname === "/store/[id]" ? "16px" : "74px",
+            md: "auto",
+          },
           insetInlineEnd: 0,
           zIndex: (th) => th.zIndex.appBar - 1,
-          display: { xs: "none", md: "flex" },
+          display: "flex",
           flexDirection: "column",
           alignItems: "stretch",
           width: "80px",
@@ -190,6 +208,9 @@ const FloatingCartButton = () => {
               : `${itemCount > 99 ? "99+" : itemCount} ${
                   itemCount > 1 ? t("items") : t("item")
                 }`}
+            {totalWeightKg > 0
+              ? ` · ${totalWeightKg.toFixed(0)}kg`
+              : ""}
           </Typography>
         </Box>
       </Box>
