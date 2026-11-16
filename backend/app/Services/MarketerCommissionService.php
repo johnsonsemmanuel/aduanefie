@@ -586,7 +586,7 @@ class MarketerCommissionService
             'stores' => $storeCount,
             'verified_stores' => $verifiedStoreCount,
             'onboarding_bounty_rate' => $bountyRate,
-            'onboarding_bounty_earned' => round($storeCount * $bountyRate, 2),
+            'onboarding_bounty_earned' => round($verifiedStoreCount * $bountyRate, 2),
             'verified_bounty_earned' => round($verifiedStoreCount * $bountyRate, 2),
             'total_sales' => round($totalSales, 2),
             'delivered_orders_count' => $deliveredOrdersCount,

@@ -183,7 +183,7 @@
                                 </td>
                                 <td>
                                     <strong>{{ $s['stores'] }}</strong> total
-                                    <div class="text-muted small">{{ $s['verified_stores'] ?? 0 }} verified</div>
+                                    <div class="text-muted small">{{ $s['verified_stores'] ?? 0 }} verified · {{ (int) $s['stores'] - (int) ($s['verified_stores'] ?? 0) }} awaiting</div>
                                 </td>
                                 <td>
                                     <span class="font-weight-600">{{ number_format($s['onboarding_bounty_earned'] ?? 0, 2) }} {{ $s['currency'] }}</span>

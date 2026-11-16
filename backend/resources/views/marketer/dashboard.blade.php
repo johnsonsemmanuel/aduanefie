@@ -29,12 +29,12 @@
             <div class="stat">
                 <div class="label">Farmers Onboarded</div>
                 <div class="value">{{ $summary['stores'] }}</div>
-                <div class="small muted">{{ $summary['verified_stores'] ?? 0 }} verified live</div>
+                <div class="small muted">{{ $summary['verified_stores'] ?? 0 }} verified live · {{ (int) $summary['stores'] - (int) ($summary['verified_stores'] ?? 0) }} awaiting verification</div>
             </div>
             <div class="stat">
                 <div class="label">Onboarding Bounty</div>
                 <div class="value">{{ number_format($summary['onboarding_bounty_earned'] ?? 0, 2) }} {{ $summary['currency'] }}</div>
-                <div class="small muted">@ {{ number_format($summary['onboarding_bounty_rate'] ?? 25, 2) }} {{ $summary['currency'] }} / farmer</div>
+                <div class="small muted">@ {{ number_format($summary['onboarding_bounty_rate'] ?? 25, 2) }} {{ $summary['currency'] }} / farmer · {{ number_format(((int) $summary['stores'] - (int) ($summary['verified_stores'] ?? 0)) * (float) ($summary['onboarding_bounty_rate'] ?? 25), 2) }} {{ $summary['currency'] }} pending verification</div>
             </div>
             <div class="stat">
                 <div class="label">Total Farmer Sales</div>
