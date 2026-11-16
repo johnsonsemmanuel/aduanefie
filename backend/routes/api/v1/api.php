@@ -449,8 +449,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
                 Route::put('offline-payment-update', 'OrderController@update_offline_payment_info');
                 Route::get('payment-failed', 'CustomerController@orderPaymentFailed');
                 Route::post('get-Tax', 'OrderController@get_tax');
+                Route::post('checkout-summary', 'OrderController@checkout_summary');
+                Route::post('get-surge-price', 'OrderController@get_surge_price');
 
             });
+            Route::post('order-again/reorder', 'OrderController@reorder');
             Route::get('pro-customer/active-offer', 'PromotionController@pro_customer_active_offer');
             Route::get('reels/list', 'CustomerController@reels_list');
 
@@ -474,6 +477,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
 
         Route::group(['prefix' => 'items'], function () {
             Route::get('latest', 'ItemController@get_simple_items');
+            Route::get('live-farming', 'ItemController@get_live_farming_items');
             Route::get('new-arrival', 'ItemController@get_new_products');
             Route::get('popular', 'ItemController@get_popular_products');
             Route::get('most-reviewed', 'ItemController@get_most_reviewed_products');
@@ -548,6 +552,24 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
         Route::get('happy-hour/stores', 'PromotionController@happy_hour_stores');
         Route::get('item/farming-list', 'ItemController@farming_list');
         Route::get('delivery-charge/coverage-list', 'PromotionController@delivery_charge_coverage_list');
+        Route::get('parcel-weight', 'ParcelCategoryController@parcel_weight');
+        Route::get('parcel-dimension', 'ParcelCategoryController@parcel_dimension');
+        Route::get('trending-searches', 'PromotionController@trending_searches');
+        Route::get('stores/exclusive-deals', 'PromotionController@exclusive_deals_stores');
+
+        Route::group(['prefix' => 'trade'], function () {
+            Route::get('blocs', 'TradeController@blocs');
+            Route::get('corridors', 'TradeController@corridors');
+            Route::post('customs-duties/calculate', 'TradeController@customs_duties_calculate');
+            Route::get('sourcing', 'TradeController@sourcing');
+            Route::get('requests', 'TradeController@requests');
+            Route::post('rfqs', 'TradeController@store_rfq');
+            Route::post('rfqs/{id}/quotes', 'TradeController@store_quote');
+            Route::get('agro-prices', 'TradeController@agro_prices');
+            Route::get('fx-rates', 'TradeController@fx_rates');
+            Route::post('orders/{id}/esperworks-invoice', 'TradeController@esperworks_invoice');
+            Route::post('orders/{id}/esperworks-contract', 'TradeController@esperworks_contract');
+        });
 
         Route::group(['prefix' => 'common-condition'], function () {
             Route::get('/', 'CommonConditionController@get_conditions');

@@ -29,6 +29,8 @@ class Item extends Model
         'reviews_count' => 'integer',
         'recommended' => 'integer',
         'maximum_cart_quantity' => 'integer',
+        'moq' => 'integer',
+        'bulk_pricing_tiers' => 'array',
         'organic' => 'integer',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -63,6 +65,8 @@ class Item extends Model
         'pre_order_enabled'=>'boolean',
         'pre_order_limit'=>'integer',
         'plot_id'=>'integer',
+        'is_insured'=>'boolean',
+        'insurance_type'=>'string',
     ];
 
     protected $appends = ['unit_type','image_full_url','images_full_url'];
