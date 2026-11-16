@@ -18,6 +18,12 @@
                     @csrf
                     <button type="submit" class="btn btn--primary">Run accrual now</button>
                 </form>
+                <a href="{{ route('admin.marketer.commissions.export', array_filter([
+                    'marketer_id' => $marketerId ?: null,
+                    'status' => $status ?: null,
+                    'store_id' => $storeId ?: null,
+                    'search' => $search ?: null,
+                ])) }}" class="btn btn--secondary">Export CSV</a>
             </div>
         </div>
     </div>

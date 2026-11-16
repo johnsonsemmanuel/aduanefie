@@ -53,11 +53,13 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
         Route::group(['prefix' => 'marketer', 'as' => 'marketer.'], function () {
             Route::get('/', 'MarketerController@index')->name('index');
             Route::get('commissions', 'MarketerController@commissions')->name('commissions');
+            Route::get('commissions/export', 'MarketerController@commissionsExport')->name('commissions.export');
             Route::get('payouts', 'MarketerController@payouts')->name('payouts');
             Route::get('payouts/{id}', 'MarketerController@showPayout')->name('payouts.show')->where('id', '[0-9]+');
             Route::post('payouts/{id}/approve', 'MarketerController@approvePayout')->name('payouts.approve');
             Route::post('payouts/{id}/reject', 'MarketerController@rejectPayout')->name('payouts.reject');
             Route::post('payouts/{id}/paid', 'MarketerController@markPayoutPaid')->name('payouts.paid');
+            Route::post('payouts/bulk', 'MarketerController@bulkPayout')->name('payouts.bulk');
             Route::get('stores', 'MarketerController@stores')->name('stores');
             Route::post('stores/{id}/assign', 'MarketerController@assignStore')->name('stores.assign');
             Route::post('rate/{id}', 'MarketerController@updateRate')->name('rate');

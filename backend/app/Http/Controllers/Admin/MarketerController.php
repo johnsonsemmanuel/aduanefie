@@ -97,7 +97,71 @@ class MarketerController extends Controller
         $storeId = $request->query('store_id');
         $search = trim((string) $request->query('search'));
 
-        $items = MarketerCommission::query()
+        $items = $this->commissionsQuery($marketerId, $status, $storeId, $search)
+            ->paginate(50)
+            ->withQueryString();
+
+        $marketers = Admin::where('role_id', config('marketer.role_id', 5))->orderBy('f_name')->get(['id', 'f_name', 'l_name', 'email']);
+        $currency = $this->commissions->currency();
+
+        return view('admin-views.marketer.commissions', compact('items', 'marketers', 'marketerId', 'status', 'storeId', 'search', 'currency'));
+    }
+
+    public function commissionsExport(Request $request)
+    {
+        $this->authorizeSuperAdmin();
+
+        $marketerId = $request->query('marketer_id');
+        $status = $request->query('status');
+        $storeId = $request->query('store_id');
+        $search = trim((string) $request->query('search'));
+
+        $items = $this->commissionsQuery($marketerId, $status, $storeId, $search)
+            ->get();
+
+        $filename = 'marketer-commissions-' . now()->format('Ymd-His') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        return new \Symfony\Component\HttpFoundation\StreamedResponse(function () use ($items) {
+            $handle = fopen('php://output', 'w');
+            fputcsv($handle, [
+                'Order ID', 'Store', 'Marketer', 'Marketer Email', 'Delivered At',
+                'Platform Commission', 'Rate (%)', 'Marketer Amount', 'Currency',
+                'Eligible From', 'Status', 'Payout ID',
+            ]);
+
+            foreach ($items as $c) {
+                fputcsv($handle, [
+                    $c->order_id,
+                    $c->store?->name ?? '—',
+                    $c->marketer?->f_name . ' ' . $c->marketer?->l_name,
+                    $c->marketer?->email ?? '—',
+                    $c->order?->delivered ?? '—',
+                    number_format($c->base_amount, 2),
+                    rtrim(rtrim(number_format($c->rate, 3), '0'), '.'),
+                    number_format($c->amount, 2),
+                    $c->currency,
+                    $c->eligible_at ?? 'on hold',
+                    str_replace('_', ' ', $c->status),
+                    $c->payout_id ?? '—',
+                ]);
+            }
+
+            fclose($handle);
+        }, 200, $headers);
+    }
+
+    /**
+     * Shared query builder for commissions listing and export.
+     * Returns the Eloquent builder (not paginated) so callers can paginate or ->get().
+     */
+    private function commissionsQuery(?string $marketerId, ?string $status, ?string $storeId, string $search)
+    {
+        return MarketerCommission::query()
             ->with(['marketer', 'store', 'order'])
             ->when($marketerId, fn ($q) => $q->where('marketer_id', $marketerId))
             ->when($storeId, fn ($q) => $q->where('store_id', $storeId))
@@ -115,14 +179,7 @@ class MarketerController extends Controller
                         ->orWhereHas('marketer', fn ($m) => $m->where('email', 'like', "%$search%")->orWhere('f_name', 'like', "%$search%"));
                 });
             })
-            ->latest('id')
-            ->paginate(50)
-            ->withQueryString();
-
-        $marketers = Admin::where('role_id', config('marketer.role_id', 5))->orderBy('f_name')->get(['id', 'f_name', 'l_name', 'email']);
-        $currency = $this->commissions->currency();
-
-        return view('admin-views.marketer.commissions', compact('items', 'marketers', 'marketerId', 'status', 'storeId', 'search', 'currency'));
+            ->latest('id');
     }
 
     public function payouts(Request $request)
@@ -235,6 +292,90 @@ class MarketerController extends Controller
         }
 
         return redirect()->route('admin.marketer.payouts.show', $payout->id);
+    }
+
+    public function bulkPayout(Request $request)
+    {
+        $this->authorizeSuperAdmin();
+
+        $data = $request->validate([
+            'commission_ids' => 'required|array|min:1',
+            'commission_ids.*' => 'required|integer|exists:marketer_commissions,id',
+            'network' => 'required|string|max:50',
+            'account_name' => 'required|string|max:100',
+            'account_number' => 'required|string|max:50',
+            'country' => 'required|string|max:10',
+            'note' => 'nullable|string|max:500',
+        ]);
+
+        $this->validatePayoutRail($data);
+
+        $commissions = MarketerCommission::query()
+            ->whereIn('id', $data['commission_ids'])
+            ->where('status', MarketerCommission::STATUS_ELIGIBLE)
+            ->lockForUpdate()
+            ->get();
+
+        if ($commissions->isEmpty()) {
+            Toastr::error('No eligible commissions found for the selected IDs.');
+            return back();
+        }
+
+        $currencies = $commissions->pluck('currency')->unique();
+        if ($currencies->count() > 1) {
+            Toastr::error('Selected commissions span more than one currency. Select commissions from one currency only.');
+            return back();
+        }
+
+        $minimum = (float) config('marketer.min_payout', 0);
+        $total = round((float) $commissions->sum('amount'), 2);
+        if ($minimum > 0 && $total < $minimum) {
+            Toastr::error('The minimum payout is ' . number_format($minimum, 2) . ' ' . $currencies->first() . '.');
+            return back();
+        }
+
+        $grouped = $commissions->groupBy('marketer_id');
+        $created = 0;
+
+        foreach ($grouped as $marketerId => $comms) {
+            $marketer = Admin::findOrFail($marketerId);
+            $amount = round((float) $comms->sum('amount'), 2);
+
+            $payout = MarketerPayout::create([
+                'marketer_id' => $marketerId,
+                'amount' => $amount,
+                'currency' => $currencies->first(),
+                'method' => 'mobile_money',
+                'network' => $data['network'],
+                'account_name' => $data['account_name'],
+                'account_number' => $data['account_number'],
+                'country' => $data['country'],
+                'status' => MarketerPayout::STATUS_REQUESTED,
+                'requested_at' => now(),
+                'note' => $data['note'] ?? null,
+            ]);
+
+            MarketerCommission::whereIn('id', $comms->pluck('id'))
+                ->update([
+                    'payout_id' => $payout->id,
+                    'status' => MarketerCommission::STATUS_IN_PAYOUT,
+                    'updated_at' => now(),
+                ]);
+
+            $this->audit('payout.bulk_created', $payout, [], [
+                'commission_count' => $comms->count(),
+                'amount' => $amount,
+                'currency' => $currencies->first(),
+                'network' => $data['network'],
+                'country' => $data['country'],
+            ]);
+
+            $created++;
+        }
+
+        Toastr::success("Created $created payout request(s) for " . number_format($total, 2) . ' ' . $currencies->first() . '.');
+
+        return redirect()->route('admin.marketer.payouts');
     }
 
     public function updateRate(Request $request, $id)
@@ -655,5 +796,53 @@ class MarketerController extends Controller
             'ip_address' => request()->ip(),
             'user_agent' => request()->userAgent(),
         ]);
+    }
+
+    /**
+     * Validate that the network is supported for the country and that the
+     * account number matches the network's expected pattern.
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    private function validatePayoutRail(array $data): void
+    {
+        $country = strtoupper(trim((string) ($data['country'] ?? '')));
+        $network = strtoupper(trim((string) ($data['network'] ?? '')));
+        $account = preg_replace('/\D/', '', (string) ($data['account_number'] ?? ''));
+
+        $rails = config('payout.countries', []);
+        $countryConfig = $rails[$country] ?? null;
+
+        if (!$countryConfig) {
+            $validator = \Illuminate\Support\Facades\Validator::make(
+                ['country' => $data['country'] ?? ''],
+                ['country' => 'required|in:' . implode(',', array_keys($rails))],
+                ['country.in' => 'The selected country is not supported for payouts yet.']
+            );
+            throw new \Illuminate\Validation\ValidationException($validator);
+        }
+
+        $networks = $countryConfig['networks'];
+        if (!array_key_exists($network, $networks)) {
+            $validator = \Illuminate\Support\Facades\Validator::make(
+                ['network' => $network],
+                ['network' => 'required|in:' . implode(',', array_keys($networks))],
+                ['network.in' => 'That network is not supported in ' . $countryConfig['name'] . '.']
+            );
+            throw new \Illuminate\Validation\ValidationException($validator);
+        }
+
+        $pattern = $networks[$network]['pattern'] ?? null;
+        if ($pattern && !preg_match('#' . $pattern . '#', $account)) {
+            $validator = \Illuminate\Support\Facades\Validator::make(
+                ['account_number' => $data['account_number'] ?? ''],
+                ['account_number' => 'required|regex:' . $pattern],
+                [
+                    'account_number.regex' => 'The account number does not look like a valid '
+                        . $networks[$network]['label'] . ' number for ' . $countryConfig['name'] . '.',
+                ]
+            );
+            throw new \Illuminate\Validation\ValidationException($validator);
+        }
     }
 }
