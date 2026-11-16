@@ -159,6 +159,8 @@ class MarketerPortalController extends Controller
             'note' => 'nullable|string|max:500',
         ]);
 
+        $this->validatePayoutRail($data);
+
         try {
             $payout = $this->commissions->requestPayout($marketer, $data);
         } catch (RuntimeException $e) {
@@ -167,5 +169,53 @@ class MarketerPortalController extends Controller
 
         return redirect()->route('marketer.payouts')
             ->with('status', 'Payout request ' . $payout->id . ' submitted for approval.');
+    }
+
+    /**
+     * Validate that the network is supported for the country and that the
+     * account number matches the network's expected pattern.
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    private function validatePayoutRail(array $data): void
+    {
+        $country = strtoupper(trim((string) ($data['country'] ?? '')));
+        $network = strtoupper(trim((string) ($data['network'] ?? '')));
+        $account = preg_replace('/\D/', '', (string) ($data['account_number'] ?? ''));
+
+        $rails = config('payout.countries', []);
+        $countryConfig = $rails[$country] ?? null;
+
+        if (!$countryConfig) {
+            $validator = \Illuminate\Support\Facades\Validator::make(
+                ['country' => $data['country'] ?? ''],
+                ['country' => 'required|in:' . implode(',', array_keys($rails))],
+                ['country.in' => 'The selected country is not supported for payouts yet.']
+            );
+            throw new \Illuminate\Validation\ValidationException($validator);
+        }
+
+        $networks = $countryConfig['networks'];
+        if (!array_key_exists($network, $networks)) {
+            $validator = \Illuminate\Support\Facades\Validator::make(
+                ['network' => $network],
+                ['network' => 'required|in:' . implode(',', array_keys($networks))],
+                ['network.in' => 'That network is not supported in ' . $countryConfig['name'] . '.']
+            );
+            throw new \Illuminate\Validation\ValidationException($validator);
+        }
+
+        $pattern = $networks[$network]['pattern'] ?? null;
+        if ($pattern && !preg_match('#' . $pattern . '#', $account)) {
+            $validator = \Illuminate\Support\Facades\Validator::make(
+                ['account_number' => $data['account_number'] ?? ''],
+                ['account_number' => 'required|regex:' . $pattern],
+                [
+                    'account_number.regex' => 'The account number does not look like a valid '
+                        . $networks[$network]['label'] . ' number for ' . $countryConfig['name'] . '.',
+                ]
+            );
+            throw new \Illuminate\Validation\ValidationException($validator);
+        }
     }
 }
