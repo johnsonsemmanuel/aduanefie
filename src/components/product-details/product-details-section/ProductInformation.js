@@ -808,6 +808,20 @@ const ProductInformation = ({
                 {moq > 1 && (
                   <Chip size="small" variant="outlined" label={`${t("Min Order")}: ${moq}`} />
                 )}
+                <Chip
+                  size="small"
+                  color="primary"
+                  variant="outlined"
+                  onClick={() =>
+                    router.push(
+                      `/b2b-rfq?commodity=${encodeURIComponent(
+                        item?.name || ""
+                      )}&unit=${encodeURIComponent(item?.agro_unit || "")}`
+                    )
+                  }
+                  sx={{ cursor: "pointer", fontWeight: 600 }}
+                  label={t("Request Bulk Quote (RFQ)")}
+                />
               </Stack>
               {bulkTiers.length > 0 && (
                 <Stack direction="row" spacing={1} flexWrap="wrap">
