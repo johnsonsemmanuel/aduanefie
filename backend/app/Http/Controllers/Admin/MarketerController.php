@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\CentralLogics\SMS_module;
 use App\Models\Admin;
 use App\Models\AdminRole;
+use App\Models\MarketerAuditLog;
 use App\Models\MarketerCommission;
 use App\Models\MarketerPayout;
 use App\Models\Store;
@@ -175,6 +176,11 @@ class MarketerController extends Controller
         try {
             $this->commissions->approve($payout, Auth::guard('admin')->user());
             Toastr::success('Payout #' . $payout->id . ' approved. No money has moved yet.');
+            $this->audit('payout.approved', $payout, [], [
+                'status' => $payout->status,
+                'approved_by' => $payout->approved_by,
+                'approved_at' => $payout->approved_at?->toISOString(),
+            ]);
         } catch (RuntimeException $e) {
             Toastr::error($e->getMessage());
         }
@@ -192,6 +198,11 @@ class MarketerController extends Controller
         try {
             $this->commissions->reject($payout, Auth::guard('admin')->user(), $request->input('reason'));
             Toastr::success('Payout #' . $payout->id . ' rejected. Its commissions are requestable again.');
+            $this->audit('payout.rejected', $payout, [], [
+                'status' => $payout->status,
+                'rejection_reason' => $payout->rejection_reason,
+                'rejected_by' => Auth::guard('admin')->user()->id,
+            ]);
         } catch (RuntimeException $e) {
             Toastr::error($e->getMessage());
         }
@@ -214,6 +225,11 @@ class MarketerController extends Controller
         try {
             $this->commissions->markPaid($payout, Auth::guard('admin')->user(), $request->input('reference'));
             Toastr::success('Payout #' . $payout->id . ' recorded as paid.');
+            $this->audit('payout.paid', $payout, [], [
+                'status' => $payout->status,
+                'reference' => $payout->reference,
+                'paid_at' => $payout->paid_at?->toISOString(),
+            ]);
         } catch (RuntimeException $e) {
             Toastr::error($e->getMessage());
         }
@@ -234,6 +250,11 @@ class MarketerController extends Controller
             ->where('role_id', config('marketer.role_id', 5))
             ->firstOrFail();
 
+        $before = [
+            'marketer_commission_rate' => $marketer->marketer_commission_rate,
+            'onboarding_bounty_ghs' => $marketer->onboarding_bounty_ghs,
+        ];
+
         // Null means "use the configured default". Existing commission rows
         // keep the rate they were accrued at, so a change is not retroactive.
         $marketer->marketer_commission_rate = $data['marketer_commission_rate'] ?? null;
@@ -242,7 +263,13 @@ class MarketerController extends Controller
         }
         $marketer->save();
 
+        $after = [
+            'marketer_commission_rate' => $marketer->marketer_commission_rate,
+            'onboarding_bounty_ghs' => $marketer->onboarding_bounty_ghs,
+        ];
+
         Toastr::success('Commission rate & onboarding bounty updated.');
+        $this->audit('rate.updated', $marketer, $before, $after);
 
         return back();
     }
@@ -298,11 +325,18 @@ class MarketerController extends Controller
         }
 
         $store = Store::withoutGlobalScope(ZoneScope::class)->findOrFail($id);
+        $beforeMarketerId = $store->marketer_id;
         $store->assignMarketer($marketerId);
 
         Toastr::success($marketerId
             ? 'Store attributed. Commission accrues for orders delivered from now on.'
             : 'Marketer removed from the store.');
+
+        $this->audit('store.attributed', $store, [
+            'marketer_id' => $beforeMarketerId,
+        ], [
+            'marketer_id' => $store->marketer_id,
+        ]);
 
         return back();
     }
@@ -598,5 +632,28 @@ class MarketerController extends Controller
         if (!$admin || (int) $admin->role_id !== 1) {
             abort(403);
         }
+    }
+
+    /**
+     * Write an immutable audit log entry for a marketer programme action.
+     *
+     * @param  mixed  $subject  Eloquent model or null
+     * @param  array  $before   Previous values
+     * @param  array  $after    New values
+     */
+    private function audit(string $action, $subject = null, array $before = [], array $after = []): void
+    {
+        $admin = Auth::guard('admin')->user();
+
+        MarketerAuditLog::create([
+            'admin_id' => $admin?->id,
+            'action' => $action,
+            'subject_id' => $subject ? (int) $subject->id : null,
+            'subject_type' => $subject ? class_basename($subject) : null,
+            'before' => $before,
+            'after' => $after,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+        ]);
     }
 }
