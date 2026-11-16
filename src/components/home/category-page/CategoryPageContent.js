@@ -184,6 +184,9 @@ const CategoryPageContent = () => {
       filters?.rating,
       filters?.type,
       filters?.quick_action,
+      filters?.is_insured,
+      filters?.farming_status,
+      filters?.crop_grade,
     ].filter(Boolean).length;
     setAppliedFilterCount(count);
   };
@@ -242,7 +245,24 @@ const CategoryPageContent = () => {
     isReady && (isAllTab || isStoresTab),
   );
 
-  const items = itemsData?.pages?.flatMap((p) => p?.products ?? []) ?? [];
+  const rawItems = itemsData?.pages?.flatMap((p) => p?.products ?? []) ?? [];
+  const items = rawItems.filter((item) => {
+    if (appliedFilters?.is_insured && !item?.is_insured) return false;
+    if (
+      appliedFilters?.farming_status &&
+      (item?.effective_farming_status || item?.farming_status) !==
+        appliedFilters.farming_status
+    ) {
+      return false;
+    }
+    if (
+      appliedFilters?.crop_grade &&
+      item?.crop_grade !== appliedFilters.crop_grade
+    ) {
+      return false;
+    }
+    return true;
+  });
   const stores = storesData?.pages?.flatMap((p) => p?.stores ?? []) ?? [];
 
   const itemsLabel =
@@ -254,13 +274,13 @@ const CategoryPageContent = () => {
       ? t("Items")
       : moduleType === "service"
       ? t("Services")
-      : t("Groceries");
+      : t("Produce & Supplies");
   const storesLabel =
     moduleType === "food"
       ? t("Restaurants")
       : moduleType === "service"
       ? t("Service Providers")
-      : t("Stores");
+      : t("Farms & Suppliers");
 
   const searchPlaceholder = t("Search Here...");
 

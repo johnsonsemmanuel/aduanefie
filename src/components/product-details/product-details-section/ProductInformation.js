@@ -815,8 +815,32 @@ const ProductInformation = ({
                     <Chip
                       key={idx}
                       size="small"
-                      variant="outlined"
+                      variant={
+                        Number(state.modalData?.[0]?.quantity) >=
+                        Number(tier.min_qty)
+                          ? "filled"
+                          : "outlined"
+                      }
                       color="primary"
+                      onClick={() => {
+                        const targetQty = Math.max(1, Number(tier.min_qty) || 1);
+                        if (state.modalData?.[0]) {
+                          const unitBase =
+                            Number(tier.unit_price) ||
+                            Number(state.modalData[0]?.price) ||
+                            0;
+                          dispatch({
+                            type: ACTION.setModalData,
+                            payload: {
+                              ...state.modalData[0],
+                              quantity: targetQty,
+                              totalPrice: unitBase * targetQty,
+                            },
+                          });
+                          toast.success(`${t("Quantity set to")} ${targetQty}`);
+                        }
+                      }}
+                      sx={{ cursor: "pointer" }}
                       label={`${tier.min_qty}+ ${t("units")}: ${getAmountWithSign(tier.unit_price)}`}
                     />
                   ))}
@@ -883,8 +907,21 @@ const ProductInformation = ({
                     </Typography>
                     <Typography sx={{ fontSize: { xs: "13px", md: "14px" }, fontWeight: 600, color: theme.palette.text.primary, flex: 1 }}>
                       {[
-                        item?.agro_unit,
+                        item?.agro_unit
+                          ? ({
+                              kg: "Kilogram (kg)",
+                              bag_50kg: "50kg Bag",
+                              bag_100kg: "100kg Bag",
+                              crate: "Crate",
+                              bunch: "Bunch",
+                              ton: "Metric Ton",
+                              box: "Export Box",
+                            }[item.agro_unit] || item.agro_unit)
+                          : null,
                         item?.unit_weight_kg ? `(~${item.unit_weight_kg} kg)` : null,
+                        Number(item?.unit_weight_kg) > 0 && Number(item?.price) > 0
+                          ? `· ${getAmountWithSign((Number(item.price) / Number(item.unit_weight_kg)).toFixed(2))}/kg`
+                          : null,
                       ]
                         .filter(Boolean)
                         .join(" ")}

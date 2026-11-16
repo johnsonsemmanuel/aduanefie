@@ -173,6 +173,43 @@ const OrderRow = ({ product, t }) => {
               </Typography>
             )}
           </Stack>
+          {(product?.item_details?.agro_unit ||
+            product?.item_details?.crop_grade ||
+            Number(product?.item_details?.unit_weight_kg) > 0) && (
+            <Typography
+              sx={{
+                fontSize: "12px",
+                fontWeight: 500,
+                color: theme.palette.text.secondary,
+              }}
+            >
+              {[
+                product?.item_details?.agro_unit
+                  ? ({
+                      kg: "kg",
+                      bag_50kg: "50kg Bag",
+                      bag_100kg: "100kg Bag",
+                      crate: "Crate",
+                      bunch: "Bunch",
+                      ton: "Ton",
+                      box: "Export Box",
+                    }[product.item_details.agro_unit] ||
+                    product.item_details.agro_unit)
+                  : null,
+                product?.item_details?.crop_grade,
+                Number(product?.item_details?.unit_weight_kg) > 0
+                  ? `${(
+                      Number(product.item_details.unit_weight_kg) *
+                      Number(product?.quantity || 1)
+                    )
+                      .toFixed(1)
+                      .replace(/\.0$/, "")} kg total`
+                  : null,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
+            </Typography>
+          )}
           {variationText && (
             <Typography
               sx={{ fontSize: "12px", color: theme.palette.text.secondary }}
