@@ -58,6 +58,19 @@ Route::post('admin-mfa/setup', 'AdminMfaController@confirmSetup')
     ->middleware('throttle:admin-mfa');
 Route::get('admin-mfa/recovery-codes', 'AdminMfaController@recoveryCodes')->name('admin.mfa.recovery-codes');
 
+// Second factor for the vendor panel (store login). Same pattern as admin
+// MFA but on the vendor guard; routes live under /vendor-mfa so the PortalScope
+// middleware can deny them on non-vendor hosts.
+Route::get('vendor-mfa', 'VendorMfaController@showChallenge')->name('vendor.mfa.challenge');
+Route::post('vendor-mfa', 'VendorMfaController@verify')
+    ->name('vendor.mfa.verify')
+    ->middleware('throttle:admin-mfa');
+Route::get('vendor-mfa/setup', 'VendorMfaController@showSetup')->name('vendor.mfa.setup');
+Route::post('vendor-mfa/setup', 'VendorMfaController@confirmSetup')
+    ->name('vendor.mfa.setup.submit')
+    ->middleware('throttle:admin-mfa');
+Route::get('vendor-mfa/recovery-codes', 'VendorMfaController@recoveryCodes')->name('vendor.mfa.recovery-codes');
+
 // Rider portal on logistics.aduanefie.com. Login is phone + password, matching
 // the mobile API. Status updates are intentionally absent: see
 // RiderDashboardController for why.
