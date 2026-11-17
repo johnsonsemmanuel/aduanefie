@@ -1,3 +1,5 @@
+<?php
+
 use App\Models\Item;
 use App\Models\Order;
 use App\Models\OrderDetail;
@@ -989,6 +991,8 @@ class FarmerController extends Controller
                 ];
             });
 
+        return response()->json([
+            'items' => $items,
             'total' => $items->count(),
         ], 200);
     }
