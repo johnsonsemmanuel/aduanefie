@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Http\Controllers\Api\V1\Vendor;
+
 use App\Models\Item;
 use App\Models\Order;
 use App\Models\OrderDetail;
