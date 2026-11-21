@@ -216,6 +216,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
                 Route::get('{id}/items', 'FarmerController@plot_items');
             });
 
+            // Aggregation hubs
+            Route::group(['prefix' => 'aggregation-hubs'], function () {
+                Route::get('/', 'FarmerController@aggregation_hubs');
+                Route::post('/', 'FarmerController@create_aggregation_hub');
+                Route::patch('{id}', 'FarmerController@update_aggregation_hub');
+                Route::delete('{id}', 'FarmerController@delete_aggregation_hub');
+            });
+        });
+
             // Agro-service booking
             Route::group(['prefix' => 'services'], function () {
                 Route::get('categories', 'FarmerController@service_categories');

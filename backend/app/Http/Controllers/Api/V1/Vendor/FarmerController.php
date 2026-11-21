@@ -11,6 +11,7 @@ use App\Models\GrowthUpdate;
 use App\Models\CustomerProductSubscription;
 use App\Models\PestReport;
 use App\Models\FarmPlot;
+use App\Models\AggregationHub;
 use Modules\Service\Entities\Service;
 use Modules\Service\Entities\ServiceBooking;
 use Illuminate\Http\Request;
@@ -1266,6 +1267,219 @@ class FarmerController extends Controller
         return response()->json([
             'message' => translate('messages.booking_cancelled'),
             'booking' => $booking,
+        ], 200);
+    }
+
+    /**
+     * List aggregation hubs for the vendor's store
+     */
+    public function aggregation_hubs(Request $request)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        if (!$store) {
+            return response()->json([
+                'errors' => [['code' => 'no_store', 'message' => translate('messages.no_store_found')]]
+            ], 404);
+        }
+
+        $status = $request->query('status', 'all');
+        $limit = $request->query('limit', 25);
+        $offset = $request->query('offset', 1);
+
+        $query = AggregationHub::where('store_id', $store->id);
+
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $total = $query->count();
+        $hubs = $query->latest()->offset(($offset - 1) * $limit)
+            ->limit($limit)
+            ->get()
+            ->map(function ($hub) {
+                return [
+                    'id' => $hub->id,
+                    'hub_code' => $hub->hub_code,
+                    'name' => $hub->name,
+                    'address' => $hub->address,
+                    'city' => $hub->city,
+                    'region' => $hub->region,
+                    'country_code' => $hub->country_code,
+                    'latitude' => $hub->latitude,
+                    'longitude' => $hub->longitude,
+                    'phone' => $hub->phone,
+                    'contact_person' => $hub->contact_person,
+                    'capacity_kg' => $hub->capacity_kg,
+                    'current_utilization_kg' => $hub->current_utilization_kg,
+                    'available_capacity_kg' => $hub->available_capacity_kg,
+                    'utilization_percent' => $hub->utilization_percent,
+                    'status' => $hub->status,
+                    'status_label' => $hub->status_label,
+                    'services' => $hub->services,
+                    'notes' => $hub->notes,
+                ];
+            });
+
+        return response()->json([
+            'hubs' => $hubs,
+            'total' => $total,
+            'limit' => $limit,
+            'offset' => $offset,
+        ], 200);
+    }
+
+    /**
+     * Create a new aggregation hub
+     */
+    public function create_aggregation_hub(Request $request)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        if (!$store) {
+            return response()->json([
+                'errors' => [['code' => 'no_store', 'message' => translate('messages.no_store_found')]]
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'hub_code' => 'required|string|max:50|unique:aggregation_hubs,hub_code',
+            'address' => 'required|string|max:255',
+            'city' => 'required|string|max:100',
+            'region' => 'nullable|string|max:100',
+            'country_code' => 'nullable|string|max:3',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'phone' => 'nullable|string|max:40',
+            'contact_person' => 'nullable|string|max:255',
+            'capacity_kg' => 'nullable|numeric|min:0',
+            'services' => 'nullable|array',
+            'services.*' => 'string|in:cold_chain,sorting,grading,packaging,storage,drying',
+            'notes' => 'nullable|string|max:2000',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => Helpers::error_processor($validator)], 403);
+        }
+
+        $hub = AggregationHub::create([
+            'vendor_id' => $vendor->id,
+            'store_id' => $store->id,
+            'name' => $request->name,
+            'hub_code' => $request->hub_code,
+            'address' => $request->address,
+            'city' => $request->city,
+            'region' => $request->region,
+            'country_code' => $request->country_code ?? 'GH',
+            'latitude' => $request->latitude,
+            'longitude' => $request->longitude,
+            'phone' => $request->phone,
+            'contact_person' => $request->contact_person,
+            'capacity_kg' => $request->capacity_kg,
+            'current_utilization_kg' => 0,
+            'status' => 'active',
+            'services' => $request->services ?? [],
+            'notes' => $request->notes,
+        ]);
+
+        return response()->json([
+            'message' => translate('messages.hub_created'),
+            'hub' => [
+                'id' => $hub->id,
+                'hub_code' => $hub->hub_code,
+                'name' => $hub->name,
+                'size_acres' => $hub->size_acres,
+                'capacity_kg' => $hub->capacity_kg,
+                'status' => $hub->status,
+                'status_label' => $hub->status_label,
+            ],
+        ], 201);
+    }
+
+    /**
+     * Update an aggregation hub
+     */
+    public function update_aggregation_hub(Request $request, $id)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        $hub = AggregationHub::where('id', $id)
+            ->where('store_id', $store->id)
+            ->first();
+
+        if (!$hub) {
+            return response()->json([
+                'errors' => [['code' => 'hub_not_found', 'message' => translate('messages.hub_not_found')]]
+            ], 404);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|string|max:255',
+            'hub_code' => 'sometimes|string|max:50|unique:aggregation_hubs,hub_code,' . $hub->id,
+            'address' => 'sometimes|string|max:255',
+            'city' => 'sometimes|string|max:100',
+            'region' => 'sometimes|string|max:100',
+            'country_code' => 'sometimes|string|max:3',
+            'latitude' => 'nullable|numeric',
+            'longitude' => 'nullable|numeric',
+            'phone' => 'nullable|string|max:40',
+            'contact_person' => 'nullable|string|max:255',
+            'capacity_kg' => 'sometimes|numeric|min:0',
+            'services' => 'sometimes|array',
+            'services.*' => 'string|in:cold_chain,sorting,grading,packaging,storage,drying',
+            'notes' => 'sometimes|string|max:2000',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => Helpers::error_processor($validator)], 403);
+        }
+
+        $hub->update($request->only([
+            'name', 'hub_code', 'address', 'city', 'region', 'country_code',
+            'latitude', 'longitude', 'phone', 'contact_person',
+            'capacity_kg', 'services', 'notes',
+        ]));
+
+        return response()->json([
+            'message' => translate('messages.hub_updated'),
+            'hub' => [
+                'id' => $hub->id,
+                'hub_code' => $hub->hub_code,
+                'name' => $hub->name,
+                'size_acres' => $hub->size_acres,
+                'capacity_kg' => $hub->capacity_kg,
+                'status' => $hub->status,
+                'status_label' => $hub->status_label,
+            ],
+        ], 200);
+    }
+
+    /**
+     * Delete an aggregation hub
+     */
+    public function delete_aggregation_hub(Request $request, $id)
+    {
+        $vendor = $request['vendor'];
+        $store = $vendor->stores()->first();
+
+        $hub = AggregationHub::where('id', $id)
+            ->where('store_id', $store->id)
+            ->first();
+
+        if (!$hub) {
+            return response()->json([
+                'errors' => [['code' => 'hub_not_found', 'message' => translate('messages.hub_not_found')]]
+            ], 404);
+        }
+
+        $hub->delete();
+
+        return response()->json([
+            'message' => translate('messages.hub_deleted'),
         ], 200);
     }
 }
