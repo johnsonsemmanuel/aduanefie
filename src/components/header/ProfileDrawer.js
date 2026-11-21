@@ -17,6 +17,7 @@ const QUICK_EXPLORE_LINKS = [
   { label: "Group Buys", path: "/group-buys" },
   { label: "Live Farming", path: "/live-farming" },
   { label: "Regional Tours", path: "/regional-tours" },
+  { label: "Become a Marketer", path: "/become-a-marketer" },
   { label: "Market Prices", path: "/market-prices" },
   { label: "B2B Trade", path: "/trade" },
 ];

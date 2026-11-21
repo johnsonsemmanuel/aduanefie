@@ -464,6 +464,52 @@ const ProfileIntro = ({
         </Stack>
       )}
 
+      {/* Glanceable Marketplace Activity Hub */}
+      <Stack
+        direction="row"
+        gap={1}
+        sx={{
+          mt: { xs: 1.5, md: 2 },
+          px: { xs: "16px", md: 0 },
+          overflowX: "auto",
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": { display: "none" },
+        }}
+      >
+        {[
+          { label: t("My Orders"), path: "/profile?page=my-orders" },
+          { label: t("My Group Buys"), path: "/group-buys" },
+          { label: t("Live Farms"), path: "/live-farming" },
+          { label: t("Monthly Orders"), path: "/profile?page=monthly-cart-list" },
+          { label: t("Regional Tours"), path: "/regional-tours" },
+        ].map((action) => (
+          <Button
+            key={action.path}
+            size="small"
+            variant="outlined"
+            onClick={() => router.push(action.path)}
+            sx={{
+              flexShrink: 0,
+              whiteSpace: "nowrap",
+              borderRadius: "999px",
+              px: 1.75,
+              py: 0.6,
+              fontSize: "12px",
+              fontWeight: 600,
+              borderColor: theme.palette.divider,
+              color: theme.palette.primary.deep || theme.palette.text.primary,
+              bgcolor: theme.palette.background.paper,
+              "&:hover": {
+                borderColor: theme.palette.primary.main,
+                bgcolor: theme.palette.background.secondary,
+              },
+            }}
+          >
+            {action.label}
+          </Button>
+        ))}
+      </Stack>
+
       {/* Edit Profile Modal */}
       <CustomModal
         openModal={editOpen}
