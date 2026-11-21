@@ -327,6 +327,13 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
     "/service/all-providers",
     "/service/checkout",
     "/service/checkout/[slug]",
+    // These render CompactMobileHeader/SimpleMobileHeader in-page.
+    "/service/custom-service/create",
+    "/service/custom-service/details/[id]",
+    // Trade pages render SimpleMobileHeader; the navbar would be a second header.
+    "/trade",
+    "/trade/blocs",
+    "/trade/blocs/[slug]",
     "/campaigns",
     "/campaigns/[id]",
   ];

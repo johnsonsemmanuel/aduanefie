@@ -12,6 +12,7 @@ import MainLayout from "components/layout/MainLayout";
 import SEO from "components/seo";
 import { checkMaintenanceMode } from "utils/serverSidePropsHelper";
 import fetchWithTimeoutRetry from "utils/fetchWithTimeoutRetry";
+import CompactMobileHeader from "components/common/CompactMobileHeader";
 import StoreDetailsSkeleton from "components/common/skeletons/StoreDetailsSkeleton";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { saveModuleParam } from "utils/moduleParamManager";
@@ -83,6 +84,10 @@ const StorePage = ({ configData, providerDetails, distance }) => {
         configData={configData}
       />
       <MainLayout configData={configData}>
+        <CompactMobileHeader
+          title={providerDetails?.name || "Provider Details"}
+          backHref="/service/all-providers"
+        />
         <ProviderDetails
           providerDetails={providerDetails}
           configData={configData}

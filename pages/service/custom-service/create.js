@@ -9,6 +9,7 @@ import { useGetConfigData } from "../../../src/api-manage/hooks/useGetConfigData
 import { setConfigData } from "../../../src/redux/slices/configData";
 import { getToken } from "../../../src/helper-functions/getToken";
 import { getCurrentModuleType } from "../../../src/helper-functions/getCurrentModuleType";
+import CompactMobileHeader from "components/common/CompactMobileHeader";
 import CreateCustomService from "components/home/module-wise-components/service/components/custom-service/create";
 
 const CreateCustomServicePage = () => {
@@ -53,6 +54,7 @@ const CreateCustomServicePage = () => {
         configData={configData}
       />
       <MainLayout configData={configData} landingPageData={landingPageData}>
+        <CompactMobileHeader title="Create Custom Service" />
         <NoSsr>
           <CreateCustomService configData={configData} />
         </NoSsr>

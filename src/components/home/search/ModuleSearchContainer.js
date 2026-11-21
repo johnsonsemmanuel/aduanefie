@@ -27,6 +27,7 @@ import ModuleSearchResult from "./ModuleSearchResult";
 import MobileSearchPageBar from "components/header/new-navbar/MobileSearchPageBar";
 import ServiceSearchBanner from "../module-wise-components/service/components/global/ServiceSearchBanner";
 import { getServiceSections } from "../module-wise-components/service/serviceSectionsConfig";
+import { DESKTOP_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 
 const BANNER_MAP = {
   [ModuleTypes.FOOD]: FoodSearchBanner,
@@ -217,7 +218,12 @@ const ModuleSearchContainer = ({
       <ModuleHomeSidebarLayout
         overviewContent={
           <>
-            <Box sx={{ display: { xs: "block", md: "none" } }}>
+            <Box
+              sx={{
+                display: "block",
+                [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: { display: "none" },
+              }}
+            >
               <MobileSearchPageBar
                 searchQuery={searchQuery}
                 query={router.query}

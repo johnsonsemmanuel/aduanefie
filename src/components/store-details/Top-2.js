@@ -16,7 +16,6 @@ import {
   styled,
   Tooltip,
   Typography,
-  useMediaQuery,
   useTheme,
 } from "@mui/material";
 import Slider from "react-slick";
@@ -27,6 +26,7 @@ import React, { useEffect, useReducer, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import ModeSwitcherTrigger from "components/module-select/ModeSwitcherTrigger";
+import { DESKTOP_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 import { useDispatch, useSelector } from "react-redux";
 import { useAddStoreToWishlist } from "api-manage/hooks/react-query/wish-list/useAddStoreToWishLists";
 import { useWishListStoreDelete } from "api-manage/hooks/react-query/wish-list/useWishListStoreDelete";
@@ -234,7 +234,6 @@ const Top2 = (props) => {
   const [announcementExpanded, setAnnouncementExpanded] = useState(false);
   const [openAnnouncementModal, setOpenAnnouncementModal] = useState(false);
   const dispatchRedux = useDispatch();
-  const isSmall = useMediaQuery(theme.breakpoints.down("md"));
   const { t } = useTranslation();
   const router = useRouter();
   const { data: storeCouponData } = useGetStoreCouponList(storeDetails?.id);
@@ -659,7 +658,10 @@ const Top2 = (props) => {
       {/* Mobile-only condensed sticky header — appears when hero scrolls out */}
       <Box
         sx={{
-          display: { xs: "block", md: "none" },
+          display: "block",
+          [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
+            display: "none",
+          },
           position: "fixed",
           top: 0,
           left: 0,

@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { useGetConfigData } from "../../../../src/api-manage/hooks/useGetConfigData";
 import { setConfigData } from "../../../../src/redux/slices/configData";
 import { getToken } from "../../../../src/helper-functions/getToken";
+import CompactMobileHeader from "components/common/CompactMobileHeader";
 import CustomServiceDetails from "components/home/module-wise-components/service/components/custom-service/details";
 import PushNotificationLayout from "components/PushNotificationLayout";
 
@@ -48,6 +49,7 @@ const CustomServiceDetailsPage = () => {
         configData={configData}
       />
       <MainLayout configData={configData} landingPageData={landingPageData}>
+        <CompactMobileHeader title="Custom Service Details" />
         <NoSsr>
           <PushNotificationLayout pathName="profile">
             <CustomServiceDetails configData={configData} serviceId={id} />

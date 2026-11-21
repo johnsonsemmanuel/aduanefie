@@ -21,6 +21,7 @@ import { setConfigData } from "redux/slices/configData";
 import { useGetConfigData } from "../../src/api-manage/hooks/useGetConfigData";
 import useGetDistance from "../../src/api-manage/hooks/react-query/google-api/useGetDistance";
 import ModeSwitcherTrigger from "components/module-select/ModeSwitcherTrigger";
+import { DESKTOP_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 
 const CheckoutMobileHeader = () => {
   const router = useRouter();
@@ -29,7 +30,10 @@ const CheckoutMobileHeader = () => {
   return (
     <Box
       sx={{
-        display: { xs: "block", md: "none" },
+        display: "block",
+        [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
+          display: "none",
+        },
         position: "sticky",
         top: 0,
         zIndex: theme.zIndex.appBar,

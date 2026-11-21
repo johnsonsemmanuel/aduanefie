@@ -12,6 +12,7 @@ import { getToken } from "helper-functions/getToken";
 import { t } from "i18next";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { MOBILE_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setWalletAmount } from "redux/slices/cart";
@@ -67,7 +68,7 @@ const PAGE_TO_MENU_KEY = {
 const UserInformation = ({ page, configData, orderId }) => {
   const theme = useTheme();
   useScrollToTop();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isMobile = useMediaQuery(MOBILE_LAYOUT_MEDIA_QUERY);
   const [accountDeleteStatus, setAccountDeleteStatus] = useState(true);
   const dispatch = useDispatch();
   const router = useRouter();

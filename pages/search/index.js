@@ -1,4 +1,5 @@
 import { Box, NoSsr } from "@mui/material";
+import CompactMobileHeader from "components/common/CompactMobileHeader";
 import SearchWithTitle from "components/home/SearchWithTitle";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { getToken } from "helper-functions/getToken";
@@ -68,7 +69,9 @@ const SearchPage = ({ configData, metaData }) => {
       />
       <MainLayout configData={configData}>
         <NoSsr>
-          <Box sx={{ mt: { xs: "60px", md: "34px" } }}>
+          {/* Sidebar modules use the fixed MobileSearchPageBar, which needs a
+              60px spacer. Non-sidebar modules now get an in-flow compact header. */}
+          <Box sx={{ mt: { xs: isModuleWithSidebar ? "60px" : 0, md: "34px" } }}>
             {isModuleWithSidebar ? (
               <ModuleSearchContainer
                 searchValue={router.query.search}
@@ -78,6 +81,7 @@ const SearchPage = ({ configData, metaData }) => {
               />
             ) : (
               <>
+                <CompactMobileHeader title="Search" />
                 <SearchWithTitle
                   currentTab={0}
                   zoneid={zoneid}

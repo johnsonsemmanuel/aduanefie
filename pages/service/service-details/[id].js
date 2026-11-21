@@ -12,6 +12,7 @@ import {
   service_campaign_details_api,
 } from "components/home/module-wise-components/service/service-api-manage/ApiRoutes";
 import fetchWithTimeoutRetry from "utils/fetchWithTimeoutRetry";
+import CompactMobileHeader from "components/common/CompactMobileHeader";
 import ProductDetailsSkeleton from "../../../src/components/common/skeletons/ProductDetailsSkeleton";
 
 const ServiceDetails = dynamic(
@@ -64,6 +65,14 @@ const Index = ({ configData, serviceDetailsData }) => {
         robotsMeta={serviceDetailsData?.meta_data}
       />
       <MainLayout configData={configData}>
+        <CompactMobileHeader
+          title={serviceDetailsData?.name || "Service Details"}
+          backHref={
+            serviceDetailsData?.store_id
+              ? `/service/provider/${serviceDetailsData.store_id}`
+              : "/service/all-providers"
+          }
+        />
         <CustomContainer>
           <ServiceDetails
             serviceDetailsData={mergedServiceDetailsData}

@@ -2,6 +2,7 @@ import { Box, IconButton, Stack, Typography, useTheme } from "@mui/material";
 import ModeSwitcherTrigger from "components/module-select/ModeSwitcherTrigger";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
+import { DESKTOP_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 
 /**
  * Mobile-only sticky header with back arrow (→ home) + title.
@@ -22,7 +23,10 @@ const SimpleMobileHeader = ({ title, action, sx, backHref }) => {
   return (
     <Box
       sx={{
-        display: { xs: "block", md: "none" },
+        display: "block",
+        [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
+          display: "none",
+        },
         position: "sticky",
         top: 0,
         zIndex: theme.zIndex.appBar,

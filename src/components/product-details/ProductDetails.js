@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addWishList, removeWishListItem, setWishList } from "redux/slices/wishList";
 import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
 import { not_logged_in_message } from "utils/toasterMessages";
+import { DESKTOP_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 import SinglePoster from "../home/module-wise-components/ecommerce/SinglePoster";
 import FeaturedStores from "../home/module-wise-components/pharmacy/featured-stores";
 import DetailsAndReviews from "./details-and-reviews/DetailsAndReviews";
@@ -184,7 +185,10 @@ const ProductDetails = ({ productDetailsData, configData }) => {
       {/* Mobile-only fixed top bar with back arrow + dynamic title */}
       <Box
         sx={{
-          display: { xs: "flex", md: "none" },
+          display: "flex",
+          [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
+            display: "none",
+          },
           position: "fixed",
           top: 0,
           left: 0,
@@ -250,8 +254,15 @@ const ProductDetails = ({ productDetailsData, configData }) => {
         <ModeSwitcherTrigger variant="compact" />
       </Box>
 
-      {/* Spacer so content isn't hidden under the fixed bar on mobile */}
-      <Box sx={{ display: { xs: "block", md: "none" }, height: 52 }} />
+      {/* Spacer so content isn't hidden under the fixed bar on mobile.
+          Must use the same 1180px cutoff as the bar above. */}
+      <Box
+        sx={{
+          display: "block",
+          [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: { display: "none" },
+          height: 52,
+        }}
+      />
 
       <CustomStackFullWidth
         sx={{

@@ -1,6 +1,7 @@
 import { Box, IconButton, InputBase, Stack, Typography, useTheme } from "@mui/material";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { DESKTOP_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 
 /**
  * Mobile-only sticky action bar for section pages.
@@ -21,7 +22,10 @@ const SectionMobileActionBar = ({
   return (
     <Box
       sx={{
-        display: { xs: "flex", md: "none" },
+        display: "flex",
+        [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
+          display: "none",
+        },
         position: "sticky",
         top: "56px",
         zIndex: 9,

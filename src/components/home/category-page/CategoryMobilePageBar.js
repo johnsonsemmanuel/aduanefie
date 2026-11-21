@@ -9,6 +9,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
+import { DESKTOP_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 
 /**
  * Mobile-only sticky action row for the category page: context search + filter icon.
@@ -45,7 +46,10 @@ const CategoryMobilePageBar = ({
   return (
     <Box
       sx={{
-        display: { xs: "block", md: "none" },
+        display: "block",
+        [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
+          display: "none",
+        },
         position: "sticky",
         top: "60px", // sits just below MobileNavBar's section title bar
         zIndex: theme.zIndex.appBar - 1,
