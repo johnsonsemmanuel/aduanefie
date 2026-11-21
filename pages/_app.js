@@ -23,6 +23,9 @@ import useScrollToTop from "../src/api-manage/hooks/custom-hooks/useScrollToTop"
 import { useEffect } from "react";
 import ModuleChecker from "../src/components/module-select/ModuleChecker";
 import ProSubscriptionExpiredModal from "../src/components/pro-plan/ProSubscriptionExpiredModal";
+import ErrorBoundary from "../src/components/common/ErrorBoundary";
+import { setLogoutUser } from "redux/slices/profileInfo";
+import { clearAllCartData } from "redux/slices/cart";
 
 Router.events.on("routeChangeStart", nProgress.start);
 Router.events.on("routeChangeError", nProgress.done);
@@ -74,6 +77,18 @@ function MyApp(props) {
     }
   }, []);
 
+  // Sync Redux + React Query when MainApi clears an expired/revoked 401 token
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      store.dispatch(setLogoutUser(null));
+      store.dispatch(clearAllCartData());
+      queryClient.invalidateQueries();
+    };
+    window.addEventListener("aduanefie:session-expired", handleSessionExpired);
+    return () =>
+      window.removeEventListener("aduanefie:session-expired", handleSessionExpired);
+  }, []);
+
   return (
     <>
       {useScrollToTop()}
@@ -95,7 +110,9 @@ function MyApp(props) {
                       <Toaster position="top-center" containerStyle={{ zIndex: 99999 }} />
                       <ModuleChecker />
                       <ProSubscriptionExpiredModal />
-                      {getLayout(<Component {...pageProps} />)}
+                      <ErrorBoundary>
+                        {getLayout(<Component {...pageProps} />)}
+                      </ErrorBoundary>
                     </RTL>
                   </ThemeProvider>
                 )}

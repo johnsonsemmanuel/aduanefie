@@ -1,4 +1,5 @@
 import { Grid, Card, IconButton, Box } from "@mui/material";
+import { safeJsonParse } from "utils/safeJsonParse";
 import { CustomButtonPrimary } from "styled-components/CustomButtons.style";
 import { Stack } from "@mui/system";
 import { useFormik } from "formik";
@@ -391,7 +392,7 @@ const PercelDelivery = ({ configData }) => {
   let zoneid = undefined;
   if (typeof window !== "undefined") {
     zoneid = localStorage.getItem("zoneid");
-    currentLocation = JSON.parse(localStorage.getItem("currentLatLng"));
+    currentLocation = safeJsonParse(localStorage.getItem("currentLatLng"), {});
   }
   const formSubmitHandler = (values) => {
     if (!parcelCategories?.id) {

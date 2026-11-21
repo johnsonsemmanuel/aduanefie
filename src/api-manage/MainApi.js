@@ -1,4 +1,5 @@
 import axios from "axios";
+import { safeJsonParse } from "utils/safeJsonParse";
 // NEXT_PUBLIC_BASE_URL may or may not carry a trailing slash. Axios normalises
 // that when joining baseURL + path, but every server-side `${baseUrl}${path}`
 // template does not - it yields `host//api/v1/...`, which the API answers with
@@ -22,9 +23,9 @@ MainApi.interceptors.request.use(function (config) {
   if (typeof window !== "undefined") {
     zoneid = localStorage.getItem("zoneid");
     token = localStorage.getItem("token");
-    language = JSON.parse(localStorage.getItem("language-setting"));
-    currentLocation = JSON.parse(localStorage.getItem("currentLatLng"));
-    moduleid = JSON.parse(localStorage.getItem("module"))?.id;
+    language = safeJsonParse(localStorage.getItem("language-setting"), null);
+    currentLocation = safeJsonParse(localStorage.getItem("currentLatLng"), null);
+    moduleid = safeJsonParse(localStorage.getItem("module"), null)?.id;
   }
   config.headers.latitude = currentLocation?.lat || 0;
   config.headers.longitude = currentLocation?.lng || 0;
@@ -74,9 +75,10 @@ MainApi.interceptors.response.use(
       !isAuthEndpoint &&
       localStorage.getItem("token")
     ) {
-      // Stale or revoked session token: clear it so background React Query hooks
-      // stop firing repeated 401 storms on /customer/info, /address/list, /message/list.
+      // Stale or revoked session token: clear it and notify app state so Redux
+      // user/cart state resets cleanly without waiting for a full reload.
       localStorage.removeItem("token");
+      window.dispatchEvent(new Event("aduanefie:session-expired"));
     }
     return Promise.reject(error);
   },
