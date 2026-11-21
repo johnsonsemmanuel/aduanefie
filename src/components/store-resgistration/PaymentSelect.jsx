@@ -22,6 +22,7 @@ const PaymentSelect = ({ submitBusiness, resData, isLoading }) => {
   let bPlan;
   let storeIdd;
   let packageIdd;
+  let storedOnboardingToken;
 
   const readStored = (key) => {
     const raw = localStorage.getItem(key);
@@ -34,6 +35,7 @@ const PaymentSelect = ({ submitBusiness, resData, isLoading }) => {
     bPlan = readStored("business_plan");
     storeIdd = readStored("store_id");
     packageIdd = readStored("package_id");
+    storedOnboardingToken = readStored("onboarding_token");
   }
 
   const submitPayment = () => {
@@ -41,14 +43,22 @@ const PaymentSelect = ({ submitBusiness, resData, isLoading }) => {
     const storeId = resData?.store_id ?? allData?.res?.store_id ?? storeIdd;
     const packageId =
       resData?.package_id ?? allData?.res?.package_id ?? packageIdd;
+    // Signed token from the registration response. The backend uses it to bind
+    // this payment to the store created in this session.
+    const regToken =
+      resData?.onboarding_token ??
+      allData?.res?.onboarding_token ??
+      storedOnboardingToken;
 
     if (businessPlan != null)
       localStorage.setItem("business_plan", businessPlan);
     if (storeId != null) localStorage.setItem("store_id", storeId);
     if (packageId != null) localStorage.setItem("package_id", packageId);
+    if (regToken != null) localStorage.setItem("onboarding_token", regToken);
 
     submitBusiness({
       business_plan: businessPlan,
+      onboarding_token: regToken,
       store_id: storeId,
       package_id: packageId,
       payment: selectedMethod ?? selectType,
