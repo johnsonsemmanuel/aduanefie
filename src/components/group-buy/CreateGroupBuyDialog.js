@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -22,6 +22,14 @@ const CreateGroupBuyDialog = ({ open, onClose, item, onCreated }) => {
     destination_country: "",
   });
   const { mutate, isLoading } = useCreateGroupBuy();
+
+  // This dialog stays mounted while closed, so useState alone would never see
+  // the item passed in from a product page after navigation.
+  useEffect(() => {
+    if (item?.id) {
+      setForm((previous) => ({ ...previous, item_id: item.id }));
+    }
+  }, [item?.id]);
 
   const update = (field) => (event) =>
     setForm((previous) => ({ ...previous, [field]: event.target.value }));
