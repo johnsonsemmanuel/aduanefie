@@ -93,16 +93,47 @@ const SignIn = ({
   const theme = useTheme();
 
   const [state, loginDispatch] = useReducer(loginReducer, loginInitialState);
-  let userDatafor = undefined;
+  // "Remember me" may persist only a non-sensitive identifier. Passwords must
+  // never be written to browser storage, so the legacy `userDatafor` shape is
+  // migrated to an identifier-only record below.
+  let rememberedIdentifier = "";
   const moduleType = getCurrentModuleType();
   if (typeof window !== "undefined") {
-    userDatafor = JSON.parse(localStorage.getItem("userDatafor"));
+    try {
+      const stored = JSON.parse(localStorage.getItem("userDatafor"));
+      if (stored && typeof stored.email_or_phone === "string") {
+        rememberedIdentifier = stored.email_or_phone;
+      }
+    } catch {
+      rememberedIdentifier = "";
+    }
   }
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = localStorage.getItem("userDatafor");
+      if (!raw) return;
+      const parsed = JSON.parse(raw);
+      const identifier =
+        parsed && typeof parsed.email_or_phone === "string"
+          ? parsed.email_or_phone
+          : "";
+      if (Object.keys(parsed || {}).length === 1 && identifier) return;
+      // Drop any stored password / password-equivalent value immediately.
+      localStorage.setItem(
+        "userDatafor",
+        JSON.stringify({ email_or_phone: identifier })
+      );
+    } catch {
+      localStorage.removeItem("userDatafor");
+    }
+  }, []);
 
   const loginFormik = useFormik({
     initialValues: {
-      email_or_phone: userDatafor?.email_or_phone || "",
-      password: userDatafor ? userDatafor.password : "",
+      email_or_phone: rememberedIdentifier,
+      password: "",
       tandc: false,
     },
     validationSchema: Yup.object({
@@ -127,7 +158,12 @@ const SignIn = ({
     onSubmit: async (values, helpers) => {
       try {
         if (isRemember) {
-          localStorage.setItem("userDatafor", JSON.stringify(values));
+          localStorage.setItem(
+            "userDatafor",
+            JSON.stringify({ email_or_phone: values.email_or_phone })
+          );
+        } else if (typeof window !== "undefined") {
+          localStorage.removeItem("userDatafor");
         }
         formSubmitHandler({ ...values, login_type: "manual" });
       } catch (err) {}

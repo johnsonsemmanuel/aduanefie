@@ -42,6 +42,41 @@ import {
 import { useUpdatePaymentMethod } from "api-manage/hooks/react-query/payment-method/useUpdatePaymentMethod";
 import { useUpdatePaymentByWallet } from "api-manage/hooks/react-query/useUpdatePaymentByWallet";
 import { baseUrl } from "api-manage/MainApi";
+
+
+// Build same-origin print documents with DOM APIs. Backend-provided invoice and
+// contract values are always assigned through textContent; interpolating them
+// into document.write() allowed stored HTML/script to execute with access to
+// the opener's localStorage (including the auth token).
+const buildPrintDoc = (title) => {
+  if (typeof window === "undefined") return null;
+  const win = window.open("", "_blank");
+  if (!win) return null;
+  const doc = win.document;
+  doc.open();
+  // Static skeleton only - no application data is written as markup.
+  doc.write(
+    '<!doctype html><html><head><meta charset="utf-8"><title></title></head><body></body></html>'
+  );
+  doc.close();
+  doc.title = String(title || "Document");
+  const body = doc.body;
+  body.style.cssText =
+    "font-family:sans-serif;padding:32px;max-width:760px;margin:auto";
+  return { win, doc, body };
+};
+
+const addEl = (doc, parent, tag, text, style) => {
+  const node = doc.createElement(tag);
+  if (style) node.setAttribute("style", style);
+  if (text !== undefined && text !== null) node.textContent = String(text);
+  parent.appendChild(node);
+  return node;
+};
+
+const CELL = "padding:8px;border-bottom:1px solid #ddd";
+const MUTED = "margin:4px 0;font-size:13px;color:#555";
+
 import MainApi from "api-manage/MainApi";
 import Router, { useRouter } from "next/router";
 import { useGetFailedPayment } from "api-manage/hooks/react-query/useGetFailedPayment";
@@ -471,18 +506,136 @@ const TopDetails = (props) => {
                       return;
                     }
                     const inv = payload?.invoice;
-                    const win = window.open("", "_blank");
-                    if (win && inv) {
-                      const rowsHtml = (inv.items || [])
-                        .map(
-                          (it) =>
-                            `<tr><td style="padding:8px;border-bottom:1px solid #ddd">${it.name}</td><td style="padding:8px;border-bottom:1px solid #ddd">${it.quantity} × ${it.unit} (${it.crop_grade})</td><td style="padding:8px;border-bottom:1px solid #ddd">${it.line_weight_kg || 0} kg</td><td style="padding:8px;border-bottom:1px solid #ddd;text-align:right">GH₵ ${Number(it.line_total).toFixed(2)}</td></tr>`
-                        )
-                        .join("");
-                      win.document.write(
-                        `<html><head><title>${payload.invoice_number} - EsperWorks Proforma & Waybill</title></head><body style="font-family:sans-serif;padding:32px;max-width:760px;margin:auto"><div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #2e5a27;padding-bottom:16px"><div><h2 style="margin:0;color:#2e5a27">ADUANEFIE AGRO PROFORMA & WAYBILL</h2><p style="margin:4px 0;font-size:13px;color:#555">Powered by EsperWorks (${inv.provider})</p></div><div style="text-align:right"><strong>${payload.invoice_number}</strong><p style="margin:4px 0;font-size:13px">Date: ${inv.issue_date}</p></div></div><div style="display:flex;justify-content:space-between;margin:20px 0;font-size:14px"><div><strong>Supplier / Farm:</strong><br/>${inv.supplier?.name || ""}<br/>${inv.supplier?.phone || ""}</div><div style="text-align:right"><strong>Buyer / Consignee:</strong><br/>${inv.client?.name || ""}<br/>${inv.client?.phone || ""}<br/>${inv.client?.address || ""}</div></div><table style="width:100%;border-collapse:collapse;font-size:14px"><thead><tr style="background:#f4f6f3"><th style="padding:8px;text-align:left">Commodity</th><th style="padding:8px;text-align:left">Qty · Unit · Grade</th><th style="padding:8px;text-align:left">Weight</th><th style="padding:8px;text-align:right">Amount</th></tr></thead><tbody>${rowsHtml}</tbody></table><div style="margin-top:20px;text-align:right;font-size:14px"><p>Total Payload Weight: <strong>${inv.total_weight_kg} kg</strong></p><p>Delivery Charge: GH₵ ${Number(inv.delivery_charge).toFixed(2)}</p><p>Trade & Crop Insurance: GH₵ ${Number(inv.insurance_fee).toFixed(2)}</p><h3 style="color:#2e5a27">Total: GH₵ ${Number(inv.total_amount).toFixed(2)}</h3></div><div style="margin-top:24px"><button onclick="window.print()" style="padding:8px 16px;background:#2e5a27;color:#fff;border:none;border-radius:6px;cursor:pointer">Print / Save PDF</button></div></body></html>`
+                    if (inv) {
+                      const print = buildPrintDoc(
+                        `${payload.invoice_number || "Invoice"} - EsperWorks Proforma & Waybill`
                       );
-                      win.document.close();
+                      if (!print) return;
+                      const { win, doc, body } = print;
+
+                      const header = addEl(
+                        doc,
+                        body,
+                        "div",
+                        null,
+                        "display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #2e5a27;padding-bottom:16px"
+                      );
+                      const brand = addEl(doc, header, "div");
+                      addEl(
+                        doc,
+                        brand,
+                        "h2",
+                        "ADUANEFIE AGRO PROFORMA & WAYBILL",
+                        "margin:0;color:#2e5a27"
+                      );
+                      addEl(
+                        doc,
+                        brand,
+                        "p",
+                        `Powered by EsperWorks (${inv.provider || ""})`,
+                        MUTED
+                      );
+                      const meta = addEl(
+                        doc,
+                        header,
+                        "div",
+                        null,
+                        "text-align:right"
+                      );
+                      addEl(doc, meta, "strong", payload.invoice_number);
+                      addEl(doc, meta, "p", `Date: ${inv.issue_date || ""}`, MUTED);
+
+                      const parties = addEl(
+                        doc,
+                        body,
+                        "div",
+                        null,
+                        "display:flex;justify-content:space-between;margin:20px 0;font-size:14px"
+                      );
+                      const supplier = addEl(doc, parties, "div");
+                      addEl(doc, supplier, "strong", "Supplier / Farm:");
+                      addEl(doc, supplier, "div", inv.supplier?.name);
+                      addEl(doc, supplier, "div", inv.supplier?.phone);
+                      const client = addEl(
+                        doc,
+                        parties,
+                        "div",
+                        null,
+                        "text-align:right"
+                      );
+                      addEl(doc, client, "strong", "Buyer / Consignee:");
+                      addEl(doc, client, "div", inv.client?.name);
+                      addEl(doc, client, "div", inv.client?.phone);
+                      addEl(doc, client, "div", inv.client?.address);
+
+                      const table = addEl(
+                        doc,
+                        body,
+                        "table",
+                        null,
+                        "width:100%;border-collapse:collapse;font-size:14px"
+                      );
+                      const head = addEl(doc, table, "thead");
+                      const headRow = addEl(doc, head, "tr", null, "background:#f4f6f3");
+                      addEl(doc, headRow, "th", "Commodity", "padding:8px;text-align:left");
+                      addEl(doc, headRow, "th", "Qty · Unit · Grade", "padding:8px;text-align:left");
+                      addEl(doc, headRow, "th", "Weight", "padding:8px;text-align:left");
+                      addEl(doc, headRow, "th", "Amount", "padding:8px;text-align:right");
+                      const rows = addEl(doc, table, "tbody");
+                      (Array.isArray(inv.items) ? inv.items : []).forEach((it) => {
+                        const row = addEl(doc, rows, "tr");
+                        addEl(doc, row, "td", it.name, CELL);
+                        addEl(
+                          doc,
+                          row,
+                          "td",
+                          `${it.quantity} × ${it.unit} (${it.crop_grade})`,
+                          CELL
+                        );
+                        addEl(doc, row, "td", `${it.line_weight_kg || 0} kg`, CELL);
+                        addEl(
+                          doc,
+                          row,
+                          "td",
+                          `GH₵ ${Number(it.line_total || 0).toFixed(2)}`,
+                          `${CELL};text-align:right`
+                        );
+                      });
+
+                      const totals = addEl(
+                        doc,
+                        body,
+                        "div",
+                        null,
+                        "margin-top:20px;text-align:right;font-size:14px"
+                      );
+                      const totalRow = (label, value, heading) => {
+                        const line = addEl(doc, totals, heading || "p");
+                        addEl(doc, line, "strong", label);
+                        line.appendChild(doc.createTextNode(` ${value}`));
+                      };
+                      totalRow("Total Payload Weight:", `${inv.total_weight_kg} kg`);
+                      totalRow(
+                        "Delivery Charge:",
+                        `GH₵ ${Number(inv.delivery_charge || 0).toFixed(2)}`
+                      );
+                      totalRow(
+                        "Trade & Crop Insurance:",
+                        `GH₵ ${Number(inv.insurance_fee || 0).toFixed(2)}`
+                      );
+                      totalRow(
+                        "Total:",
+                        `GH₵ ${Number(inv.total_amount || 0).toFixed(2)}`,
+                        "h3"
+                      );
+                      const printButton = addEl(
+                        doc,
+                        body,
+                        "button",
+                        "Print / Save PDF",
+                        "margin-top:24px;padding:8px 16px;background:#2e5a27;color:#fff;border:none;border-radius:6px;cursor:pointer"
+                      );
+                      printButton.addEventListener("click", () => win.print());
                     }
                   } catch (e) {
                     toast.error(t("Unable to generate EsperWorks invoice"));
@@ -514,18 +667,163 @@ const TopDetails = (props) => {
                       return;
                     }
                     const ctr = payload?.contract;
-                    const win = window.open("", "_blank");
-                    if (win && ctr) {
-                      const itemsList = (ctr.items || [])
-                        .map(
-                          (it) =>
-                            `<li><strong>${it.name}</strong> - ${it.quantity} × ${it.unit} (${it.crop_grade}) · ${it.line_weight_kg || 0} kg · GH₵ ${Number(it.line_total).toFixed(2)}</li>`
-                        )
-                        .join("");
-                      win.document.write(
-                        `<html><head><title>${payload.contract_number} - EsperWorks Trade Contract</title></head><body style="font-family:sans-serif;padding:32px;max-width:760px;margin:auto;line-height:1.5"><div style="border-bottom:2px solid #2e5a27;padding-bottom:12px"><h2 style="margin:0;color:#2e5a27">${ctr.title}</h2><p style="margin:4px 0;font-size:13px;color:#555">Contract Ref: <strong>${payload.contract_number}</strong> · Date: ${ctr.effective_date} · Powered by ${ctr.provider}</p></div><p style="font-size:14px"><strong>Supplier / Farm:</strong> ${ctr.supplier?.name || ""} (${ctr.supplier?.phone || ""})<br/><strong>Buyer / Off-Taker:</strong> ${ctr.buyer?.name || ""} (${ctr.buyer?.phone || ""}) - ${ctr.buyer?.delivery_address || ""}</p><h4 style="margin-bottom:6px">1. Contracted Produce & Specifications</h4><ul style="font-size:14px">${itemsList}</ul><p style="font-size:14px">Total Contract Value: <strong>GH₵ ${Number(ctr.total_amount).toFixed(2)}</strong> · Total Payload: <strong>${ctr.total_weight_kg} kg</strong></p><h4 style="margin-bottom:6px">2. Quality, Escrow & Transit Assurance Terms</h4><ul style="font-size:13px"><li><strong>Quality Inspection:</strong> ${ctr.terms?.quality_inspection}</li><li><strong>Escrow Release:</strong> ${ctr.terms?.escrow_release}</li><li><strong>Transit Coverage:</strong> ${ctr.terms?.transit_coverage}</li></ul><div style="margin-top:24px;padding:16px;border:1px solid #ccc;border-radius:8px;background:#f9faf8"><label style="display:block;font-size:13px;font-weight:bold;margin-bottom:6px">Digital Signature (Full Legal Name):</label><input id="sig" type="text" placeholder="Type full name to e-Sign via EsperWorks" style="padding:8px;width:280px;margin-right:8px"/><button onclick="if(document.getElementById('sig').value){document.getElementById('status').innerText='Signed digitally by '+document.getElementById('sig').value+' on '+new Date().toLocaleString();}else{alert('Enter your name to sign');}" style="padding:8px 16px;background:#2e5a27;color:#fff;border:none;border-radius:6px;cursor:pointer">e-Sign Contract</button><button onclick="window.print()" style="padding:8px 16px;margin-left:8px;border:1px solid #2e5a27;background:#fff;color:#2e5a27;border-radius:6px;cursor:pointer">Print / Save PDF</button><p id="status" style="margin-top:10px;color:#2e5a27;font-weight:bold;font-size:13px"></p></div></body></html>`
+                    if (ctr) {
+                      const print = buildPrintDoc(
+                        `${payload.contract_number || "Contract"} - EsperWorks Trade Contract`
                       );
-                      win.document.close();
+                      if (!print) return;
+                      const { win, doc, body } = print;
+
+                      const header = addEl(
+                        doc,
+                        body,
+                        "div",
+                        null,
+                        "border-bottom:2px solid #2e5a27;padding-bottom:12px"
+                      );
+                      addEl(doc, header, "h2", ctr.title, "margin:0;color:#2e5a27");
+                      addEl(
+                        doc,
+                        header,
+                        "p",
+                        `Contract Ref: ${payload.contract_number || ""} · Date: ${ctr.effective_date || ""} · Powered by ${ctr.provider || ""}`,
+                        MUTED
+                      );
+
+                      const parties = addEl(
+                        doc,
+                        body,
+                        "p",
+                        null,
+                        "font-size:14px"
+                      );
+                      addEl(doc, parties, "strong", "Supplier / Farm:");
+                      parties.appendChild(
+                        doc.createTextNode(
+                          ` ${ctr.supplier?.name || ""} (${ctr.supplier?.phone || ""}) `
+                        )
+                      );
+                      addEl(doc, parties, "br");
+                      addEl(doc, parties, "strong", "Buyer / Off-Taker:");
+                      parties.appendChild(
+                        doc.createTextNode(
+                          ` ${ctr.buyer?.name || ""} (${ctr.buyer?.phone || ""}) - ${ctr.buyer?.delivery_address || ""}`
+                        )
+                      );
+
+                      addEl(
+                        doc,
+                        body,
+                        "h4",
+                        "1. Contracted Produce & Specifications",
+                        "margin-bottom:6px"
+                      );
+                      const items = addEl(
+                        doc,
+                        body,
+                        "ul",
+                        null,
+                        "font-size:14px"
+                      );
+                      (Array.isArray(ctr.items) ? ctr.items : []).forEach((it) => {
+                        const item = addEl(doc, items, "li");
+                        addEl(doc, item, "strong", it.name);
+                        item.appendChild(
+                          doc.createTextNode(
+                            ` - ${it.quantity} × ${it.unit} (${it.crop_grade}) · ${it.line_weight_kg || 0} kg · GH₵ ${Number(it.line_total || 0).toFixed(2)}`
+                          )
+                        );
+                      });
+
+                      const value = addEl(doc, body, "p", null, "font-size:14px");
+                      addEl(doc, value, "strong", "Total Contract Value:");
+                      value.appendChild(
+                        doc.createTextNode(
+                          ` GH₵ ${Number(ctr.total_amount || 0).toFixed(2)} · Total Payload: ${ctr.total_weight_kg} kg`
+                        )
+                      );
+
+                      addEl(
+                        doc,
+                        body,
+                        "h4",
+                        "2. Quality, Escrow & Transit Assurance Terms",
+                        "margin-bottom:6px"
+                      );
+                      const terms = addEl(
+                        doc,
+                        body,
+                        "ul",
+                        null,
+                        "font-size:13px"
+                      );
+                      [
+                        ["Quality Inspection:", ctr.terms?.quality_inspection],
+                        ["Escrow Release:", ctr.terms?.escrow_release],
+                        ["Transit Coverage:", ctr.terms?.transit_coverage],
+                      ].forEach(([label, text]) => {
+                        const term = addEl(doc, terms, "li");
+                        addEl(doc, term, "strong", label);
+                        term.appendChild(doc.createTextNode(` ${text || ""}`));
+                      });
+
+                      const sign = addEl(
+                        doc,
+                        body,
+                        "div",
+                        null,
+                        "margin-top:24px;padding:16px;border:1px solid #ccc;border-radius:8px;background:#f9faf8"
+                      );
+                      addEl(
+                        doc,
+                        sign,
+                        "label",
+                        "Digital Signature (Full Legal Name):",
+                        "display:block;font-size:13px;font-weight:bold;margin-bottom:6px"
+                      );
+                      const sigInput = addEl(
+                        doc,
+                        sign,
+                        "input",
+                        null,
+                        "padding:8px;width:280px;margin-right:8px"
+                      );
+                      sigInput.setAttribute("type", "text");
+                      sigInput.setAttribute("id", "sig");
+                      sigInput.setAttribute(
+                        "placeholder",
+                        "Type full name to e-Sign via EsperWorks"
+                      );
+                      const signButton = addEl(
+                        doc,
+                        sign,
+                        "button",
+                        "e-Sign Contract",
+                        "padding:8px 16px;background:#2e5a27;color:#fff;border:none;border-radius:6px;cursor:pointer"
+                      );
+                      const status = addEl(
+                        doc,
+                        sign,
+                        "p",
+                        "",
+                        "margin-top:10px;color:#2e5a27;font-weight:bold;font-size:13px"
+                      );
+                      signButton.addEventListener("click", () => {
+                        const name = (sigInput.value || "").trim();
+                        if (!name) {
+                          win.alert("Enter your name to sign");
+                          return;
+                        }
+                        status.textContent = `Signed digitally by ${name} on ${new Date().toLocaleString()}`;
+                      });
+                      const printButton = addEl(
+                        doc,
+                        sign,
+                        "button",
+                        "Print / Save PDF",
+                        "padding:8px 16px;margin-left:8px;border:1px solid #2e5a27;background:#fff;color:#2e5a27;border-radius:6px;cursor:pointer"
+                      );
+                      printButton.addEventListener("click", () => win.print());
                     }
                   } catch (e) {
                     toast.error(t("Unable to load EsperWorks contract"));
