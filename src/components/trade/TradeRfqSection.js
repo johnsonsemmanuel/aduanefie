@@ -48,6 +48,8 @@ const INITIAL_FORM = {
   trade_bloc: "ECOWAS",
   requires_insurance: true,
   requires_phytosanitary: true,
+  supply_frequency: "one_time",
+  preferred_delivery_day: "Friday",
   notes: "",
 };
 
@@ -103,9 +105,21 @@ const TradeRfqSection = () => {
       toast.error(t("Please fill in your name, phone, commodity, and quantity."));
       return;
     }
+    const frequencyLabels = {
+      one_time: null,
+      weekly: "Standing Weekly Supply Contract",
+      biweekly: "Standing Bi-Weekly Supply Contract",
+      monthly: "Standing Monthly Supply Contract",
+    };
+    const scheduleTag = frequencyLabels[form.supply_frequency]
+      ? `[${frequencyLabels[form.supply_frequency]} — Preferred Dispatch: ${form.preferred_delivery_day}]`
+      : "";
+    const combinedNotes = [scheduleTag, form.notes].filter(Boolean).join(" ").trim();
+
     createRfq(
       {
         ...form,
+        notes: combinedNotes,
         quantity: Number(form.quantity),
         target_price_ghs: form.target_price_ghs ? Number(form.target_price_ghs) : null,
       },
@@ -324,6 +338,37 @@ const TradeRfqSection = () => {
                     onChange={(e) => setForm({ ...form, destination_city: e.target.value })}
                   />
                 </Grid>
+                <Grid item xs={12} sm={form.supply_frequency !== "one_time" ? 6 : 12}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel>{t("Supply Frequency (HoReCa / Institutional)")}</InputLabel>
+                    <Select
+                      label={t("Supply Frequency (HoReCa / Institutional)")}
+                      value={form.supply_frequency}
+                      onChange={(e) => setForm({ ...form, supply_frequency: e.target.value })}
+                    >
+                      <MenuItem value="one_time">{t("One-time bulk order")}</MenuItem>
+                      <MenuItem value="weekly">{t("Weekly standing supply")}</MenuItem>
+                      <MenuItem value="biweekly">{t("Bi-weekly standing supply")}</MenuItem>
+                      <MenuItem value="monthly">{t("Monthly off-take contract")}</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                {form.supply_frequency !== "one_time" && (
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth size="small">
+                      <InputLabel>{t("Preferred Dispatch Day")}</InputLabel>
+                      <Select
+                        label={t("Preferred Dispatch Day")}
+                        value={form.preferred_delivery_day}
+                        onChange={(e) => setForm({ ...form, preferred_delivery_day: e.target.value })}
+                      >
+                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day) => (
+                          <MenuItem key={day} value={day}>{t(day)}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                )}
                 <Grid item xs={12}>
                   <Stack direction="row" flexWrap="wrap" gap={1}>
                     <FormControlLabel

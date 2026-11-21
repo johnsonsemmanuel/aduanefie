@@ -38,6 +38,7 @@ import { useTranslation } from "react-i18next";
 import { useGetAgroPrices } from "api-manage/hooks/react-query/trade/useGetAgroPrices";
 import { useGetFxRates } from "api-manage/hooks/react-query/trade/useGetFxRates";
 import { getCommonServerSideProps } from "utils/serverSidePropsHelper";
+import { GHANA_UNIT_GUIDE, getGhanaSeasonalGuide } from "utils/agroGuidance";
 import { useDispatch } from "react-redux";
 import { useGetConfigData } from "api-manage/hooks/useGetConfigData";
 import { setConfigData } from "redux/slices/configData";
@@ -258,6 +259,54 @@ const MarketPricesPage = ({ configData }) => {
                 {t("Live exchange rates are unavailable. Showing GH₵ reference prices.")}
               </Alert>
             )}
+
+            {/* Ghana Seasonal Crop Guide & Standard Unit Reference */}
+            {(() => {
+              const guide = getGhanaSeasonalGuide();
+              return (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: { xs: 2, md: 2.5 },
+                    mb: 2.5,
+                    borderRadius: "12px",
+                    border: `1px solid ${theme.palette.divider}`,
+                    bgcolor: alpha(theme.palette.success.main, 0.04),
+                  }}
+                >
+                  <Stack spacing={1.25}>
+                    <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} spacing={1}>
+                      <Typography sx={{ fontWeight: 700, fontSize: "14px", color: theme.palette.text.primary }}>
+                        {t("Ghana Seasonal Supply")}: {guide.seasonName} ({guide.monthsLabel})
+                      </Typography>
+                      <Typography sx={{ fontSize: "12px", color: theme.palette.text.secondary }}>
+                        {t("Next harvest")}: {guide.harvestSoon}
+                      </Typography>
+                    </Stack>
+                    <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" useFlexGap>
+                      <Typography sx={{ fontSize: "12px", fontWeight: 600, color: theme.palette.text.secondary }}>
+                        {t("Best Value / Peak Now:")}
+                      </Typography>
+                      {guide.peakCrops.map((crop) => (
+                        <Chip
+                          key={crop}
+                          component={Link}
+                          href={`/search?search_value=${encodeURIComponent(crop)}`}
+                          clickable
+                          size="small"
+                          label={crop}
+                          sx={{ fontSize: "11.5px", fontWeight: 600, height: 24 }}
+                        />
+                      ))}
+                    </Stack>
+                    <Typography sx={{ fontSize: "11.5px", color: theme.palette.text.secondary }}>
+                      <strong>{t("Standard Ghana Units")}:</strong>{" "}
+                      {GHANA_UNIT_GUIDE.map((u) => `${u.label} (${u.approx})`).join(" · ")}
+                    </Typography>
+                  </Stack>
+                </Paper>
+              );
+            })()}
 
             {/* Price Table */}
             <Box sx={{ display: { xs: "none", md: "block" } }}>

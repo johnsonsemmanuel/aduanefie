@@ -1,6 +1,7 @@
 import { Button, IconButton, Skeleton, Tooltip, Typography, useTheme } from "@mui/material";
 import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
 import { recordRecentlyViewed } from "utils/recentlyViewed";
+import { computePricePerKg, getPostHarvestTip } from "utils/agroGuidance";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
 import { Stack } from "@mui/system";
 import React, { useEffect, useMemo, useReducer, useRef, useState } from "react";
@@ -1389,6 +1390,52 @@ const ProductInformation = ({
             </>
           );
         })()}
+
+        {state.modalData[0]?.id &&
+          state.modalData[0]?.module_type !== "pharmacy" &&
+          state.modalData[0]?.module?.module_type !== "pharmacy" &&
+          (() => {
+            const item = state.modalData[0];
+            const perKg = computePricePerKg(item, item?.totalPrice || item?.price);
+            const tip = getPostHarvestTip(item);
+            return (
+              <Stack
+                spacing={0.75}
+                sx={{
+                  mt: 1.5,
+                  p: { xs: 1.25, md: 1.5 },
+                  borderRadius: "10px",
+                  border: `1px solid ${theme.palette.divider}`,
+                  bgcolor: alpha(theme.palette.success.main, 0.04),
+                }}
+              >
+                <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} flexWrap="wrap" useFlexGap>
+                  <Typography sx={{ fontSize: "12.5px", fontWeight: 700, color: theme.palette.text.primary }}>
+                    {t("Post-Harvest Freshness & Storage Guide")}
+                  </Typography>
+                  {perKg && (
+                    <Chip
+                      size="small"
+                      label={`≈ ${getAmountWithSign(perKg.pricePerKg)} / kg (${perKg.weightKg} kg)`}
+                      sx={{
+                        height: 22,
+                        fontSize: "11px",
+                        fontWeight: 700,
+                        bgcolor: alpha(theme.palette.primary.main, 0.1),
+                        color: theme.palette.primary.main,
+                      }}
+                    />
+                  )}
+                </Stack>
+                <Typography sx={{ fontSize: "12.5px", color: theme.palette.text.secondary, lineHeight: 1.45 }}>
+                  {t(tip.storageTip)}
+                </Typography>
+                <Typography sx={{ fontSize: "11.5px", color: theme.palette.text.secondary }}>
+                  {t(tip.shelfLifeNote)} · {t("Perishable quality claims accepted within 6h of delivery with photo.")}
+                </Typography>
+              </Stack>
+            );
+          })()}
 
         {(state.modalData[0]?.module_type === "pharmacy" ||
           state.modalData[0]?.module?.module_type === "pharmacy") &&
