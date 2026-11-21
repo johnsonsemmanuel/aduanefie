@@ -52,7 +52,8 @@ const RideShareIntroBanner = ({ configData, appUrl }) => {
 
     if (isAndroid) {
       const fallback = encodeURIComponent(appUrl?.android ?? "");
-      window.location.href = `intent://open/#Intent;package=com.sixamtech.sixam_mart_user;S.browser_fallback_url=${fallback};end`;
+      const pkg = process.env.NEXT_PUBLIC_ANDROID_PACKAGE || "com.aduanefie.marketplace";
+      window.location.href = `intent://open/#Intent;package=${pkg};S.browser_fallback_url=${fallback};end`;
     } else if (isIos) {
       let appOpened = false;
       const onVisibilityChange = () => {

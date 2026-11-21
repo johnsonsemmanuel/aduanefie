@@ -53,7 +53,7 @@ const PARCEL_DEMO_ORDERS = [
     id: "p1",
     store: {
       id: "r1",
-      name: "Dhanmondi 27 → Banani",
+      name: "Agbogbloshie → East Legon",
       logo_full_url: PARCEL_LOGO_RIDER,
     },
     items: [
@@ -61,28 +61,28 @@ const PARCEL_DEMO_ORDERS = [
       { image_full_url: PARCEL_ITEM_DOCUMENTS },
       { image_full_url: PARCEL_ITEM_PACKAGE },
     ],
-    totalPrice: 12.5,
-    placedDate: "08 May, 2026",
+    totalPrice: 35.0,
+    placedDate: "08 Nov, 2026",
   },
   {
     id: "p2",
     store: {
       id: "r2",
-      name: "Mirpur 10 → Gulshan 2",
+      name: "Kumasi Kejetia → Tema Port",
       logo_full_url: PARCEL_LOGO_BIKE,
     },
     items: [
       { image_full_url: PARCEL_ITEM_ELECTRONICS },
       { image_full_url: PARCEL_ITEM_FRAGILE },
     ],
-    totalPrice: 18.75,
-    placedDate: "05 May, 2026",
+    totalPrice: 120.0,
+    placedDate: "05 Nov, 2026",
   },
   {
     id: "p3",
     store: {
       id: "r3",
-      name: "Uttara 7 → Bashundhara",
+      name: "Techiman → Accra Central",
       logo_full_url: PARCEL_LOGO_RIDER,
     },
     items: [
@@ -91,28 +91,28 @@ const PARCEL_DEMO_ORDERS = [
       { image_full_url: PARCEL_ITEM_PACKAGE },
       { image_full_url: PARCEL_ITEM_DOCUMENTS },
     ],
-    totalPrice: 22.0,
-    placedDate: "02 May, 2026",
+    totalPrice: 145.0,
+    placedDate: "02 Nov, 2026",
   },
   {
     id: "p4",
     store: {
       id: "r4",
-      name: "Mohammadpur → Motijheel",
+      name: "Aburi Farms → Osu",
       logo_full_url: PARCEL_LOGO_BIKE,
     },
     items: [
       { image_full_url: PARCEL_ITEM_DOCUMENTS },
       { image_full_url: PARCEL_ITEM_DOCUMENTS },
     ],
-    totalPrice: 8.0,
-    placedDate: "28 Apr, 2026",
+    totalPrice: 45.0,
+    placedDate: "28 Oct, 2026",
   },
   {
     id: "p5",
     store: {
       id: "r5",
-      name: "Tejgaon → Old Dhaka",
+      name: "Tamale → Kumasi",
       logo_full_url: PARCEL_LOGO_RIDER,
     },
     items: [
@@ -120,8 +120,8 @@ const PARCEL_DEMO_ORDERS = [
       { image_full_url: PARCEL_ITEM_PACKAGE },
       { image_full_url: PARCEL_ITEM_GIFT },
     ],
-    totalPrice: 15.4,
-    placedDate: "25 Apr, 2026",
+    totalPrice: 180.0,
+    placedDate: "25 Oct, 2026",
   },
 ];
 

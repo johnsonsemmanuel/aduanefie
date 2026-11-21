@@ -21,11 +21,19 @@ import { useGetLiveFarmingItems } from "api-manage/hooks/react-query/useGetLiveF
 import { getAmountWithSign } from "helper-functions/CardHelpers";
 import InsuranceBadge from "components/badges/InsuranceBadge";
 
+const getGhanaSeasonLabel = () => {
+  const month = new Date().getMonth() + 1;
+  if (month >= 3 && month <= 7) return "Major Season";
+  if (month >= 9 && month <= 11) return "Minor Season";
+  return "Irrigated Season";
+};
+
 const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true }) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState("all");
   const [backyardOnly, setBackyardOnly] = useState(false);
+  const seasonLabel = getGhanaSeasonLabel();
 
   const { data, isLoading } = useGetLiveFarmingItems({
     status: statusFilter,
@@ -90,13 +98,26 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
               </Typography>
               <Chip
                 size="small"
-                color="success"
                 variant="outlined"
                 label={t("LIVE")}
                 sx={{
                   height: 18,
                   fontSize: "9.5px",
                   fontWeight: 700,
+                  borderColor: theme.palette.primary.main,
+                  color: theme.palette.primary.deep,
+                }}
+              />
+              <Chip
+                size="small"
+                label={t(seasonLabel)}
+                sx={{
+                  display: { xs: "none", sm: "inline-flex" },
+                  height: 18,
+                  fontSize: "10px",
+                  fontWeight: 600,
+                  bgcolor: theme.palette.background.secondary,
+                  color: theme.palette.primary.deep,
                 }}
               />
             </Stack>
@@ -211,16 +232,16 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
                     textDecoration: "none",
                     borderRadius: "12px",
                     border: "1px solid",
-                    borderColor: alpha("#15803D", 0.14),
+                    borderColor: alpha(theme.palette.primary.main, 0.28),
                     boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                     transition: "transform 0.2s ease, box-shadow 0.2s ease",
                     "&:hover": {
                       transform: "translateY(-3px)",
-                      boxShadow: "0 8px 20px rgba(21,128,61,0.12)",
+                      boxShadow: `0 8px 20px ${alpha(theme.palette.primary.deep, 0.14)}`,
                     },
                   }}
                 >
-                  <Box sx={{ position: "relative", height: { xs: 118, sm: 155 }, overflow: "hidden", bgcolor: "#F3F4F6" }}>
+                  <Box sx={{ position: "relative", height: { xs: 118, sm: 155 }, overflow: "hidden", bgcolor: theme.palette.background.secondary }}>
                     <Box
                       component="img"
                       src={imgSrc}
@@ -237,7 +258,7 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
                         label={isHarvestReady ? t("Harvest Ready") : t("Growing")}
                         sx={{
                           height: { xs: 20, sm: 22 },
-                          bgcolor: isHarvestReady ? "#15803D" : "#B45309",
+                          bgcolor: isHarvestReady ? theme.palette.primary.main : (theme.palette.warning.secondary || "#bf6a02"),
                           color: "#FFFFFF",
                           fontWeight: 700,
                           fontSize: { xs: "9.5px", sm: "10.5px" },
@@ -282,7 +303,7 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
 
                       <Box sx={{ mt: { xs: 0.9, sm: 1.25 } }}>
                         <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.35 }}>
-                          <Typography sx={{ fontSize: { xs: "10px", sm: "11px" }, fontWeight: 600, color: "#15803D", whiteSpace: "nowrap" }}>
+                          <Typography sx={{ fontSize: { xs: "10px", sm: "11px" }, fontWeight: 600, color: theme.palette.primary.deep, whiteSpace: "nowrap" }}>
                             {isHarvestReady
                               ? t("Ready")
                               : daysLeft !== null && daysLeft !== undefined
@@ -299,10 +320,10 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
                           sx={{
                             height: { xs: 5, sm: 6 },
                             borderRadius: 4,
-                            bgcolor: alpha("#15803D", 0.12),
+                            bgcolor: alpha(theme.palette.primary.main, 0.16),
                             "& .MuiLinearProgress-bar": {
                               borderRadius: 4,
-                              bgcolor: isHarvestReady ? "#15803D" : "#D97706",
+                              bgcolor: isHarvestReady ? theme.palette.primary.main : (theme.palette.warning.secondary || "#bf6a02"),
                             },
                           }}
                         />
@@ -310,7 +331,7 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
                     </Box>
 
                     <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={0.5} sx={{ mt: { xs: 1, sm: 1.5 } }}>
-                      <Typography sx={{ fontWeight: 800, fontSize: { xs: "12.5px", sm: "14.5px" }, color: "#67513A", whiteSpace: "nowrap" }}>
+                      <Typography sx={{ fontWeight: 800, fontSize: { xs: "12.5px", sm: "14.5px" }, color: theme.palette.primary.deep, whiteSpace: "nowrap" }}>
                         {getAmountWithSign(item?.price || 0)}
                       </Typography>
                       <Chip
@@ -320,8 +341,8 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
                           height: { xs: 20, sm: 22 },
                           fontSize: { xs: "10px", sm: "11px" },
                           fontWeight: 700,
-                          bgcolor: alpha("#67513A", 0.1),
-                          color: "#67513A",
+                          bgcolor: theme.palette.background.secondary,
+                          color: theme.palette.primary.deep,
                         }}
                       />
                     </Stack>

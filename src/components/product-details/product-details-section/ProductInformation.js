@@ -928,9 +928,70 @@ const ProductInformation = ({
             </Stack>
           ) : null;
 
+          const isPerishableCrop =
+            ["farming", "harvest_ready"].includes(item?.effective_farming_status || item?.farming_status) ||
+            ["bunch", "crate"].includes(item?.agro_unit) ||
+            Boolean(item?.is_backyard);
+
+          const provenanceStrip =
+            item?.origin_country || item?.crop_grade || isPerishableCrop ? (
+              <Stack
+                direction="row"
+                flexWrap="wrap"
+                gap={0.75}
+                sx={{
+                  mt: 1,
+                  p: "8px 10px",
+                  borderRadius: "10px",
+                  bgcolor: theme.palette.background.secondary || "#EFE7D3",
+                }}
+              >
+                {item?.origin_country && (
+                  <Chip
+                    size="small"
+                    label={`${t("Origin")}: ${item.origin_country}`}
+                    sx={{
+                      height: 22,
+                      fontSize: "11px",
+                      fontWeight: 600,
+                      bgcolor: theme.palette.background.paper,
+                      color: theme.palette.primary.deep,
+                    }}
+                  />
+                )}
+                {item?.crop_grade && (
+                  <Chip
+                    size="small"
+                    label={`${t("Grade")}: ${item.crop_grade}`}
+                    sx={{
+                      height: 22,
+                      fontSize: "11px",
+                      fontWeight: 600,
+                      bgcolor: theme.palette.background.paper,
+                      color: theme.palette.primary.deep,
+                    }}
+                  />
+                )}
+                {isPerishableCrop && (
+                  <Chip
+                    size="small"
+                    label={t("Fresh Produce · Fast delivery recommended")}
+                    sx={{
+                      height: 22,
+                      fontSize: "11px",
+                      fontWeight: 600,
+                      bgcolor: theme.palette.primary.main,
+                      color: "#FFFFFF",
+                    }}
+                  />
+                )}
+              </Stack>
+            ) : null;
+
           if (!hasAgroInfo) {
             return (
               <>
+                {provenanceStrip}
                 <InsuranceBadge item={item} variant="card" sx={{ mt: 1.25 }} />
                 {bulkBlock}
                 {groupBuyBlock}
@@ -955,6 +1016,7 @@ const ProductInformation = ({
 
           return (
             <>
+              {provenanceStrip}
               <InsuranceBadge item={item} variant="card" sx={{ mt: 1.25 }} />
               {bulkBlock}
               {groupBuyBlock}

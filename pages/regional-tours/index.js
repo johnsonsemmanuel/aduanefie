@@ -173,7 +173,7 @@ const RegionalToursPage = ({ configData }) => {
               sx={{
                 p: { xs: 2, md: 3.5 },
                 borderRadius: "16px",
-                bgcolor: "#2B1F16",
+                bgcolor: (theme) => theme.palette.primary.deep || "#67513A",
                 color: "#FFFFFF",
                 mb: 3,
               }}
@@ -181,7 +181,12 @@ const RegionalToursPage = ({ configData }) => {
               <Chip
                 size="small"
                 label="Field Onboarding & Farmer Engagement"
-                sx={{ bgcolor: "#67513A", color: "#FAF8F5", fontWeight: 600, mb: 1 }}
+                sx={{
+                  bgcolor: (theme) => theme.palette.primary.main || "#8B9F69",
+                  color: "#FFFFFF",
+                  fontWeight: 600,
+                  mb: 1,
+                }}
               />
               <Typography variant="h4" sx={{ fontWeight: 700, fontSize: { xs: "1.35rem", md: "1.95rem" }, mb: 0.75 }}>
                 Aduanefie Regional Farmer Tours
