@@ -87,7 +87,7 @@ const EditGroupBuyDialog = ({ open, onClose, group, onUpdated }) => {
             </Typography>
           )}
           <TextField
-            label="Target value (GH₵)"
+            label="Target value (₵)"
             type="number"
             size="small"
             fullWidth

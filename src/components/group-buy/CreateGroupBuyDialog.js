@@ -134,7 +134,7 @@ const CreateGroupBuyDialog = ({ open, onClose, item, onCreated }) => {
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 0.5 }}>
           <Typography variant="body2" color="text.secondary">
-            Pick a supplier, then the product you want to buy together. GH₵2,000
+            Pick a supplier, then the product you want to buy together. ₵2,000
             is only an example - use any target that fits the item.
           </Typography>
           <Autocomplete
@@ -169,7 +169,7 @@ const CreateGroupBuyDialog = ({ open, onClose, item, onCreated }) => {
             SelectProps={{ MenuProps: MODAL_SELECT_MENU_PROPS }}
             helperText={
               selectedProduct
-                ? `Farmer price GH₵${Number(selectedProduct.price || 0).toLocaleString()}`
+                ? `Farmer price ₵${Number(selectedProduct.price || 0).toLocaleString()}`
                 : supplierId
                 ? "Choose a product from this supplier."
                 : "Choose a supplier first."
@@ -182,7 +182,7 @@ const CreateGroupBuyDialog = ({ open, onClose, item, onCreated }) => {
                   key={`${supplierId}-${product.id}`}
                   value={String(product.id)}
                 >
-                  {product.name || `Product ${product.id}`} - GH₵
+                  {product.name || `Product ${product.id}`} - ₵
                   {Number(product.price || 0).toLocaleString()}
                 </MenuItem>
               ))
@@ -197,7 +197,7 @@ const CreateGroupBuyDialog = ({ open, onClose, item, onCreated }) => {
             )}
           </TextField>
           <TextField
-            label="Target value (GH₵)"
+            label="Target value (₵)"
             type="number"
             size="small"
             fullWidth
