@@ -1,18 +1,29 @@
 import {
   Box,
+  Chip,
   Drawer,
   IconButton,
   Stack,
   Typography,
   useTheme,
 } from "@mui/material";
+import { useRouter } from "next/router";
 import { t } from "i18next";
 import useGetGroupedCart from "../../api-manage/hooks/react-query/add-cart/useGetGroupedCart";
 import AccountMenuPanel from "./second-navbar/account-popover/AccountMenuPanel";
 import { CustomButtonPrimary } from "styled-components/CustomButtons.style";
 
+const QUICK_EXPLORE_LINKS = [
+  { label: "Group Buys", path: "/group-buys" },
+  { label: "Live Farming", path: "/live-farming" },
+  { label: "Regional Tours", path: "/regional-tours" },
+  { label: "Market Prices", path: "/market-prices" },
+  { label: "B2B Trade", path: "/trade" },
+];
+
 const ProfileDrawer = ({ open, onClose, onSignInClick }) => {
   const theme = useTheme();
+  const router = useRouter();
   const { refetch: cartListRefetch } = useGetGroupedCart();
 
   let token;
@@ -109,6 +120,43 @@ const ProfileDrawer = ({ open, onClose, onSignInClick }) => {
           gap: "12px",
         }}
       >
+        {/* Quick marketplace navigation */}
+        <Box
+          sx={{
+            backgroundColor: "background.paper",
+            borderRadius: "14px",
+            p: "12px 14px",
+            border: `1px solid ${theme.palette.divider}`,
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: "12px",
+              fontWeight: 700,
+              color: "text.secondary",
+              mb: 1,
+            }}
+          >
+            {t("Explore Aduanefie")}
+          </Typography>
+          <Stack direction="row" flexWrap="wrap" gap={0.75}>
+            {QUICK_EXPLORE_LINKS.map((item) => (
+              <Chip
+                key={item.path}
+                label={t(item.label)}
+                size="small"
+                clickable
+                variant="outlined"
+                onClick={() => {
+                  onClose?.();
+                  router.push(item.path);
+                }}
+                sx={{ fontWeight: 600, fontSize: "12px" }}
+              />
+            ))}
+          </Stack>
+        </Box>
+
         {/* Login/Signup intro card */}
         <Box
           sx={{
