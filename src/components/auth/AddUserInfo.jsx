@@ -76,6 +76,9 @@ const AddUserInfo = ({ formSubmitHandler, loginInfo, isLoading, userInfo }) => {
           login_type: loginInfo.login_type,
           phone: loginInfo?.is_email ? values?.phone : loginInfo.phone,
           email: loginInfo?.is_email ? loginInfo?.email : values?.email,
+          // Signed proof issued only after OTP / password / OAuth verification.
+          // The backend resolves the account from this, never from phone/email.
+          profile_completion_token: loginInfo?.profile_completion_token,
           guest_id: getGuestId(),
         });
       } catch (err) {}

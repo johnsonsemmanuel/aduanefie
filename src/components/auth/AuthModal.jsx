@@ -153,6 +153,13 @@ const AuthModal = ({
     loginMutation(tempValues, {
       onSuccess: (res) => {
         if (res?.is_personal_info === 0) {
+          // Keep the fresh signed completion proof from this verification.
+          setLoginInfo({
+            ...res,
+            phone: loginInfo?.is_email ? undefined : (loginInfo?.phone ?? res?.phone),
+            email: loginInfo?.is_email ? (res?.email ?? loginInfo?.email) : undefined,
+            is_email: loginInfo?.is_email,
+          });
           setModalFor("user_info");
         } else {
           handleSuccess(res?.token);
