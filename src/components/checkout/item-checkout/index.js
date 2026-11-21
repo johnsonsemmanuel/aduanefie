@@ -771,7 +771,11 @@ const ItemCheckout = (props) => {
         : 0;
       formData.append("extra_packaging_amount", resolvedPackagingAmount);
       formData.append("is_insured", isInsuranceApplied ? 1 : 0);
-      formData.append("cutlery", cartPrefs?.addCutlery ? 1 : cutlery ? 1 : 0);
+      const isFoodOrder = getCurrentModuleType() === "food";
+      formData.append(
+        "cutlery",
+        isFoodOrder && (cartPrefs?.addCutlery || cutlery) ? 1 : 0,
+      );
       formData.append(
         "unavailable_item_note",
         cartPrefs?.unavailableChoice ?? unavailable_item_note ?? "",
@@ -785,7 +789,9 @@ const ItemCheckout = (props) => {
       formData.append("password", formik.values.password);
       return formData;
     } else {
-      const resolvedCutlery = cartPrefs?.addCutlery ? 1 : cutlery ? 1 : 0;
+      const isFoodOrder = getCurrentModuleType() === "food";
+      const resolvedCutlery =
+        isFoodOrder && (cartPrefs?.addCutlery || cutlery) ? 1 : 0;
       const resolvedUnavailableNote =
         cartPrefs?.unavailableChoice ?? unavailable_item_note;
       const resolvedPackagingAmount = cartPrefs?.extraPackaging
@@ -1085,11 +1091,7 @@ const ItemCheckout = (props) => {
   // getStoresOrRestaurants() output produces a string that never matches a
   // translation entry, so the toast showed untranslated mixed text.
   const storeCloseToast = () =>
-    toast.error(
-      getCurrentModuleType() === "food"
-        ? t("Restaurant is closed. Try again later.")
-        : t("Store is closed. Try again later."),
-    );
+    toast.error(t("Store is closed. Try again later."));
   //totalAmount
   const handlePlaceOrderBasedOnAvailability = () => {
     //cod -> cash on delivery

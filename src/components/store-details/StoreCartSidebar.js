@@ -812,7 +812,7 @@ const StoreCartSidebar = ({
   // initial state - the user explicitly opts in instead of being silently
   // charged.
   const [extraPackaging, setExtraPackaging] = useState(false);
-  const [addCutlery, setAddCutlery] = useState(true);
+  const [addCutlery, setAddCutlery] = useState(false);
   const [unavailableExpanded, setUnavailableExpanded] = useState(false);
   const [unavailableChoice, setUnavailableChoice] = useState("remove");
   const [subtotalCollapsed, setSubtotalCollapsed] = useState(false);
@@ -1563,7 +1563,7 @@ const StoreCartSidebar = ({
                     </Stack>
                   )}
 
-                  {getCurrentModuleType() !== ModuleTypes.GROCERY && (
+                  {getCurrentModuleType() === ModuleTypes.FOOD && (
                     <Stack
                       direction="row"
                       alignItems="center"

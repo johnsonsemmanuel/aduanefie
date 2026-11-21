@@ -22,7 +22,7 @@ const initialState = {
   // sidebar actually reach order-place.
   cartPrefs: {
     extraPackaging: true,
-    addCutlery: true,
+    addCutlery: false,
     unavailableChoice: "remove",
     monthlySubscribe: false,
   },

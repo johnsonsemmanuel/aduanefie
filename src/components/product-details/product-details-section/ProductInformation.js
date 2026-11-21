@@ -26,6 +26,7 @@ import { getGuestId } from "helper-functions/getToken";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
+import { showAddedToCartToast } from "utils/cartToast";
 import { useDispatch, useSelector } from "react-redux";
 import { setCart, setCartList } from "redux/slices/cart";
 import { setCartSidebarOpen } from "redux/slices/utils";
@@ -309,7 +310,7 @@ const ProductInformation = ({
     );
     //alert("Item added to cart");
     // dispatchRedux(setCartSidebarOpen(true));
-    toast.success(t("Item added to cart"));
+    showAddedToCartToast(t, router);
     handleModalClose?.();
     setClearCartModal(false);
   };
