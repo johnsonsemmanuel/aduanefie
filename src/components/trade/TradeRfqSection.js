@@ -30,6 +30,8 @@ import {
 } from "api-manage/hooks/react-query/trade/useTradeRfqs";
 import CustomModal from "components/modal";
 import { TRADE_COUNTRIES, UNIT_OPTIONS } from "utils/tradeOptions";
+import { useGetAgroPrices } from "api-manage/hooks/react-query/trade/useGetAgroPrices";
+import { findMatchingAgroPrice, formatCedi } from "utils/agroPriceMatch";
 
 const INITIAL_FORM = {
   buyer_name: "",
@@ -94,6 +96,8 @@ const TradeRfqSection = () => {
   });
 
   const { data: rfqData, isLoading, isError: rfqError, refetch: refetchRfqs } = useGetTradeRfqs("all");
+  const { data: agroPriceData } = useGetAgroPrices();
+  const matchedMarketPrice = findMatchingAgroPrice(form.commodity, agroPriceData?.prices || []);
   const { mutate: createRfq, isLoading: isSubmitting } = useCreateTradeRfq();
   const { mutate: submitQuote, isLoading: isSubmittingQuote } = useSubmitRfqQuote();
 
@@ -278,9 +282,14 @@ const TradeRfqSection = () => {
                     fullWidth
                     size="small"
                     type="number"
-                    label={t("Target Price (GH₵ / unit)")}
+                    label={t("Target Price (₵ / unit)")}
                     value={form.target_price_ghs}
                     onChange={(e) => setForm({ ...form, target_price_ghs: e.target.value })}
+                    helperText={
+                      matchedMarketPrice
+                        ? `${t("Ref Wholesale")}: ${formatCedi(matchedMarketPrice.wholesale_price_ghs)}/${matchedMarketPrice.unit} (${matchedMarketPrice.source_platform})`
+                        : undefined
+                    }
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>

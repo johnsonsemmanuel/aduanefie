@@ -17,6 +17,8 @@ import { useTranslation } from "react-i18next";
 import VerifiedBadge from "components/group-buy/VerifiedBadge";
 import StatusBadge from "components/common/StatusBadge";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
+import { useGetAgroPrices } from "api-manage/hooks/react-query/trade/useGetAgroPrices";
+import { findMatchingAgroPrice, formatCedi } from "utils/agroPriceMatch";
 
 const statusBadgeKey = (status) => {
   if (status === "locked" || status === "fulfilled") return "accepted";
@@ -40,6 +42,8 @@ const GroupBuyCard = ({ group, onEdit }) => {
   const spotsLeft = Math.max(0, limit - committed);
   const progress = Math.min(100, Math.max(6, (committed / Math.max(1, limit)) * 100));
   const sharePrice = group.member_share_ghs ?? group.item_share_ghs ?? 0;
+  const { data: agroPriceData } = useGetAgroPrices();
+  const marketMatch = findMatchingAgroPrice(group.item?.name || group.title, agroPriceData?.prices || []);
   const imgSrc =
     group.item?.image_full_url ||
     group.item?.image ||
@@ -190,6 +194,21 @@ const GroupBuyCard = ({ group, onEdit }) => {
               {t("Pool")} {getAmountWithSign(group.target_value_ghs || 0)}
             </Typography>
           </Stack>
+          {marketMatch && (
+            <Typography
+              sx={{
+                mt: 0.35,
+                fontSize: "10.5px",
+                fontWeight: 600,
+                color: theme.palette.success.dark,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {t("Mkt Retail")}: {formatCedi(marketMatch.retail_price_ghs)} · {marketMatch.source_platform}
+            </Typography>
+          )}
         </Box>
 
         <Box sx={{ mt: { xs: 0.9, sm: 1.25 } }}>

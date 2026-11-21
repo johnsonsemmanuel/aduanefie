@@ -19,6 +19,8 @@ import {
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useGetLiveFarmingItems } from "api-manage/hooks/react-query/useGetLiveFarmingItems";
+import { useGetAgroPrices } from "api-manage/hooks/react-query/trade/useGetAgroPrices";
+import { findMatchingAgroPrice, formatCedi } from "utils/agroPriceMatch";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
 import InsuranceBadge from "components/badges/InsuranceBadge";
 
@@ -43,6 +45,8 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
     limit,
     offset: 1,
   });
+  const { data: agroPriceData } = useGetAgroPrices();
+  const agroPrices = agroPriceData?.prices || [];
 
   const rawProducts = data?.products || [];
   const normalizedQuery = searchTerm.trim().toLowerCase();
@@ -372,9 +376,23 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
                     </Box>
 
                     <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={0.5} sx={{ mt: { xs: 1, sm: 1.5 } }}>
-                      <Typography sx={{ fontWeight: 800, fontSize: { xs: "12.5px", sm: "14.5px" }, color: theme.palette.primary.deep, whiteSpace: "nowrap" }}>
-                        {getAmountWithSign(item?.price || 0)}
-                      </Typography>
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography sx={{ fontWeight: 800, fontSize: { xs: "12.5px", sm: "14.5px" }, color: theme.palette.primary.deep, whiteSpace: "nowrap" }}>
+                          {getAmountWithSign(item?.price || 0)}
+                        </Typography>
+                        {(() => {
+                          const m = findMatchingAgroPrice(item, agroPrices);
+                          if (!m) return null;
+                          const mktRetail = Number(m.retail_price_ghs || 0);
+                          const itemPrice = Number(item?.price || 0);
+                          const savePct = mktRetail > itemPrice && itemPrice > 0 ? Math.round(((mktRetail - itemPrice) / mktRetail) * 100) : 0;
+                          return (
+                            <Typography sx={{ fontSize: "10px", fontWeight: 600, color: savePct >= 5 ? theme.palette.success.dark : "text.secondary", whiteSpace: "nowrap" }}>
+                              {savePct >= 5 ? `${t("Save")} ${savePct}%` : `${t("Mkt")} ${formatCedi(m.wholesale_price_ghs)}`}
+                            </Typography>
+                          );
+                        })()}
+                      </Box>
                       <Chip
                         size="small"
                         label={item?.pre_order_available ? t("Pre-Order") : t("View")}
