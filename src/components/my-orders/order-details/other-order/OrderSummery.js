@@ -382,6 +382,76 @@ const OrderSummery = (props) => {
                         </Box>
                       </Stack>
                     )}
+                  {summaryData?.is_pre_order && (
+                    <Stack>
+                      <Typography
+                        sx={{
+                          fontSize: "16px",
+                          fontWeight: 700,
+                          letterSpacing: "0.5px",
+                          textTransform: "capitalize",
+                          color: theme.palette.text.primary,
+                          mb: 1,
+                        }}
+                      >
+                        {t("Pre-Order Reservation")}
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: "inline-flex",
+                          alignSelf: "flex-start",
+                          px: 1.25,
+                          py: 0.5,
+                          borderRadius: "999px",
+                          backgroundColor: alpha(theme.palette.primary.main, 0.12),
+                          color: theme.palette.primary.main,
+                          border: `1px solid ${alpha(theme.palette.primary.main, 0.25)}`,
+                          fontSize: "13px",
+                          fontWeight: 700,
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {summaryData?.expected_harvest_date
+                          ? `${t("Expected Harvest")}: ${summaryData.expected_harvest_date}`
+                          : t("Reserved for Harvest")}
+                      </Box>
+                    </Stack>
+                  )}
+                  {(summaryData?.is_insured || Number(summaryData?.insurance_fee) > 0) && (
+                    <Stack>
+                      <Typography
+                        sx={{
+                          fontSize: "16px",
+                          fontWeight: 700,
+                          letterSpacing: "0.5px",
+                          textTransform: "capitalize",
+                          color: theme.palette.text.primary,
+                          mb: 1,
+                        }}
+                      >
+                        {t("Trade & Crop Insurance")}
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: "inline-flex",
+                          alignSelf: "flex-start",
+                          px: 1.25,
+                          py: 0.5,
+                          borderRadius: "999px",
+                          backgroundColor: alpha(theme.palette.success.main, 0.12),
+                          color: theme.palette.success.main,
+                          border: `1px solid ${alpha(theme.palette.success.main, 0.25)}`,
+                          fontSize: "13px",
+                          fontWeight: 700,
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {Number(summaryData?.insurance_fee) > 0
+                          ? `${t("Covered")} · ${getAmountWithSign(summaryData.insurance_fee)}`
+                          : t("Covered")}
+                      </Box>
+                    </Stack>
+                  )}
                   {!isParentRepeatBooking && (
                     <PaymentSummaryCard
                       {...{

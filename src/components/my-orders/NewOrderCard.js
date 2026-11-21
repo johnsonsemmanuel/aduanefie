@@ -257,23 +257,63 @@ const NewOrderCard = ({ order, bg = "transparent", configData }) => {
             details={order?.items_preview ?? []}
             size={thumbnailSize}
           />
-          {itemDescription && (
-            <Typography
-              sx={{
-                fontSize: { xs: "12px", md: "14px" },
-                fontWeight: 400,
-                color: "neutral.500",
-                lineHeight: 1.3,
-                width: "162px",
-                flexShrink: 0,
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-              }}
-            >
-              {itemDescription}
-            </Typography>
+          {(itemDescription || order?.is_pre_order || order?.is_insured) && (
+            <Stack spacing={0.5} sx={{ width: "162px", flexShrink: 0 }}>
+              {itemDescription && (
+                <Typography
+                  sx={{
+                    fontSize: { xs: "12px", md: "14px" },
+                    fontWeight: 400,
+                    color: "neutral.500",
+                    lineHeight: 1.3,
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
+                  {itemDescription}
+                </Typography>
+              )}
+              {(order?.is_pre_order || order?.is_insured) && (
+                <Stack direction="row" flexWrap="wrap" gap={0.5}>
+                  {order?.is_pre_order && (
+                    <Box
+                      component="span"
+                      sx={{
+                        fontSize: "10.5px",
+                        fontWeight: 700,
+                        px: "7px",
+                        py: "2px",
+                        borderRadius: "999px",
+                        bgcolor: "#EFE7D3",
+                        color: "#67513A",
+                      }}
+                    >
+                      {order?.expected_harvest_date
+                        ? `${t("Harvest")}: ${order.expected_harvest_date}`
+                        : t("Pre-Order")}
+                    </Box>
+                  )}
+                  {order?.is_insured && (
+                    <Box
+                      component="span"
+                      sx={{
+                        fontSize: "10.5px",
+                        fontWeight: 700,
+                        px: "7px",
+                        py: "2px",
+                        borderRadius: "999px",
+                        bgcolor: "#EDF2E4",
+                        color: "#536636",
+                      }}
+                    >
+                      {t("Insured")}
+                    </Box>
+                  )}
+                </Stack>
+              )}
+            </Stack>
           )}
         </Stack>
 
