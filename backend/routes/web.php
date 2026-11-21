@@ -212,3 +212,13 @@ Route::group(['prefix' => 'deliveryman', 'as' => 'deliveryman.'], function () {
     Route::get('apply', 'DeliveryManController@create')->name('create');
     Route::post('apply', 'DeliveryManController@store')->name('store');
 });
+
+// Customer-facing group buying web layer
+Route::group(['prefix' => 'group-buys', 'as' => 'customer.group-buys.'], function () {
+    Route::get('/', 'CustomerGroupBuyController@index')->name('index');
+    Route::get('{id}', 'CustomerGroupBuyController@show')->name('show');
+    Route::post('{id}/join', 'CustomerGroupBuyController@join')->name('join');
+    Route::get('{id}/checkout', 'CustomerGroupBuyController@checkout')->name('checkout');
+    Route::get('my', 'CustomerGroupBuyController@my')->name('my');
+    Route::post('{id}/leave', 'CustomerGroupBuyController@leave')->name('leave');
+});

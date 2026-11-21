@@ -9,6 +9,7 @@ use App\Models\Item;
 use App\Models\Order;
 use App\Models\Store;
 use App\Services\CrossBorder\ShippingQuoteService;
+use App\Services\GroupBuy\GroupBuyNotificationService;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -21,11 +22,14 @@ use Illuminate\Support\Facades\DB;
  *  - No payment is captured at join time. A group that fails to fill releases
  *    its members without taking money, so "auto refund" means "never charged".
  *  - Every state transition writes a matching event, including failure paths.
+ *  - Consent is required before joining; notifications fire on every transition.
  */
 class GroupBuyService
 {
-    public function __construct(private ShippingQuoteService $quotes)
-    {
+    public function __construct(
+        private ShippingQuoteService $quotes,
+        private GroupBuyNotificationService $notifications,
+    ) {
     }
 
     /**
@@ -124,6 +128,9 @@ class GroupBuyService
 
     /**
      * Join an open group. Locks the row so the 5th member cannot oversubscribe.
+     *
+     * @param  array  $data  May contain 'consent_accepted' (bool), 'consent_version' (string),
+     *                       'delivery_charge_ghs', 'delivery_address' (array), 'gps_lat', 'gps_lng'
      */
     public function join(GroupBuy $group, ?int $userId, ?string $guestId, array $data = []): GroupBuyParticipant
     {
@@ -145,6 +152,11 @@ class GroupBuyService
                 throw new \InvalidArgumentException('This group is already full.');
             }
 
+            // Consent dialogue: the group may require explicit acceptance.
+            if ($group->consent_text && ! ($data['consent_accepted'] ?? false)) {
+                throw new \InvalidArgumentException('You must accept the group consent terms to join.');
+            }
+
             $exists = GroupBuyParticipant::where('group_buy_id', $group->id)
                 ->where(function ($q) use ($userId, $guestId) {
                     $q->when($userId, fn ($inner) => $inner->orWhere('user_id', $userId))
@@ -164,16 +176,24 @@ class GroupBuyService
                 'item_share_ghs' => round($unitPrice * $group->share_units, 2),
                 'delivery_charge_ghs' => round((float) ($data['delivery_charge_ghs'] ?? 0), 2),
                 'delivery_address' => $data['delivery_address'] ?? null,
+                'gps_lat' => $data['gps_lat'] ?? null,
+                'gps_lng' => $data['gps_lng'] ?? null,
                 'payment_status' => GroupBuyParticipant::PAYMENT_NOT_CHARGED,
                 'fulfillment_status' => GroupBuyParticipant::FULFILLMENT_PENDING,
                 'joined_at' => now(),
+                'consent_accepted_at' => $data['consent_accepted'] ? now() : null,
+                'consent_version' => $data['consent_version'] ?? $group->consent_version,
             ]);
 
             $group->increment('committed_count');
             $this->log($group, 'joined', $participant->id, $data['actor_type'] ?? 'customer', $userId ?? null, [
                 // increment() already updates the in-memory attribute.
                 'committed_count' => $group->committed_count,
+                'consent_accepted' => $data['consent_accepted'] ?? false,
             ]);
+
+            // Notify before locking so the new member sees the welcome message.
+            $this->notifications->memberJoined($group, $participant);
 
             if ($group->fresh()->committed_count >= $group->member_limit) {
                 $group->update([
@@ -183,6 +203,7 @@ class GroupBuyService
                 $this->log($group, 'locked', null, 'system', null, [
                     'committed_count' => $group->member_limit,
                 ]);
+                $this->notifications->groupLocked($group);
             }
 
             return $participant;
@@ -270,12 +291,16 @@ class GroupBuyService
         $this->log($participant->groupBuy, 'shipped', $participant->id, 'supplier', null, [
             'order_link' => 'supplier ships directly to this member',
         ]);
+
+        $this->notifications->shipped($participant);
     }
 
     public function markDelivered(GroupBuyParticipant $participant): void
     {
         $participant->update(['fulfillment_status' => GroupBuyParticipant::FULFILLMENT_DELIVERED]);
         $this->log($participant->groupBuy, 'delivered', $participant->id, 'system', null);
+
+        $this->notifications->delivered($participant);
 
         $group = $participant->groupBuy;
         $outstanding = $group->participants()
@@ -288,6 +313,47 @@ class GroupBuyService
             ]);
             $this->log($group, 'fulfilled', null, 'system', null);
         }
+    }
+
+    /**
+     * Record that a member has paid for their share. Called after the member's
+     * order payment is confirmed. When all members pay, the escrow is marked
+     * ready for release to the store.
+     */
+    public function markPaid(GroupBuyParticipant $participant): void
+    {
+        $participant->update(['payment_status' => GroupBuyParticipant::PAYMENT_PAID]);
+        $this->log($participant->groupBuy, 'payment_received', $participant->id, 'customer', $participant->user_id, [
+            'item_share_ghs' => $participant->item_share_ghs,
+        ]);
+
+        $group = $participant->groupBuy->fresh();
+        if ($group->isFullyPaid() && $group->escrow_status !== 'released') {
+            $group->update(['escrow_status' => 'ready']);
+            $this->log($group, 'escrow_ready', null, 'system', null, [
+                'paid_count' => $group->paidCount(),
+                'total_members' => $group->member_limit,
+            ]);
+        }
+    }
+
+    /**
+     * Release escrow funds to the store. Admin-triggered after all deliveries
+     * are confirmed.
+     */
+    public function releaseEscrow(GroupBuy $group): void
+    {
+        if ($group->escrow_status !== 'ready') {
+            throw new \InvalidArgumentException('Escrow is not ready for release. All members must pay first.');
+        }
+
+        $group->update([
+            'escrow_status' => 'released',
+            'escrow_released_at' => now(),
+        ]);
+        $this->log($group, 'escrow_released', null, 'system', null, [
+            'released_at' => now()->toISOString(),
+        ]);
     }
 
     /**

@@ -339,6 +339,8 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::post('expire/{id}', 'GroupBuyController@expire')->name('expire');
             Route::post('ship/{participant}', 'GroupBuyController@ship')->name('ship');
             Route::post('deliver/{participant}', 'GroupBuyController@deliver')->name('deliver');
+            Route::post('remind/{id}', 'GroupBuyController@sendReminder')->name('remind');
+            Route::post('release-escrow/{id}', 'GroupBuyController@releaseEscrow')->name('release-escrow');
         });
 
         Route::group(['prefix' => 'footer-links', 'as' => 'footer-links.', 'middleware' => ['module:settings']], function () {
