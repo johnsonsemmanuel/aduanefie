@@ -1,4 +1,5 @@
 import axios from "axios";
+import { readCurrentLocation } from "helper-functions/validLocation";
 // NEXT_PUBLIC_BASE_URL may or may not carry a trailing slash. Axios normalises
 // that when joining baseURL + path, but every server-side `${baseUrl}${path}`
 // template does not - it yields `host//api/v1/...`, which the API answers with
@@ -14,7 +15,7 @@ MainApi.interceptors.request.use(function (config) {
   let zoneid = undefined;
   let token = undefined;
   let language = undefined;
-  let currentLocation = undefined;
+  let currentLocation = null;
   let software_id = 33571750;
   let hostname = process.env.NEXT_CLIENT_HOST_URL;
   let moduleid = undefined;
@@ -23,11 +24,21 @@ MainApi.interceptors.request.use(function (config) {
     zoneid = localStorage.getItem("zoneid");
     token = localStorage.getItem("token");
     language = JSON.parse(localStorage.getItem("language-setting"));
-    currentLocation = JSON.parse(localStorage.getItem("currentLatLng"));
+    currentLocation = readCurrentLocation(
+      localStorage.getItem("currentLatLng"),
+    );
     moduleid = JSON.parse(localStorage.getItem("module"))?.id;
   }
-  config.headers.latitude = currentLocation?.lat || 0;
-  config.headers.longitude = currentLocation?.lng || 0;
+  if (currentLocation) {
+    config.headers.latitude = currentLocation.lat;
+    config.headers.longitude = currentLocation.lng;
+  } else {
+    // Never invent a coordinate. Nearby endpoints fail closed when these
+    // headers are absent, and list-first views can explain that no location
+    // has been set yet.
+    delete config.headers.latitude;
+    delete config.headers.longitude;
+  }
   const zoneidIsValid =
     zoneid &&
     zoneid !== "undefined" &&
