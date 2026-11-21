@@ -28,6 +28,7 @@ import useGetZoneList from "api-manage/hooks/react-query/zone-list/zone-list";
 import { ActonButtonsSection } from "components/deliveryman-registration/CustomStylesDeliveryman";
 import BusinessTin from "components/store-resgistration/BusinessTin";
 import { shadows } from "@mui/system";
+import { normalizeCountry } from "utils/marketProfiles";
 
 const STORE_REG_DRAFT_KEY = "aduanefie_store_reg_draft_v1";
 
@@ -55,7 +56,7 @@ export const generateInitialValues = (languages, allData) => {
     tin_expire_date: allData?.tin_expire_date || "",
     tin_certificate_image: allData?.tin_certificate_image || "",
     farm_type: allData?.farm_type || "commercial",
-    country: allData?.country || "Ghana",
+    country: normalizeCountry(allData?.country) || "GH",
     region: allData?.region || "",
     district: allData?.district || "",
     sub_district: allData?.sub_district || "",

@@ -22,6 +22,11 @@ import { useDispatch } from "react-redux";
 import { useGetConfigData } from "api-manage/hooks/useGetConfigData";
 import { setConfigData } from "redux/slices/configData";
 import toast from "react-hot-toast";
+import {
+  getCountryOptions,
+  getMarketProfile,
+  normalizeCountry,
+} from "utils/marketProfiles";
 
 const GHANA_REGIONS = [
   "Greater Accra",
@@ -42,8 +47,6 @@ const GHANA_REGIONS = [
   "Upper West",
 ];
 
-const MOMO_NETWORKS = ["MTN MoMo", "Telecel Cash", "AirtelTigo Money"];
-
 const BecomeAMarketerPage = ({ configData }) => {
   const dispatch = useDispatch();
   const { data: dataConfig, refetch: configRefetch } = useGetConfigData();
@@ -58,18 +61,39 @@ const BecomeAMarketerPage = ({ configData }) => {
   }, [dataConfig, dispatch]);
 
   const effectiveConfig = configData || dataConfig;
+  const countryOptions = getCountryOptions();
 
   const [submitting, setSubmitting] = useState(false);
   const [submittedMsg, setSubmittedMsg] = useState("");
   const [form, setForm] = useState({
+    country: normalizeCountry(effectiveConfig?.country) || "GH",
     full_name: "",
     email: "",
     phone: "",
-    region: "Ashanti",
+    region: "Greater Accra",
     district: "",
-    momo_network: "MTN MoMo",
+    momo_network: "MTN",
     experience_notes: "",
   });
+
+  const marketProfile = getMarketProfile(form.country);
+  const usesGhanaRegions = marketProfile?.address?.location_dataset === "ghana";
+  const regionLabel = marketProfile?.address?.region_label || "Region / State";
+  const districtLabel = marketProfile?.address?.district_label || "District / Town";
+  const payoutNetworks = marketProfile?.payouts?.networks || ["MTN"];
+  const phoneExample = marketProfile?.phone?.example || "0241234567";
+  const phoneDialCode = marketProfile?.phone?.dial_code || "+233";
+
+  const handleCountryChange = (country) => {
+    const profile = getMarketProfile(country);
+    setForm((current) => ({
+      ...current,
+      country,
+      region: profile?.address?.location_dataset === "ghana" ? "Greater Accra" : "",
+      district: "",
+      momo_network: profile?.payouts?.networks?.[0] || "",
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -80,17 +104,22 @@ const BecomeAMarketerPage = ({ configData }) => {
     setSubmitting(true);
     setSubmittedMsg("");
     try {
-      const { data } = await MainApi.post("/api/v1/marketer-applications", form);
+      const { data } = await MainApi.post("/api/v1/marketer-applications", {
+        ...form,
+        country: form.country,
+        country_code: form.country,
+      });
       const msg = data?.message || "Application submitted!";
       setSubmittedMsg(msg);
       toast.success(msg);
       setForm({
+        country: form.country,
         full_name: "",
         email: "",
         phone: "",
         region: form.region,
         district: "",
-        momo_network: "MTN MoMo",
+        momo_network: form.momo_network,
         experience_notes: "",
       });
     } catch (err) {
@@ -140,7 +169,7 @@ const BecomeAMarketerPage = ({ configData }) => {
                 Earn by Onboarding Farmers in Your Region
               </Typography>
               <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.9)", maxWidth: 680 }}>
-                Join Aduanefie&apos;s regional field network. Earn GH₵ 25 for every verified farm or agro-vendor you onboard, plus 20% recurring share of Aduanefie&apos;s commission on their delivered orders.
+                Join Aduanefie&apos;s regional field network. Earn an onboarding bounty in your local currency for every verified farm or agro-vendor you onboard, plus a recurring share of Aduanefie&apos;s commission on their delivered orders.
               </Typography>
             </Paper>
 
@@ -149,8 +178,8 @@ const BecomeAMarketerPage = ({ configData }) => {
                 <Stack spacing={1.5}>
                   {[
                     {
-                      title: "GH₵ 25 Onboarding Bounty",
-                      desc: "Paid per verified farmer, backyard grower, or agro-input vendor who joins through your referral code.",
+                      title: "Onboarding Bounty",
+                      desc: "Paid in your local currency per verified farmer, backyard grower, or agro-input vendor who joins through your referral code.",
                     },
                     {
                       title: "20% Recurring Order Commission",
@@ -195,6 +224,21 @@ const BecomeAMarketerPage = ({ configData }) => {
                   <Box component="form" onSubmit={handleSubmit}>
                     <Stack spacing={1.5}>
                       <TextField
+                        select
+                        required
+                        fullWidth
+                        size="small"
+                        label="Country"
+                        value={form.country}
+                        onChange={(e) => handleCountryChange(e.target.value)}
+                      >
+                        {countryOptions.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </TextField>
+                      <TextField
                         required
                         fullWidth
                         size="small"
@@ -217,31 +261,43 @@ const BecomeAMarketerPage = ({ configData }) => {
                           fullWidth
                           size="small"
                           label="Phone Number (MoMo / SMS)"
-                          placeholder="0241234567"
+                          placeholder={phoneExample}
+                          helperText={`${phoneDialCode} mobile number`}
                           value={form.phone}
                           onChange={(e) => setForm({ ...form, phone: e.target.value })}
                         />
                       </Stack>
                       <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
+                        {usesGhanaRegions ? (
+                          <TextField
+                            select
+                            required
+                            fullWidth
+                            size="small"
+                            label={regionLabel}
+                            value={form.region}
+                            onChange={(e) => setForm({ ...form, region: e.target.value })}
+                          >
+                            {GHANA_REGIONS.map((r) => (
+                              <MenuItem key={r} value={r}>
+                                {r}
+                              </MenuItem>
+                            ))}
+                          </TextField>
+                        ) : (
+                          <TextField
+                            required
+                            fullWidth
+                            size="small"
+                            label={regionLabel}
+                            value={form.region}
+                            onChange={(e) => setForm({ ...form, region: e.target.value })}
+                          />
+                        )}
                         <TextField
-                          select
-                          required
                           fullWidth
                           size="small"
-                          label="Target Region"
-                          value={form.region}
-                          onChange={(e) => setForm({ ...form, region: e.target.value })}
-                        >
-                          {GHANA_REGIONS.map((r) => (
-                            <MenuItem key={r} value={r}>
-                              {r}
-                            </MenuItem>
-                          ))}
-                        </TextField>
-                        <TextField
-                          fullWidth
-                          size="small"
-                          label="District / Town"
+                          label={districtLabel}
                           value={form.district}
                           onChange={(e) => setForm({ ...form, district: e.target.value })}
                         />
@@ -254,7 +310,7 @@ const BecomeAMarketerPage = ({ configData }) => {
                         value={form.momo_network}
                         onChange={(e) => setForm({ ...form, momo_network: e.target.value })}
                       >
-                        {MOMO_NETWORKS.map((net) => (
+                        {payoutNetworks.map((net) => (
                           <MenuItem key={net} value={net}>
                             {net}
                           </MenuItem>

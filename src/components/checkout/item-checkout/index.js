@@ -16,6 +16,11 @@ import { isBundleCartRow } from "helper-functions/bundleCartRow";
 import { getStoresOrRestaurants } from "helper-functions/getStoresOrRestaurants";
 import { getGuestId, getToken } from "helper-functions/getToken";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
+import {
+  getCurrencyOptions,
+  getMarketProfile,
+  DEFAULT_COUNTRY,
+} from "utils/marketProfiles";
 import moment from "moment/moment";
 import Router from "next/router";
 import React, { useEffect, useMemo, useReducer, useState, useRef } from "react";
@@ -147,8 +152,16 @@ const ItemCheckout = (props) => {
   const [total_order_amount, setTotalOrderAmount] = useState(0);
   const [deliveryTip, setDeliveryTip] = useState(0);
   const [deliveryFee, setDeliveryFee] = useState(0);
-  const [selectedCurrency, setSelectedCurrency] = useState({ code: "GHS", symbol: "GH₵", name: "Ghanaian Cedi" });
-  const [currencies, setCurrencies] = useState([]);
+  const [selectedCurrency, setSelectedCurrency] = useState(
+    getCurrencyOptions(DEFAULT_COUNTRY)[0] || {
+      code: "GHS",
+      symbol: "GH₵",
+      name: "Ghanaian Cedi",
+    },
+  );
+  const [currencies, setCurrencies] = useState(
+    getCurrencyOptions(DEFAULT_COUNTRY),
+  );
   const [deliveryFeeBeforeProDiscount, setDeliveryFeeBeforeProDiscount] =
     useState(0);
   const [minDeliveryCharge, setMinDeliveryCharge] = useState(0);
@@ -365,24 +378,18 @@ const ItemCheckout = (props) => {
   }, []);
 
   useEffect(() => {
-    // Load available currencies for multi-currency support
-    const africanCurrencies = [
-      { code: "GHS", symbol: "GH₵", name: "Ghanaian Cedi" },
-      { code: "NGN", symbol: "₦", name: "Nigerian Naira" },
-      { code: "KES", symbol: "Ksh", name: "Kenyan Shilling" },
-      { code: "XAF", symbol: "FCFA", name: "CFA Franc BEAC" },
-      { code: "XOF", symbol: "CFA", name: "CFA Franc BCEAO" },
-      { code: "ZAR", symbol: "R", name: "South African Rand" },
-      { code: "USD", symbol: "$", name: "US Dollar" },
-      { code: "EUR", symbol: "€", name: "Euro" },
-      { code: "GBP", symbol: "£", name: "British Pound" },
-    ];
-    setCurrencies(africanCurrencies);
-    // Default to store's currency or GHS
-    const storeCurrency = storeData?.currency || "GHS";
-    const found = africanCurrencies.find(c => c.code === storeCurrency);
-    if (found) setSelectedCurrency(found);
-  }, [storeData]);
+    // The destination market is the only authority on which currency an order
+    // may be charged in. Never offer an arbitrary global currency list; the
+    // backend rejects any currency outside the destination's presentment set.
+    const options = getCurrencyOptions(destinationCountry, DEFAULT_COUNTRY);
+    setCurrencies(options);
+    const preferred = options[0];
+    if (preferred) {
+      setSelectedCurrency((current) =>
+        options.some((option) => option.code === current?.code) ? current : preferred
+      );
+    }
+  }, [destinationCountry]);
   useEffect(() => {
     if (storeId) {
       refetch();
@@ -1709,27 +1716,38 @@ const ItemCheckout = (props) => {
                     setRecurringFrequency={setRecurringFrequency}
                   />
 
-                  {/* Currency Selector */}
-                  <Box sx={{ mt: 2, mb: 1, px: 1, display: "flex", alignItems: "center", gap: 1 }}>
-                    <Typography variant="body2" fontWeight="600" sx={{ color: "text.secondary", minWidth: "100px" }}>
-                      {t("Currency")}
+                  {/* Currency is determined by the delivery country. */}
+                  <Box sx={{ mt: 2, mb: 1, px: 1 }}>
+                    <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
+                      <Typography variant="body2" fontWeight="600" sx={{ color: "text.secondary" }}>
+                        {t("Currency")}
+                      </Typography>
+                      {currencies.length === 1 ? (
+                        <Typography variant="body2" fontWeight="600">
+                          {selectedCurrency.code} - {selectedCurrency.name} ({selectedCurrency.symbol})
+                        </Typography>
+                      ) : (
+                        <Select
+                          value={selectedCurrency?.code || ""}
+                          onChange={(e) => {
+                            const found = currencies.find((c) => c.code === e.target.value);
+                            if (found) setSelectedCurrency(found);
+                          }}
+                          displayEmpty
+                          MenuProps={{ PaperProps: { style: { maxHeight: 200, overflowY: "auto" } } }}
+                          sx={{ width: 220 }}
+                        >
+                          {currencies.map((c) => (
+                            <MenuItem key={c.code} value={c.code}>
+                              {c.code} - {c.name} ({c.symbol})
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      )}
+                    </Stack>
+                    <Typography variant="caption" color="text.secondary">
+                      {t("Currency is set by your delivery country so you always pay in local money.")}
                     </Typography>
-                    <Select
-                      value={selectedCurrency.code}
-                      onChange={(e) => {
-                        const found = currencies.find(c => c.code === e.target.value);
-                        if (found) setSelectedCurrency(found);
-                      }}
-                      displayEmpty
-                      MenuProps={{ PaperProps: { style: { maxHeight: 200, overflowY: "auto" } } }}
-                      sx={{ width: 200 }}
-                    >
-                      {currencies.map(c => (
-                        <MenuItem key={c.code} value={c.code}>
-                          {c.code} - {c.name} ({c.symbol})
-                        </MenuItem>
-                      ))}
-                    </Select>
                   </Box>
 
                   <PlaceOrder

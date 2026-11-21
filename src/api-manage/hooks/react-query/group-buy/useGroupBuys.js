@@ -171,13 +171,15 @@ export const useSendGroupBuyMessage = (id) => {
   );
 };
 
-export const useGetOrganizerVerification = (enabled = true) => {
+export const useGetOrganizerVerification = (enabled = true, countryCode = "GH") => {
   const hasToken =
     typeof window !== "undefined" && Boolean(localStorage.getItem("token"));
   return useQuery(
-    ["group-buy", "verification"],
+    ["group-buy", "verification", countryCode],
     async () => {
-      const { data } = await MainApi.get(group_buy_verification_api);
+      const { data } = await MainApi.get(group_buy_verification_api, {
+        params: { country_code: countryCode },
+      });
       return data?.data;
     },
     { enabled: Boolean(enabled && hasToken), staleTime: 60 * 1000, retry: false }
@@ -187,10 +189,17 @@ export const useGetOrganizerVerification = (enabled = true) => {
 export const useSubmitOrganizerVerification = () => {
   const queryClient = useQueryClient();
   return useMutation(
-    async (ghanaCardLast4) => {
-      const { data } = await MainApi.post(group_buy_verification_api, {
-        ghana_card_last4: ghanaCardLast4,
-      });
+    async (payload) => {
+      // Accept the legacy string form during rollout; new callers send an
+      // explicit object with the market country code.
+      const body =
+        typeof payload === "string"
+          ? { identity_last4: payload, ghana_card_last4: payload, country_code: "GH" }
+          : {
+              identity_last4: payload?.identity_last4,
+              country_code: payload?.country_code || "GH",
+            };
+      const { data } = await MainApi.post(group_buy_verification_api, body);
       return data?.data;
     },
     {

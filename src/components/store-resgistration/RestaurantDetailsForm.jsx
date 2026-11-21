@@ -13,6 +13,7 @@ import { useSelector } from "react-redux";
 import CustomMultiSelect from "components/custom-multi-select/CustomMultiSelect";
 import HailIcon from '@mui/icons-material/Hail';
 import GhanaRegionDistrictFields from "components/common/GhanaRegionDistrictFields";
+import { getCountryOptions, getMarketProfile } from "utils/marketProfiles";
 
 export const checkTaxiModule = (value, moduleOption) => {
   const moduleObj = moduleOption?.find((item) => item.value === value);
@@ -59,6 +60,11 @@ const RestaurantDetailsForm = ({
     SetModuleType(selectedModule?.module_type);
   }, [selectedModule]);
 
+  // Country must be chosen first: it drives currency, phone format, address
+  // labels and the identity document used later in onboarding.
+  const countryOptions = getCountryOptions();
+  const marketProfile = getMarketProfile(RestaurantJoinFormik.values.country);
+  const usesGhanaLocations = marketProfile?.address?.location_dataset === "ghana";
 
   return (
     <CustomStackFullWidth alignItems="center" key={address || selectedLanguage}>
@@ -80,6 +86,25 @@ const RestaurantDetailsForm = ({
               fontSize=""
             />
             <Stack mt={4}>
+              <CustomSelectWithFormik
+                labelColor={alpha(theme.palette.neutral[1000], 0.8)}
+                selectFieldData={countryOptions}
+                inputLabel={t("Country")}
+                placeholder={t("Select Country")}
+                passSelectedValue={(val) => {
+                  RestaurantJoinFormik.setFieldValue("country", val);
+                  // Region/district datasets are country specific. Clear them
+                  // so a stale Ghana district never carries into another market.
+                  RestaurantJoinFormik.setFieldValue("region", "");
+                  RestaurantJoinFormik.setFieldValue("district", "");
+                  RestaurantJoinFormik.setFieldValue("sub_district", "");
+                }}
+                touched={RestaurantJoinFormik.touched.country}
+                errors={RestaurantJoinFormik.errors.country}
+                fieldProps={RestaurantJoinFormik.getFieldProps("country")}
+              />
+            </Stack>
+            <Stack mt="24px">
               <CustomTextFieldWithFormik
                 labelColor={alpha(theme.palette.neutral[1000], 0.8)}
                 backgroundColor
@@ -370,29 +395,6 @@ const RestaurantDetailsForm = ({
                 />
               </Grid>
               <Grid item xs={12} sm={6} md={4}>
-                <CustomSelectWithFormik
-                  labelColor={alpha(theme.palette.neutral[1000], 0.8)}
-                  selectFieldData={[
-                    { label: "Ghana", value: "Ghana" },
-                    { label: "Nigeria", value: "Nigeria" },
-                    { label: "Kenya", value: "Kenya" },
-                    { label: "Côte d'Ivoire", value: "Côte d'Ivoire" },
-                    { label: "Togo", value: "Togo" },
-                    { label: "Burkina Faso", value: "Burkina Faso" },
-                    { label: "Senegal", value: "Senegal" },
-                    { label: "South Africa", value: "South Africa" },
-                  ]}
-                  inputLabel={t("Country")}
-                  placeholder={t("Select Country")}
-                  passSelectedValue={(val) =>
-                    RestaurantJoinFormik.setFieldValue("country", val)
-                  }
-                  touched={RestaurantJoinFormik.touched.country}
-                  errors={RestaurantJoinFormik.errors.country}
-                  fieldProps={RestaurantJoinFormik.getFieldProps("country")}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6} md={4}>
                 <CustomTextFieldWithFormik
                   labelColor={alpha(theme.palette.neutral[1000], 0.8)}
                   placeholder={t("e.g. MKT-12 (Optional)")}
@@ -407,10 +409,45 @@ const RestaurantDetailsForm = ({
                   value={RestaurantJoinFormik.values.marketer_code}
                 />
               </Grid>
-              <GhanaRegionDistrictFields
-                formik={RestaurantJoinFormik}
-                gridProps={{ xs: 12, sm: 6, md: 4 }}
-              />
+              {usesGhanaLocations ? (
+                <GhanaRegionDistrictFields
+                  formik={RestaurantJoinFormik}
+                  gridProps={{ xs: 12, sm: 6, md: 4 }}
+                />
+              ) : (
+                <>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <CustomTextFieldWithFormik
+                      labelColor={alpha(theme.palette.neutral[1000], 0.8)}
+                      placeholder={marketProfile?.address?.region_label || t("Region / State")}
+                      name="region"
+                      label={marketProfile?.address?.region_label || t("Region / State")}
+                      touched={RestaurantJoinFormik.touched.region}
+                      errors={RestaurantJoinFormik.errors.region}
+                      fieldProps={RestaurantJoinFormik.getFieldProps("region")}
+                      onChangeHandler={(value) =>
+                        RestaurantJoinFormik.setFieldValue("region", value)
+                      }
+                      value={RestaurantJoinFormik.values.region || ""}
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6} md={4}>
+                    <CustomTextFieldWithFormik
+                      labelColor={alpha(theme.palette.neutral[1000], 0.8)}
+                      placeholder={marketProfile?.address?.district_label || t("District")}
+                      name="district"
+                      label={marketProfile?.address?.district_label || t("District")}
+                      touched={RestaurantJoinFormik.touched.district}
+                      errors={RestaurantJoinFormik.errors.district}
+                      fieldProps={RestaurantJoinFormik.getFieldProps("district")}
+                      onChangeHandler={(value) =>
+                        RestaurantJoinFormik.setFieldValue("district", value)
+                      }
+                      value={RestaurantJoinFormik.values.district || ""}
+                    />
+                  </Grid>
+                </>
+              )}
               <Grid item xs={12} sm={6} md={4}>
                 <CustomTextFieldWithFormik
                   labelColor={alpha(theme.palette.neutral[1000], 0.8)}

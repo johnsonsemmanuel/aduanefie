@@ -1,4 +1,5 @@
 import { store } from "redux/store";
+import { getMarketProfile, DEFAULT_COUNTRY } from "utils/marketProfiles";
 
 /**
  * Format a plain number (non-currency) using config's digit_after_decimal_point.
@@ -33,12 +34,16 @@ export const formatNumber = (value, fallbackDecimals = 2) => {
 //   return amount;
 // };
 
-export const getAmountWithSign = (amount, needDecimal = true) => {
+export const getAmountWithSign = (amount, needDecimal = true, country = null) => {
   if (amount == null || isNaN(Number(amount))) return "";
 
   const { configData } = store?.getState()?.configData || {};
-  const decimals = configData?.digit_after_decimal_point ?? 2;
-  const symbol = configData?.currency_symbol || "";
+  // Country-aware currency: resolve the active market so XOF markets show
+  // whole CFA amounts and Nigeria shows naira, while Ghana keeps the cedi.
+  const marketCountry = country || configData?.country || DEFAULT_COUNTRY;
+  const profile = getMarketProfile(marketCountry);
+  const decimals = profile?.decimal_places ?? configData?.digit_after_decimal_point ?? 2;
+  const symbol = profile?.currency_symbol || configData?.currency_symbol || "";
   const direction = configData?.currency_symbol_direction || "left";
 
   // Function to format large numbers
