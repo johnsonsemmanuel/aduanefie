@@ -65,6 +65,7 @@ import {
 import TopBanner from "./top-banner";
 import ModuleSearchBanner from "./module-wise-components/shared/ModuleSearchBanner";
 import RideShareModuleLandingPage from "./module-wise-components/rideShare";
+import PickedForYouSection from "./for-you/PickedForYouSection";
 
 export const HomeComponentsWrapper = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -369,6 +370,9 @@ const HomePageComponents = ({
               </>
             )}
             {getModuleWiseComponents()}
+            {["grocery", "ecommerce", "food", "pharmacy"].includes(moduleType) && (
+              <PickedForYouSection />
+            )}
           </Box>
         </CustomStackFullWidth>
 
