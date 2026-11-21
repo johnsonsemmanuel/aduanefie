@@ -477,10 +477,11 @@ const ProfileIntro = ({
         }}
       >
         {[
-          { label: t("My Orders"), path: "/profile?page=my-orders" },
+          { label: t("Buy Again"), path: "/profile?page=my-orders" },
           { label: t("My Group Buys"), path: "/group-buys" },
           { label: t("Live Farms"), path: "/live-farming" },
           { label: t("Monthly Orders"), path: "/profile?page=monthly-cart-list" },
+          { label: t("Saved Items"), path: "/home/wishlist" },
           { label: t("Track Order"), path: "/track-order" },
         ].map((action) => (
           <Button

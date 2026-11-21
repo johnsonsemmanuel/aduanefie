@@ -182,9 +182,40 @@ const GroupBuysPage = ({ configData }) => {
                     ))}
                   </Grid>
                 ) : (
-                  <Typography color="text.secondary">
-                    No groups here yet. Start one and share it with other buyers.
-                  </Typography>
+                  <Box
+                    sx={{
+                      p: 3,
+                      borderRadius: "12px",
+                      border: "1px dashed",
+                      borderColor: "divider",
+                      textAlign: "center",
+                    }}
+                  >
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700, mb: 0.5 }}>
+                      No matching group buys right now
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2 }}>
+                      Start the first group for this marketplace or browse all marketplaces.
+                    </Typography>
+                    <Stack direction="row" justifyContent="center" spacing={1} flexWrap="wrap" useFlexGap>
+                      <Button size="small" variant="contained" onClick={() => setCreateOpen(true)}>
+                        Start a group
+                      </Button>
+                      {(scopeToModule || country || status !== "all") && (
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => {
+                            setScopeToModule(false);
+                            setCountry("");
+                            setStatus("all");
+                          }}
+                        >
+                          Show all marketplaces
+                        </Button>
+                      )}
+                    </Stack>
+                  </Box>
                 )}
               </>
             ) : mineLoading ? (

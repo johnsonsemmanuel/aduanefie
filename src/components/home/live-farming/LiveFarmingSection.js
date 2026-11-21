@@ -206,10 +206,23 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
           ))}
         </Grid>
       ) : products.length === 0 ? (
-        <Box sx={{ py: 4, textAlign: "center" }}>
-          <Typography sx={{ color: "text.secondary", fontSize: "14px" }}>
+        <Box sx={{ py: 3, textAlign: "center" }}>
+          <Typography sx={{ color: "text.secondary", fontSize: "13.5px", mb: 1.25 }}>
             {t("No crops match this live farming filter right now.")}
           </Typography>
+          {(statusFilter !== "all" || backyardOnly) && (
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => {
+                setStatusFilter("all");
+                setBackyardOnly(false);
+              }}
+              sx={{ textTransform: "none", fontWeight: 600 }}
+            >
+              {t("Show all active crops")}
+            </Button>
+          )}
         </Box>
       ) : (
         <Grid container spacing={{ xs: 1.25, sm: 2 }}>
