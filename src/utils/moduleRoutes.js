@@ -4,6 +4,11 @@
 export const isModuleAgnosticRoute = (pathname) =>
   !pathname ||
   pathname === "/" ||
+  pathname === "/404" ||
+  pathname === "/500" ||
+  pathname === "/app-redirect" ||
+  pathname === "/maintainance" ||
+  pathname === "/forgot-password" ||
   pathname === "/welcome" ||
   pathname === "/trade" ||
   pathname?.startsWith("/trade/") ||
@@ -16,8 +21,10 @@ export const isModuleAgnosticRoute = (pathname) =>
   pathname === "/store-registration" ||
   pathname === "/deliveryman-registration" ||
   pathname === "/profile" ||
+  pathname?.startsWith("/profile/") ||
   pathname === "/interest" ||
   pathname === "/checkout" ||
+  pathname?.startsWith("/checkout/") ||
   pathname?.startsWith("/track-order") ||
   pathname === "/help-and-support" ||
   pathname === "/about-us" ||
