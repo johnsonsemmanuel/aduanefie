@@ -4,14 +4,22 @@ import placeholder from "../../public/static/no-image-found.png";
 import { Box } from "@mui/system";
 
 const resolveImageSrc = (raw) => {
+  const clean = (val) => {
+    if (typeof val !== "string") return "";
+    const t = val.trim();
+    if (!t || /\/assets\/admin\/img\/160x160\/img2\.jpg$/i.test(t)) return "";
+    return t;
+  };
   if (typeof raw === "string") {
-    const trimmed = raw.trim();
-    return trimmed ? trimmed : placeholder?.src;
+    return clean(raw) || placeholder?.src;
   }
   if (raw && typeof raw === "object") {
-    if (typeof raw.src === "string" && raw.src.trim()) return raw.src;
-    if (typeof raw.img_full_url === "string" && raw.img_full_url.trim()) return raw.img_full_url;
-    if (typeof raw.image_full_url === "string" && raw.image_full_url.trim()) return raw.image_full_url;
+    return (
+      clean(raw.src) ||
+      clean(raw.img_full_url) ||
+      clean(raw.image_full_url) ||
+      placeholder?.src
+    );
   }
   return placeholder?.src;
 };

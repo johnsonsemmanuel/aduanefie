@@ -235,16 +235,16 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedModule?.module_type]);
 
-  // Map a section label/id to its Figma chip background tint
+  // Map a section label/id to consistent Aduanefie earth/olive chip tints
   const isDark = theme.palette.mode === "dark";
   const chipBgFor = (s) => {
     const key =
       (s.id || "").toLowerCase() + " " + (s.label || "").toLowerCase();
     if (/offer|discount|deal/.test(key))
-      return isDark ? "rgba(239,68,68,0.15)" : "#fee9e7";
-    if (/rate|top|popular|best/.test(key))
-      return isDark ? "rgba(234,179,8,0.15)" : "#fffbeb";
-    return isDark ? "rgba(59,130,246,0.15)" : "#f1f6fd";
+      return isDark ? "rgba(191,106,2,0.18)" : "#F6EBDC";
+    if (/live|farm|rate|top|popular|best/.test(key))
+      return isDark ? "rgba(139,159,105,0.20)" : "#EDF2E4";
+    return isDark ? "rgba(103,81,58,0.22)" : "#F3EDE4";
   };
 
   const goToSection = (s) => {
@@ -680,9 +680,10 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
               sx={{
                 pl: "14px",
                 pr: "0px",
-                pb: "8px",
-                pt: "2px",
+                pb: "10px",
+                pt: "4px",
                 backgroundColor: theme.palette.background.paper,
+                borderBottom: `1px solid ${theme.palette.divider}`,
               }}
             >
               <Box
