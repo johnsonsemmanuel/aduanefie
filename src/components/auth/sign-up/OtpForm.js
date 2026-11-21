@@ -39,6 +39,7 @@ const OtpForm = ({
   const isDemo = configData?.demo;
 
   const [otp, setOtp] = useState("");
+  const lastAutoSubmittedRef = useRef("");
   const otpFormik = useFormik({
     //here reset_token is otp inputs
     initialValues: {
@@ -176,13 +177,13 @@ const OtpForm = ({
                     fontSize: "16px",
                     outline: "none",
                     height: {
-                      xs: "35px",
-                      sm: "40px",
-                      md: "45px",
+                      xs: "44px",
+                      sm: "44px",
+                      md: "46px",
                     },
                     width: {
-                      xs: "35px !important",
-                      sm: "40px !important",
+                      xs: "42px !important",
+                      sm: "42px !important",
                       md: "45px !important",
                     },
                     borderRadius: "10px",
@@ -192,13 +193,31 @@ const OtpForm = ({
               >
                 <OtpInput
                   value={otpFormik.values.reset_token}
-                  onChange={(otp) =>
-                    otpFormik.setFieldValue("reset_token", otp)
-                  }
+                  onChange={(nextOtp) => {
+                    const digits = String(nextOtp || "").replace(/\D/g, "").slice(0, 6);
+                    otpFormik.setFieldValue("reset_token", digits);
+                    if (
+                      digits.length === 6 &&
+                      !isLoading &&
+                      lastAutoSubmittedRef.current !== digits
+                    ) {
+                      lastAutoSubmittedRef.current = digits;
+                      formSubmitHandler({ reset_token: digits, phone: data });
+                    } else if (digits.length < 6) {
+                      lastAutoSubmittedRef.current = "";
+                    }
+                  }}
                   numInputs={6}
                   onBlur={otpFormik.handleBlur("reset_token")}
                   inputType="tel"
-                  renderInput={(props) => <input {...props} />}
+                  renderInput={(props, index) => (
+                    <input
+                      {...props}
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      autoComplete={index === 0 ? "one-time-code" : "off"}
+                    />
+                  )}
                   error={
                     otpFormik.touched.reset_token &&
                     Boolean(otpFormik.errors.reset_token)

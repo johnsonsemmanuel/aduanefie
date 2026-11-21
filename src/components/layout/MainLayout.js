@@ -21,6 +21,8 @@ import SearchProductModal from "../home/search/SearchProductModal";
 // import { MainLayoutRoot } from "./LandingLayout";
 import FloatingCartButton from "../header/new-navbar/FloatingCartButton";
 import HappyHourBanner from "../happy-hour/HappyHourBanner";
+import NetworkStatusBanner from "./NetworkStatusBanner";
+import ScrollToTopFab from "./ScrollToTopFab";
 import { DESKTOP_LAYOUT_MEDIA_QUERY, MOBILE_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 import {
   MOBILE_BOTTOM_NAV_HEIGHT,
@@ -349,6 +351,8 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
         </Box>
       )}
       {isSmall && showBottomNav && <BottomNav />}
+      <NetworkStatusBanner />
+      <ScrollToTopFab hasBottomNav={Boolean(isSmall && showBottomNav)} />
       <SearchProductModal />
       <FloatingCartButton />
     </MainLayoutRoot>
