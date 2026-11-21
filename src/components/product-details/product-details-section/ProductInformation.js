@@ -1,4 +1,4 @@
-import { Skeleton, Typography, useTheme } from "@mui/material";
+import { Button, Skeleton, Typography, useTheme } from "@mui/material";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
 import { Stack } from "@mui/system";
 import React, { useEffect, useMemo, useReducer, useRef, useState } from "react";
@@ -863,11 +863,46 @@ const ProductInformation = ({
             </Stack>
           ) : null;
 
+          // Shared group buying is available on every physical-goods module.
+          const groupBuyBlock = (
+            <Stack
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+              spacing={1}
+              sx={{
+                mt: 1,
+                p: { xs: 1.25, md: 1.5 },
+                borderRadius: "10px",
+                border: `1px solid ${theme.palette.divider}`,
+              }}
+            >
+              <Box>
+                <Typography sx={{ fontSize: "12.5px", fontWeight: 700 }}>
+                  {t("Shared group buying")}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {t("Split a bulk purchase with other buyers")}
+                </Typography>
+              </Box>
+              <Button
+                size="small"
+                variant="outlined"
+                onClick={() =>
+                  router.push(`/group-buys?item_id=${item?.id ?? ""}`)
+                }
+              >
+                {t("Start or join")}
+              </Button>
+            </Stack>
+          );
+
           if (!hasAgroInfo) {
             return (
               <>
                 <InsuranceBadge item={item} variant="card" sx={{ mt: 1.25 }} />
                 {bulkBlock}
+                {groupBuyBlock}
               </>
             );
           }
@@ -891,6 +926,7 @@ const ProductInformation = ({
             <>
               <InsuranceBadge item={item} variant="card" sx={{ mt: 1.25 }} />
               {bulkBlock}
+              {groupBuyBlock}
               <Stack
               spacing={0.75}
               sx={{

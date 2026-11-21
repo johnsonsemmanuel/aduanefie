@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import {
   Box,
   Container,
@@ -17,59 +17,10 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import FormatQuoteOutlinedIcon from "@mui/icons-material/FormatQuoteOutlined";
-import MapModal from "components/Map/MapModal";
-import { useGeolocated } from "react-geolocated";
 import DollarSignHighlighter from "components/DollarSignHighlighter";
 
-const testimonialData = [
-  {
-    id: 1,
-    name: "John Smith",
-    role: "Customer",
-    rating: 5,
-    comment:
-      "Amazing service! Fast delivery and great food quality. Highly recommended!",
-    avatar: "/images/avatar1.jpg",
-  },
-  {
-    id: 2,
-    name: "Sarah Johnson",
-    role: "Regular Customer",
-    rating: 5,
-    comment:
-      "The app is so easy to use and the delivery is always on time. Love it!",
-    avatar: "/images/avatar2.jpg",
-  },
-  {
-    id: 3,
-    name: "Mike Wilson",
-    role: "Food Lover",
-    rating: 4,
-    comment: "Great variety of restaurants and quick service. Very satisfied!",
-    avatar: "/images/avatar3.jpg",
-  },
-  {
-    id: 4,
-    name: "Emma Davis",
-    role: "Busy Professional",
-    rating: 5,
-    comment:
-      "Perfect for my busy schedule. Reliable and convenient food delivery.",
-    avatar: "/images/avatar4.jpg",
-  },
-];
-
 const TestimonialCard = ({ testimonial }) => {
-  const [open, setOpen] = useState(false);
-
   const theme = useTheme();
-  const { coords } = useGeolocated({
-    positionOptions: {
-      enableHighAccuracy: false,
-    },
-    userDecisionTimeout: 5000,
-    isGeolocationEnabled: true,
-  });
 
   return (
     <Card
@@ -140,7 +91,9 @@ const TestimonialCard = ({ testimonial }) => {
 const Testimonials = ({ testimonial_section, handleOrderNow }) => {
   const theme = useTheme();
   const sliderRef = useRef(null);
-  const data = testimonial_section?.testimonial_list || testimonialData;
+  // Only show testimonials that were actually entered in the admin dashboard.
+  // There is deliberately no fabricated fallback list.
+  const data = testimonial_section?.testimonial_list || [];
 
   const handleNext = () => {
     sliderRef.current?.slickNext();
@@ -222,13 +175,15 @@ const Testimonials = ({ testimonial_section, handleOrderNow }) => {
             >
               {testimonial_section?.testimonial_sub_title}
             </Typography>
-            <Button
-              onClick={handleOrderNow}
-              variant="contained"
-              sx={{ mt: { xs: "10px", md: "1rem" } }}
-            >
-              {testimonial_section?.testimonial_button_title}
-            </Button>
+            {testimonial_section?.testimonial_button_title ? (
+              <Button
+                onClick={handleOrderNow}
+                variant="contained"
+                sx={{ mt: { xs: "10px", md: "1rem" } }}
+              >
+                {testimonial_section.testimonial_button_title}
+              </Button>
+            ) : null}
           </Box>
         </Grid>
 
@@ -236,30 +191,32 @@ const Testimonials = ({ testimonial_section, handleOrderNow }) => {
         <Grid item xs={12} md={8}>
           <Box sx={{ position: "relative" }}>
             {/* Left Navigation Button */}
-            <IconButton
-              onClick={handlePrev}
-              sx={{
-                position: "absolute",
-                left: { xs: -11, md: -20 },
-                top: "50%",
-                transform: "translateY(-50%)",
-                zIndex: 2,
-                backgroundColor: "#f5f5f5",
-                color: "#666",
-                borderRadius: "50%",
-                "&:hover": {
-                  backgroundColor: "#e0e0e0",
-                },
-                width: "33px",
-                height: "33px",
-              }}
-            >
-              {theme.direction === "rtl" ? (
-                <ArrowForwardIos sx={{ fontSize: "18px" }} />
-              ) : (
-                <ArrowBackIos sx={{ fontSize: "18px", marginLeft: "6px" }} />
-              )}
-            </IconButton>
+            {data.length > 1 ? (
+              <IconButton
+                onClick={handlePrev}
+                sx={{
+                  position: "absolute",
+                  left: { xs: -11, md: -20 },
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  zIndex: 2,
+                  backgroundColor: "#f5f5f5",
+                  color: "#666",
+                  borderRadius: "50%",
+                  "&:hover": {
+                    backgroundColor: "#e0e0e0",
+                  },
+                  width: "33px",
+                  height: "33px",
+                }}
+              >
+                {theme.direction === "rtl" ? (
+                  <ArrowForwardIos sx={{ fontSize: "18px" }} />
+                ) : (
+                  <ArrowBackIos sx={{ fontSize: "18px", marginLeft: "6px" }} />
+                )}
+              </IconButton>
+            ) : null}
 
             {/* React Slick Slider */}
             <Box
@@ -273,42 +230,62 @@ const Testimonials = ({ testimonial_section, handleOrderNow }) => {
                 borderRadius: "10px",
               }}
             >
-              <Slider ref={sliderRef} {...sliderSettings}>
-                {data.map((testimonial) => (
-                  <Box key={testimonial.id} sx={{ px: 1 }}>
-                    <TestimonialCard testimonial={testimonial} />
-                  </Box>
-                ))}
-              </Slider>
+              {data.length ? (
+                <Slider ref={sliderRef} {...sliderSettings}>
+                  {data.map((testimonial) => (
+                    <Box key={testimonial.id} sx={{ px: 1 }}>
+                      <TestimonialCard testimonial={testimonial} />
+                    </Box>
+                  ))}
+                </Slider>
+              ) : (
+                <Box
+                  sx={{
+                    p: { xs: 3, md: 5 },
+                    textAlign: "center",
+                    borderRadius: "12px",
+                    border: `1px dashed ${theme.palette.divider}`,
+                  }}
+                >
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    No customer reviews yet
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    Reviews will appear here once they are added in the admin dashboard.
+                  </Typography>
+                </Box>
+              )}
             </Box>
 
             {/* Right Navigation Button */}
-            <IconButton
-              onClick={handleNext}
-              sx={{
-                position: "absolute",
-                right: { xs: -11, md: -20 },
-                top: "50%",
-                transform: "translateY(-50%)",
-                zIndex: 2,
-                backgroundColor: "#f5f5f5",
-                color: "#666",
-                borderRadius: "50%",
-                "&:hover": {
-                  backgroundColor: "#e0e0e0",
-                },
-                width: 30,
-                height: 30,
-              }}
-            >
-              {theme.direction === "rtl" ? (
-                <ArrowBackIos
-                  sx={{ fontSize: "18px", marginInlineEnd: "6px" }}
-                />
-              ) : (
-                <ArrowForwardIos sx={{ fontSize: "18px" }} />
-              )}
-            </IconButton>
+            {data.length > 1 ? (
+              <IconButton
+                onClick={handleNext}
+                sx={{
+                  position: "absolute",
+                  right: { xs: -11, md: -20 },
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  zIndex: 2,
+                  backgroundColor: "#f5f5f5",
+                  color: "#666",
+                  borderRadius: "50%",
+                  "&:hover": {
+                    backgroundColor: "#e0e0e0",
+                  },
+                  width: 30,
+                  height: 30,
+                }}
+              >
+                {theme.direction === "rtl" ? (
+                  <ArrowBackIos
+                    sx={{ fontSize: "18px", marginInlineEnd: "6px" }}
+                  />
+                ) : (
+                  <ArrowForwardIos sx={{ fontSize: "18px" }} />
+                )}
+              </IconButton>
+            ) : null}
           </Box>
         </Grid>
       </Grid>

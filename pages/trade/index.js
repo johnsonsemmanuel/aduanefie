@@ -254,6 +254,36 @@ const TradeHub = ({ configData, metaData }) => {
               </Stack>
             </Box>
 
+            {/* Shared group buying — pool a bulk purchase across 5 buyers */}
+            <Box
+              sx={{
+                mt: "18px",
+                p: { xs: "16px", md: "20px" },
+                borderRadius: "12px",
+                border: "1px solid",
+                borderColor: "divider",
+                bgcolor: "background.paper",
+              }}
+            >
+              <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" spacing={2} alignItems={{ sm: "center" }}>
+                <Box>
+                  <Typography sx={{ fontWeight: 700, fontSize: "16px" }}>
+                    {t("Shared group buying")}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    {t("Can't cover the full bulk amount? Join five buyers splitting one pooled order. Each pays their own delivery.")}
+                  </Typography>
+                </Box>
+                <Button
+                  variant="contained"
+                  onClick={() => router.push("/group-buys")}
+                  sx={{ whiteSpace: "nowrap" }}
+                >
+                  {t("Browse groups")}
+                </Button>
+              </Stack>
+            </Box>
+
             {/* Live Bulk RFQ & Supplier Quotes */}
             <TradeRfqSection />
           </Box>

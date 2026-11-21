@@ -228,6 +228,17 @@ export const cross_border_shipping_options_api =
 export const cross_border_quote_api = "/api/v1/cross-border/quote";
 
 // ============================================================================
+// Shared group buying (module-agnostic)
+// ============================================================================
+export const group_buys_api = "/api/v1/group-buys";
+export const group_buys_my_api = "/api/v1/group-buys/my";
+export const group_buy_detail_api = (id) => `/api/v1/group-buys/${id}`;
+export const group_buy_join_api = (id) => `/api/v1/group-buys/${id}/join`;
+export const group_buy_leave_api = (id) => `/api/v1/group-buys/${id}/leave`;
+export const group_buy_cancel_api = (id) => `/api/v1/group-buys/${id}/cancel`;
+export const group_buy_quote_api = (id) => `/api/v1/group-buys/${id}/quote`;
+
+// ============================================================================
 // Intra-African Agricultural Trade API Routes
 // ============================================================================
 export const trade_corridors_api = "/api/v1/trade/corridors";

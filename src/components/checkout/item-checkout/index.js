@@ -188,6 +188,11 @@ const ItemCheckout = (props) => {
   const { t } = useTranslation();
   const guest_id = getGuestId();
   const { method } = router.query;
+  // Shared group buy: the server re-validates the group state and derives the
+  // item price. This is only an identifier, never a price or quantity.
+  const groupBuyId = router.query.group_buy_id
+    ? Number(router.query.group_buy_id)
+    : null;
   const formik = useFormik({
     initialValues: {
       password: "",
@@ -649,6 +654,8 @@ const ItemCheckout = (props) => {
     if (getCurrentModuleType() === "pharmacy") {
       const formData = new FormData();
       formData.append("cart", JSON.stringify(carts));
+      // The pharmacy/prescription entry point is intentionally not wired to
+      // group buys; the backend rejects group_buy_id on that path.
       if (scheduleAt !== "now") {
         formData.append("schedule_at", scheduleAt);
       }
@@ -784,6 +791,7 @@ const ItemCheckout = (props) => {
         ...address,
         ...getAreaZipOrderParams(areaZip.summaryParams),
         is_buy_now: page === "buy_now" || page === "campaign" ? 1 : 0,
+        ...(groupBuyId ? { group_buy_id: groupBuyId } : {}),
         partial_payment: usePartialPayment,
         schedule_at: scheduleAt === "now" ? null : scheduleAt,
         // order_time: scheduleAt,
