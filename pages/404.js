@@ -1,4 +1,4 @@
-import { Container, Stack, Typography } from "@mui/material";
+import { Button, Container, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
@@ -15,7 +15,7 @@ export default function Custom400() {
     <Container
       maxWidth="lg"
       sx={{
-        mt: { md: "5rem" },
+        mt: { xs: "2rem", md: "5rem" },
         mb: { xs: "72px", md: "0" },
       }}
     >
@@ -24,22 +24,36 @@ export default function Custom400() {
         alignItems="center"
         spacing={4}
       >
-        <Stack maxWidth="500px" width="100%" spacing={2} padding="1rem">
+        <Stack maxWidth="520px" width="100%" spacing={2} padding="1rem" alignItems="center">
           <FourHundred />
-          <Typography align="center" variant="h3">
-            {t("something went wrong.")}
+          <Typography align="center" variant="h4" fontWeight={700}>
+            {t("We couldn't find that page")}
           </Typography>
-          <Typography align="center">
-            <Link href={homeHref} style={{ textDecoration: "none", color: "inherit" }}>
-              <Typography
-                component="span"
-                color="primary"
-                sx={{ py: "8px", cursor: "pointer" }}
-              >
-                {t("Back to Home")}
-              </Typography>
-            </Link>
+          <Typography align="center" color="text.secondary" fontSize="14.5px">
+            {t("The listing or page may have moved. Jump straight back into the marketplace below.")}
           </Typography>
+          <Button
+            component={Link}
+            href={homeHref}
+            variant="contained"
+            sx={{ px: 3, py: 1, borderRadius: "10px", fontWeight: 700, textTransform: "none" }}
+          >
+            {t("Back to Marketplace")}
+          </Button>
+          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap justifyContent="center" pt={0.5}>
+            <Button component={Link} href="/group-buys" size="small" variant="outlined" sx={{ textTransform: "none", borderRadius: "8px" }}>
+              {t("Group Buys")}
+            </Button>
+            <Button component={Link} href="/live-farming" size="small" variant="outlined" sx={{ textTransform: "none", borderRadius: "8px" }}>
+              {t("Live Farming")}
+            </Button>
+            <Button component={Link} href="/market-prices" size="small" variant="outlined" sx={{ textTransform: "none", borderRadius: "8px" }}>
+              {t("Market Prices")}
+            </Button>
+            <Button component={Link} href="/track-order" size="small" variant="outlined" sx={{ textTransform: "none", borderRadius: "8px" }}>
+              {t("Track Order")}
+            </Button>
+          </Stack>
         </Stack>
       </CustomStackFullWidth>
     </Container>
