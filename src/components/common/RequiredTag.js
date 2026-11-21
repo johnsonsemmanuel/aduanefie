@@ -2,16 +2,16 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 /**
- * Required / state tag — 3 visual states (Figma node 2348:240849):
+ * Required / state tag - 3 visual states (Figma node 2348:240849):
  *
- *  variant="initial"    — light red bg, red text
- *  variant="active"     — solid red bg, white text
- *  variant="completed"  — grey bg, dark text
+ *  variant="initial"    - light red bg, red text
+ *  variant="active"     - solid red bg, white text
+ *  variant="completed"  - grey bg, dark text
  *
  * Props:
- *  - label: string   — text to display (default: "Required")
+ *  - label: string   - text to display (default: "Required")
  *  - variant: "initial" | "active" | "completed"
- *  - sx: object      — additional MUI sx overrides
+ *  - sx: object      - additional MUI sx overrides
  */
 
 const useVariantConfig = (variant) => {

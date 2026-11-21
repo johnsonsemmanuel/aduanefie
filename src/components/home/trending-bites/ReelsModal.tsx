@@ -59,7 +59,7 @@ const formatViewCount = (count: number): string => {
   return String(count);
 };
 
-// Module-level blob cache — mirrors Flutter's CacheManager.
+// Module-level blob cache - mirrors Flutter's CacheManager.
 // Survives component remounts; blob URLs are never revoked once cached so
 // repeated opens of the same reel are instant (no network round-trip).
 const reelVideoCache = new Map<number, string>();
@@ -67,7 +67,7 @@ const reelVideoCache = new Map<number, string>();
 // Tracks in-flight preload downloads so we never start two for the same reel.
 const reelPreloadInFlight = new Map<number, Promise<string | null>>();
 
-// Build proxy URL with auth query params (runs in browser — reads localStorage).
+// Build proxy URL with auth query params (runs in browser - reads localStorage).
 const buildProxyUrl = (reelId: number): string => {
   const token = localStorage.getItem("token");
   const zoneid = localStorage.getItem("zoneid");
@@ -360,7 +360,7 @@ const ReelsModal = ({
       if (prev[item.id] === serverLiked) return prev;
       return { ...prev, [item.id]: serverLiked };
     });
-  }, [item?.id, serverLiked]); // primitive dep — stable across re-renders
+  }, [item?.id, serverLiked]); // primitive dep - stable across re-renders
 
   useEffect(() => {
     // Reset state whenever the active reel changes, even before the video
@@ -383,7 +383,7 @@ const ReelsModal = ({
     const tryPlay = () => {
       video.muted = isMuted;
       video.play().catch(() => {
-        // Browser blocked unmuted autoplay — fall back to muted so playback
+        // Browser blocked unmuted autoplay - fall back to muted so playback
         // still starts; user can tap the speaker icon to unmute.
         if (!video.muted) {
           video.muted = true;
@@ -432,7 +432,7 @@ const ReelsModal = ({
       video.removeEventListener("progress", onBufferProgress);
     };
 
-    // ── Cache hit — instant play ──
+    // ── Cache hit - instant play ──
     const cached = reelVideoCache.get(item.id);
     if (cached) {
       video.muted = isMuted;
@@ -447,7 +447,7 @@ const ReelsModal = ({
       };
     }
 
-    // ── No cache — stream via proxy URL ──
+    // ── No cache - stream via proxy URL ──
     //   Browser makes its own Range requests and plays as soon as it has
     //   enough data (moov atom + a few frames). If the MP4 is faststart-
     //   encoded, playback starts after the first ~2 MB chunk.
@@ -555,7 +555,7 @@ const ReelsModal = ({
   };
 
   // Touch handlers: vertical swipe changes reels (up = next, down = prev).
-  // Only triggers when the vertical delta clearly exceeds horizontal — so a
+  // Only triggers when the vertical delta clearly exceeds horizontal - so a
   // diagonal scroll or a tap doesn't accidentally flip the reel.
   const handleSwipeStart = (e: React.TouchEvent<HTMLDivElement>) => {
     const t = e.touches[0];
@@ -663,7 +663,7 @@ const ReelsModal = ({
             touchAction: { xs: "pan-x", md: "auto" },
           }}
         >
-          {/* Thumbnail — visible until video starts */}
+          {/* Thumbnail - visible until video starts */}
           <Box
             component="img"
             src={item.foodImage}

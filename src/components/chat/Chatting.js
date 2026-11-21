@@ -71,7 +71,7 @@ const Chatting = ({ configData }) => {
 	};
 	// The old API wrapped the rows in `conversations`; v4.2 returns them under
 	// `content.data`, which the hook now unwraps to a plain array. Accept either
-	// and never store undefined — ContactLists does `channelList.length`.
+	// and never store undefined - ContactLists does `channelList.length`.
 	const toChannelArray = (res) =>
 		Array.isArray(res) ? res : res?.conversations ?? res?.data ?? [];
 

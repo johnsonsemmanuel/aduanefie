@@ -102,7 +102,7 @@ const ParcelSearchPanel = () => {
     }
     // Entering by location skips the category grid, so ask for the parcel
     // information here too. No id is passed, so the modal falls back to the
-    // first category — the same set the grid would have offered.
+    // first category - the same set the grid would have offered.
     setOpenParcelInfo(true);
   };
 

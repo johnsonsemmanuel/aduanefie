@@ -32,7 +32,7 @@ const ModuleSearchBanner = ({
 
   // rootMargin offsets the sticky navbar (64px desktop top bar) so the banner
   // counts as "out of view" the moment its search input slips behind the navbar
-  // — that's exactly when the navbar search should take over.
+  // - that's exactly when the navbar search should take over.
   const { ref, inView } = useInView({
     threshold: 0,
     rootMargin: "-64px 0px 0px 0px",

@@ -109,7 +109,7 @@ const UserInformation = ({ page, configData, orderId }) => {
   // only one registered.
   const hasOwnPushNotificationLayout = activePage === "inbox" || isOrderDetails;
 
-  // Mobile: derive from URL — if on a sub-page, show content; else show sidebar
+  // Mobile: derive from URL - if on a sub-page, show content; else show sidebar
   const mobileView =
     isMobile && activePage !== "profile-settings" ? "content" : null;
   const setMobileView = (val) => {

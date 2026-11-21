@@ -29,7 +29,7 @@ import useRemoveBogoFromCart from "api-manage/hooks/react-query/add-cart/useRemo
 // guide) → the shape NewProductCardBogo renders. Item-level discounts never
 // apply inside a bundle, so there is nothing to zero out here (unlike
 // Stackfood's `mapBundleFoodItem`, which forces `discount: 0` on a richer
-// generic food shape) — this API already hands back bundle-final prices.
+// generic food shape) - this API already hands back bundle-final prices.
 const mapBundleItem = (raw) => ({
   id: raw?.item_id ?? raw?.service_id,
   name: raw?.name,
@@ -108,7 +108,7 @@ const BogoItemDetailsModal = ({ open, onClose, bundle, offer }) => {
   const store = bundle?.store;
 
   // `cart/get-all` folds a bundle into one entry per group carrying
-  // `bogo_details` (§6.2) — no ungrouped-row reconciliation needed, unlike
+  // `bogo_details` (§6.2) - no ungrouped-row reconciliation needed, unlike
   // Stackfood's raw cart endpoint.
   const existingCartRow = cartGroups
     .find((group) => String(group?.store?.id) === String(store?.id))
@@ -188,7 +188,7 @@ const BogoItemDetailsModal = ({ open, onClose, bundle, offer }) => {
   const handleAddOrUpdateCart = isInCart ? handleUpdateCart : handleAddToCart;
 
   // Not in cart yet: nothing to remove, so minus stays disabled until the
-  // stepper is bumped above 1. Already in cart: minus is always live — at
+  // stepper is bumped above 1. Already in cart: minus is always live - at
   // quantity 1 it swaps to a trash icon that removes the bundle outright.
   const canDecrement = isInCart || quantity > 1;
 

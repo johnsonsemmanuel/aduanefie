@@ -192,7 +192,7 @@ const HeroLocationForm = ({ onLocationSaved }) => {
     // place-api-details answers 200 with `{ error: { … } }` for a place id
     // Google no longer recognises. That body is truthy but carries no
     // `location`, and writing it here parks `location` as `{lat: undefined}`
-    // — which keeps the Pick/Discover button disabled with no way to recover.
+    // - which keeps the Pick/Discover button disabled with no way to recover.
     const lat = placeDetails?.location?.latitude;
     const lng = placeDetails?.location?.longitude;
     if (lat !== undefined && lng !== undefined) {

@@ -61,7 +61,7 @@ const ModuleTab = styled(Box)(({ theme, active }) => ({
   padding: "10px 24px",
   cursor: "pointer",
   whiteSpace: "nowrap",
-  // Never let a tab shrink below its nowrap label — a long module name would
+  // Never let a tab shrink below its nowrap label - a long module name would
   // otherwise overflow its own background and overlap the neighboring tabs.
   // The row scrolls horizontally instead (same approach as MobileNavBar).
   flexShrink: 0,
@@ -399,7 +399,7 @@ const NewNavBar = ({ configData }) => {
   const [authInitialView, setAuthInitialView] = useState("landing");
 
   // Reopen the sign-in modal whenever something dispatches
-  // `setOpenSignInModal(true)` — e.g. ForgotPassword's "Back to Login".
+  // `setOpenSignInModal(true)` - e.g. ForgotPassword's "Back to Login".
   useEffect(() => {
     if (openSignInModal) {
       setModalFor("sign-in");
@@ -603,7 +603,7 @@ const NewNavBar = ({ configData }) => {
         <AddressReselect location={location} />
       </Box>
 
-      {/* Active Mode Switcher — shared with the mobile and compact headers */}
+      {/* Active Mode Switcher - shared with the mobile and compact headers */}
       <ModeSwitcherTrigger variant="desktop" />
 
       {/* Search: grows to fill space, 24px from icons */}
@@ -667,7 +667,7 @@ const NewNavBar = ({ configData }) => {
     // Section query keys already carry getModuleId(), so each module owns a
     // separate cache entry and switching cannot serve the previous module's
     // data. A blanket invalidateQueries() here additionally threw away every
-    // unrelated entry too — config, modules, zone, landing page — so every
+    // unrelated entry too - config, modules, zone, landing page - so every
     // switch refetched the whole app and switching back was never cached.
     //
     // /home's getServerSideProps only loads config and page metadata, neither

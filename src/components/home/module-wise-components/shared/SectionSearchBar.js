@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 /**
  * Contextual search bar for section and category pages.
  * Updates URL with `?q=value` (shallow) so the page can fetch filtered results.
- * Does NOT show global suggestions — it only scopes search to current context.
+ * Does NOT show global suggestions - it only scopes search to current context.
  */
 const SectionSearchBar = ({ placeholder }) => {
   const { t } = useTranslation();

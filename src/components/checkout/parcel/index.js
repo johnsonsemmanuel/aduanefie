@@ -101,7 +101,7 @@ const ParcelCheckout = ({ distanceData }) => {
   const { parcelCategories, parcelWeight, parcelDimension } = useSelector(
     (state) => state.parcelCategories,
   );
-  // "Small, Light (2-4Kg)" — what the customer chose in the parcel information
+  // "Small, Light (2-4Kg)" - what the customer chose in the parcel information
   // modal, echoed in the billing panel next to the parcel type.
   const parcelInformationSummary = getParcelInformationSummary(
     parcelWeight,
@@ -230,7 +230,7 @@ const ParcelCheckout = ({ distanceData }) => {
   const summaryDelivery = checkoutSummary?.delivery;
   const quoteUnavailable = isQuoteUnavailable(checkoutSummaryQueryShim);
   const summaryTax = checkoutSummary?.tax;
-  // Passed through untouched — the screens read `price`, `price_type`,
+  // Passed through untouched - the screens read `price`, `price_type`,
   // `customer_note` and `customer_note_status` off it.
   const surgePrice = checkoutSummary?.surge;
   const {
@@ -314,7 +314,7 @@ const ParcelCheckout = ({ distanceData }) => {
   //     handleOffineOrder();
   //   }
   // }, [orderId]);
-  // The "before" figure the UI strikes through — base + surge, ahead of the
+  // The "before" figure the UI strikes through - base + surge, ahead of the
   // free-delivery and Pro overrides.
   const parcelDeliveryFree = () =>
     Number(summaryDelivery?.base_delivery_charge) || 0;
@@ -344,7 +344,7 @@ const ParcelCheckout = ({ distanceData }) => {
     proDeliveryBenefitActive && effectiveParcelDeliveryFee === 0;
   const proSavingsMessage = (() => {
     if (!proDeliveryBenefitActive) return undefined;
-    // Parcel is delivery-only — keep the qualifier in delivery terms.
+    // Parcel is delivery-only - keep the qualifier in delivery terms.
     const hasMin = proBenefit?.min_order_status === 1 && proMinOrderAmount > 0;
     const minAmount = hasMin ? getAmountWithSign(proMinOrderAmount) : "";
     if (proCoversDelivery) {
@@ -394,7 +394,7 @@ const ParcelCheckout = ({ distanceData }) => {
     parcel_category_id: parcelCategories?.id,
     // Weight/size brackets chosen in the parcel information modal. The server
     // prices a parcel as base + weight + dimension + category, so these decide
-    // part of the delivery charge — `order/place` and `checkout-summary` take
+    // part of the delivery charge - `order/place` and `checkout-summary` take
     // them as nullable integers under exactly these names (not
     // `parcel_weight_id` / `parcel_dimension_id`), and reject anything
     // non-integer. Sent as JSON, so an explicit null stays null.

@@ -1,10 +1,10 @@
 /**
- * The delivery ETA as the server computes it, on `customer/order/track` only —
+ * The delivery ETA as the server computes it, on `customer/order/track` only -
  * `customer/order/details` carries no `eta`, so read it off the track payload.
  *
  *   eta: {
  *     min, max, unit,                     // 0, 5, "min"
- *     text,                               // "Eta any minute now" — localised
+ *     text,                               // "Eta any minute now" - localised
  *     overdue,                            // past the window
  *     from, to, window,                   // "03:12 PM", "03:17 PM", "03:12 PM - 03:17 PM"
  *     from_at, to_at, timezone,           // absolute, in the store's timezone
@@ -12,7 +12,7 @@
  *   }
  *
  * `text` and `window` arrive already localised and formatted in the store's
- * timezone — which is often not the viewer's — so they are rendered verbatim
+ * timezone - which is often not the viewer's - so they are rendered verbatim
  * rather than reformatted client-side. The window moves as the order ages, so
  * it re-reads on every track refetch.
  */
@@ -33,15 +33,15 @@ export interface OrderEta {
 }
 
 export interface ResolvedOrderEta {
-  /** The headline phrase — self-describing, so it needs no "Estimated delivery:" label. */
+  /** The headline phrase - self-describing, so it needs no "Estimated delivery:" label. */
   label: string;
   /** "03:12 PM - 03:17 PM", for the supporting line. Empty when the server sent
    *  none, or when the range is inverted (end before start). */
   window: string;
-  /** The window ends on a later calendar day than it starts — label it so it
+  /** The window ends on a later calendar day than it starts - label it so it
    *  does not read as reversed. */
   spansDays: boolean;
-  /** The `from_at`/`to_at` calendar dates, formatted in the store's timezone —
+  /** The `from_at`/`to_at` calendar dates, formatted in the store's timezone -
    *  e.g. "Sep 23, 2026" / "Sep 27, 2026". Always shown alongside the window
    *  (a delayed order's date is never safe to assume/omit). */
   fromDateLabel: string;
@@ -51,7 +51,7 @@ export interface ResolvedOrderEta {
 }
 
 /**
- * Returns null when the order carries no server ETA — callers then fall back to
+ * Returns null when the order carries no server ETA - callers then fall back to
  * whatever they showed before rather than inventing a window.
  */
 export const resolveOrderEta = (trackData): ResolvedOrderEta | null => {
@@ -59,7 +59,7 @@ export const resolveOrderEta = (trackData): ResolvedOrderEta | null => {
   if (!eta) return null;
 
   // A window that only prints clock times reads as reversed when it crosses
-  // midnight — a live pending order returned "11:53 AM - 10:58 AM" spanning two
+  // midnight - a live pending order returned "11:53 AM - 10:58 AM" spanning two
   // days. `from_at`/`to_at` carry the dates, so use them to tell a genuine
   // cross-day window (label it) from a truly inverted one (drop the range).
   const fromAt = eta?.from_at ? new Date(eta.from_at) : null;
@@ -69,7 +69,7 @@ export const resolveOrderEta = (trackData): ResolvedOrderEta | null => {
   const inverted = bothParsed && +toAt < +fromAt;
 
   // Formatted in the store's timezone, same principle as the raw from/to
-  // strings: don't shift it for the viewer. Always shown — an order can be
+  // strings: don't shift it for the viewer. Always shown - an order can be
   // delayed by weeks/months, so "today" is never a safe assumption to omit
   // the date on, and the year matters once the window crosses into a
   // different year than the viewer's now.
@@ -80,7 +80,7 @@ export const resolveOrderEta = (trackData): ResolvedOrderEta | null => {
     timeZone: eta?.timezone || undefined,
   };
   // "Same calendar day" per the store's own timezone, not the viewer's local
-  // Date-object day — two viewers in different zones must agree on whether
+  // Date-object day - two viewers in different zones must agree on whether
   // from/to fall on the same date.
   const dayKeyOpts: Intl.DateTimeFormatOptions = {
     timeZone: eta?.timezone || undefined,
@@ -127,9 +127,9 @@ export const resolveOrderEta = (trackData): ResolvedOrderEta | null => {
 };
 
 /**
- * Statuses that end an order. The server already nulls `eta` for all of them —
+ * Statuses that end an order. The server already nulls `eta` for all of them -
  * verified live: delivered / canceled / failed orders all come back with
- * `eta: null` — so this exists to stop the *legacy* client-side estimate from
+ * `eta: null` - so this exists to stop the *legacy* client-side estimate from
  * rendering on a closed order, and to pick the delivered-time replacement.
  */
 const CLOSED_STATUSES = ["delivered", "canceled", "cancelled", "failed", "refunded", "refund_requested"];

@@ -54,7 +54,7 @@ const getBundleSubItems = (bundleData) => {
   }));
 };
 
-// ─── BundleItemRow — a single sub-item card, per Figma "Best Value Bundle" ──
+// ─── BundleItemRow - a single sub-item card, per Figma "Best Value Bundle" ──
 
 const BundleItemRow = ({ subItem, onClick }) => {
   const { t } = useTranslation();
@@ -181,7 +181,7 @@ const BundleItemRow = ({ subItem, onClick }) => {
   );
 };
 
-// ─── BundleViewDrawer — reusable bundle/combo contents viewer + add-to-cart ──
+// ─── BundleViewDrawer - reusable bundle/combo contents viewer + add-to-cart ──
 // Desktop: side drawer, opens from the reading-direction-aware trailing edge
 // (right in LTR, left in RTL). Mobile: bottom sheet, capped at 90dvh.
 
@@ -204,7 +204,7 @@ const BundleViewDrawer = ({
   const { configData } = useSelector((s) => s.configData);
   const showTaxInclusiveLabel = configData?.tax_included === 1;
 
-  // Always fetch fresh on open, per the API guide's documented flow — the
+  // Always fetch fresh on open, per the API guide's documented flow - the
   // list response's own items[] (when present) can be a stale cached
   // snapshot, and price/availability can change under a happy hour.
   const { data: bundleDetails, isLoading: detailsLoading } =
@@ -212,7 +212,7 @@ const BundleViewDrawer = ({
   const subItems = getBundleSubItems(bundleDetails);
   const [viewingSubItem, setViewingSubItem] = useState(null);
 
-  // Local pre-add quantity — lets the user pick how many to add (e.g. 5)
+  // Local pre-add quantity - lets the user pick how many to add (e.g. 5)
   // and confirm once, instead of adding 1 then incrementing repeatedly.
   // Reset to the item's current cart quantity (or 1) every time the
   // drawer opens.

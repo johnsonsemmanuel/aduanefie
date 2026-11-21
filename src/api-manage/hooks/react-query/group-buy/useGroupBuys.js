@@ -9,10 +9,24 @@ import {
   group_buy_leave_api,
   group_buy_cancel_api,
   group_buy_quote_api,
+  group_buy_members_api,
+  group_buy_messages_api,
 } from "api-manage/ApiRoutes";
 
-const identity = () =>
-  getToken() ? {} : { guest_id: getGuestId() || `guest_${Date.now()}` };
+// A stable guest id matters here: members, chat and checkout all scope the
+// caller by this value. Generating a fresh one per call made the same guest
+// look like a different member on every request.
+const identity = () => {
+  if (getToken()) return {};
+  let guestId = getGuestId();
+  if (!guestId) {
+    guestId = `guest_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("guest_id", guestId);
+    }
+  }
+  return { guest_id: guestId };
+};
 
 export const useGetGroupBuys = ({ status = "all", country, moduleId, enabled = true } = {}) =>
   useQuery(
@@ -91,6 +105,69 @@ const groupAction = (urlBuilder, invalidate = true) => {
 export const useJoinGroupBuy = () => groupAction(group_buy_join_api);
 export const useLeaveGroupBuy = () => groupAction(group_buy_leave_api);
 export const useCancelGroupBuy = () => groupAction(group_buy_cancel_api);
+
+export const useUpdateGroupBuy = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async ({ id, payload }) => {
+      const { data } = await MainApi.put(group_buy_detail_api(id), {
+        ...identity(),
+        ...payload,
+      });
+      return data?.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("group-buys");
+        queryClient.invalidateQueries("group-buy");
+      },
+    }
+  );
+};
+
+export const useGetGroupBuyMembers = (id, enabled = true) =>
+  useQuery(
+    ["group-buy", id, "members"],
+    async () => {
+      const { data } = await MainApi.get(group_buy_members_api(id), {
+        params: identity(),
+      });
+      return data?.data || [];
+    },
+    { enabled: Boolean(id) && enabled, staleTime: 15 * 1000 }
+  );
+
+export const useGetGroupBuyMessages = (id, enabled = true) =>
+  useQuery(
+    ["group-buy", id, "messages"],
+    async () => {
+      const { data } = await MainApi.get(group_buy_messages_api(id), {
+        params: { ...identity(), limit: 100 },
+      });
+      return data?.data || [];
+    },
+    // Low-bandwidth polling: 8s is enough for a group chat and avoids a
+    // realtime transport on metered mobile connections.
+    { enabled: Boolean(id) && enabled, refetchInterval: enabled ? 8000 : false }
+  );
+
+export const useSendGroupBuyMessage = (id) => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async (message) => {
+      const { data } = await MainApi.post(group_buy_messages_api(id), {
+        ...identity(),
+        message,
+      });
+      return data?.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["group-buy", id, "messages"]);
+      },
+    }
+  );
+};
 
 export const useGetGroupBuyQuote = (id, destinationCountry, enabled = true) =>
   useQuery(

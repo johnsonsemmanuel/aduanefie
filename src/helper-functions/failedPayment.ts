@@ -13,7 +13,7 @@
  * actions refusing to run. Everything downstream goes through this instead.
  *
  * The endpoint also answers `null` (no incomplete order) and has historically
- * returned an array, which callers already guarded for — both collapse to null.
+ * returned an array, which callers already guarded for - both collapse to null.
  */
 
 export interface ResolvedFailedPayment {

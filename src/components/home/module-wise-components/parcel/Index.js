@@ -235,7 +235,7 @@ const Parcel = ({ configData }) => {
               // populated with a positive `days_remaining`. The API returns
               // `status: false` + `message: "no_benefit_for_module"` for
               // subscribers whose plan offers no benefit on the current
-              // module — pushing "Subscribe Now" again would be misleading.
+              // module - pushing "Subscribe Now" again would be misleading.
               const noBenefitForModule =
                 activeOffer?.message === "no_benefit_for_module";
               const alreadySubscribed =

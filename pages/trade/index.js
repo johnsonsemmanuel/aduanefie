@@ -254,7 +254,7 @@ const TradeHub = ({ configData, metaData }) => {
               </Stack>
             </Box>
 
-            {/* Shared group buying — pool a bulk purchase across 5 buyers */}
+            {/* Shared group buying - pool a bulk purchase across 5 buyers */}
             <Box
               sx={{
                 mt: "18px",

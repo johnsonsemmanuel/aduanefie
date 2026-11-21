@@ -4,7 +4,7 @@ import CustomImageContainer from "../../CustomImageContainer";
 import Link from "next/link";
 
 // Phone numbers (and similar "+880…" strings) must keep left-to-right digit
-// order even in RTL locales — otherwise the leading "+" jumps to the right.
+// order even in RTL locales - otherwise the leading "+" jumps to the right.
 const isLtrValue = (value) =>
   typeof value === "string" && /^\+?[\d\s()-]+$/.test(value.trim());
 

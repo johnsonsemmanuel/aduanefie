@@ -281,7 +281,7 @@ const SearchResultStoreCard = ({ store, items = [], showAdBadge = false }) => {
 
   return (
     <CardRoot onClick={handleClick}>
-      {/* Top — Restaurant info */}
+      {/* Top - Restaurant info */}
       <Stack direction="row" alignItems="center" gap="8px">
         <Logo>
           {store?.logo_full_url && (
@@ -391,7 +391,7 @@ const SearchResultStoreCard = ({ store, items = [], showAdBadge = false }) => {
         </Stack>
       </Stack>
 
-      {/* Bottom — Items row (3 full + 4th peeking to suggest more) */}
+      {/* Bottom - Items row (3 full + 4th peeking to suggest more) */}
       {items.length > 0 ? (
         <ItemsRow>
           {items.slice(0, 4).map((it) => (

@@ -137,7 +137,7 @@ const MapComponent = (props) => {
   }, [state.map]);
 
   // The map is uncontrolled (no center/zoom props) so user pan/zoom isn't
-  // overridden on re-render — the viewport must be set imperatively, both on
+  // overridden on re-render - the viewport must be set imperatively, both on
   // first load and when coordinates arrive asynchronously.
   useEffect(() => {
     if (!state.map) return;

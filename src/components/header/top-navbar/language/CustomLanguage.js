@@ -134,7 +134,7 @@ const CustomLanguage = ({
     i18n.changeLanguage(lan?.languageCode);
     queryClient.invalidateQueries();
     // Re-run getServerSideProps for the current route (reads the languageSetting
-    // cookie) via a soft navigation — no full-page reload.
+    // cookie) via a soft navigation - no full-page reload.
     router.replace(router.asPath, undefined, { scroll: false });
 
     toast.success(t("Language has been changed"), {

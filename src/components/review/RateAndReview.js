@@ -134,7 +134,7 @@ const RateAndReview = ({
 
   // Load items when data arrives for a new order, but preserve local state during refetches.
   // Reviewed item_ids come from the `trackData` PROP, not the internal
-  // `trackOrderData` query above — that query is `enabled: false` and only
+  // `trackOrderData` query above - that query is `enabled: false` and only
   // resolves after `refetchTrackOrder()` fires in a later effect, so it's
   // very often still empty the first (and, per the `loadedOrderId` guard,
   // only) time this effect runs. `trackData` is fetched by the parent and is
@@ -190,7 +190,7 @@ const RateAndReview = ({
       console.log("[RateAndReview] extracted serviceItems", extracted);
       setServiceItems(extracted);
     }
-    // Service module bookings never require a serviceman — reviewing one
+    // Service module bookings never require a serviceman - reviewing one
     // isn't part of the business flow here, so servicemen stays empty and
     // the "Servicemen" tab (gated on servicemen.length > 0) never shows.
   }, [isService, serviceData]);

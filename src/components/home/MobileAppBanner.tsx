@@ -77,7 +77,7 @@ const StoreButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const DEFAULT_TITLE = "Get the Aduanefie App — Trade & Shop Faster!";
+const DEFAULT_TITLE = "Get the Aduanefie App - Trade & Shop Faster!";
 
 const MobileAppBanner = () => {
   const theme = useTheme();
@@ -142,7 +142,7 @@ const MobileAppBanner = () => {
         <i className="fi fi-rr-cross-circle"></i>
       </IconButton>
 
-      {/* Mobile layout: column — QR top, title, buttons bottom */}
+      {/* Mobile layout: column - QR top, title, buttons bottom */}
       <Stack
         sx={{
           display: { xs: "flex", sm: "none" },
@@ -207,7 +207,7 @@ const MobileAppBanner = () => {
         </Stack>
       </Stack>
 
-      {/* Desktop layout: row — text+buttons left, QR right */}
+      {/* Desktop layout: row - text+buttons left, QR right */}
       <Stack
         direction="row"
         alignItems="center"

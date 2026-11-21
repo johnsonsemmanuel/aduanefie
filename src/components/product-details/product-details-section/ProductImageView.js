@@ -325,7 +325,7 @@ const ProductImageView = ({
               overflow: "hidden",
             }}
           >
-            {/* Close button — mobile only, scrolls with content */}
+            {/* Close button - mobile only, scrolls with content */}
             {onClose && isMobile && (
               <IconButton
                 onClick={onClose}

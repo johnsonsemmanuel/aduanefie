@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "react-query";
 import { pro_cancel } from "../../../ApiRoutes";
 import MainApi from "../../../MainApi";
 
-// POST /api/v1/customer/pro-customer/cancel — operates on auth'd user.
+// POST /api/v1/customer/pro-customer/cancel - operates on auth'd user.
 const cancelProPlan = async () => {
   const { data } = await MainApi.post(pro_cancel);
   return data;

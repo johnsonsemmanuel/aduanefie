@@ -107,7 +107,7 @@ const ModuleSearchContainer = ({
 
   const { data: categoriesResponse } = useGetCategories(searchValue);
 
-  // Init redux from URL params — only for sidebar filter UI sync.
+  // Init redux from URL params - only for sidebar filter UI sync.
   // API params use activeBrandIds (derived from URL directly) to avoid re-renders.
   useEffect(() => {
     if (!router.isReady) return;
@@ -126,7 +126,7 @@ const ModuleSearchContainer = ({
   const isItemsTab = activeTab === "items";
   const isStoresTab = activeTab === "restaurants";
 
-  // Always derive brand ids from URL — stable across renders, no Redux race.
+  // Always derive brand ids from URL - stable across renders, no Redux race.
   const parsedBrandIdDirect = Number(brand_id);
   const activeBrandIds = useMemo(
     () => (Number.isFinite(parsedBrandIdDirect) ? [parsedBrandIdDirect] : []),

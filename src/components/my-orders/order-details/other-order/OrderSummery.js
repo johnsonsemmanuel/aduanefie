@@ -261,7 +261,7 @@ const OrderSummery = (props) => {
               pl={{ xs: "0px", sm: "20px", md: "25px" }}
               mt="8px"
             >
-              {/* Address + Payment + Cutlery — 2-column grid on sm+ */}
+              {/* Address + Payment + Cutlery - 2-column grid on sm+ */}
               <Box
                 sx={{
                   border: (t) =>
@@ -337,10 +337,10 @@ const OrderSummery = (props) => {
                         wordBreak: "break-word",
                       }}
                     >
-                      {summaryData?.delivery_address?.address || "—"}
+                      {summaryData?.delivery_address?.address || "-"}
                     </Typography>
                   </Stack>
-                  {/* Cutlery card (inside left column) — food orders only */}
+                  {/* Cutlery card (inside left column) - food orders only */}
                   {summaryData?.module_type === "food" &&
                     summaryData?.cutlery && (
                       <Stack>

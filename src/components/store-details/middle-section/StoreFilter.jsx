@@ -109,7 +109,7 @@ const StoreFilter = ({
     }
 
     // `filterData` was the legacy module-wise checkbox payload. The new
-    // popover doesn't expose those checkboxes — keep the prop wiring
+    // popover doesn't expose those checkboxes - keep the prop wiring
     // intact by clearing it when the user applies via this drawer.
     if (typeof setFilterData === "function") {
       setFilterData([]);

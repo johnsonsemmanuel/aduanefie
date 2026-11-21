@@ -205,7 +205,7 @@ const storeBadgeCycleB = keyframes`
   100% { opacity: 0; transform: scale(0.4) rotate(25deg); }
 `;
 
-// StoreBadge — verified tick and/or store logo. When BOTH are present they
+// StoreBadge - verified tick and/or store logo. When BOTH are present they
 // crossfade back and forth on an infinite CSS loop; a single one renders static.
 const StoreBadge = ({
   isStoreVerified,
@@ -423,7 +423,7 @@ export const StoreRow = ({
   );
 };
 
-// ─── CartControls — shared Add/IncDec UI (extracted to prevent re-creation) ──
+// ─── CartControls - shared Add/IncDec UI (extracted to prevent re-creation) ──
 
 export const CartControls = ({
   isHorizontal,
@@ -469,7 +469,7 @@ export const CartControls = ({
     );
   }
 
-  // Collapsible side button (− / +) — width animates 0 ↔ 36
+  // Collapsible side button (− / +) - width animates 0 ↔ 36
   const sideSx = {
     width: expanded ? 36 : 0,
     height: 36,
@@ -532,7 +532,7 @@ export const CartControls = ({
   );
 };
 
-// ─── ImageOverlay — non-pharmacy (halal, veg, wishlist, add/incdec) ──────────
+// ─── ImageOverlay - non-pharmacy (halal, veg, wishlist, add/incdec) ──────────
 
 const ImageOverlay = ({
   isHorizontal,
@@ -642,7 +642,7 @@ const ImageOverlay = ({
   );
 };
 
-// ─── PharmacyImageOverlay — discount, free delivery, wishlist, add/incdec ────
+// ─── PharmacyImageOverlay - discount, free delivery, wishlist, add/incdec ────
 
 const PharmacyImageOverlay = ({
   isHorizontal,
@@ -729,7 +729,7 @@ const PharmacyImageOverlay = ({
   );
 };
 
-// ─── InfoSection — non-pharmacy info block ────────────────────────────────────
+// ─── InfoSection - non-pharmacy info block ────────────────────────────────────
 
 export const InfoSection = ({
   isHorizontal,
@@ -1065,7 +1065,7 @@ export const InfoSection = ({
   );
 };
 
-// ─── PharmacyInfoSection — name + generic + company + price + unit ───────────
+// ─── PharmacyInfoSection - name + generic + company + price + unit ───────────
 
 const PharmacyInfoSection = ({
   isHorizontal,
@@ -1254,7 +1254,7 @@ const PharmacyInfoSection = ({
   );
 };
 
-// ─── RentalFeatureTag — pill chip for vehicle attributes ─────────────────────
+// ─── RentalFeatureTag - pill chip for vehicle attributes ─────────────────────
 
 const RentalFeatureTag = ({ iconClass, label }) => (
   <Stack
@@ -1290,7 +1290,7 @@ const RentalFeatureTag = ({ iconClass, label }) => (
   </Stack>
 );
 
-// ─── RentalImageOverlay — discount top-left, wishlist top-right, info bottom-right
+// ─── RentalImageOverlay - discount top-left, wishlist top-right, info bottom-right
 
 export const RentalImageOverlay = ({
   discountText,
@@ -1314,7 +1314,7 @@ export const RentalImageOverlay = ({
     : "";
   return (
     <>
-      {/* Discount badge — top-left */}
+      {/* Discount badge - top-left */}
       {!!discountText && (
         <Box sx={{ position: "absolute", top: 10, left: 10, zIndex: 2 }}>
           <DiscountBadge>
@@ -1333,7 +1333,7 @@ export const RentalImageOverlay = ({
         </Box>
       )}
 
-      {/* Wishlist — top-right */}
+      {/* Wishlist - top-right */}
       <WishlistBtn
         variant="vertical"
         onClick={onWishlist}
@@ -1350,7 +1350,7 @@ export const RentalImageOverlay = ({
         />
       </WishlistBtn>
 
-      {/* Info button — only shown when there are more similar vehicles.
+      {/* Info button - only shown when there are more similar vehicles.
           Expands on hover to reveal "N More Similar Vehicle(s)". */}
       {showInfoButton && (
         <Box
@@ -1429,7 +1429,7 @@ export const RentalImageOverlay = ({
   );
 };
 
-// ─── RentalInfoSection — store + name + "Start From" + price + feature tags ──
+// ─── RentalInfoSection - store + name + "Start From" + price + feature tags ──
 
 export const RentalInfoSection = ({
   item,
@@ -1596,11 +1596,11 @@ const NewProductCard = ({
   isRental = false,
   horizontalStyle,
 }) => {
-  // "bogo" is a read-only row card (no cart controls of its own — the BOGO
+  // "bogo" is a read-only row card (no cart controls of its own - the BOGO
   // item-details modal owns one shared stepper/button for the whole
   // bundle), so it skips every cart/wishlist/module hook below entirely.
   // Safe because a given mounted instance's `variant` never changes across
-  // its own re-renders — this branch is always taken, or never.
+  // its own re-renders - this branch is always taken, or never.
   if (variant === "bogo") {
     return <NewProductCardBogo item={item} />;
   }
@@ -1621,7 +1621,7 @@ const NewProductCard = ({
   const { wishLists } = useSelector((s) => s.wishList);
   const { configData } = useSelector((s) => s.configData);
 
-  // ── Derived values — no useState/useEffect needed ──
+  // ── Derived values - no useState/useEffect needed ──
   const cartList = getCartListModuleWise(aliasCartList);
   const isInCart = cartList?.find((c) => c.id === item?.id);
   const isProductExist = !!isInCart;
@@ -1673,7 +1673,7 @@ const NewProductCard = ({
     dispatch({ type: ACTION.setClearCartModal, payload: false });
   };
 
-  // ── Cart increment success — exact copy from ProductCard ──
+  // ── Cart increment success - exact copy from ProductCard ──
   const cartUpdateHandleSuccess = (res) => {
     if (!res) return;
     res.forEach((i) => {
@@ -1694,7 +1694,7 @@ const NewProductCard = ({
     });
   };
 
-  // ── Cart decrement success — exact copy from ProductCard ──
+  // ── Cart decrement success - exact copy from ProductCard ──
   const cartUpdateHandleSuccessDecrement = (res) => {
     if (!res) return;
     res.forEach((i) => {
@@ -1732,7 +1732,7 @@ const NewProductCard = ({
     };
 
     if (cartList.length > 0) {
-      // Multi-store carts allowed — always proceed with add.
+      // Multi-store carts allowed - always proceed with add.
       const isStoreExist = true;
       if (isStoreExist) {
         if (!isInCart)
@@ -1758,7 +1758,7 @@ const NewProductCard = ({
     }
   };
 
-  // ── Cart clear modal confirm — use item directly (no modalData state) ──
+  // ── Cart clear modal confirm - use item directly (no modalData state) ──
   const handleCloseForClearCart = (value) => {
     if (value === "add-item") {
       addToMutate(
@@ -1786,7 +1786,7 @@ const NewProductCard = ({
     }
   };
 
-  // ── Increment — exact logic from ProductCard ──
+  // ── Increment - exact logic from ProductCard ──
   const handleIncrement = () => {
     if (!isInCart) return;
     if (updateLoading) return;
@@ -1812,7 +1812,7 @@ const NewProductCard = ({
       });
     } else {
       // Variation-aware stock: if a variation is selected, use its stock.
-      // isInCart.stock is base product stock — not reliable for variation products.
+      // isInCart.stock is base product stock - not reliable for variation products.
       const selectedVariation = isInCart.selectedOption?.[0];
       const stockValue =
         selectedVariation && typeof selectedVariation.stock === "number"
@@ -1839,7 +1839,7 @@ const NewProductCard = ({
     }
   };
 
-  // ── Decrement — exact logic from ProductCard ──
+  // ── Decrement - exact logic from ProductCard ──
   const handleDecrement = () => {
     if (!isInCart) return;
     if (isInCart.quantity === 1) {
@@ -1918,7 +1918,7 @@ const NewProductCard = ({
     }
   };
 
-  // ── Card click — exact from ProductCard ──
+  // ── Card click - exact from ProductCard ──
   const handleClick = () => {
     if (onCardClick) {
       onCardClick(item);
@@ -1933,7 +1933,7 @@ const NewProductCard = ({
     }
   };
 
-  // ── Service variation confirm — initial add (item NOT yet in cart) ──
+  // ── Service variation confirm - initial add (item NOT yet in cart) ──
   const handleServiceVariationSelect = (selected) => {
     setSelectedVariation(selected);
     const computedPrice = selected.reduce(
@@ -1959,10 +1959,10 @@ const NewProductCard = ({
     );
   };
 
-  // ── Service variation update — item IS already in cart, diff and sync ──
+  // ── Service variation update - item IS already in cart, diff and sync ──
   // Uses mutateAsync + Promise.allSettled with a try/finally so the modal's
   // loading state ALWAYS resolves, even if a delete/add call errors or an
-  // edge case leaves counts mismatched — no more "stuck spinner forever".
+  // edge case leaves counts mismatched - no more "stuck spinner forever".
   const handleServiceVariationUpdate = async (newSelected) => {
     // variations apart instead of collapsing them onto one key.
     const identifyVariant = (variation) =>
@@ -2068,7 +2068,7 @@ const NewProductCard = ({
     }
   };
 
-  // ── Add button click — exact addToCart from ProductCard ──
+  // ── Add button click - exact addToCart from ProductCard ──
   const handleAddClick = (e) => {
     e.stopPropagation();
     if (item?.module_type === "service") {

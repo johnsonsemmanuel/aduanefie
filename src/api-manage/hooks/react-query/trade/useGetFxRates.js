@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import MainApi from "api-manage/MainApi";
 
 // Currency symbols are static presentation data, not a rate. Rates must come
-// from the API — a hard-coded "fallback rate" would be shown as if it were
+// from the API - a hard-coded "fallback rate" would be shown as if it were
 // current when the trade service is down.
 const CURRENCY_SYMBOLS = {
   GHS: "GH₵",

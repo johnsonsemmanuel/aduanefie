@@ -140,7 +140,7 @@ const AddressForm = ({
     },
     
     onSubmit: async (values, helpers) => {
-      // Address type is picked outside the form (icon row in the modal) —
+      // Address type is picked outside the form (icon row in the modal) -
       // block submit and hand focus back to that selector when it's missing.
       if (!contactInfoOnly && !values.address_type && !values.address_label) {
         toast.error(t("Please select an address type"), {
@@ -180,7 +180,7 @@ const AddressForm = ({
 
     if (token) {
       if (editAddress && editAddress?.address_type) {
-        // "Selected Address" is the transient checkout address — not yet
+        // "Selected Address" is the transient checkout address - not yet
         // persisted server-side. Editing it only updates local state.
         if (address?.address_type === "Selected Address" || !editAddress?.id ) {
        

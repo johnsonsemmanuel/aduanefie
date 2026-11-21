@@ -17,7 +17,7 @@ const statusColor = (status) => {
   return "default";
 };
 
-const GroupBuyCard = ({ group }) => {
+const GroupBuyCard = ({ group, onEdit }) => {
   const router = useRouter();
   const committed = Number(group.committed_count || 0);
   const limit = Number(group.member_limit || 5);
@@ -65,14 +65,21 @@ const GroupBuyCard = ({ group }) => {
       </CardContent>
 
       <Box sx={{ p: 2, pt: 0 }}>
-        <Button
-          fullWidth
-          size="small"
-          variant="contained"
-          onClick={() => router.push(`/group-buys/${group.id}`)}
-        >
-          View group
-        </Button>
+        <Stack direction="row" spacing={1}>
+          <Button
+            fullWidth
+            size="small"
+            variant="contained"
+            onClick={() => router.push(`/group-buys/${group.id}`)}
+          >
+            View group
+          </Button>
+          {group.is_organizer && group.status === "open" && onEdit && (
+            <Button size="small" variant="outlined" onClick={() => onEdit(group)}>
+              Edit
+            </Button>
+          )}
+        </Stack>
       </Box>
     </Card>
   );

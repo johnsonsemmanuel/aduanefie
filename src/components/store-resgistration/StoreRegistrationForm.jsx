@@ -379,7 +379,7 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
   let moduleOption = [];
   // `data` already comes back scoped to the selected zone (the API is
   // called with `?zone_id=`), so no client-side zones[] filtering is needed
-  // or possible — this endpoint's module rows don't carry a `zones` array.
+  // or possible - this endpoint's module rows don't carry a `zones` array.
   const zoneWiseModules = data;
 
   if (zoneWiseModules?.length > 0) {

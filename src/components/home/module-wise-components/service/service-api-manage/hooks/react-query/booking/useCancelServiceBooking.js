@@ -1,4 +1,4 @@
-// Placeholder — real hook shipped with the Service addon.
+// Placeholder - real hook shipped with the Service addon.
 export default function useCancelServiceBooking(..._args) {
   return {
     mutate: (..._a) => {},

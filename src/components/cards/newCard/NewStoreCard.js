@@ -73,7 +73,7 @@ const DiscountBadges = ({ item, theme, t }) => {
   const badges = [];
 
   // Already the winning rate (happy hour beats the vendor's own standing
-  // discount server-side — see StoreDiscountResolver) and always a percent,
+  // discount server-side - see StoreDiscountResolver) and always a percent,
   // so no discount_type branching is needed here.
   const discountPct = Number(item?.active_discount) || 0;
   const hasDiscount = discountPct > 0;
@@ -315,9 +315,9 @@ const NewStoreCard = ({
   );
 
   // ─────────────────────────────────────────────────────────────────────────
-  // ADS VARIANT — uses `ad` prop (full ad object)
+  // ADS VARIANT - uses `ad` prop (full ad object)
   // ─────────────────────────────────────────────────────────────────────────
-  // Video player state — always called (hooks rules)
+  // Video player state - always called (hooks rules)
   const [playing, setPlaying] = useState(true);
   const [ended, setEnded] = useState(false);
 
@@ -454,7 +454,7 @@ const NewStoreCard = ({
 
           {/* Rating + divider + reviews + Explore */}
           <Stack direction="row" alignItems="center" gap="8px">
-            {/* Rating — only show when there's meaningful data */}
+            {/* Rating - only show when there's meaningful data */}
             {(() => {
               const rating = Number(
                 ad?.average_rating || adStore?.avg_rating || 0
@@ -513,7 +513,7 @@ const NewStoreCard = ({
               );
             })()}
 
-            {/* Avatar/item image group — Figma: overlapping circles 28x28 */}
+            {/* Avatar/item image group - Figma: overlapping circles 28x28 */}
             {(() => {
               const images = ad?.store?.top_items
                 ?.map((i) => i.image_full_url)
@@ -539,7 +539,7 @@ const NewStoreCard = ({
                           height: 28,
                           borderRadius: "50%",
                           // Visible separation ring between the overlapping
-                          // avatars — near-white borders vanished against the
+                          // avatars - near-white borders vanished against the
                           // white card and white product photos.
                           border: `2px solid ${theme.palette.background.paper}`,
                           outline: `1px solid ${theme.palette.divider}`,
@@ -553,7 +553,7 @@ const NewStoreCard = ({
                           justifyContent: "center",
                         }}
                       >
-                        {/* 24px = 28px box minus the 2px border each side —
+                        {/* 24px = 28px box minus the 2px border each side -
                             a 28px image overflowed and clipped off-center. */}
                         <NextImage
                           src={src}
@@ -619,7 +619,7 @@ const NewStoreCard = ({
   return (
     <CardRoot onClick={handleClick}>
       {/* Image */}
-      {/* Image — all corners rounded (12px), overflow clips image */}
+      {/* Image - all corners rounded (12px), overflow clips image */}
       <Box
         className="store-img"
         sx={{
@@ -645,7 +645,7 @@ const NewStoreCard = ({
           borderRadius="12px"
         />
 
-        {/* Bottom gradient shadow — visible on parent hover */}
+        {/* Bottom gradient shadow - visible on parent hover */}
         <Box
           className="img-gradient-overlay"
           sx={{
@@ -766,7 +766,7 @@ const NewStoreCard = ({
         </Box>
       </Box>
 
-      {/* Info — Figma: pt:8 px:4 pb:0, gap:2px between rows */}
+      {/* Info - Figma: pt:8 px:4 pb:0, gap:2px between rows */}
       <Box
         sx={{
           pt: "8px",
@@ -777,7 +777,7 @@ const NewStoreCard = ({
           gap: "2px",
         }}
       >
-        {/* Row 1: Store name + Rating — pb:2px */}
+        {/* Row 1: Store name + Rating - pb:2px */}
         <Stack
           direction="row"
           alignItems="center"

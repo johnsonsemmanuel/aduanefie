@@ -237,8 +237,8 @@ export const bengali = {
   "Are you sure, you want to reset?": "هل أنت متأكد أنك تريد إعادة تعيين؟",
   Ascending: "ঊর্ধ্বক্রম",
   "Ask AI Assistant": "এআই সহকারীকে জিজ্ঞাসা করুন",
-  "Ask anything — orders, deals, restaurants, recommendations.":
-    "যে কোনো কিছু জিজ্ঞাসা করুন — অর্ডার, অফার, রেস্তোরাঁ, সুপারিশ।",
+  "Ask anything - orders, deals, restaurants, recommendations.":
+    "যে কোনো কিছু জিজ্ঞাসা করুন - অর্ডার, অফার, রেস্তোরাঁ, সুপারিশ।",
   "Attach photo": "إرفاق صورة",
   "Automatically reorder these items every month.":
     "প্রতি মাসে স্বয়ংক্রিয়ভাবে এই আইটেমগুলি পুনঃঅর্ডার করুন।",
@@ -2357,8 +2357,8 @@ export const bengali = {
   "Type your opinion": "আপনার মতামত টাইপ করুন",
   "Type your tin number": "আপনার TIN নম্বর টাইপ করুন",
   "Typing…": "টাইপ করছে…",
-  "Unable to renew — plan information unavailable.":
-    "Unable to renew — plan information unavailable.",
+  "Unable to renew - plan information unavailable.":
+    "Unable to renew - plan information unavailable.",
   "Unavailable item note": "ملاحظة عنصر غير متوفر",
   Unit: "وحدة",
   "Unit Price": "একক মূল্য",

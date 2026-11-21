@@ -7,7 +7,7 @@ import { onErrorResponse } from "../../api-error-response/ErrorResponses";
 // Fully independent from useGetModule.js (that hook is reused across the app
 // and always resolves the browsing session's zone). This one is for flows
 // that need the module list for an ARBITRARY, explicitly chosen zone (e.g.
-// vendor registration's "Business Zone" picker) — it takes zoneId as a plain
+// vendor registration's "Business Zone" picker) - it takes zoneId as a plain
 // argument and never touches localStorage/session zone state.
 const getModuleByZone = async (zoneId) => {
   const { data } = await MainApi.get(`${moduleList}?zone_id=${zoneId}`);

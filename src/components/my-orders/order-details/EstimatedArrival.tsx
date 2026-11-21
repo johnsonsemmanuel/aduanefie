@@ -18,7 +18,7 @@ import { capitalizeLabel } from "helper-functions/stringHelpers";
  * server-side (Maps travel time + preparation buffer + transit buffer, with the
  * preparation buffer swapped for the real processing time once processing
  * starts) and already localised into the store's timezone. Nothing here
- * recalculates a duration — reformatting would shift the times for any viewer
+ * recalculates a duration - reformatting would shift the times for any viewer
  * outside that timezone.
  *
  * The server nulls `eta` for delivered / canceled / failed orders, so a closed
@@ -104,7 +104,7 @@ const EstimatedArrival: React.FC<EstimatedArrivalProps> = ({
     );
   }
 
-  // Running order with no ETA from the server — say so rather than showing a
+  // Running order with no ETA from the server - say so rather than showing a
   // guessed window or an empty gap.
   const arrival = eta?.window || eta?.label;
 

@@ -137,7 +137,7 @@ const BundleCardShimmer = () => (
 );
 
 /**
- * Shared "Bundle Items" home section — one horizontal slider of bundle cards,
+ * Shared "Bundle Items" home section - one horizontal slider of bundle cards,
  * used by every module that sells bundles. GET /bundle/home is public (no
  * token/guest_id) and returns one thumbnail per bundle, not a per-item image
  * set, so every card here renders via BundleProductCard's single-image path.

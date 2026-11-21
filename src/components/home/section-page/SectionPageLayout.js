@@ -313,7 +313,7 @@ const ItemsGrid = ({
           <SearchEmptyState label="No results found" />
         )}
       </Box>
-      {/* Sentinel — triggers next page fetch when scrolled into view */}
+      {/* Sentinel - triggers next page fetch when scrolled into view */}
       <Box ref={ref} sx={{ height: "10px" }} />
       {isFetchingNextPage && (
         <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
@@ -379,7 +379,7 @@ const StoresGrid = ({
           <SearchEmptyState label="No results found" />
         )}
       </Box>
-      {/* Sentinel — triggers next page fetch when scrolled into view */}
+      {/* Sentinel - triggers next page fetch when scrolled into view */}
       <Box ref={ref} sx={{ height: "10px" }} />
       {isFetchingNextPage && (
         <Box sx={{ display: "flex", justifyContent: "center", py: 2 }}>
@@ -566,7 +566,7 @@ const SectionPageLayout = ({
         </Stack>
       </Stack>
 
-      {/* Search banner — desktop only */}
+      {/* Search banner - desktop only */}
       <Box sx={{ display: { xs: "none", md: "block" } }}>
         <ModuleSearchBanner
           zoneid={
@@ -580,7 +580,7 @@ const SectionPageLayout = ({
         />
       </Box>
 
-      {/* Filter bar — desktop only */}
+      {/* Filter bar - desktop only */}
       <Stack
         direction="row"
         alignItems="center"

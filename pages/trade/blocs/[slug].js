@@ -257,17 +257,17 @@ const TradeBlocDetail = ({ slug, configData, metaData }) => {
                             <TableCell align="right">
                               {corridor.distance_km
                                 ? `${Math.round(corridor.distance_km)} km`
-                                : "—"}
+                                : "-"}
                             </TableCell>
                             <TableCell align="right">
                               {corridor.transit_days_estimate
                                 ? `${corridor.transit_days_estimate} d`
-                                : "—"}
+                                : "-"}
                             </TableCell>
                             <TableCell align="right">
                               {corridor.trucking_rate_per_ton_usd
                                 ? money(corridor.trucking_rate_per_ton_usd)
-                                : "—"}
+                                : "-"}
                             </TableCell>
                             <TableCell align="center">
                               <Chip

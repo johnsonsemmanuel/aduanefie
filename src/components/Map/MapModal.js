@@ -108,7 +108,7 @@ const MapModal = ({
 
   useEffect(() => {
     if (!places) return;
-    // Support both API shapes — `suggestions` (Places Autocomplete v2)
+    // Support both API shapes - `suggestions` (Places Autocomplete v2)
     // and `predictions` (legacy). Never leave `predictions` undefined or
     // the Autocomplete crashes on `.map()`.
     const list = Array.isArray(places?.suggestions)
@@ -144,7 +144,7 @@ const MapModal = ({
     }
   }, [geoCodeResults]);
 
-  // Reflect the resolved address in the search input — fires on initial
+  // Reflect the resolved address in the search input - fires on initial
   // geocode, after picking a suggestion (which triggers a new geocode),
   // after dragging the pin, and after the "use current location" button.
   useEffect(() => {
@@ -184,7 +184,7 @@ const MapModal = ({
     // place-api-details answers 200 with `{ error: { … } }` for a place id
     // Google no longer recognises. That body is truthy but carries no
     // `location`, and writing it here parks `location` as `{lat: undefined}`
-    // — which keeps the Pick/Discover button disabled with no way to recover.
+    // - which keeps the Pick/Discover button disabled with no way to recover.
     const lat = placeDetails?.location?.latitude;
     const lng = placeDetails?.location?.longitude;
     if (lat !== undefined && lng !== undefined) {
@@ -333,7 +333,7 @@ const MapModal = ({
                 paddingRight: isModalExpand ? "0px" : "15px",
               }}
             >
-              {/* Header hidden in fullscreen — expanded view is just the map,
+              {/* Header hidden in fullscreen - expanded view is just the map,
                   search bar, and close button. */}
               {!isModalExpand && (
                 <>
@@ -395,7 +395,7 @@ const MapModal = ({
                       }
                       setPlaceDetailsEnabled(true);
                     }}
-                    // Controlled input — without this, the input text snaps
+                    // Controlled input - without this, the input text snaps
                     // back to `currentLocationValue.description` (geocoded
                     // address) whenever it resolves, swallowing the user's
                     // typing. `searchKey` is the source of truth here.
@@ -412,7 +412,7 @@ const MapModal = ({
                     // The parent Modal pins itself at zIndex 1600. MUI's
                     // Autocomplete popper defaults to theme.zIndex.modal
                     // (1300), so the suggestion dropdown was rendering
-                    // BEHIND the modal — visible in the DOM but hidden
+                    // BEHIND the modal - visible in the DOM but hidden
                     // from view. Float it above the modal.
                     slotProps={{ popper: { sx: { zIndex: 1700 } } }}
                     componentsProps={{
@@ -458,7 +458,7 @@ const MapModal = ({
                   position: "relative",
                 }}
               >
-                {/* Address bar hidden in fullscreen — expanded view keeps only
+                {/* Address bar hidden in fullscreen - expanded view keeps only
                     the map, search bar, and close button. */}
                 {!isModalExpand && (
                   <LocationView>
@@ -534,7 +534,7 @@ const MapModal = ({
                 </WrapperCurrentLocationPick>
               </CustomBoxFullWidth>
             </SimpleBar>
-            {/* Footer actions hidden in fullscreen — the shrink control on the
+            {/* Footer actions hidden in fullscreen - the shrink control on the
                 map returns to the normal view to pick the location. */}
             {!isModalExpand && (
               <CustomStackFullWidth

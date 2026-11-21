@@ -135,7 +135,7 @@ const CheckoutAddressPickerModal = ({
                   isLoading={isLoading}
                 />
 
-                {/* Add new address — part of saved addresses section */}
+                {/* Add new address - part of saved addresses section */}
                 {onAddNewAddress && (
                   <Button
                     fullWidth
@@ -156,7 +156,7 @@ const CheckoutAddressPickerModal = ({
                 )}
               </>
             ) : (
-              /* Guest user — prompt to sign in */
+              /* Guest user - prompt to sign in */
               <Stack
                 direction="row"
                 alignItems="center"

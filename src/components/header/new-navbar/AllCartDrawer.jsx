@@ -102,7 +102,7 @@ const AllCartDrawer = ({ open, onClose, cartData = [], refetch }) => {
   const [deletingStoreId, setDeletingStoreId] = useState(null);
   const [confirmClearAllOpen, setConfirmClearAllOpen] = useState(false);
 
-  // Prefer server-grouped data (cart/get-all) — re-synced after every
+  // Prefer server-grouped data (cart/get-all) - re-synced after every
   // add/update/delete via react-query invalidation. Fall back to local
   // grouping of cartList if the grouped fetch hasn't returned yet.
   // Filter to only show carts belonging to the current module.
@@ -180,7 +180,7 @@ const AllCartDrawer = ({ open, onClose, cartData = [], refetch }) => {
       },
       onError: () => {
         refetch?.();
-        // Mutation failed — skip refetch so the drawer doesn't re-sync
+        // Mutation failed - skip refetch so the drawer doesn't re-sync
         // against a store group that was never actually cleared.
         setDeletingStoreId(null);
       },
@@ -212,7 +212,7 @@ const AllCartDrawer = ({ open, onClose, cartData = [], refetch }) => {
         },
       }}
     >
-      {/* Close tab — fixed vertical pill on left edge of drawer (Figma 2042:54942) */}
+      {/* Close tab - fixed vertical pill on left edge of drawer (Figma 2042:54942) */}
       {open && (
         <Box
           onClick={onClose}

@@ -1,7 +1,7 @@
 import axios from "axios";
 // NEXT_PUBLIC_BASE_URL may or may not carry a trailing slash. Axios normalises
 // that when joining baseURL + path, but every server-side `${baseUrl}${path}`
-// template does not — it yields `host//api/v1/...`, which the API answers with
+// template does not - it yields `host//api/v1/...`, which the API answers with
 // a 404. Strip it once here so both styles are safe.
 export const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || "").replace(
   /\/+$/,

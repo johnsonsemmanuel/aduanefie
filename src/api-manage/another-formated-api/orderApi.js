@@ -2,8 +2,8 @@ import MainApi from "../MainApi";
 import { getToken } from "helper-functions/getToken";
 import { getApiContent } from "../getApiContent";
 
-// Callers read payload fields straight off the axios response — e.g.
-// `response.data.order_id` after placing an order — and some also read
+// Callers read payload fields straight off the axios response - e.g.
+// `response.data.order_id` after placing an order - and some also read
 // `response.data.message` for the success toast. v4.2 moved the payload into
 // `content` while leaving `message` on the envelope, so expose both: the
 // envelope message first, then the payload spread over it so real fields win.

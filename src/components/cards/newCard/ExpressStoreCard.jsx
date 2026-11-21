@@ -214,7 +214,7 @@ const ExpressStoreCard = ({
         )
       ) : null}
 
-      {/* Bottom — Store bar */}
+      {/* Bottom - Store bar */}
       <StoreBar showProducts={showProducts}>
         <Logo>
           {store?.logo_full_url && (

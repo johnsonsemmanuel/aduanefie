@@ -19,7 +19,7 @@ const getGeoCode = async (location) => {
 // Dragging the map emits a new {lat,lng} on every idle event, and the raw
 // floats differ in the 10th decimal. Keying the query on the raw object spawns
 // a fresh request per pixel of movement, so the result never settles and
-// `geoCodeResults` stays undefined — which blanks the search field and leaves
+// `geoCodeResults` stays undefined - which blanks the search field and leaves
 // the Pick button permanently disabled. ~5 decimals is ≈1m of precision, far
 // finer than an address needs, and it makes the key stable.
 const toStableKey = (location) => {

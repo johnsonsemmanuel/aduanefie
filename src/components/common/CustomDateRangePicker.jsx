@@ -10,8 +10,8 @@ import "react-date-range/dist/theme/default.css";
  *
  * Props:
  *   value      – array of range objects [{ startDate, endDate, key }]
- *   onChange   – (item) => void  — receives { [key]: { startDate, endDate, key } }
- *   minDate    – Date (defaults to today — past dates are always disabled)
+ *   onChange   – (item) => void  - receives { [key]: { startDate, endDate, key } }
+ *   minDate    – Date (defaults to today - past dates are always disabled)
  *   maxDate    – Date
  *   months     – number of calendar months to render (default 1)
  *   direction  – "horizontal" | "vertical" (default "horizontal")

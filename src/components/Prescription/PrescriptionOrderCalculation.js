@@ -53,7 +53,7 @@ const PrescriptionOrderCalculation = ({
     latitude: destination?.latitude,
     longitude: destination?.longitude,
     deliveryType: selectedDeliveryOption?.deliveryType,
-    // area_id / zip_code_id — the zone's rule prices off these.
+    // area_id / zip_code_id - the zone's rule prices off these.
     ...(areaZipParams || {}),
   });
   const checkoutSummary = checkoutSummaryQuery?.data;
@@ -62,13 +62,13 @@ const PrescriptionOrderCalculation = ({
   useEffect(() => {
     setQuoteUnavailable?.(quoteUnavailable);
   }, [quoteUnavailable]);
-  // Passed through untouched — the rows below read `price`, `price_type`,
+  // Passed through untouched - the rows below read `price`, `price_type`,
   // `customer_note` and `customer_note_status` off it.
   const surgePrice = checkoutSummary?.surge;
   // The vehicle charge is folded into `base_delivery_charge` server-side, so
   // there is no separate figure to caption any more.
   const extraCharge = 0;
-  // The "before" figure — base + surge, ahead of free-delivery and Pro.
+  // The "before" figure - base + surge, ahead of free-delivery and Pro.
   const computedDeliveryFee = Number(summaryDelivery?.base_delivery_charge) || 0;
 
   // ── Pro member: delivery_fee benefit ───────────────────────────────────

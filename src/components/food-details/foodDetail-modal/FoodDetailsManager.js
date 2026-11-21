@@ -138,7 +138,7 @@ const FoodDetailsManager = (props) => {
           </CustomOverlayBox>
         )}
 
-        {/* Close button — mobile only, scrolls with content, top-left of image */}
+        {/* Close button - mobile only, scrolls with content, top-left of image */}
         {onClose && (
           <IconButton
             onClick={onClose}
@@ -169,7 +169,7 @@ const FoodDetailsManager = (props) => {
           </IconButton>
         )}
 
-        {/* Wishlist button — top-right of image. Hidden for scheduled/
+        {/* Wishlist button - top-right of image. Hidden for scheduled/
             pre-order items (those carrying `available_date_starts`). */}
         {!(item?.available_date_starts ?? product?.available_date_starts) && (
           <Box

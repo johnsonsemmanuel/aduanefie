@@ -6,7 +6,7 @@ import { getModuleId } from "helper-functions/getModuleId";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { getApiCollection } from "../../../getApiContent";
 
-// GET /bundle/home — public, no token/guest_id needed. Strip only: takes
+// GET /bundle/home - public, no token/guest_id needed. Strip only: takes
 // `limit` (default 10 server-side) and no `offset`, and its content carries
 // no `pagination` block.
 const getData = async (params = {}) => {

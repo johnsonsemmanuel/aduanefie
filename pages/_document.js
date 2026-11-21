@@ -225,7 +225,7 @@ CustomDocument.getInitialProps = async (ctx) => {
   // 🛠 Fetch analytics config server-side
   let analyticsConfig = {};
   // `_document.getInitialProps` runs on EVERY server render, so this fetch was
-  // firing once per page view on every route — checkout included. The analytics
+  // firing once per page view on every route - checkout included. The analytics
   // script ids change rarely, so memoise them for the life of the server
   // process (with a TTL) instead of paying an API round trip per request.
   if (

@@ -2,13 +2,13 @@ import { alpha, Box, Typography, useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 /**
- * Order status badge — pill shape with color variants.
+ * Order status badge - pill shape with color variants.
  * Dark mode supported via theme palette.
  *
  * Props:
- *  - status: string  — order status (case-insensitive)
- *  - label: string   — custom label override
- *  - sx: object      — additional MUI sx overrides
+ *  - status: string  - order status (case-insensitive)
+ *  - label: string   - custom label override
+ *  - sx: object      - additional MUI sx overrides
  */
 
 const useStatusConfig = (key) => {
@@ -16,7 +16,7 @@ const useStatusConfig = (key) => {
   const p = theme.palette;
   const isDark = theme.palette.mode === "dark";
 
-  // Success (green) pill — the fixed pale-green bg glares on dark surfaces,
+  // Success (green) pill - the fixed pale-green bg glares on dark surfaces,
   // so derive a translucent tint from the palette there instead.
   const successStyle = {
     bg: isDark ? alpha(p.success?.main ?? "#14B8A6", 0.16) : "#cff7d3",

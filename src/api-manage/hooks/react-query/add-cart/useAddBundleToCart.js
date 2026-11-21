@@ -3,7 +3,7 @@ import { bundle_cart_add_api } from "../../../ApiRoutes";
 import { getApiContent } from "../../../getApiContent";
 import { useMutation, useQueryClient } from "react-query";
 
-// POST /customer/cart/bundle/add — body: { bundle_id, quantity, guest_id }.
+// POST /customer/cart/bundle/add - body: { bundle_id, quantity, guest_id }.
 // Response content: { bundle_group_id, quantity, store_id, data: [...], pagination }.
 const addData = async (postData) => {
   const { data } = await MainApi.post(bundle_cart_add_api, postData);

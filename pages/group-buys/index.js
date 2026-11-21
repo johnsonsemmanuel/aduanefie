@@ -20,12 +20,13 @@ import SimpleMobileHeader from "components/common/SimpleMobileHeader";
 import SEO from "components/seo";
 import GroupBuyCard from "components/group-buy/GroupBuyCard";
 import CreateGroupBuyDialog from "components/group-buy/CreateGroupBuyDialog";
+import EditGroupBuyDialog from "components/group-buy/EditGroupBuyDialog";
 import { useGetGroupBuys, useGetMyGroupBuys } from "api-manage/hooks/react-query/group-buy/useGroupBuys";
 import { getCommonServerSideProps } from "utils/serverSidePropsHelper";
 import { useDispatch } from "react-redux";
 import { useGetConfigData } from "api-manage/hooks/useGetConfigData";
 import { setConfigData } from "redux/slices/configData";
-import { DESTINATION_COUNTRY_CODES } from "utils/tradeOptions";
+import { TRADE_COUNTRIES } from "utils/tradeOptions";
 
 const GroupBuysPage = ({ configData }) => {
   const dispatch = useDispatch();
@@ -47,6 +48,7 @@ const GroupBuysPage = ({ configData }) => {
   const [country, setCountry] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
   const [prefillItem, setPrefillItem] = useState(null);
+  const [editingGroup, setEditingGroup] = useState(null);
 
   useEffect(() => {
     if (router.query.item_id) {
@@ -76,7 +78,7 @@ const GroupBuysPage = ({ configData }) => {
       <MainLayout configData={effectiveConfig}>
         <SimpleMobileHeader title="Group Buys" backHref="/trade" />
         <CustomContainer>
-          <Box sx={{ py: { xs: 3, md: 5 } }}>
+          <Box sx={{ pt: { xs: 1.5, md: 3 }, pb: { xs: 3, md: 5 } }}>
             <Stack
               direction={{ xs: "column", sm: "row" }}
               justifyContent="space-between"
@@ -127,9 +129,9 @@ const GroupBuysPage = ({ configData }) => {
                     sx={{ minWidth: 200 }}
                   >
                     <MenuItem value="">All destinations</MenuItem>
-                    {DESTINATION_COUNTRY_CODES.map((code) => (
-                      <MenuItem key={code} value={code}>
-                        {code}
+                    {TRADE_COUNTRIES.map((country) => (
+                      <MenuItem key={country.code} value={country.code}>
+                        {country.name} ({country.code})
                       </MenuItem>
                     ))}
                   </TextField>
@@ -148,7 +150,7 @@ const GroupBuysPage = ({ configData }) => {
                   <Grid container spacing={2}>
                     {groups.map((group) => (
                       <Grid item xs={12} sm={6} md={4} key={group.id}>
-                        <GroupBuyCard group={group} />
+                        <GroupBuyCard group={group} onEdit={setEditingGroup} />
                       </Grid>
                     ))}
                   </Grid>
@@ -171,7 +173,7 @@ const GroupBuysPage = ({ configData }) => {
               <Grid container spacing={2}>
                 {myGroups.map((group) => (
                   <Grid item xs={12} sm={6} md={4} key={group.id}>
-                    <GroupBuyCard group={group} />
+                    <GroupBuyCard group={group} onEdit={setEditingGroup} />
                   </Grid>
                 ))}
               </Grid>
@@ -187,6 +189,17 @@ const GroupBuysPage = ({ configData }) => {
         onClose={() => setCreateOpen(false)}
         item={prefillItem}
       />
+      {editingGroup && (
+        <EditGroupBuyDialog
+          open={Boolean(editingGroup)}
+          onClose={() => setEditingGroup(null)}
+          group={editingGroup}
+          onUpdated={() => {
+            refetch();
+            refetchMine();
+          }}
+        />
+      )}
     </>
   );
 };

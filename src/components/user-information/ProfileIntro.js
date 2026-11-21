@@ -56,7 +56,7 @@ const StatCard = ({ value, label, icon, mobile = false }) => (
           fontVariantNumeric: "tabular-nums",
         }}
       >
-        {value ?? "—"}
+        {value ?? "-"}
       </Typography>
       <Box
         component="img"
@@ -122,7 +122,7 @@ const ProfileIntro = ({
     "service-request": t("Requested Services"),
   };
   // `page` can carry a query suffix on payment redirects (e.g.
-  // "wallet?flag=success", "subscription-plan?flag=cancel") — strip it so the
+  // "wallet?flag=success", "subscription-plan?flag=cancel") - strip it so the
   // label still resolves instead of falling back to "Profile".
   const normalizedPage = typeof page === "string" ? page.split("?")[0] : page;
   const pageLabel = pageLabels[normalizedPage] || t("Profile");
@@ -269,7 +269,7 @@ const ProfileIntro = ({
             overflow: "hidden",
           }}
         >
-          {/* Edit button — absolute top-right */}
+          {/* Edit button - absolute top-right */}
           {editBtn(t("Edit"), true)}
 
           {/* Avatar + name + join */}
@@ -316,7 +316,7 @@ const ProfileIntro = ({
             </Stack>
           </Stack>
 
-          {/* Stat cards — slider showing 1.4 */}
+          {/* Stat cards - slider showing 1.4 */}
           <Box sx={{ width: "100%", overflow: "hidden" }}>
             <SliderWrapper>
               <Slider

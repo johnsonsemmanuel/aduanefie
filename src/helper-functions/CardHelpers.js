@@ -2,7 +2,7 @@ import { store } from "redux/store";
 
 /**
  * Format a plain number (non-currency) using config's digit_after_decimal_point.
- * Safe against null / undefined / string / NaN inputs — returns "" for invalid values.
+ * Safe against null / undefined / string / NaN inputs - returns "" for invalid values.
  *
  * @param {number|string|null|undefined} value
  * @param {number} [fallbackDecimals=2]  used when config is not yet loaded

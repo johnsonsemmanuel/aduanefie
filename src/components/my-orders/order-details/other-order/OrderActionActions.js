@@ -250,7 +250,7 @@ const OrderActionActions = ({
           data?.length > 0 &&
           hasChatAndReview(trackData?.store)?.isReview === 1 && (
             <Stack direction="column" spacing={1}>
-              {/* Hide once the order has been reviewed — the refund button
+              {/* Hide once the order has been reviewed - the refund button
                   below must stay available regardless. */}
               {!trackData?.is_reviewed && (
                 <Button

@@ -18,7 +18,7 @@ const NewStoreCardSkeleton = () => (
         height="100%"
         sx={{ borderRadius: "12px" }}
       />
-      {/* Wishlist stub — top-right */}
+      {/* Wishlist stub - top-right */}
       <Skeleton
         variant="circular"
         animation="wave"
@@ -26,7 +26,7 @@ const NewStoreCardSkeleton = () => (
       />
     </Box>
 
-    {/* Info block — pt:8 px:4 */}
+    {/* Info block - pt:8 px:4 */}
     <Box sx={{ pt: "8px", px: "4px", display: "flex", flexDirection: "column", gap: "6px" }}>
       {/* Row 1: store name + rating */}
       <Stack direction="row" alignItems="center" justifyContent="space-between" gap="16px">

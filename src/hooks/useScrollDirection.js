@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
  * Tracks scroll direction and collapse state for scroll-away headers.
  *
  * Returns { direction, isCollapsed, isPastThreshold }:
- *  - direction:        "up" | "down" — flips with hysteresis (see below)
+ *  - direction:        "up" | "down" - flips with hysteresis (see below)
  *  - isCollapsed:      true after a real downward scroll past `collapseAt`,
  *                      false again only above `expandAt` (dead zone between
  *                      the two absorbs jitter: URL-bar bounce, micro-scrolls)
@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
  *                      scroll-to-top buttons and similar)
  *
  * PERFORMANCE: this hook deliberately does NOT expose a live `scrollY`.
- * State updates fire only when one of the booleans flips — a handful of
+ * State updates fire only when one of the booleans flips - a handful of
  * times per gesture instead of every scrolled pixel. A previous version
  * returned `scrollY` from state, which re-rendered every subscribed
  * component (layout, navbar) on every frame and made the header
@@ -118,7 +118,7 @@ const useScrollDirection = ({
  *
  *   "html.mobile-nav-collapsed &": { transform: "translateY(-116px)" }
  *
- * Animate `transform`/`opacity` only (compositor-friendly) — never
+ * Animate `transform`/`opacity` only (compositor-friendly) - never
  * max-height or margins, which reflow the page on every animation frame.
  */
 export const useScrollCollapseClass = (

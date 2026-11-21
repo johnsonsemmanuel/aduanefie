@@ -16,7 +16,7 @@ const ChatWithAdmin = ({ automateMessageData, orderID, isBooking }) => {
   const theme = useTheme();
   const router = useRouter();
   // The automated reasons are order/product-specific (admin-configured for the
-  // commerce flow) — for service-module bookings show only the custom message.
+  // commerce flow) - for service-module bookings show only the custom message.
   const reasonList = isBooking ? [] : automateMessageData;
   const [selected, setSelected] = React.useState(false);
   const [value, setValue] = React.useState("");

@@ -44,7 +44,7 @@ const Coupon = (props) => {
 
   // Pro-customer coupon detection. Primary signal is `coupon_type` (sits
   // alongside "default", "first_order", "free_delivery", etc.). Backend also
-  // ships `customer_id` as a JSON-stringified array — fall back to that in
+  // ships `customer_id` as a JSON-stringified array - fall back to that in
   // case the type field is left as "default" but the audience is restricted.
   const parsedCustomerIds = (() => {
     const raw = coupon?.customer_id;

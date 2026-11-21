@@ -100,7 +100,7 @@ const WishListCard = ({ item, onOpenModal }) => {
   };
   const addToCartHandler = () => {
     if (cartList.length > 0) {
-      // Multi-store carts allowed — always proceed with add.
+      // Multi-store carts allowed - always proceed with add.
       const isStoreExist = true;
 
       if (isStoreExist) {

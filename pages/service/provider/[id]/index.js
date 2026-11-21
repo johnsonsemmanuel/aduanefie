@@ -127,7 +127,7 @@ export const getServerSideProps = async (context) => {
   ]);
   console.timeEnd("Fetch Config + Store Details");
 
-  // configData powers the header/layout/business info — it must always load, no graceful degrade.
+  // configData powers the header/layout/business info - it must always load, no graceful degrade.
   if (configSettled.status === "rejected") {
     console.log("config network error 🔥", configSettled.reason?.message);
     return { notFound: true };

@@ -26,7 +26,7 @@ const BogoOfferCard = ({ data, onClick: onClickOverride }) => {
 
   // Callers embedding this card outside the BOGO list page (e.g. the chat
   // assistant) may need to run their own logic first (closing a popover,
-  // confirming a module switch) — pass onClick to take over the navigation
+  // confirming a module switch) - pass onClick to take over the navigation
   // entirely instead of the default self-navigate below.
   const handleClick =
     onClickOverride ??

@@ -108,7 +108,7 @@ const itemNamesFrom = (details = []) =>
 // ── Main component ────────────────────────────────────────────────────────────
 
 /**
- * New order card — Figma 2348:220813 (desktop) / 2348:220990 (mobile)
+ * New order card - Figma 2348:220813 (desktop) / 2348:220990 (mobile)
  *
  * Props:
  *  - order: order object from API
@@ -125,7 +125,7 @@ const NewOrderCard = ({ order, bg = "transparent", configData }) => {
 
   const status = order?.order_status ?? "";
   // When the reorder feature is disabled in config, a delivered order should
-  // not surface a "Re-order" button — fall back to "Details" instead.
+  // not surface a "Re-order" button - fall back to "Details" instead.
   const rawActionType = getActionType(status);
   const actionType =
     rawActionType === "reorder" &&

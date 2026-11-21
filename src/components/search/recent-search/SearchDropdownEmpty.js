@@ -77,7 +77,7 @@ const sliderSettings = (searchFromNav = false, itemCount = 0) => {
   };
 };
 
-// Used by FeaturedRestaurantsSection — gap 20px (Figma spec)
+// Used by FeaturedRestaurantsSection - gap 20px (Figma spec)
 const SliderWrapper = styled(CustomBoxFullWidth)(({ theme }) => ({
   "& .slick-list": {
     overflowX: "hidden",

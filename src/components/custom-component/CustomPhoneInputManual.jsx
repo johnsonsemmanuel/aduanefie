@@ -126,7 +126,7 @@ const CustomPhoneInputManual = ({
   const defaultCountry = initCountry?.toLowerCase();
   // The library calls onChange as (value, country, event, formattedValue).
   // When the typed digits match a known dial code, `country.dialCode` is the
-  // detected ISD prefix — make sure that prefix is always at the front of
+  // detected ISD prefix - make sure that prefix is always at the front of
   // the value we hand up so the consumer never sees a bare local number.
   const changeHandler = (phone, country) => {
     let next = phone || "";

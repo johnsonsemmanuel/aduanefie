@@ -17,7 +17,7 @@ export const useGetProFaqs = ({ enabled = true } = {}) => {
   });
 };
 
-// Backend keys the question/answer fields inconsistently across versions —
+// Backend keys the question/answer fields inconsistently across versions -
 // resolve whichever variant is present so call sites stay simple.
 export const resolveFaq = (faq) => ({
   question: faq?.question ?? faq?.q ?? faq?.title ?? "",

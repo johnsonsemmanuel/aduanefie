@@ -125,7 +125,7 @@ const adSpin = keyframes`
 `;
 
 // ─── Ported from StackFood restaurant-details (ProOfferCoupon /
-// RestaurantDiscountCoupon / RestaurantCouponCard) — Top-2 is a
+// RestaurantDiscountCoupon / RestaurantCouponCard) - Top-2 is a
 // side-by-side comparison duplicate of Top.js's own coupon slider, not a
 // replacement. Keep both until the design is reviewed and one is dropped.
 const COUPON_PRO_ACCENT = "#3979E0";
@@ -139,7 +139,7 @@ const CouponCard2 = styled(Box)(({ theme, variant }) => {
   return {
     position: "relative",
     // Fills its slick slot (sized by slidesToShow), rather than a fixed
-    // pixel width — a hardcoded width here ignored the slot and overflowed
+    // pixel width - a hardcoded width here ignored the slot and overflowed
     // into the neighbouring card's gap.
     width: "100%",
     boxSizing: "border-box",
@@ -256,7 +256,7 @@ const Top2 = (props) => {
   // The Pro coupon card must reflect the customer's own active Pro
   // entitlement, not the store's unrelated promotional `discount` object
   // (that one can be null/expired while the store still supports Pro
-  // discounts) — pull the real percentage/min-order from the active offer.
+  // discounts) - pull the real percentage/min-order from the active offer.
   const hasToken = !!getToken();
   const { data: activeOfferRaw, isLoading: activeOfferLoading } =
     useGetProActiveOffer({
@@ -264,14 +264,14 @@ const Top2 = (props) => {
     });
   const activeOffer = activeOfferRaw?.data ?? activeOfferRaw ?? null;
   // react-query keeps the last successful `data` around once `enabled`
-  // flips false — it just stops refetching, it doesn't clear the cache.
+  // flips false - it just stops refetching, it doesn't clear the cache.
   // Without the explicit `hasToken` check, a logged-out user would still
   // see the Pro card from before they logged out.
   const isProActive = hasToken && activeOffer?.status === true;
   const proBenefit = activeOffer?.benefit ?? null;
   const proFeatureEnabled = configData?.pro_member_status === 1;
 
-  // Same reasoning as the Pro card — storeDetails.discount can be null even
+  // Same reasoning as the Pro card - storeDetails.discount can be null even
   // when the store has a live vendor discount, since the actual current
   // eligibility (percentage/min-purchase) is computed by this endpoint, not
   // carried on storeDetails itself.
@@ -426,7 +426,7 @@ const Top2 = (props) => {
       : 0;
 
   // `storeDetails.store_discount` is the real cart-independent config (a
-  // single object, with its own active window) — `storeDetails.discount`
+  // single object, with its own active window) - `storeDetails.discount`
   // is a separate, often-null field; `useGetCartDiscountEligibility` below
   // only returns numbers once a cart exists. Prefer store_discount first.
   const storeDiscount = storeDetails?.store_discount;
@@ -495,7 +495,7 @@ const Top2 = (props) => {
     );
   };
 
-  // Same underlying coupons array Top.js builds — only the card visuals
+  // Same underlying coupons array Top.js builds - only the card visuals
   // and slider settings below differ (StackFood-style cards, fixed
   // slidesToShow instead of variableWidth ticket cards).
   const coupons = [];
@@ -507,7 +507,7 @@ const Top2 = (props) => {
   // "discount_percentage"`, tied to storeDetails.is_pro_discount_available)
   // or delivery-fee based (`type: "delivery_fee"`, e.g.
   // { offer_type: "partial_free" | "full_free", charge_discount_percentage,
-  // min_order_status, min_order_amount } — see useGetProActiveOffer). The
+  // min_order_status, min_order_amount } - see useGetProActiveOffer). The
   // two are independent: a store can grant the delivery benefit without
   // is_pro_discount_available, so that flag only gates the discount case.
   const proBenefitType = proBenefit?.type;
@@ -544,19 +544,19 @@ const Top2 = (props) => {
     Number(storeDetails?.is_pro_discount_available) === 1 &&
     !proBenefitPending
   ) {
-    // This card is the Pro plan's own benefit — it must use
+    // This card is the Pro plan's own benefit - it must use
     // proBenefit.percentage (the actual Pro discount, e.g. 16%), never the
     // store's generic public discount (discountPercentText, e.g. 7%),
     // which is a different, non-Pro offer shown in its own card below.
     // proBenefit comes from useGetProActiveOffer, which is enabled for any
-    // logged-in user (not just subscribers) — it's the plan's terms, not
+    // logged-in user (not just subscribers) - it's the plan's terms, not
     // something exclusive to an active subscription.
     const proHeading =
       Number(proBenefit?.percentage) > 0
         ? `${proBenefit.percentage}% ${t("OFF")}`
         : discountPercentText;
     if (proHeading) {
-      // "Up to X" cap — only mentioned when the benefit actually has one.
+      // "Up to X" cap - only mentioned when the benefit actually has one.
       const proCapAmount =
         Number(proBenefit?.max_amount) > 0
           ? proBenefit.max_amount
@@ -658,7 +658,7 @@ const Top2 = (props) => {
 
   return (
     <PageBackground>
-      {/* Mobile-only condensed sticky header — appears when hero scrolls out */}
+      {/* Mobile-only condensed sticky header - appears when hero scrolls out */}
       <Box
         sx={{
           display: "block",
@@ -714,7 +714,7 @@ const Top2 = (props) => {
       </Box>
 
       <CustomStackFullWidth spacing={{ xs: "16px", md: "20px" }} useFlexGap>
-        {/* Hero card — breadcrumb + info on left, banner on right */}
+        {/* Hero card - breadcrumb + info on left, banner on right */}
         <HeroCard>
           <Grid container alignItems="stretch">
             <Grid
@@ -1071,7 +1071,7 @@ const Top2 = (props) => {
                   </Tooltip>
                 </Stack>
 
-                {/* Announcement button — only shown when store has announcement */}
+                {/* Announcement button - only shown when store has announcement */}
                 {storeDetails?.announcement === 1 && (
                   <Box
                     onClick={() => setOpenAnnouncementModal(true)}
@@ -1152,7 +1152,7 @@ const Top2 = (props) => {
           </Grid>
         </HeroCard>
 
-        {/* Coupons & discount slider — StackFood-style port (ProOfferCoupon /
+        {/* Coupons & discount slider - StackFood-style port (ProOfferCoupon /
             RestaurantDiscountCoupon / RestaurantCouponCard), for comparison
             against Top.js's own coupon slider above. */}
         {slideCount > 0 && (

@@ -28,7 +28,7 @@ const VerticalSkeleton = ({ cardWidth }) => (
         height="100%"
         sx={{ borderRadius: "12px" }}
       />
-      {/* Add-button stub — bottom-right */}
+      {/* Add-button stub - bottom-right */}
       <Skeleton
         variant="rectangular"
         animation="wave"
@@ -57,7 +57,7 @@ const VerticalSkeleton = ({ cardWidth }) => (
         </Stack>
       </Stack>
 
-      {/* Product name — 2 lines */}
+      {/* Product name - 2 lines */}
       <Stack gap="3px">
         <Skeleton variant="text" animation="wave" width="95%" height={14} />
         <Skeleton variant="text" animation="wave" width="70%" height={14} />

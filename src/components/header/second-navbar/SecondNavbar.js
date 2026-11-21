@@ -387,7 +387,7 @@ const SecondNavBar = ({ configData }) => {
   };
 
   // Reopens the sign-in modal whenever something dispatches
-  // `setOpenSignInModal(true)` — e.g. ForgotPassword's "Back to Login".
+  // `setOpenSignInModal(true)` - e.g. ForgotPassword's "Back to Login".
   useEffect(() => {
     if (openSignInModal) {
       setModalFor("sign-in");

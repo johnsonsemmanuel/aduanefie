@@ -24,7 +24,7 @@ export const handleProductRedirect = (item, router, productType) => {
 
 export const handleServiceRedirect = (item, router, productType) => {
   const moduleId = router?.query?.module ?? getModuleId();
-  // No scrollTo here — the service-details page itself scrolls to top on
+  // No scrollTo here - the service-details page itself scrolls to top on
   // mount, and resolving this promise early on a slow network would snap
   // the still-visible previous page to the top before navigation completes.
   router.push(

@@ -5,12 +5,12 @@ import { getLanguage } from "helper-functions/getLanguage";
  * Reusable slider section header.
  *
  * Props:
- *  sliderRef     — ref attached to the <Slider> element
- *  currentSlide  — current slide index (managed by parent via afterChange)
- *  totalSlides   — total number of slides (data.length)
- *  heading       — JSX rendered on the left (title, subtitle, etc.)
- *  trailing      — optional JSX rendered to the right of the arrows (e.g. "See more" link)
- *  sx            — extra sx for the root Stack
+ *  sliderRef     - ref attached to the <Slider> element
+ *  currentSlide  - current slide index (managed by parent via afterChange)
+ *  totalSlides   - total number of slides (data.length)
+ *  heading       - JSX rendered on the left (title, subtitle, etc.)
+ *  trailing      - optional JSX rendered to the right of the arrows (e.g. "See more" link)
+ *  sx            - extra sx for the root Stack
  *
  * Parent wires up afterChange:
  *   <Slider ref={sliderRef} afterChange={(i) => setCurrentSlide(i)} ...>
@@ -90,10 +90,10 @@ const SliderSectionHeader = ({
       justifyContent="space-between"
       sx={{ width: "100%", ...sx }}
     >
-      {/* Left — heading JSX */}
+      {/* Left - heading JSX */}
       <Box sx={{ flex: 1, minWidth: 0, textAlign: "start" }}>{heading}</Box>
 
-      {/* Right — arrows + optional trailing */}
+      {/* Right - arrows + optional trailing */}
       <Stack direction="row" alignItems="center" gap="8px" sx={{ flexShrink: 0, overflow: "visible" }}>
         {trailing && !trailingAfterArrows && <Box sx={{ flexShrink: 0, minWidth: "max-content", overflow: "visible" }}>{trailing}</Box>}
         {!isMobile && hasOverflow && (

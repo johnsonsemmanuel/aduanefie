@@ -119,7 +119,7 @@ const adSpin = keyframes`
   100% { transform: scaleX(-1); }
 `;
 
-// Coupon variants — based on Figma Aduanefie React Redesign (node 2042:50829)
+// Coupon variants - based on Figma Aduanefie React Redesign (node 2042:50829)
 const COUPON_PRO_ACCENT = "#2A61BA";
 
 const CouponCard = styled(Box)(({ theme, variant }) => {
@@ -179,7 +179,7 @@ const CouponArrow = ({ direction, onClick }) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isRtl = theme.direction === "rtl";
-  // In RTL "previous" sits on the right and "next" on the left — flip
+  // In RTL "previous" sits on the right and "next" on the left - flip
   // both the absolute position and the chevron icon so the visual cue
   // matches reading direction.
   const isPrev = direction === "prev";
@@ -471,7 +471,7 @@ const Top = (props) => {
 
   return (
     <PageBackground>
-      {/* Mobile-only condensed sticky header — appears when hero scrolls out */}
+      {/* Mobile-only condensed sticky header - appears when hero scrolls out */}
       <Box
         sx={{
           display: { xs: "block", md: "none" },
@@ -523,7 +523,7 @@ const Top = (props) => {
       </Box>
 
       <CustomStackFullWidth spacing={1.5}>
-        {/* Hero card — breadcrumb + info on left, banner on right */}
+        {/* Hero card - breadcrumb + info on left, banner on right */}
         <HeroCard>
           <Grid container alignItems="stretch">
             <Grid
@@ -640,7 +640,7 @@ const Top = (props) => {
                 </Stack>
               </Stack>
 
-              {/* Mobile-only — gray pill cards (Image 1 design) */}
+              {/* Mobile-only - gray pill cards (Image 1 design) */}
 
               <Stack
                 direction="row"
@@ -853,7 +853,7 @@ const Top = (props) => {
                   </Tooltip>
                 </Stack>
 
-                {/* Announcement button — only shown when store has announcement */}
+                {/* Announcement button - only shown when store has announcement */}
                 {storeDetails?.announcement === 1 && (
                   <Box
                     onClick={() => setOpenAnnouncementModal(true)}
@@ -882,7 +882,7 @@ const Top = (props) => {
                       },
                     }}
                   >
-                    {/* Icon — fixed 36×36, always right, continuously spinning */}
+                    {/* Icon - fixed 36×36, always right, continuously spinning */}
                     <Box
                       className="announcement-icon"
                       sx={{
@@ -905,7 +905,7 @@ const Top = (props) => {
                         }}
                       />
                     </Box>
-                    {/* Text — hidden under icon, slides left on hover */}
+                    {/* Text - hidden under icon, slides left on hover */}
                     <Box
                       className="announcement-label"
                       sx={{
@@ -936,7 +936,7 @@ const Top = (props) => {
           </Grid>
         </HeroCard>
 
-        {/* Coupons & discount slider — Figma 2042:50829 */}
+        {/* Coupons & discount slider - Figma 2042:50829 */}
         {(() => {
           const coupons = [];
           if (

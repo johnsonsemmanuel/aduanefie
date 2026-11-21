@@ -14,7 +14,7 @@ const WaveDecoration = ({ stacked = false }) => (
     sx={{
       position: "absolute",
       // Leave clearance on the right so the Subscribe-Now CTA isn't
-      // half-buried under the curves — the button is ~130px on xs and
+      // half-buried under the curves - the button is ~130px on xs and
       // grows a little on md, so we pull the wave back by that much.
       // When stacked, the button sits below the copy so the wave can
       // stretch further.

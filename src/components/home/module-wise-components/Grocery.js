@@ -47,7 +47,7 @@ const menus = ["All", "Beauty", "Bread & Juice", "Drinks", "Milks"];
 
 // Wrapper that renders its children as-is. When a section returns null (no
 // data / feature off), this element doesn't exist in the DOM at all, so the
-// parent Stack skips it — no leftover gap.
+// parent Stack skips it - no leftover gap.
 const S = ({ children }) => children ?? null;
 
 const Grocery = (props) => {
@@ -60,7 +60,7 @@ const Grocery = (props) => {
     (state) => state.utilsData,
   );
   const { data, refetch, isLoading } = useGetOtherBanners();
-  // The other-banners query is enabled:false — fetch it here so the
+  // The other-banners query is enabled:false - fetch it here so the
   // promotional banner doesn't depend on another page priming the cache.
   useEffect(() => {
     refetch();

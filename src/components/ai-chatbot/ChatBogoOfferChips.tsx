@@ -5,7 +5,7 @@ import BogoOfferCardImpl from "components/bogo-list/BogoOfferCard";
 import type { ChatBogoOffer } from "./types";
 
 // The chat's `bogo_offers` rows are byte-identical to a GET /bogo/offers
-// row, so the BOGO list page's own card renders them as-is — no parallel
+// row, so the BOGO list page's own card renders them as-is - no parallel
 // design to keep in step. It is a plain JS component, hence the explicit
 // (loose) prop shape.
 const BogoOfferCard = BogoOfferCardImpl as unknown as (props: {

@@ -130,7 +130,7 @@ const ItemCheckout = (props) => {
   // Lane picked from the cross-border shipping selector. Shape mirrors one
   // entry of `cross-border/shipping-options` (`shipping_rate_id`,
   // `shipping_method_id`, `amount`, `landed_cost`, …). Only the ids go back to
-  // the server — the amount is display-only and is re-quoted at placement.
+  // the server - the amount is display-only and is re-quoted at placement.
   const [shippingOption, setShippingOption] = useState(null);
   const { couponInfo } = useSelector((state) => state.profileInfo);
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -277,7 +277,7 @@ const ItemCheckout = (props) => {
     }
     return null;
   }, [isCrossBorder, checkoutProductList, t]);
-  // Quantity only — the server resolves price, HS code and billable weight
+  // Quantity only - the server resolves price, HS code and billable weight
   // from the catalogue, never from this payload.
   const crossBorderLines = useMemo(() => {
     if (!isCrossBorder) return [];
@@ -409,7 +409,7 @@ const ItemCheckout = (props) => {
   const { data: zoneData } = useQuery(
     ["zoneId", zoneLookupLatLng],
     // GoogleApi.getZoneId hands back the raw axios response (with the v4.2
-    // envelope already unwrapped onto `.data`) — every consumer below reads
+    // envelope already unwrapped onto `.data`) - every consumer below reads
     // `zoneData.zone_data` directly, so unwrap that last layer here instead
     // of leaving each call site to do it (most didn't, which is why
     // additional_delivery_option_status/pivot lookups silently came back
@@ -423,7 +423,7 @@ const ItemCheckout = (props) => {
 
   // `stores/details` no longer returns the store's latitude/longitude, so
   // distance-api was being called with `origin_lat=undefined` and answering
-  // 422 ("The origin lat must be a number") — and handleDistance's haversine
+  // 422 ("The origin lat must be a number") - and handleDistance's haversine
   // fallback used the same undefined coords, so the delivery fee had no usable
   // distance at all. Only call the API when we actually have both coordinate
   // pairs; otherwise fall back to `distance_km`, which the store payload does
@@ -611,7 +611,7 @@ const ItemCheckout = (props) => {
     });
   };
   // areaZip.summaryParams is keyed `areaId`/`zipCodeId` (useGetCheckoutSummary's
-  // param names) — the order-place API wants `area_id`/`zip_code_id`.
+  // param names) - the order-place API wants `area_id`/`zip_code_id`.
   const AREA_ZIP_BACKEND_KEY = { areaId: "area_id", zipCodeId: "zip_code_id" };
   const getAreaZipOrderParams = (summaryParams) =>
     Object.fromEntries(
@@ -621,7 +621,7 @@ const ItemCheckout = (props) => {
       ]),
     );
 
-  // profileInfo has no `.name` field — it's `f_name`/`l_name` (see
+  // profileInfo has no `.name` field - it's `f_name`/`l_name` (see
   // delivery-address/index.js, which already builds it this way).
   const profileFullName = [profileInfo?.f_name, profileInfo?.l_name]
     .filter(Boolean)
@@ -665,7 +665,7 @@ const ItemCheckout = (props) => {
       formData.append("order_type", orderType);
 
       // Delivery-speed selection (express / standard / slightly_delay).
-      // Skipped when a free-delivery coupon is applied — surcharge is moot.
+      // Skipped when a free-delivery coupon is applied - surcharge is moot.
       if (
         selectedDeliveryOption?.id != null &&
         couponDiscount?.coupon_type !== "free_delivery"
@@ -1075,7 +1075,7 @@ const ItemCheckout = (props) => {
     }
   };
 
-  // Literal keys per module — composing the key from the (already translated)
+  // Literal keys per module - composing the key from the (already translated)
   // getStoresOrRestaurants() output produces a string that never matches a
   // translation entry, so the toast showed untranslated mixed text.
   const storeCloseToast = () =>
@@ -1170,7 +1170,7 @@ const ItemCheckout = (props) => {
     }
     // The server refused to quote this delivery (e.g. an area/zip the zone no
     // longer covers). The fee reads 0 out of the empty payload, so placing here
-    // would bill a price the server never agreed — stop instead.
+    // would bill a price the server never agreed - stop instead.
     if (quoteUnavailable) {
       toast.error(t("Delivery charge is unavailable for this address"));
       return;

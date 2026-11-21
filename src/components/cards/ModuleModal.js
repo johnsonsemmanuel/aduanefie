@@ -252,7 +252,7 @@ const ModuleModal = (props) => {
           },
         }}
       >
-        {/* Close button hidden on mobile — shown inside the image via ProductImageView */}
+        {/* Close button hidden on mobile - shown inside the image via ProductImageView */}
         <IconButton
           onClick={handleModalClose}
           sx={{

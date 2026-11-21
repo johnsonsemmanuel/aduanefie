@@ -407,7 +407,7 @@ const GoogleMapComponent = ({
   );
 
   // In MapModal (`mapmodal`) the parent wrapper itself goes fullscreen when
-  // expanded, so render the map INLINE — its search bar and close button float
+  // expanded, so render the map INLINE - its search bar and close button float
   // above the map. The old nested <Modal> here sat at MUI's default z-index
   // (1300), *below* MapModal's 1600, so the fullscreen map was hidden behind a
   // white wrapper. Inline also keeps the map instance mounted (no remount →

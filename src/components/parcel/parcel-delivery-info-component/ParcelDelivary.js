@@ -136,7 +136,7 @@ const PercelDelivery = ({ configData }) => {
   const proOfferResolved =
     !(proFeatureEnabled && hasToken) || !activeOfferLoading;
   const proSavingsMessage = (() => {
-    // Parcel only ships things — never say "order" anywhere in the copy.
+    // Parcel only ships things - never say "order" anywhere in the copy.
     const minOrderAmount = Number(proBenefit?.min_order_amount);
     const hasMin =
       proBenefit?.min_order_status === 1 &&

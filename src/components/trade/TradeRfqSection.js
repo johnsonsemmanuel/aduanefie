@@ -43,7 +43,7 @@ const INITIAL_FORM = {
   target_price_ghs: "",
   incoterm: "DDP",
   origin_country: "Ghana",
-  destination_country: "Nigeria",
+  destination_country: "Ghana",
   destination_city: "",
   trade_bloc: "ECOWAS",
   requires_insurance: true,
@@ -408,7 +408,7 @@ const TradeRfqSection = () => {
                       <Box>
                         <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
                           <Typography sx={{ fontWeight: 700, fontSize: "15px" }}>
-                            {rfq.commodity} — {Number(rfq.quantity).toLocaleString()} {rfq.unit}
+                            {rfq.commodity} - {Number(rfq.quantity).toLocaleString()} {rfq.unit}
                           </Typography>
                           <Chip size="small" label={rfq.status?.toUpperCase()} variant="outlined" />
                         </Stack>
@@ -447,7 +447,7 @@ const TradeRfqSection = () => {
         maxWidth="xs"
       >
         <DialogTitle>
-          {t("Submit Supplier Quote")} — #{quoteModalRfq?.id}
+          {t("Submit Supplier Quote")} - #{quoteModalRfq?.id}
         </DialogTitle>
         <Box component="form" onSubmit={handleSubmitQuote}>
           <DialogContent>

@@ -154,7 +154,7 @@ const HappyHourViewModal = ({ openModal, handleClose, happyHour, expireAt }) => 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
-  // Fetched lazily — the query stays idle until the modal is actually open.
+  // Fetched lazily - the query stays idle until the modal is actually open.
   const { data, isLoading } = useGetHappyHourStores(
     { running: true, limit: 100, offset: 1 },
     Boolean(openModal),
@@ -281,7 +281,7 @@ const HappyHourViewModal = ({ openModal, handleClose, happyHour, expireAt }) => 
           ) : (
             <Grid container spacing={{ xs: 1.5, md: 3 }}>
               {stores.map((store) => {
-                // /happy-hour/stores never returns a bare `discount` key —
+                // /happy-hour/stores never returns a bare `discount` key -
                 // NewStoreCard reads item.discount.{discount,discount_type},
                 // but this row carries `active_discount` (a number: what's
                 // actually charged) and `store_discount` (the vendor's own

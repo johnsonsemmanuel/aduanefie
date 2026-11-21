@@ -7,7 +7,7 @@ import { getStoredZoneId } from "helper-functions/getToken";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 
 /**
- * `delivery-charge/coverage-list?zone_id=N` — the areas or zip codes the zone
+ * `delivery-charge/coverage-list?zone_id=N` - the areas or zip codes the zone
  * prices by. Verified live:
  *
  *   { "type": "zip_code_wise", "coverage": [ { "id": 1, "name": "12345" }, … ] }
@@ -17,7 +17,7 @@ import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
  * `zip_code_wise`. Distance-wise and fixed zones return a null type, and the
  * field stays hidden (TC_67).
  *
- * Keyed by zone, not module — the same list came back for modules 1/4/5/6.
+ * Keyed by zone, not module - the same list came back for modules 1/4/5/6.
  */
 
 export type CoverageType = "area_wise" | "zip_code_wise" | null;
@@ -58,12 +58,12 @@ export const coverageRequiresSelection = (content?: CoverageListContent) =>
 /**
  * Which key the selected id travels under in `checkout-summary`.
  *
- * The server only honours the key that matches the zone's rule — verified on a
+ * The server only honours the key that matches the zone's rule - verified on a
  * `zip_code_wise` zone: `zip_code_id` moved the fee 10 → 40 → 50 while `area_id`
  * was ignored and left it at 10. Sending the wrong one is silent: the customer
  * picks, nothing changes, and the order bills the unpriced amount.
  *
- * Matched loosely rather than against an exact string — the only types observed
+ * Matched loosely rather than against an exact string - the only types observed
  * live are `zip_code_wise` and `null`, so the precise spelling of the area
  * variant is unconfirmed and `area`/`area_wise` should both work.
  */

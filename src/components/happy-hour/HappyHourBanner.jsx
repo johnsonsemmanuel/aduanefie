@@ -53,7 +53,7 @@ const HappyHourBanner = ({ compact = false, onActiveChange }) => {
     happyHour?.discount ? `${happyHour.discount}${t("% OFF")}! ` : ""
   }${happyHour?.title ?? t("Happy Hour")}`;
 
-  // Leading zero units collapse — a day only shows once >0, an hour only once
+  // Leading zero units collapse - a day only shows once >0, an hour only once
   // a day or hour is >0; minutes/seconds always show.
   const showDays = days > 0;
   const showHours = showDays || hours > 0;
@@ -78,7 +78,7 @@ const HappyHourBanner = ({ compact = false, onActiveChange }) => {
     padding: { xs: tight ? "4px" : "6px", md: "8px" },
     backgroundColor: "happyHourBanner.timerBg",
     borderRadius: "6px",
-    // timerBg is solid red in both themes, so the digits stay white in both —
+    // timerBg is solid red in both themes, so the digits stay white in both -
     // error.contrastText would flip to near-black in dark mode.
     color: "whiteContainer.main",
     fontVariantNumeric: "tabular-nums",

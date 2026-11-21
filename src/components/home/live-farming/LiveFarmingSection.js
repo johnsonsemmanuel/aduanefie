@@ -170,7 +170,7 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
           {products.map((item) => {
             const status = item?.effective_farming_status || item?.farming_status || "farming";
             const isHarvestReady = status === "harvest_ready";
-            const progress = typeof item?.cultivation_progress_pct === "number" ? item.cultivation_progress_pct : isHarvestReady ? 100 : 45;
+            const progress = typeof item?.cultivation_progress_pct === "number" ? item.cultivation_progress_pct : isHarvestReady ? 100 : 0;
             const daysLeft = item?.days_to_harvest;
             const imgSrc = item?.image_full_url || item?.image || "/static/empty_img.png";
 
@@ -257,7 +257,7 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
                               ? t("Ready for Dispatch")
                               : daysLeft !== null && daysLeft !== undefined
                               ? t("{{days}}d to harvest", { days: daysLeft })
-                              : t("In Cultivation")}
+                              : t("Growing")}
                           </Typography>
                           <Typography sx={{ fontSize: "11px", fontWeight: 700, color: "text.secondary" }}>
                             {progress}%

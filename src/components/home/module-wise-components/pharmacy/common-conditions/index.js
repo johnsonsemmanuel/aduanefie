@@ -108,7 +108,7 @@ const CommonConditions = ({ title }) => {
   const scrollTabs = (dir) => {
     const el = getActiveTabsEl();
     if (!el) return;
-    // Forward (dir=1) means scrollLeft decreasing in RTL — invert the delta.
+    // Forward (dir=1) means scrollLeft decreasing in RTL - invert the delta.
     const rtl = theme.direction === "rtl";
     el.scrollBy({ left: (rtl ? -dir : dir) * 200, behavior: "smooth" });
     setTimeout(updateTabBoundary, 350);
@@ -174,7 +174,7 @@ const CommonConditions = ({ title }) => {
     boxShadow: "0px 1px 4px rgba(0,0,0,0.15)",
   });
 
-  // Tab items JSX — shared between mobile and desktop renders
+  // Tab items JSX - shared between mobile and desktop renders
   const tabItemsJsx = conditions?.data?.map((item, index) => {
     const isActive = selected === index;
     return (
@@ -246,7 +246,7 @@ const CommonConditions = ({ title }) => {
           {t(title)}
         </Typography>
 
-        {/* Arrows sit in the title row — no space wasted in the tab strip */}
+        {/* Arrows sit in the title row - no space wasted in the tab strip */}
         <Stack direction="row" gap="8px" sx={{ ml: "auto", flexShrink: 0 }}>
           <Box onClick={() => scrollTabs(-1)} sx={arrowSx(!tabAtStart)}>
             <i

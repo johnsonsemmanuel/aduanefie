@@ -234,7 +234,7 @@ const RENTAL_VEH_4 =
   "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=200&q=60";
 
 /**
- * Demo rental "Your Last Trips" data — already in normalized `LastOrder`
+ * Demo rental "Your Last Trips" data - already in normalized `LastOrder`
  * shape, so it can be passed straight to `<LastOrdersSection orders={...} />`.
  * Replace with `data?.trips?.map(normalizeRentalOrder)` once the API is wired.
  * @type {LastOrder[]}

@@ -61,7 +61,7 @@ const CartDiscountEligibilityBanner = ({
     !!storeId && hasCartItems,
   );
   // react-query keeps the last successful `data` around after `enabled`
-  // flips false — it just stops refetching, it doesn't clear the cache. So
+  // flips false - it just stops refetching, it doesn't clear the cache. So
   // once the cart empties out, the stale pre-removal amount would otherwise
   // hang around forever; ignore it explicitly instead of trusting the query.
   const cartData = hasCartItems ? rawCartData : undefined;
@@ -117,7 +117,7 @@ const CartDiscountEligibilityBanner = ({
   const qualifyingAmount = Number(data?.qualifying_amount) || 0;
   const shortfall = Number(data?.shortfall) || 0;
   const discountAmount = Number(data?.discount_amount) || 0;
-  // No minimum spend means every basket already qualifies — nothing to add.
+  // No minimum spend means every basket already qualifies - nothing to add.
   const isQualified = !!data?.is_qualified || !hasMinPurchase;
 
   const progress = isQualified

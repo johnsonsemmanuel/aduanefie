@@ -15,7 +15,7 @@ const STALE_TIME = 1000 * 60 * 15;
 
 // Four components consume this (page, LandingLayout, footer, home). With
 // `enabled: false` each had to call refetch() on mount, and refetch() ignores
-// staleTime — so the same landing payload was fetched four times per page load.
+// staleTime - so the same landing payload was fetched four times per page load.
 // One shared, enabled query fixes that within a session.
 //
 // react-query's cache is memory-only though, so every reload started cold and

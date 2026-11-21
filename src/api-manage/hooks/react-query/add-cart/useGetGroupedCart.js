@@ -17,7 +17,7 @@ const fetchGroupedCart = async () => {
   const guestId = getGuestId();
   // This endpoint is `customer_or_guest`: with neither a bearer token nor a
   // guest_id it answers 401, and a guest cart is only addressable by its id.
-  // Send guest_id whenever we hold one — the backend prefers the token when
+  // Send guest_id whenever we hold one - the backend prefers the token when
   // both are present, and every other cart call in the app does the same.
   const params = guestId ? `?guest_id=${guestId}` : "";
   const { data } = await MainApi.get(`${cart_get_all}${params}`);
@@ -52,7 +52,7 @@ export default function useGetGroupedCart(options = {}) {
       // `{ carts, user_data }` while this flattens the mart cart into an array.
       // `cart/get-all` answers `[]` under the rental module, so dispatching
       // regardless raced the rental booking list and wiped it out from under
-      // /rental/cart and /rental/checkout — the vehicle list and trip details
+      // /rental/cart and /rental/checkout - the vehicle list and trip details
       // then rendered empty. Re-read the module here: it can change in flight.
       const moduleTypeNow = getCurrentModuleType();
       if (moduleTypeNow !== ModuleTypes.RENTAL) {

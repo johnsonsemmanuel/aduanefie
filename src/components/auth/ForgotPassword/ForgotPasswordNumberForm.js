@@ -135,7 +135,7 @@ const ForgotPasswordNumberForm = ({
   };
   const lanDirection = getLanguage() ? getLanguage() : "ltr";
   const handleOnChange = (value) => {
-    // Empty input must clear the field — otherwise prefixing "+" to an
+    // Empty input must clear the field - otherwise prefixing "+" to an
     // empty string leaves a lone "+" hanging in the form value.
     if (!value) {
       phoneFormik.setFieldValue("phone", "");

@@ -378,7 +378,7 @@ const ProductCard = (props) => {
 
   const addToCartHandler = () => {
     if (cartList.length > 0) {
-      // Multi-store carts allowed — always proceed with add. Same-store
+      // Multi-store carts allowed - always proceed with add. Same-store
       // guard removed intentionally (was previously triggering CartClearModal).
       const isStoreExist = true;
 

@@ -296,7 +296,7 @@ const ProductInformation = ({
   const addToCard = () => {
     //handleAddToCartOnDispatch();
     if (cartList?.length > 0) {
-      // Multi-store carts allowed — always proceed with add.
+      // Multi-store carts allowed - always proceed with add.
       const isStoreExist = true;
       if (isStoreExist) {
         handleAddToCartOnDispatch();
@@ -333,7 +333,7 @@ const ProductInformation = ({
         icon: "⚠️",
       });
     } else {
-      // Detail APIs return store id in different shapes — flat `store_id`,
+      // Detail APIs return store id in different shapes - flat `store_id`,
       // nested `store.id`, or only present on the cart-list snapshot. Resolve
       // through every candidate so the update call never goes out without one.
       const resolvedStoreId =
@@ -410,7 +410,7 @@ const ProductInformation = ({
           md: "0px",
         }}
       >
-        {/* Store name row — verified badge / logo + name */}
+        {/* Store name row - verified badge / logo + name */}
         {(state.modalData[0]?.store_name || productDetailsData?.store_name) &&
           router?.pathname !== "/store/[id]" &&
           router?.pathname !== "/product/[id]" &&
@@ -593,7 +593,7 @@ const ProductInformation = ({
           </Stack>
         )}
 
-        {/* Brand tag — shown right after Unit; click navigates to the
+        {/* Brand tag - shown right after Unit; click navigates to the
             brand's search results, same route the home page brand grid uses. */}
         {(state.modalData[0]?.brand_id || state.modalData[0]?.brand?.id) &&
           (state.modalData[0]?.brand_name ||
@@ -652,7 +652,7 @@ const ProductInformation = ({
           productDetailsData={productDetailsData}
         />
 
-        {/* Halal + veg/non-veg + organic badges — right after price.
+        {/* Halal + veg/non-veg + organic badges - right after price.
             Discount + free delivery moved onto the image (see ProductImageView),
             matching the Figma layout. */}
         {(() => {
@@ -743,7 +743,7 @@ const ProductInformation = ({
           );
         })()}
 
-        {/* Agro info — origin, seasonality, certification, cold chain, dates */}
+        {/* Agro info - origin, seasonality, certification, cold chain, dates */}
         {(() => {
           const item = state.modalData[0];
           const seasonality = item?.seasonality

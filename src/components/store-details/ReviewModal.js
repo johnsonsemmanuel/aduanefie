@@ -88,7 +88,7 @@ const RestaurantReviewModal = ({
 
   // Service module's review endpoint returns { reviews: [...] } instead of a
   // bare array, and each review carries service_name/customer.f_name-l_name
-  // instead of item_name/customer_name — normalize both shapes here so the
+  // instead of item_name/customer_name - normalize both shapes here so the
   // render below (shared across modules) can stay untouched.
   const reviews = useMemo(() => {
     const rawList = Array.isArray(data) ? data : (data?.reviews ?? []);
@@ -128,7 +128,7 @@ const RestaurantReviewModal = ({
   };
   const handleClick = (itemReview) => {
     // Service module reviews have no linked `item` (they review a service
-    // booking, not a purchasable product) — nothing to open.
+    // booking, not a purchasable product) - nothing to open.
     if (!itemReview) return;
 
     setProductData(itemReview);

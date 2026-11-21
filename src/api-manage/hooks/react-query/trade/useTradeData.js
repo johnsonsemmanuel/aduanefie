@@ -48,7 +48,7 @@ export const useTradeBlocCorridors = (slug) =>
     enabled: TRADE_API_ENABLED && Boolean(slug),
   });
 
-// Legacy hook name kept for call sites. It now returns only live API data —
+// Legacy hook name kept for call sites. It now returns only live API data -
 // no seeded substitute that could be mistaken for current information.
 export const useTradeBlocWithFallback = (slug) => {
   const query = useTradeBloc(slug);

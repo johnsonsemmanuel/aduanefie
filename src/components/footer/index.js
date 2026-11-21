@@ -34,7 +34,7 @@ const FooterComponent = ({ configData }) => {
       : `${MOBILE_BOTTOM_NAV_HEIGHT}px`;
 
   return (
-    /* Outer wrapper — #f7f7f7 background */
+    /* Outer wrapper - #f7f7f7 background */
     <Box
       id="site-footer"
       sx={{
@@ -50,7 +50,7 @@ const FooterComponent = ({ configData }) => {
         overflowX: "hidden",
       }}
     >
-      {/* Main white card — top corners rounded */}
+      {/* Main white card - top corners rounded */}
       <Box
         sx={{
           backgroundColor: "background.paper",
@@ -72,7 +72,7 @@ const FooterComponent = ({ configData }) => {
         />
       </Box>
 
-      {/* Footer bottom bar — #f2f2f2, no radius */}
+      {/* Footer bottom bar - #f2f2f2, no radius */}
       <FooterBottom configData={configData} />
     </Box>
   );

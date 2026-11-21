@@ -16,7 +16,7 @@ import toast from "react-hot-toast";
 const ParcelCategory = () => {
   const theme = useTheme();
   const router = useRouter();
-  // Picking a category no longer jumps straight to the address screen — it
+  // Picking a category no longer jumps straight to the address screen - it
   // opens the parcel information modal so weight and dimension are chosen
   // up front, and only then continues.
   const [infoOpen, setInfoOpen] = useState(false);

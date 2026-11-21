@@ -59,7 +59,7 @@ const AuthLanding = ({
         overflow: "hidden",
       }}
     >
-      {/* Top bar — close button right-aligned */}
+      {/* Top bar - close button right-aligned */}
       <Box sx={{ display: "flex", justifyContent: "flex-end", p: 0 }}>
         <IconButton
           onClick={handleClose}

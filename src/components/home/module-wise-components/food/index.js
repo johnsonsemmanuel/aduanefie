@@ -39,8 +39,8 @@ import TopPicksSection from "../grocery/TopPicksSection";
 
 // Wrapper that renders its children as-is. When a section returns null (no
 // data / feature off), this element doesn't exist in the DOM at all, so the
-// parent Stack skips it — no leftover gap. Avoids CSS :has() entirely.
-// NOTE: must stay at module scope — defining it inside the component recreates
+// parent Stack skips it - no leftover gap. Avoids CSS :has() entirely.
+// NOTE: must stay at module scope - defining it inside the component recreates
 // the type every render, remounting every wrapped section on each render.
 const S = ({ children }) => children ?? null;
 

@@ -87,7 +87,7 @@ const FULL_BLEED_MOBILE_ROUTES = new Set([
   "/service/all-providers",
 ]);
 
-// Constant per route/module — sized for the EXPANDED header. The scroll-away
+// Constant per route/module - sized for the EXPANDED header. The scroll-away
 // collapse is a pure transform on the fixed AppBar (see NavBar.style.js) and
 // never changes layout, so the content offset must not react to it either.
 //
@@ -99,7 +99,7 @@ const getMobileMarginTop = ({ pathname, currentModuleType }) => {
   if (FULL_BLEED_MOBILE_ROUTES.has(pathname)) return "0px";
   // BOGO list & details render only the compact address + cart header on
   // mobile (no module tabs, search bar or section chips), so they need a much
-  // smaller offset than the home header's default 7.6rem — otherwise a large
+  // smaller offset than the home header's default 7.6rem - otherwise a large
   // empty gap appears above the content.
   if (pathname === "/bogo-list" || pathname === "/bogo-list/[id]") {
     return "3.25rem";
@@ -136,7 +136,7 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
   );
   useEffect(() => {
     // `configData.modules` is redux-persist-blacklisted, so a hard reload of
-    // any of these routes starts with an empty module list — and since it's
+    // any of these routes starts with an empty module list - and since it's
     // only ever dispatched from the query below, the navbar's module tab bar
     // stays hidden (`renderModuleBar` bails on `!modules?.length`) unless we
     // explicitly refetch here too, not just on /home.

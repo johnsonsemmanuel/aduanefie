@@ -115,7 +115,7 @@ const BasicInformationForm = ({
   const { f_name, l_name, phone, email, image_full_url } = data;
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setConfirmShowPassword] = useState(false);
-  // "form" or "verify" — gates the Update Profile button's spinner to real submits.
+  // "form" or "verify" - gates the Update Profile button's spinner to real submits.
   const [submitSource, setSubmitSource] = useState(null);
   const customerImageUrl = configData?.base_urls?.customer_image_url;
   const dispatch = useDispatch();

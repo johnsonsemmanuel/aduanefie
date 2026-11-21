@@ -1,4 +1,4 @@
-// Placeholder — real hook shipped with the Rental addon.
+// Placeholder - real hook shipped with the Rental addon.
 export default function useMakePayment(..._args) {
   return {
     mutate: (..._a) => {},

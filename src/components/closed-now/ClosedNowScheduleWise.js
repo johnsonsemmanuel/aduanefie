@@ -10,7 +10,7 @@ import ClosedNowOverlay from "./ClosedNowOverlay";
  * `schedules` used to arrive on the store/provider detail payload, but the v4.2
  * API no longer returns it on any endpoint. Reading `.length` off it threw, and
  * simply optional-chaining would have fallen into the `else` branch below and
- * marked every store closed — a false "Closed now" banner on trading stores.
+ * marked every store closed - a false "Closed now" banner on trading stores.
  * So when there is no schedule to evaluate, defer to the `open` flag the API
  * does still send, and only claim "closed" when it explicitly says so.
  */
@@ -32,7 +32,7 @@ const ClosedNowScheduleWise = (props) => {
     return isOpen ? null : <ClosedNowOverlay borderRadius={borderRadius} />;
   }
 
-  // No schedule data — fall back to the `open` flag. `undefined` means we have
+  // No schedule data - fall back to the `open` flag. `undefined` means we have
   // no signal at all, and a wrong "closed" costs an order, so stay quiet.
   if (open === 0 || open === false) {
     return <ClosedNowOverlay borderRadius={borderRadius} />;

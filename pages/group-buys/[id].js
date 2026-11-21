@@ -27,6 +27,9 @@ import {
   useLeaveGroupBuy,
 } from "api-manage/hooks/react-query/group-buy/useGroupBuys";
 import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
+import EditGroupBuyDialog from "components/group-buy/EditGroupBuyDialog";
+import GroupBuyMembers from "components/group-buy/GroupBuyMembers";
+import GroupBuyChat from "components/group-buy/GroupBuyChat";
 import { getCommonServerSideProps } from "utils/serverSidePropsHelper";
 import { useDispatch } from "react-redux";
 import { useGetConfigData } from "api-manage/hooks/useGetConfigData";
@@ -56,6 +59,9 @@ const GroupBuyDetailPage = ({ configData }) => {
 
   const effectiveConfig = configData || dataConfig;
   const [country, setCountry] = useState("");
+  const [editOpen, setEditOpen] = useState(false);
+  const [membersOpen, setMembersOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
 
   const { data: group, isLoading, refetch } = useGetGroupBuy(id);
   useEffect(() => {
@@ -83,6 +89,8 @@ const GroupBuyDetailPage = ({ configData }) => {
   const limit = Number(group.member_limit || 5);
   const spotsLeft = Math.max(0, limit - committed);
   const isMember = Boolean(group.viewer);
+  const isOrganizer = Boolean(group.is_organizer);
+  const canUseGroupTools = isMember || isOrganizer;
   // The prescription checkout entry point is deliberately not group-aware.
   const pharmacyUnsupported = getCurrentModuleType() === "pharmacy";
   const canCheckout = group.status === "locked" && isMember && !pharmacyUnsupported;
@@ -131,7 +139,7 @@ const GroupBuyDetailPage = ({ configData }) => {
       <MainLayout configData={effectiveConfig}>
         <SimpleMobileHeader title="Group Buy" backHref="/group-buys" />
         <CustomContainer>
-          <Box sx={{ py: { xs: 3, md: 5 } }}>
+          <Box sx={{ pt: { xs: 1.5, md: 3 }, pb: { xs: 3, md: 5 } }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
               <Typography variant="h4" sx={{ fontWeight: 700, fontSize: { xs: 22, md: 28 } }}>
                 Shared group buy #{group.id}
@@ -261,7 +269,41 @@ const GroupBuyDetailPage = ({ configData }) => {
                       </Button>
                     )}
                     {group.viewer?.participant_id && ["cancelled", "expired"].includes(group.status) && (
-                      <Alert severity="success">Released — no payment was taken.</Alert>
+                      <Alert severity="success">Released - no payment was taken.</Alert>
+                    )}
+
+                    {canUseGroupTools && (
+                      <>
+                        <Divider sx={{ my: 0.5 }} />
+                        <Stack direction="row" spacing={1}>
+                          <Button
+                            fullWidth
+                            size="small"
+                            variant="outlined"
+                            onClick={() => setMembersOpen(true)}
+                          >
+                            Members ({committed})
+                          </Button>
+                          <Button
+                            fullWidth
+                            size="small"
+                            variant="outlined"
+                            onClick={() => setChatOpen(true)}
+                          >
+                            Group chat
+                          </Button>
+                        </Stack>
+                        {group.can_edit && (
+                          <Button
+                            fullWidth
+                            size="small"
+                            variant="text"
+                            onClick={() => setEditOpen(true)}
+                          >
+                            Edit group details
+                          </Button>
+                        )}
+                      </>
                     )}
                   </Stack>
                 </Paper>
@@ -270,6 +312,25 @@ const GroupBuyDetailPage = ({ configData }) => {
           </Box>
         </CustomContainer>
       </MainLayout>
+
+      <GroupBuyMembers
+        open={membersOpen}
+        onClose={() => setMembersOpen(false)}
+        id={id}
+      />
+      <GroupBuyChat
+        open={chatOpen}
+        onClose={() => setChatOpen(false)}
+        id={id}
+      />
+      {editOpen && (
+        <EditGroupBuyDialog
+          open={editOpen}
+          onClose={() => setEditOpen(false)}
+          group={group}
+          onUpdated={() => refetch()}
+        />
+      )}
     </>
   );
 };

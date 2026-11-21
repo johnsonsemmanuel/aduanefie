@@ -3,9 +3,9 @@ import { bogo_cart_update_api } from "../../../ApiRoutes";
 import { getApiContent } from "../../../getApiContent";
 import { useMutation, useQueryClient } from "react-query";
 
-// POST /customer/cart/bogo/update — body: { bogo_group_id, quantity, guest_id }.
+// POST /customer/cart/bogo/update - body: { bogo_group_id, quantity, guest_id }.
 // The group is rewritten whole from the store's enrolment rather than
-// edited line by line — see the BOGO API guide §6.3.
+// edited line by line - see the BOGO API guide §6.3.
 const updateData = async (postData) => {
   const { data } = await MainApi.post(bogo_cart_update_api, postData);
   return getApiContent(data);

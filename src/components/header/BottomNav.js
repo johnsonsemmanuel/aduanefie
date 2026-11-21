@@ -158,7 +158,7 @@ const BottomNav = () => {
                   position: "relative",
                 }}
               >
-                {/* Active indicator — downward triangle */}
+                {/* Active indicator - downward triangle */}
                 <Box
                   sx={{
                     position: "absolute",

@@ -15,7 +15,7 @@ const StoreShimmer = () => (
 );
 
 /**
- * filterParams — passed from the wrapper (FoodSectionPageWrapper etc.)
+ * filterParams - passed from the wrapper (FoodSectionPageWrapper etc.)
  * when filter drawer is applied. Shape:
  *   { sort_by, type, rating, price_min, price_max }
  */

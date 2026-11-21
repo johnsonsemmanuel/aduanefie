@@ -72,7 +72,7 @@ const getSearch = async (pageParams) => {
     const { data } = await MainApi.get(
       `${get_service_search_page_data}?${serviceQuery.toString()}`,
     );
-    // Responses are wrapped in the v4.2 envelope (`{ content: {...} }`) —
+    // Responses are wrapped in the v4.2 envelope (`{ content: {...} }`) -
     // unwrap before reading products/stores, same as the non-service path
     // below via getApiCollection.
     const content = getApiContent(data) ?? {};

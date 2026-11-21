@@ -4,7 +4,7 @@ import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 const initialState = {
   cartItem: null,
   cartList: [],
-  // Store-scoped cart list — only populated on the store-details page from
+  // Store-scoped cart list - only populated on the store-details page from
   // cart/list?store_id=X. Kept separate from the global cartList so it
   // doesn't clobber items belonging to other stores in a multi-store cart.
   storeCartList: [],
@@ -17,7 +17,7 @@ const initialState = {
   type: "regular",
   totalAmount: null,
   walletAmount: null,
-  // Per-store cart preferences set in StoreCartSidebar — read by
+  // Per-store cart preferences set in StoreCartSidebar - read by
   // ItemCheckout to seed the order payload so the user's choices in the
   // sidebar actually reach order-place.
   cartPrefs: {

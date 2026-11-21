@@ -137,7 +137,7 @@ const FooterMiddle = ({ configData, landingPageData }) => {
 
         <HorizontalDivider />
 
-        {/* Contact Info — compact responsive grid */}
+        {/* Contact Info - compact responsive grid */}
         <Box
           sx={{
             display: "grid",

@@ -36,7 +36,7 @@ const DeliverySpeedOptions = ({
   const additionalDeliveryOptionStatus = Boolean(
     chargeInfo?.additional_delivery_option_status,
   );
-  // Straight from checkout-summary's `delivery_options` — already carries
+  // Straight from checkout-summary's `delivery_options` - already carries
   // `delivery_type_text` and a ready-formatted `time_range`.
   const deliveryOptionsRaw = Array.isArray(deliveryOptions)
     ? deliveryOptions
@@ -147,8 +147,8 @@ const DeliverySpeedOptions = ({
     return null;
   }
 
-  // The final, post-everything delivery charge — admin free delivery, store
-  // offer, Pro benefit, coupon, whatever combination applied it — doesn't
+  // The final, post-everything delivery charge - admin free delivery, store
+  // offer, Pro benefit, coupon, whatever combination applied it - doesn't
   // matter which; only whether the amount actually charged is 0. Picking a
   // paid speed option (Express) on top of a free delivery would silently
   // undo that free delivery, so the options are disabled rather than hidden.

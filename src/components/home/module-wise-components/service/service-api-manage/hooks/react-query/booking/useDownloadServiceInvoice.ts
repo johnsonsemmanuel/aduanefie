@@ -1,4 +1,4 @@
-// Placeholder — real hook shipped with the Service addon.
+// Placeholder - real hook shipped with the Service addon.
 export default function useDownloadServiceInvoice(..._args: any[]) {
   return {
     mutate: (..._a: any[]) => {},

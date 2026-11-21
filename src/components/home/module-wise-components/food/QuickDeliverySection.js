@@ -32,7 +32,7 @@ const SliderWrapper = styled(CustomBoxFullWidth)(({ theme }) => ({
   "& .slick-slide:first-child": {
     paddingLeft: 0,
   },
-  // NewStoreCard has fixed width:300px — override to fill slide
+  // NewStoreCard has fixed width:300px - override to fill slide
   "& .slick-slide > div > *": {
     width: "100% !important",
   },

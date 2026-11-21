@@ -13,7 +13,7 @@ import CustomImageContainerJs from "../CustomImageContainer";
 import { onErrorResponse } from "../../api-manage/api-error-response/ErrorResponses";
 import { useSubmitServicemanReview } from "components/home/module-wise-components/service/service-api-manage/hooks/react-query/service-reviews/useSubmitServicemanReview";
 
-// WHY: these are untyped JS primitives — CustomTextArea consumes custom
+// WHY: these are untyped JS primitives - CustomTextArea consumes custom
 // `touched`/`errors` props absent from MUI's TextareaAutosize type, and
 // CustomImageContainer's inferred type marks every styling prop as required.
 const CustomTextArea = CustomTextAreaJs as unknown as React.FC<any>;

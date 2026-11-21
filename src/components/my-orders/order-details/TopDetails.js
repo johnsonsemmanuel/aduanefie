@@ -125,7 +125,7 @@ const TopDetails = (props) => {
 
   // Open the "order placed successfully" modal reactively from the live Redux
   // flag (set during checkout, just before navigating here). Driving it off the
-  // flag — rather than a mount-time `useState(orderDetailsModal)` snapshot —
+  // flag - rather than a mount-time `useState(orderDetailsModal)` snapshot -
   // makes it survive the loading skeleton and the route/`key` remounts that
   // happen while the order id resolves. A throwaway first mount used to consume
   // the flag before the real one rendered, so the modal never showed. The flag
@@ -186,11 +186,11 @@ const TopDetails = (props) => {
   console.log({ data });
 
   // Scoped to this page (order-details / booking-details under
-  // profile?page=my-orders) only — checkout and service/checkout never call
+  // profile?page=my-orders) only - checkout and service/checkout never call
   // failedOrderPlace, so they're unaffected.
   const failedOrderPlace = () => {
     // trackData (trackOrderData) is order-only and comes back empty for a
-    // booking — the booking's real payload (incl. payment_method) is `data`.
+    // booking - the booking's real payload (incl. payment_method) is `data`.
     const currentPaymentMethod = data?.payment_method ?? trackData?.payment_method;
     const isSameCashMethod =
       (paymentMethod === "cash_on_delivery" ||
@@ -426,7 +426,7 @@ const TopDetails = (props) => {
           </Stack>
         </Stack>
         <Stack alignItems="flex-end">
-          {/* Estimated Arrival — server-computed, hidden by the server for
+          {/* Estimated Arrival - server-computed, hidden by the server for
               closed orders, which this renders as their outcome instead. */}
           <Stack direction="row" alignItems="center" spacing={1}>
             <EstimatedArrival
@@ -519,11 +519,11 @@ const TopDetails = (props) => {
                       const itemsList = (ctr.items || [])
                         .map(
                           (it) =>
-                            `<li><strong>${it.name}</strong> — ${it.quantity} × ${it.unit} (${it.crop_grade}) · ${it.line_weight_kg || 0} kg · GH₵ ${Number(it.line_total).toFixed(2)}</li>`
+                            `<li><strong>${it.name}</strong> - ${it.quantity} × ${it.unit} (${it.crop_grade}) · ${it.line_weight_kg || 0} kg · GH₵ ${Number(it.line_total).toFixed(2)}</li>`
                         )
                         .join("");
                       win.document.write(
-                        `<html><head><title>${payload.contract_number} - EsperWorks Trade Contract</title></head><body style="font-family:sans-serif;padding:32px;max-width:760px;margin:auto;line-height:1.5"><div style="border-bottom:2px solid #2e5a27;padding-bottom:12px"><h2 style="margin:0;color:#2e5a27">${ctr.title}</h2><p style="margin:4px 0;font-size:13px;color:#555">Contract Ref: <strong>${payload.contract_number}</strong> · Date: ${ctr.effective_date} · Powered by ${ctr.provider}</p></div><p style="font-size:14px"><strong>Supplier / Farm:</strong> ${ctr.supplier?.name || ""} (${ctr.supplier?.phone || ""})<br/><strong>Buyer / Off-Taker:</strong> ${ctr.buyer?.name || ""} (${ctr.buyer?.phone || ""}) — ${ctr.buyer?.delivery_address || ""}</p><h4 style="margin-bottom:6px">1. Contracted Produce & Specifications</h4><ul style="font-size:14px">${itemsList}</ul><p style="font-size:14px">Total Contract Value: <strong>GH₵ ${Number(ctr.total_amount).toFixed(2)}</strong> · Total Payload: <strong>${ctr.total_weight_kg} kg</strong></p><h4 style="margin-bottom:6px">2. Quality, Escrow & Transit Assurance Terms</h4><ul style="font-size:13px"><li><strong>Quality Inspection:</strong> ${ctr.terms?.quality_inspection}</li><li><strong>Escrow Release:</strong> ${ctr.terms?.escrow_release}</li><li><strong>Transit Coverage:</strong> ${ctr.terms?.transit_coverage}</li></ul><div style="margin-top:24px;padding:16px;border:1px solid #ccc;border-radius:8px;background:#f9faf8"><label style="display:block;font-size:13px;font-weight:bold;margin-bottom:6px">Digital Signature (Full Legal Name):</label><input id="sig" type="text" placeholder="Type full name to e-Sign via EsperWorks" style="padding:8px;width:280px;margin-right:8px"/><button onclick="if(document.getElementById('sig').value){document.getElementById('status').innerText='Signed digitally by '+document.getElementById('sig').value+' on '+new Date().toLocaleString();}else{alert('Enter your name to sign');}" style="padding:8px 16px;background:#2e5a27;color:#fff;border:none;border-radius:6px;cursor:pointer">e-Sign Contract</button><button onclick="window.print()" style="padding:8px 16px;margin-left:8px;border:1px solid #2e5a27;background:#fff;color:#2e5a27;border-radius:6px;cursor:pointer">Print / Save PDF</button><p id="status" style="margin-top:10px;color:#2e5a27;font-weight:bold;font-size:13px"></p></div></body></html>`
+                        `<html><head><title>${payload.contract_number} - EsperWorks Trade Contract</title></head><body style="font-family:sans-serif;padding:32px;max-width:760px;margin:auto;line-height:1.5"><div style="border-bottom:2px solid #2e5a27;padding-bottom:12px"><h2 style="margin:0;color:#2e5a27">${ctr.title}</h2><p style="margin:4px 0;font-size:13px;color:#555">Contract Ref: <strong>${payload.contract_number}</strong> · Date: ${ctr.effective_date} · Powered by ${ctr.provider}</p></div><p style="font-size:14px"><strong>Supplier / Farm:</strong> ${ctr.supplier?.name || ""} (${ctr.supplier?.phone || ""})<br/><strong>Buyer / Off-Taker:</strong> ${ctr.buyer?.name || ""} (${ctr.buyer?.phone || ""}) - ${ctr.buyer?.delivery_address || ""}</p><h4 style="margin-bottom:6px">1. Contracted Produce & Specifications</h4><ul style="font-size:14px">${itemsList}</ul><p style="font-size:14px">Total Contract Value: <strong>GH₵ ${Number(ctr.total_amount).toFixed(2)}</strong> · Total Payload: <strong>${ctr.total_weight_kg} kg</strong></p><h4 style="margin-bottom:6px">2. Quality, Escrow & Transit Assurance Terms</h4><ul style="font-size:13px"><li><strong>Quality Inspection:</strong> ${ctr.terms?.quality_inspection}</li><li><strong>Escrow Release:</strong> ${ctr.terms?.escrow_release}</li><li><strong>Transit Coverage:</strong> ${ctr.terms?.transit_coverage}</li></ul><div style="margin-top:24px;padding:16px;border:1px solid #ccc;border-radius:8px;background:#f9faf8"><label style="display:block;font-size:13px;font-weight:bold;margin-bottom:6px">Digital Signature (Full Legal Name):</label><input id="sig" type="text" placeholder="Type full name to e-Sign via EsperWorks" style="padding:8px;width:280px;margin-right:8px"/><button onclick="if(document.getElementById('sig').value){document.getElementById('status').innerText='Signed digitally by '+document.getElementById('sig').value+' on '+new Date().toLocaleString();}else{alert('Enter your name to sign');}" style="padding:8px 16px;background:#2e5a27;color:#fff;border:none;border-radius:6px;cursor:pointer">e-Sign Contract</button><button onclick="window.print()" style="padding:8px 16px;margin-left:8px;border:1px solid #2e5a27;background:#fff;color:#2e5a27;border-radius:6px;cursor:pointer">Print / Save PDF</button><p id="status" style="margin-top:10px;color:#2e5a27;font-weight:bold;font-size:13px"></p></div></body></html>`
                       );
                       win.document.close();
                     }

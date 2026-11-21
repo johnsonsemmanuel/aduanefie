@@ -425,7 +425,7 @@ const SignIn = ({
   };
   useEffect(() => {
     // Old flow: close SignIn modal when switching to sign-up.
-    // New AuthModal flow (onBack defined) handles sign-up internally — skip.
+    // New AuthModal flow (onBack defined) handles sign-up internally - skip.
     if (!onBack && modalFor === "sign-up") {
       handleClose();
     }
@@ -633,7 +633,7 @@ const SignIn = ({
               flexDirection: "column",
             }}
           >
-            {/* Back button — pinned to the top-left corner of the modal */}
+            {/* Back button - pinned to the top-left corner of the modal */}
             <IconButton
               onClick={onBack}
               size="small"
@@ -652,7 +652,7 @@ const SignIn = ({
               />
             </IconButton>
 
-            {/* Close button — pinned to the top-right corner of the modal */}
+            {/* Close button - pinned to the top-right corner of the modal */}
             <IconButton
               onClick={handleClose}
               size="small"
@@ -668,7 +668,7 @@ const SignIn = ({
               <CloseIcon sx={{ fontSize: "20px" }} />
             </IconButton>
 
-            {/* Content — top padding leaves room for the absolute corner icons */}
+            {/* Content - top padding leaves room for the absolute corner icons */}
             <Stack
               sx={{ gap: "20px", pt: "56px", pb: "56px", px: "32px", flex: 1 }}
             >

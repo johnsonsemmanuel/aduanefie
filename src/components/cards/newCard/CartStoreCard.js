@@ -231,7 +231,7 @@ const ItemAvatars = ({
  * - store: { id, name, logo_full_url, slug }
  * - items: [{ image_full_url }]
  * - totalPrice: number
- * - originalPrice?: number       (running only — strikethrough)
+ * - originalPrice?: number       (running only - strikethrough)
  * - deliveryTime?: string        (running only)
  * - placedDate?: string          (order_placed only)
  * - onAdd, onDelete, onViewCart  (running)

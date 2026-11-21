@@ -215,8 +215,8 @@ export const arabic = {
   "Are you sure, you want to reset?": "هل أنت متأكد أنك تريد إعادة تعيين؟",
   Ascending: "تصاعدي",
   "Ask AI Assistant": "اسأل المساعد الذكي",
-  "Ask anything — orders, deals, restaurants, recommendations.":
-    "اسأل عن أي شيء — الطلبات، العروض، المطاعم، التوصيات.",
+  "Ask anything - orders, deals, restaurants, recommendations.":
+    "اسأل عن أي شيء - الطلبات، العروض، المطاعم، التوصيات.",
   "Attach photo": "إرفاق صورة",
   "Automatically reorder these items every month.":
     "إعادة طلب هذه العناصر تلقائيًا كل شهر.",
@@ -2062,8 +2062,8 @@ export const arabic = {
   "Type your opinion": "اكتب رأيك",
   "Type your tin number": "اكتب رقمك الضريبي",
   "Typing…": "يكتب…",
-  "Unable to renew — plan information unavailable.":
-    "تعذّر التجديد — معلومات الخطة غير متوفرة.",
+  "Unable to renew - plan information unavailable.":
+    "تعذّر التجديد - معلومات الخطة غير متوفرة.",
   "Unavailable item note": "ملاحظة غير متوفرة",
   Unit: "وحدة",
   "Unit Price": "سعر الوحدة",

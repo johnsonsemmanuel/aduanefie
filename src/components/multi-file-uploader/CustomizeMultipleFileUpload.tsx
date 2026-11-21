@@ -433,7 +433,7 @@ const CustomizeMultipleFileUpload: React.FC<
           )}
         </Stack>
 
-        {/* Tabs — only for logged-in users, hidden during preview step */}
+        {/* Tabs - only for logged-in users, hidden during preview step */}
         {isLoggedIn && step !== "preview" && (
           <Box
             sx={{
@@ -454,7 +454,7 @@ const CustomizeMultipleFileUpload: React.FC<
           <>{step === "select" ? renderSelectStep() : renderPreviewStep()}</>
         )}
 
-        {/* Media Library tab — requires login */}
+        {/* Media Library tab - requires login */}
         {isLoggedIn && activeTab === TAB_LIBRARY && mediaLibrary}
       </Box>
     </CustomModal>

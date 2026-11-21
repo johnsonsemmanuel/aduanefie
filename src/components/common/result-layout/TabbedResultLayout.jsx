@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 /**
- * Reusable tabbed result page shell — used by category page and (in future) search page.
+ * Reusable tabbed result page shell - used by category page and (in future) search page.
  *
  * This is a CONTROLLED PRESENTATION component:
  *   - It does NOT fetch any data.
@@ -18,7 +18,7 @@ import { useTranslation } from "react-i18next";
  *   │ {children}                                                    │
  *   └───────────────────────────────────────────────────────────────┘
  *
- * @param {ReactNode} headerLeft         Left-side of sticky bar — breadcrumb / result count text / etc.
+ * @param {ReactNode} headerLeft         Left-side of sticky bar - breadcrumb / result count text / etc.
  * @param {{value:string,label:string}[]} tabs
  * @param {string} activeTab             Currently active tab value
  * @param {(tab:string)=>void} onTabChange

@@ -24,7 +24,7 @@ export const new_arrivals = "/api/v1/items/new-arrival";
 export const flash_sales = "/api/v1/flash-sales";
 export const flash_sales_items = "api/v1/flash-sales/items";
 export const parcel_category_api = "/api/v1/parcel-category";
-// Zone-scoped parcel attributes. Both take `zone_id` as a query parameter —
+// Zone-scoped parcel attributes. Both take `zone_id` as a query parameter -
 // the `zoneid` header alone answers 422 "The zone id field is required."
 export const parcel_weight_api = "/api/v1/parcel-weight";
 export const parcel_dimension_api = "/api/v1/parcel-dimension";
@@ -170,7 +170,7 @@ export const removeAllCartItems = "api/v1/rental/user/cart/remove-cart";
 export const recommended_provider = "api/v1/stores/recommended";
 export const quick_delivery_stores_api = "/api/v1/stores/quick-delivery";
 export const tax_api = "api/v1/customer/order/get-Tax";
-// One call for the whole checkout price breakdown — delivery, surge, Pro,
+// One call for the whole checkout price breakdown - delivery, surge, Pro,
 // tax and cashback. Supersedes assembling those from separate endpoints.
 export const checkout_summary_api = "/api/v1/customer/order/checkout-summary";
 // Zone-scoped area / zip-code list for the delivery-charge rule. `type` says
@@ -237,6 +237,8 @@ export const group_buy_join_api = (id) => `/api/v1/group-buys/${id}/join`;
 export const group_buy_leave_api = (id) => `/api/v1/group-buys/${id}/leave`;
 export const group_buy_cancel_api = (id) => `/api/v1/group-buys/${id}/cancel`;
 export const group_buy_quote_api = (id) => `/api/v1/group-buys/${id}/quote`;
+export const group_buy_members_api = (id) => `/api/v1/group-buys/${id}/members`;
+export const group_buy_messages_api = (id) => `/api/v1/group-buys/${id}/messages`;
 
 // ============================================================================
 // Intra-African Agricultural Trade API Routes

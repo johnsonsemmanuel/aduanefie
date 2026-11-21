@@ -1,4 +1,4 @@
-// Placeholder — real hook shipped with the Service addon.
+// Placeholder - real hook shipped with the Service addon.
 export const useSubmitServicemanReview = (..._args: any[]) => ({
   mutate: (..._a: any[]) => {},
   mutateAsync: async (..._a: any[]) => {},

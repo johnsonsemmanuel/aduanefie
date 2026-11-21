@@ -229,7 +229,7 @@ export const ChoiceValues = (props) => {
                   />
                 ) : (
                   // `checked` (from selectedOptions) is the single source of
-                  // truth — the old `option?.isSelected ||` fallback read the
+                  // truth - the old `option?.isSelected ||` fallback read the
                   // cart data's baked-in flag and blocked unchecking in
                   // productUpdate mode.
                   <Checkbox

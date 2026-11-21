@@ -231,7 +231,7 @@ const RideShareIntroBanner = ({ configData, appUrl }) => {
           {/* Social proof */}
           <Stack spacing="2px">
             <Stack direction="row" alignItems="center" gap="4px">
-              {/* Avatar stack — mobile: 28px / desktop: 36px container */}
+              {/* Avatar stack - mobile: 28px / desktop: 36px container */}
               <Stack direction="row" alignItems="center">
                 {SOCIAL_AVATARS.map((src, i) => (
                   <Box
@@ -300,7 +300,7 @@ const RideShareIntroBanner = ({ configData, appUrl }) => {
           />
         </Box>
 
-        {/* CTA Button — mobile: full width 40px / desktop: fit-content 44px */}
+        {/* CTA Button - mobile: full width 40px / desktop: fit-content 44px */}
         <Box
           onClick={handleAppUrlClick}
           sx={{

@@ -241,8 +241,8 @@ export const spain = {
   "Are you sure, you want to reset?": "هل أنت متأكد أنك تريد إعادة تعيين؟",
   Ascending: "Ascendente",
   "Ask AI Assistant": "Pregunta al Asistente IA",
-  "Ask anything — orders, deals, restaurants, recommendations.":
-    "Pregunta lo que quieras — pedidos, ofertas, restaurantes, recomendaciones.",
+  "Ask anything - orders, deals, restaurants, recommendations.":
+    "Pregunta lo que quieras - pedidos, ofertas, restaurantes, recomendaciones.",
   "Attach photo": "إرفاق صورة",
   "Automatically reorder these items every month.":
     "Reordena automáticamente estos artículos cada mes.",
@@ -2362,8 +2362,8 @@ export const spain = {
   "Type your opinion": "Escribe tu opinión",
   "Type your tin number": "Escribe tu número TIN",
   "Typing…": "Escribiendo…",
-  "Unable to renew — plan information unavailable.":
-    "Unable to renew — plan information unavailable.",
+  "Unable to renew - plan information unavailable.":
+    "Unable to renew - plan information unavailable.",
   "Unavailable item note": "ملاحظة عنصر غير متوفر",
   Unit: "وحدة",
   "Unit Price": "Precio unitario",

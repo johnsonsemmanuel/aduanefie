@@ -18,7 +18,7 @@ const fetchStoreCouponList = async (storeId) => {
 };
 
 export const useGetStoreCouponList = (storeId, options = {}) => {
-  // Endpoint is gated to authenticated users — backend resolves the
+  // Endpoint is gated to authenticated users - backend resolves the
   // customer from the bearer token. Skip entirely for guests.
   const isLoggedIn = !!getToken();
   const query = useQuery(

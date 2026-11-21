@@ -116,7 +116,7 @@ const StoreDetails = ({ storeDetails }) => {
     storeDetails?.total_items > 0 ? storeDetails?.total_items - 1 : 0;
   const liked = isInWishList();
 
-  // Only stats with a real value are shown — each StatCard is `flex: 1`, so
+  // Only stats with a real value are shown - each StatCard is `flex: 1`, so
   // dropping one lets the rest stretch to fill the row instead of leaving a
   // gap where a 0%/blank stat used to sit.
   const statItems = [
@@ -138,7 +138,7 @@ const StoreDetails = ({ storeDetails }) => {
   ].filter(Boolean);
 
   // Figma's `--sds-color-text-default-default` (#1e1e1e light / #e0e0e0 dark)
-  // is `theme.palette.neutral[1050]`, not `theme.palette.text.primary` —
+  // is `theme.palette.neutral[1050]`, not `theme.palette.text.primary` -
   // this app's `text.primary` is a brand-tinted dark green (#67513A), a
   // different color entirely.
   const defaultTextColor =
