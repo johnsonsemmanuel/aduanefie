@@ -26,7 +26,10 @@ import React, { useEffect, useReducer, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import ModeSwitcherTrigger from "components/module-select/ModeSwitcherTrigger";
-import { DESKTOP_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
+import {
+  DESKTOP_LAYOUT_MEDIA_QUERY,
+  MOBILE_LAYOUT_MEDIA_QUERY,
+} from "utils/breakpoints";
 import { useDispatch, useSelector } from "react-redux";
 import { useAddStoreToWishlist } from "api-manage/hooks/react-query/wish-list/useAddStoreToWishLists";
 import { useWishListStoreDelete } from "api-manage/hooks/react-query/wish-list/useWishListStoreDelete";
@@ -63,7 +66,7 @@ const HeroCard = styled(Box)(({ theme }) => ({
   boxShadow: "none",
   // border: `1px solid ${theme.palette.divider}`,
   overflow: "hidden",
-  [theme.breakpoints.down("md")]: {
+  [`@media ${MOBILE_LAYOUT_MEDIA_QUERY}`]: {
     borderRadius: "0 0 16px 16px",
     border: "none",
     width: "100%",
@@ -82,7 +85,7 @@ const LogoBox = styled(Box)(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  [theme.breakpoints.down("md")]: {
+  [`@media ${MOBILE_LAYOUT_MEDIA_QUERY}`]: {
     width: "44px",
     height: "44px",
     borderRadius: "10px",
@@ -96,7 +99,7 @@ const BannerWrapper = styled(Box)(({ theme }) => ({
   minHeight: "180px",
   overflow: "hidden",
   borderRadius: "16px 0 0 16px",
-  [theme.breakpoints.down("md")]: {
+  [`@media ${MOBILE_LAYOUT_MEDIA_QUERY}`]: {
     minHeight: "135px",
     borderRadius: "0 0 8px 8px",
   },
@@ -990,7 +993,10 @@ const Top2 = (props) => {
                 {/* Mobile-only back arrow */}
                 <Box
                   sx={{
-                    display: { xs: "block", md: "none" },
+                    display: "block",
+                    [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
+                      display: "none",
+                    },
                     position: "absolute",
                     top: 10,
                     left: 10,

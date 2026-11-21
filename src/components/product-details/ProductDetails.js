@@ -322,13 +322,25 @@ const ProductDetails = ({ productDetailsData, configData }) => {
               storeDetails={productDetailsData?.store_details ?? storeData}
               storeImageBaseUrl={storeImageBaseUrl}
             />
-            <CustomStackFullWidth sx={{ display: { xs: "none", md: "block" } }}>
+            <CustomStackFullWidth
+              sx={{
+                display: "none",
+                [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: { display: "block" },
+              }}
+            >
               <ProductsMoreFromTheStore productDetails={productDetailsData} />
             </CustomStackFullWidth>
           </CustomStackFullWidth>
         </Grid>
 
-        <Grid item xs={12} sx={{ display: { xs: "block", md: "none" } }}>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: "block",
+            [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: { display: "none" },
+          }}
+        >
           <ProductsMoreFromTheStore productDetails={productDetailsData} />
         </Grid>
 
