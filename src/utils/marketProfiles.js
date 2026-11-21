@@ -24,7 +24,7 @@ export const MARKET_PROFILES = {
     name: "Ghana",
     locale: "en-GH",
     currency_code: "GHS",
-    currency_symbol: "GH₵",
+    currency_symbol: "₵",
     decimal_places: 2,
     phone: {
       dial_code: "+233",

@@ -5,7 +5,7 @@ import MainApi from "api-manage/MainApi";
 // from the API - a hard-coded "fallback rate" would be shown as if it were
 // current when the trade service is down.
 const CURRENCY_SYMBOLS = {
-  GHS: "GH₵",
+  GHS: "₵",
   USD: "$",
   NGN: "₦",
   XOF: "CFA ",

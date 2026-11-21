@@ -151,7 +151,7 @@ const ItemCheckout = (props) => {
   const [selectedCurrency, setSelectedCurrency] = useState(
     getCurrencyOptions(DEFAULT_COUNTRY)[0] || {
       code: "GHS",
-      symbol: "GH₵",
+      symbol: "₵",
       name: "Ghanaian Cedi",
     },
   );

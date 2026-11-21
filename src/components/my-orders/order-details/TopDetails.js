@@ -597,7 +597,7 @@ const TopDetails = (props) => {
                           doc,
                           row,
                           "td",
-                          `GH₵ ${Number(it.line_total || 0).toFixed(2)}`,
+                          `₵ ${Number(it.line_total || 0).toFixed(2)}`,
                           `${CELL};text-align:right`
                         );
                       });
@@ -617,15 +617,15 @@ const TopDetails = (props) => {
                       totalRow("Total Payload Weight:", `${inv.total_weight_kg} kg`);
                       totalRow(
                         "Delivery Charge:",
-                        `GH₵ ${Number(inv.delivery_charge || 0).toFixed(2)}`
+                        `₵ ${Number(inv.delivery_charge || 0).toFixed(2)}`
                       );
                       totalRow(
                         "Trade & Crop Insurance:",
-                        `GH₵ ${Number(inv.insurance_fee || 0).toFixed(2)}`
+                        `₵ ${Number(inv.insurance_fee || 0).toFixed(2)}`
                       );
                       totalRow(
                         "Total:",
-                        `GH₵ ${Number(inv.total_amount || 0).toFixed(2)}`,
+                        `₵ ${Number(inv.total_amount || 0).toFixed(2)}`,
                         "h3"
                       );
                       const printButton = addEl(
@@ -730,7 +730,7 @@ const TopDetails = (props) => {
                         addEl(doc, item, "strong", it.name);
                         item.appendChild(
                           doc.createTextNode(
-                            ` - ${it.quantity} × ${it.unit} (${it.crop_grade}) · ${it.line_weight_kg || 0} kg · GH₵ ${Number(it.line_total || 0).toFixed(2)}`
+                            ` - ${it.quantity} × ${it.unit} (${it.crop_grade}) · ${it.line_weight_kg || 0} kg · ₵ ${Number(it.line_total || 0).toFixed(2)}`
                           )
                         );
                       });
@@ -739,7 +739,7 @@ const TopDetails = (props) => {
                       addEl(doc, value, "strong", "Total Contract Value:");
                       value.appendChild(
                         doc.createTextNode(
-                          ` GH₵ ${Number(ctr.total_amount || 0).toFixed(2)} · Total Payload: ${ctr.total_weight_kg} kg`
+                          ` ₵ ${Number(ctr.total_amount || 0).toFixed(2)} · Total Payload: ${ctr.total_weight_kg} kg`
                         )
                       );
 
