@@ -171,15 +171,18 @@ export const useSendGroupBuyMessage = (id) => {
   );
 };
 
-export const useGetOrganizerVerification = (enabled = true) =>
-  useQuery(
+export const useGetOrganizerVerification = (enabled = true) => {
+  const hasToken =
+    typeof window !== "undefined" && Boolean(localStorage.getItem("token"));
+  return useQuery(
     ["group-buy", "verification"],
     async () => {
       const { data } = await MainApi.get(group_buy_verification_api);
       return data?.data;
     },
-    { enabled, staleTime: 60 * 1000 }
+    { enabled: Boolean(enabled && hasToken), staleTime: 60 * 1000, retry: false }
   );
+};
 
 export const useSubmitOrganizerVerification = () => {
   const queryClient = useQueryClient();

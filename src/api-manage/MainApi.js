@@ -64,13 +64,20 @@ MainApi.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error?.response?.status;
-    const message =
-      error?.response?.data?.message ||
-      error?.response?.data?.error ||
-      error?.response?.data?.errors?.[0]?.message;
-    // if (typeof window !== "undefined" && status === 422 ) { // probably this logic was used for demo service after one hour the data is reset
-    //   window.location.href = "/";
-    // }
+    const reqUrl = String(error?.config?.url || "");
+    const isAuthEndpoint = /\/auth\/(login|sign-up|register|verify|forgot-password|reset-password)/i.test(
+      reqUrl,
+    );
+    if (
+      typeof window !== "undefined" &&
+      status === 401 &&
+      !isAuthEndpoint &&
+      localStorage.getItem("token")
+    ) {
+      // Stale or revoked session token: clear it so background React Query hooks
+      // stop firing repeated 401 storms on /customer/info, /address/list, /message/list.
+      localStorage.removeItem("token");
+    }
     return Promise.reject(error);
   },
 );
