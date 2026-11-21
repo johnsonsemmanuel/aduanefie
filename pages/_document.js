@@ -4,6 +4,24 @@ import Document, { Head, Html, Main, NextScript } from "next/document";
 import createEmotionServer from "@emotion/server/create-instance";
 import createEmotionCache from "../src/utils/create-emotion-cache";
 
+// Analytics ids come from a backend config endpoint. They are public values,
+// but they are interpolated into executable inline scripts, so treat them as
+// untrusted: accept only provider-specific shapes, ignore unknown providers,
+// and serialise with JSON.stringify / encodeURIComponent before interpolation.
+const ANALYTICS_ID_PATTERNS = {
+  google_tag_manager: /^GTM-[A-Z0-9]{4,20}$/,
+  google_analytics: /^(?:G-[A-Z0-9]{6,20}|UA-\d+-\d+)$/,
+  facebook_pixel: /^\d{8,20}$/,
+  linkedin_insight_tag: /^\d{4,20}$/,
+  tiktok_pixel: /^[A-Z0-9]{6,40}$/,
+  snapchat_pixel: /^[A-Fa-f0-9-]{8,64}$/,
+  x_pixel: /^\d{4,20}$/,
+  pinterest_pixel: /^\d{4,20}$/,
+};
+
+const jsLiteral = (value) => JSON.stringify(String(value));
+const urlPart = (value) => encodeURIComponent(String(value));
+
 class CustomDocument extends Document {
   render() {
     const { analyticsConfig = {} } = this.props;
@@ -74,7 +92,7 @@ class CustomDocument extends Document {
                   new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
                   j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                   'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-                  })(window,document,'script','dataLayer','${analyticsConfig.google_tag_manager}');
+                  })(window,document,'script','dataLayer',${jsLiteral(analyticsConfig.google_tag_manager)});
                 `,
               }}
             />
@@ -82,14 +100,14 @@ class CustomDocument extends Document {
 
           {analyticsConfig.google_analytics && (
             <>
-              <script async src={`https://www.googletagmanager.com/gtag/js?id=${analyticsConfig.google_analytics}`} />
+              <script async src={`https://www.googletagmanager.com/gtag/js?id=${urlPart(analyticsConfig.google_analytics)}`} />
               <script
                 dangerouslySetInnerHTML={{
                   __html: `
                     window.dataLayer = window.dataLayer || [];
                     function gtag(){dataLayer.push(arguments);}
                     gtag('js', new Date());
-                    gtag('config','${analyticsConfig.google_analytics}');
+                    gtag('config',${jsLiteral(analyticsConfig.google_analytics)});
                   `,
                 }}
               />
@@ -108,7 +126,7 @@ class CustomDocument extends Document {
                   t.src=v;s=b.getElementsByTagName(e)[0];
                   s.parentNode.insertBefore(t,s)}(window, document,'script',
                   'https://connect.facebook.net/en_US/fbevents.js');
-                  fbq('init','${analyticsConfig.facebook_pixel}');
+                  fbq('init',${jsLiteral(analyticsConfig.facebook_pixel)});
                   fbq('track','PageView');
                 `,
               }}
@@ -119,7 +137,7 @@ class CustomDocument extends Document {
             <script
               dangerouslySetInnerHTML={{
                 __html: `
-                  _linkedin_partner_id = "${analyticsConfig.linkedin_insight_tag}";
+                  _linkedin_partner_id = ${jsLiteral(analyticsConfig.linkedin_insight_tag)};
                   window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
                   window._linkedin_data_partner_ids.push(_linkedin_partner_id);
                 `,
@@ -133,9 +151,9 @@ class CustomDocument extends Document {
                 __html: `
                   !function (w,d,t) {
                     w[t] = w[t] || [];
-                    w[t].push({'ttq.load': '${analyticsConfig.tiktok_pixel}','ttq.track': 'PageView'});
+                    w[t].push({'ttq.load': ${jsLiteral(analyticsConfig.tiktok_pixel)},'ttq.track': 'PageView'});
                     var s = d.createElement('script');
-                    s.src = 'https://analytics.tiktok.com/i18n/pixel/sdk.js?sdkid=${analyticsConfig.tiktok_pixel}';
+                    s.src = 'https://analytics.tiktok.com/i18n/pixel/sdk.js?sdkid=${urlPart(analyticsConfig.tiktok_pixel)}';
                     s.async = true;
                     var e = d.getElementsByTagName('script')[0];
                     e.parentNode.insertBefore(s,e);
@@ -150,7 +168,7 @@ class CustomDocument extends Document {
               dangerouslySetInnerHTML={{
                 __html: `
                   (function(e,t,n,c,r,a,i){e.tta=n,e.ttaQueue=e.ttaQueue||[],
-                  e.ttaConfig={pixelId:"${analyticsConfig.snapchat_pixel}",events:"page_view"},
+                  e.ttaConfig={pixelId:${jsLiteral(analyticsConfig.snapchat_pixel)},events:"page_view"},
                   e.ttaQueue.push({event:"page_view",parameters:{}});
                   var s=t.createElement(n);s.async=!0;s.src="https://tr.snapchat.com/tr.js";
                   var o=t.getElementsByTagName(n)[0];o.parentNode.insertBefore(s,o)})
@@ -167,7 +185,7 @@ class CustomDocument extends Document {
                   !function(e,t,n,s,u,a){e.twq||(s=e.twq=function(){s.exe?s.exe.apply(s,arguments):s.queue.push(arguments);
                   },s.version='1.1',s.queue=[],u=t.createElement(n),u.async=!0,u.src='https://static.ads-twitter.com/uwt.js',
                   a=t.getElementsByTagName(n)[0],a.parentNode.insertBefore(u,a))}(window,document,'script');
-                  twq('config','${analyticsConfig.x_pixel}');
+                  twq('config',${jsLiteral(analyticsConfig.x_pixel)});
                   twq('track','PageView');
                 `,
               }}
@@ -181,7 +199,7 @@ class CustomDocument extends Document {
                   !function(e){if(!window.pintrk){window.pintrk=function(){window.pintrk.queue.push(
                   Array.prototype.slice.call(arguments))};var n=window.pintrk;n.queue=[],n.version="3.0";var t=document.createElement("script");
                   t.async=!0,t.src=e;var r=document.getElementsByTagName("script")[0];r.parentNode.insertBefore(t,r)}}("https://s.pinimg.com/ct/core.js");
-                  pintrk('load', '${analyticsConfig.pinterest_pixel}');
+                  pintrk('load', ${jsLiteral(analyticsConfig.pinterest_pixel)});
                   pintrk('page');
                 `,
               }}
@@ -250,8 +268,11 @@ CustomDocument.getInitialProps = async (ctx) => {
       const data = getApiList(await res.json());
       if (Array.isArray(data)) {
         data.forEach((item) => {
-          if (item.type && item.script_id)
-            analyticsConfig[item.type] = item.script_id;
+          const pattern = ANALYTICS_ID_PATTERNS[item?.type];
+          const id = typeof item?.script_id === "string" ? item.script_id.trim() : "";
+          if (pattern && pattern.test(id)) {
+            analyticsConfig[item.type] = id;
+          }
         });
       }
       cachedAnalyticsConfig = analyticsConfig;
