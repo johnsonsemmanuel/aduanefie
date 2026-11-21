@@ -48,9 +48,9 @@ import { baseUrl } from "api-manage/MainApi";
 // contract values are always assigned through textContent; interpolating them
 // into document.write() allowed stored HTML/script to execute with access to
 // the opener's localStorage (including the auth token).
-const buildPrintDoc = (title) => {
+const buildPrintDoc = (title, existingWin = null) => {
   if (typeof window === "undefined") return null;
-  const win = window.open("", "_blank");
+  const win = existingWin || window.open("", "_blank");
   if (!win) return null;
   const doc = win.document;
   doc.open();
@@ -78,6 +78,7 @@ const CELL = "padding:8px;border-bottom:1px solid #ddd";
 const MUTED = "margin:4px 0;font-size:13px;color:#555";
 
 import MainApi from "api-manage/MainApi";
+import { WHOLESALE_MODULE_ID } from "components/trade/tradeData";
 import Router, { useRouter } from "next/router";
 import { useGetFailedPayment } from "api-manage/hooks/react-query/useGetFailedPayment";
 import useServiceBusinessConfig from "components/home/module-wise-components/service/service-api-manage/hooks/custom-hooks/useServiceBusinessConfig";
@@ -486,7 +487,11 @@ const TopDetails = (props) => {
               {trackData?.otp}
             </Typography>
           ) : null}
-          {!isServiceBooking && (
+          {!isServiceBooking &&
+            (Boolean(trackData?.is_cross_border) ||
+              Boolean(trackData?.is_wholesale) ||
+              String(trackData?.module_id) === String(WHOLESALE_MODULE_ID) ||
+              trackData?.order_type === "wholesale") && (
             <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mt: 1 }}>
               <Button
                 size="small"
@@ -496,21 +501,30 @@ const TopDetails = (props) => {
                   const targetId =
                     trackData?.id ?? data?.[0]?.order_id ?? data?.id ?? id;
                   if (!targetId) return;
+                  const preWin = window.open("", "_blank");
                   try {
                     const res = await MainApi.post(
                       `/api/v1/trade/orders/${targetId}/esperworks-invoice`
                     );
                     const payload = res?.data;
                     if (payload?.esperworks_url) {
-                      window.open(payload.esperworks_url, "_blank", "noopener");
+                      if (preWin) {
+                        preWin.location.href = payload.esperworks_url;
+                      } else {
+                        window.open(payload.esperworks_url, "_blank", "noopener");
+                      }
                       return;
                     }
                     const inv = payload?.invoice;
                     if (inv) {
                       const print = buildPrintDoc(
-                        `${payload.invoice_number || "Invoice"} - EsperWorks Proforma & Waybill`
+                        `${payload.invoice_number || "Invoice"} - EsperWorks Proforma & Waybill`,
+                        preWin
                       );
-                      if (!print) return;
+                      if (!print) {
+                        toast.error(t("Please allow popups to view the Proforma & Waybill."));
+                        return;
+                      }
                       const { win, doc, body } = print;
 
                       const header = addEl(
@@ -638,6 +652,7 @@ const TopDetails = (props) => {
                       printButton.addEventListener("click", () => win.print());
                     }
                   } catch (e) {
+                    if (preWin && !preWin.closed) preWin.close();
                     toast.error(t("Unable to generate EsperWorks invoice"));
                   }
                 }}
@@ -653,25 +668,34 @@ const TopDetails = (props) => {
                   const targetId =
                     trackData?.id ?? data?.[0]?.order_id ?? data?.id ?? id;
                   if (!targetId) return;
+                  const preWin = window.open("", "_blank");
                   try {
                     const res = await MainApi.post(
                       `/api/v1/trade/orders/${targetId}/esperworks-contract`
                     );
                     const payload = res?.data;
                     if (payload?.esperworks_signing_url) {
-                      window.open(
-                        payload.esperworks_signing_url,
-                        "_blank",
-                        "noopener"
-                      );
+                      if (preWin) {
+                        preWin.location.href = payload.esperworks_signing_url;
+                      } else {
+                        window.open(
+                          payload.esperworks_signing_url,
+                          "_blank",
+                          "noopener"
+                        );
+                      }
                       return;
                     }
                     const ctr = payload?.contract;
                     if (ctr) {
                       const print = buildPrintDoc(
-                        `${payload.contract_number || "Contract"} - EsperWorks Trade Contract`
+                        `${payload.contract_number || "Contract"} - EsperWorks Trade Contract`,
+                        preWin
                       );
-                      if (!print) return;
+                      if (!print) {
+                        toast.error(t("Please allow popups to view the Trade Contract."));
+                        return;
+                      }
                       const { win, doc, body } = print;
 
                       const header = addEl(
@@ -826,6 +850,7 @@ const TopDetails = (props) => {
                       printButton.addEventListener("click", () => win.print());
                     }
                   } catch (e) {
+                    if (preWin && !preWin.closed) preWin.close();
                     toast.error(t("Unable to load EsperWorks contract"));
                   }
                 }}

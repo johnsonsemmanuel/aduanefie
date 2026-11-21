@@ -273,6 +273,42 @@ const ItemCheckout = (props) => {
     Boolean(storeCountry) &&
     Boolean(destinationCountry) &&
     storeCountry !== destinationCountry;
+
+  // Auto-select a valid default payment method so Place Order never fails silently
+  // with "payment method not selected" when the customer hasn't clicked a radio yet.
+  useEffect(() => {
+    if (paymentMethod) return;
+    if (
+      configData?.cash_on_delivery &&
+      storeData?.cash_on_delivery &&
+      !isCrossBorder
+    ) {
+      setPaymentMethod("cash_on_delivery");
+      return;
+    }
+    const firstGateway = configData?.active_payment_method_list?.[0]?.gateway;
+    if (configData?.digital_payment && firstGateway) {
+      setPaymentMethod(firstGateway);
+      return;
+    }
+    if (
+      token &&
+      configData?.customer_wallet_status === 1 &&
+      Number(customerData?.data?.wallet_balance ?? 0) > 0
+    ) {
+      setPaymentMethod("wallet");
+    }
+  }, [
+    paymentMethod,
+    configData?.cash_on_delivery,
+    configData?.digital_payment,
+    configData?.active_payment_method_list,
+    configData?.customer_wallet_status,
+    storeData?.cash_on_delivery,
+    isCrossBorder,
+    token,
+    customerData?.data?.wallet_balance,
+  ]);
   // Bundles and BOGO rows have no `item_id` the catalogue can re-price, so
   // they cannot be quoted for an international lane. Surface that instead of
   // silently dropping them from the freight calculation.
@@ -948,11 +984,14 @@ const ItemCheckout = (props) => {
             orderMutation(order, {
               onSuccess: handleSuccessSecond,
               onError: (error) => {
-                error?.response?.data?.errors?.forEach((item) =>
-                  toast.error(item.message, {
-                    position: "bottom-right",
-                  }),
-                );
+                const firstMsg =
+                  error?.response?.data?.errors?.[0]?.message ||
+                  error?.response?.data?.message ||
+                  t("Could not place order. Please check your details.");
+                toast.error(firstMsg, {
+                  id: "order-place-error",
+                  position: "bottom-right",
+                });
               },
             });
           }
@@ -1066,11 +1105,14 @@ const ItemCheckout = (props) => {
             orderMutation(order, {
               onSuccess: handleSuccess,
               onError: (error) => {
-                error?.response?.data?.errors?.forEach((item) =>
-                  toast.error(item.message, {
-                    position: "bottom-right",
-                  }),
-                );
+                const firstMsg =
+                  error?.response?.data?.errors?.[0]?.message ||
+                  error?.response?.data?.message ||
+                  t("Could not place order. Please check your details.");
+                toast.error(firstMsg, {
+                  id: "order-place-error",
+                  position: "bottom-right",
+                });
               },
             });
           }
@@ -1148,6 +1190,12 @@ const ItemCheckout = (props) => {
     }
   };
   const placeOrder = () => {
+    if (!paymentMethod) {
+      toast.error(t("Please select a payment method to continue."), {
+        id: "payment-method-required",
+      });
+      return;
+    }
     // International checkout is priced by the shipping-options quote, not by
     // checkout-summary. Never let an order through without a lane the server
     // can re-quote, and never carry a lane from a different destination.
