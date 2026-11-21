@@ -17,7 +17,7 @@ import VerifiedBadge from "components/group-buy/VerifiedBadge";
 const money = (value) =>
   value === null || value === undefined
     ? "Not set"
-    : `GH₵ ${Number(value).toLocaleString(undefined, {
+    : `₵ ${Number(value).toLocaleString(undefined, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       })}`;

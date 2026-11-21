@@ -46,7 +46,7 @@ import { setConfigData } from "redux/slices/configData";
 import toast from "react-hot-toast";
 
 const money = (value) =>
-  `GH₵ ${Number(value || 0).toLocaleString(undefined, {
+  `₵ ${Number(value || 0).toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;

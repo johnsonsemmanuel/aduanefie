@@ -2,6 +2,8 @@ import { Button, IconButton, Skeleton, Tooltip, Typography, useTheme } from "@mu
 import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
 import { recordRecentlyViewed } from "utils/recentlyViewed";
 import { computePricePerKg, getPostHarvestTip } from "utils/agroGuidance";
+import { useGetAgroPrices } from "api-manage/hooks/react-query/trade/useGetAgroPrices";
+import { findMatchingAgroPrice, formatCedi } from "utils/agroPriceMatch";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
 import { Stack } from "@mui/system";
 import React, { useEffect, useMemo, useReducer, useRef, useState } from "react";
@@ -111,6 +113,8 @@ const ProductInformation = ({
 
   const actionCardRef = useRef(null);
   const [showStickyBar, setShowStickyBar] = useState(false);
+  const { data: agroPriceData } = useGetAgroPrices();
+  const agroPrices = agroPriceData?.prices || [];
 
   useEffect(() => {
     if (productDetailsData?.id) {
@@ -1398,6 +1402,7 @@ const ProductInformation = ({
             const item = state.modalData[0];
             const perKg = computePricePerKg(item, item?.totalPrice || item?.price);
             const tip = getPostHarvestTip(item);
+            const marketMatch = findMatchingAgroPrice(item, agroPrices);
             return (
               <Stack
                 spacing={0.75}
@@ -1427,6 +1432,16 @@ const ProductInformation = ({
                     />
                   )}
                 </Stack>
+                {marketMatch && (
+                  <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={0.75}>
+                    <Typography sx={{ fontSize: "12px", fontWeight: 600, color: theme.palette.primary.main }}>
+                      {t("Market Index")}: {formatCedi(marketMatch.wholesale_price_ghs)} {t("wholesale")} / {formatCedi(marketMatch.retail_price_ghs)} {t("retail")} ({marketMatch.unit})
+                    </Typography>
+                    <Typography sx={{ fontSize: "11px", color: theme.palette.text.secondary }}>
+                      {t("Powered by")} {marketMatch.source_platform}
+                    </Typography>
+                  </Stack>
+                )}
                 <Typography sx={{ fontSize: "12.5px", color: theme.palette.text.secondary, lineHeight: 1.45 }}>
                   {t(tip.storageTip)}
                 </Typography>

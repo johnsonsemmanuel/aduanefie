@@ -12,6 +12,9 @@ const AgroPriceTickerBar = () => {
   const { t } = useTranslation();
   const { data, isError } = useGetAgroPrices();
   const prices = data?.prices || [];
+  const sourceLabel = data?.sources?.length
+    ? data.sources.slice(0, 2).join(" · ")
+    : "World Bank · MoFA SRID";
 
   if (prices.length === 0) {
     if (isError) {
@@ -87,7 +90,7 @@ const AgroPriceTickerBar = () => {
               whiteSpace: "nowrap",
             }}
           >
-            GCX · MoFA · Esoko
+            {sourceLabel}
           </Typography>
         </Stack>
 
@@ -164,7 +167,7 @@ const AgroPriceTickerBar = () => {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    GH₵{Number(row.wholesale_price_ghs).toLocaleString()}
+                    ₵{Number(row.wholesale_price_ghs).toLocaleString()}
                   </Typography>
                   <Typography
                     sx={{
