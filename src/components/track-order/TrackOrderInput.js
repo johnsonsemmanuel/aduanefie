@@ -3,7 +3,7 @@ import {
   CustomPaperBigCard,
   CustomStackFullWidth,
 } from "styled-components/CustomStyles.style";
-import { CircularProgress, Grid, Stack, Typography } from "@mui/material";
+import { Chip, CircularProgress, Grid, Stack, Typography } from "@mui/material";
 import { t } from "i18next";
 import CustomTextFieldWithFormik from "../form-fields/CustomTextFieldWithFormik";
 import CustomPhoneInput from "../custom-component/CustomPhoneInput";
@@ -43,13 +43,34 @@ const mapBookingToTrackOrderData = (booking) =>
     delivered: booking.status_history?.completed,
   };
 
+const RECENT_TRACKED_KEY = "aduanefie_recent_tracked_orders_v1";
+
 const TrackOrderInput = ({ configData, pt = "62px" }) => {
   const dispatch = useDispatch();
   const [showOrderDetails, setShowOrderDetails] = useState(false);
   const [didSearchTrip, setDidSearchTrip] = useState(false);
+  const [recentOrders, setRecentOrders] = useState([]);
   const { selectedModule } = useSelector((state) => state.utilsData);
   const isServiceModule = selectedModule?.module_type === "service";
   const isRentalModule = selectedModule?.module_type === "rental";
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const saved = JSON.parse(window.localStorage.getItem(RECENT_TRACKED_KEY) || "[]");
+      if (Array.isArray(saved)) setRecentOrders(saved.slice(0, 3));
+    } catch {}
+  }, []);
+
+  const saveRecentOrderId = (rawId) => {
+    const clean = String(rawId || "").replace(/^#+/, "").trim();
+    if (!clean || typeof window === "undefined") return;
+    try {
+      const next = [clean, ...recentOrders.filter((x) => x !== clean)].slice(0, 3);
+      setRecentOrders(next);
+      window.localStorage.setItem(RECENT_TRACKED_KEY, JSON.stringify(next));
+    } catch {}
+  };
 
   const trackOrderFormik = useFormik({
     initialValues: {
@@ -61,7 +82,12 @@ const TrackOrderInput = ({ configData, pt = "62px" }) => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        dispatch(setGuestUserInfo(values));
+        const cleanedId = String(values.order_id || "").replace(/^#+/, "").trim();
+        if (cleanedId !== values.order_id) {
+          trackOrderFormik.setFieldValue("order_id", cleanedId);
+        }
+        saveRecentOrderId(cleanedId);
+        dispatch(setGuestUserInfo({ ...values, order_id: cleanedId }));
         setShowOrderDetails(true);
         if (getModule()?.module_type === "rental") {
           setDidSearchTrip(true);
@@ -76,7 +102,8 @@ const TrackOrderInput = ({ configData, pt = "62px" }) => {
   });
   const lanDirection = getLanguage() ? getLanguage() : "ltr";
   const nameHandler = (value) => {
-    trackOrderFormik.setFieldValue("order_id", value);
+    const cleaned = String(value || "").replace(/^#+/, "").trim();
+    trackOrderFormik.setFieldValue("order_id", cleaned);
   };
   const numberHandler = (value) => {
     trackOrderFormik.setFieldValue("contact_person_number", `+${value}`);
@@ -221,6 +248,24 @@ const TrackOrderInput = ({ configData, pt = "62px" }) => {
                 onChangeHandler={nameHandler}
                 value={trackOrderFormik.values.order_id}
               />
+              {recentOrders.length > 0 && (
+                <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
+                  <Typography fontSize="11.5px" color="text.secondary">
+                    {t("Recent:")}
+                  </Typography>
+                  {recentOrders.map((oid) => (
+                    <Chip
+                      key={oid}
+                      label={`#${oid}`}
+                      size="small"
+                      variant="outlined"
+                      clickable
+                      onClick={() => trackOrderFormik.setFieldValue("order_id", oid)}
+                      sx={{ fontSize: "11.5px", height: 24 }}
+                    />
+                  ))}
+                </Stack>
+              )}
             </Grid>
             <Grid item xs={12} md={4}>
               <CustomPhoneInput

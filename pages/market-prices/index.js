@@ -29,6 +29,7 @@ import {
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
+import Link from "next/link";
 import CustomContainer from "components/container";
 import MainLayout from "components/layout/MainLayout";
 import SimpleMobileHeader from "components/common/SimpleMobileHeader";
@@ -282,18 +283,19 @@ const MarketPricesPage = ({ configData }) => {
                     <TableCell align="right" sx={{ fontWeight: 700, whiteSpace: "nowrap" }}>{t("Retail Spread")}</TableCell>
                     <TableCell align="center" sx={{ fontWeight: 700, whiteSpace: "nowrap" }}>{t("Trend")}</TableCell>
                     <TableCell sx={{ fontWeight: 700, whiteSpace: "nowrap" }}>{t("Source")}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700, whiteSpace: "nowrap" }}>{t("Actions")}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {isLoading ? (
                     [1, 2, 3, 4, 5].map((i) => (
                       <TableRow key={i}>
-                        <TableCell colSpan={8}><Skeleton height={36} /></TableCell>
+                        <TableCell colSpan={9}><Skeleton height={36} /></TableCell>
                       </TableRow>
                     ))
                   ) : pricesError ? (
                     <TableRow>
-                      <TableCell colSpan={8} align="center" sx={{ py: 4, color: "text.secondary" }}>
+                      <TableCell colSpan={9} align="center" sx={{ py: 4, color: "text.secondary" }}>
                         <Stack spacing={1.5} alignItems="center">
                           <Typography>{t("Could not load market prices.")}</Typography>
                           <Button size="small" onClick={() => refetchPrices()}>
@@ -304,7 +306,7 @@ const MarketPricesPage = ({ configData }) => {
                     </TableRow>
                   ) : prices.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} align="center" sx={{ py: 4, color: "text.secondary" }}>
+                      <TableCell colSpan={9} align="center" sx={{ py: 4, color: "text.secondary" }}>
                         {t("No market price data yet.")}
                       </TableCell>
                     </TableRow>
@@ -348,6 +350,28 @@ const MarketPricesPage = ({ configData }) => {
                           </TableCell>
                           <TableCell>
                             <Chip size="small" label={row.source_platform} sx={{ fontSize: "11px", fontWeight: 600 }} />
+                          </TableCell>
+                          <TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
+                            <Stack direction="row" spacing={0.75} justifyContent="flex-end">
+                              <Button
+                                component={Link}
+                                href={`/search?search_value=${encodeURIComponent(row.commodity || "")}`}
+                                size="small"
+                                variant="contained"
+                                sx={{ fontSize: "11.5px", py: 0.35, px: 1.2, textTransform: "none", borderRadius: "7px" }}
+                              >
+                                {t("Shop")}
+                              </Button>
+                              <Button
+                                component={Link}
+                                href={`/trade?commodity=${encodeURIComponent(row.commodity || "")}&unit=${encodeURIComponent(row.unit || "")}#rfq`}
+                                size="small"
+                                variant="outlined"
+                                sx={{ fontSize: "11.5px", py: 0.35, px: 1.1, textTransform: "none", borderRadius: "7px" }}
+                              >
+                                {t("Bulk RFQ")}
+                              </Button>
+                            </Stack>
                           </TableCell>
                         </TableRow>
                       );
@@ -427,7 +451,29 @@ const MarketPricesPage = ({ configData }) => {
                               </Typography>
                             </Box>
                           </Stack>
-                          <Chip size="small" label={row.source_platform} sx={{ mt: 1.5, fontSize: "11px" }} />
+                          <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1} sx={{ mt: 1.5 }} flexWrap="wrap" useFlexGap>
+                            <Chip size="small" label={row.source_platform} sx={{ fontSize: "11px" }} />
+                            <Stack direction="row" spacing={0.75}>
+                              <Button
+                                component={Link}
+                                href={`/search?search_value=${encodeURIComponent(row.commodity || "")}`}
+                                size="small"
+                                variant="contained"
+                                sx={{ fontSize: "11.5px", py: 0.35, px: 1.25, textTransform: "none", borderRadius: "7px" }}
+                              >
+                                {t("Shop")}
+                              </Button>
+                              <Button
+                                component={Link}
+                                href={`/trade?commodity=${encodeURIComponent(row.commodity || "")}&unit=${encodeURIComponent(row.unit || "")}#rfq`}
+                                size="small"
+                                variant="outlined"
+                                sx={{ fontSize: "11.5px", py: 0.35, px: 1.1, textTransform: "none", borderRadius: "7px" }}
+                              >
+                                {t("Bulk RFQ")}
+                              </Button>
+                            </Stack>
+                          </Stack>
                         </CardContent>
                       </Card>
                     );

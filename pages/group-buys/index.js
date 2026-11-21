@@ -52,6 +52,8 @@ const GroupBuysPage = ({ configData }) => {
   const [tab, setTab] = useState(0);
   const [status, setStatus] = useState("open");
   const [country, setCountry] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("almost_full");
   const [createOpen, setCreateOpen] = useState(false);
   const [prefillItem, setPrefillItem] = useState(null);
   const [editingGroup, setEditingGroup] = useState(null);
@@ -80,7 +82,30 @@ const GroupBuysPage = ({ configData }) => {
     isError: mineError,
     refetch: refetchMine,
   } = useGetMyGroupBuys(tab === 1);
-  const groups = data?.data?.data || [];
+  const rawGroups = data?.data?.data || [];
+  const normalizedSearch = searchQuery.trim().toLowerCase();
+  const groups = [...rawGroups]
+    .filter((g) => {
+      if (!normalizedSearch) return true;
+      const hay = `${g?.item?.name || ""} ${g?.title || ""} ${g?.store?.name || ""} ${g?.destination_country || ""}`.toLowerCase();
+      return hay.includes(normalizedSearch);
+    })
+    .sort((a, b) => {
+      if (sortBy === "almost_full") {
+        const pctA = Number(a?.shares_taken || 0) / Math.max(1, Number(a?.target_shares || 5));
+        const pctB = Number(b?.shares_taken || 0) / Math.max(1, Number(b?.target_shares || 5));
+        return pctB - pctA;
+      }
+      if (sortBy === "lowest_price") {
+        return Number(a?.share_price || a?.unit_price || 0) - Number(b?.share_price || b?.unit_price || 0);
+      }
+      if (sortBy === "ending_soon") {
+        const expA = a?.expires_at ? new Date(a.expires_at).getTime() : Number.MAX_SAFE_INTEGER;
+        const expB = b?.expires_at ? new Date(b.expires_at).getTime() : Number.MAX_SAFE_INTEGER;
+        return expA - expB;
+      }
+      return Number(b?.id || 0) - Number(a?.id || 0);
+    });
   const myGroups = mine || [];
 
   return (
@@ -116,14 +141,44 @@ const GroupBuysPage = ({ configData }) => {
               </Button>
             </Stack>
 
-            <Tabs value={tab} onChange={(_, value) => setTab(value)} sx={{ mb: 3 }}>
+            <Tabs value={tab} onChange={(_, value) => setTab(value)} sx={{ mb: 2 }}>
               <Tab label="Discover groups" />
               <Tab label="My groups" />
             </Tabs>
 
+            <Stack
+              direction={{ xs: "column", sm: "row" }}
+              spacing={1.25}
+              sx={{
+                mb: 2.5,
+                p: 1.5,
+                borderRadius: "10px",
+                bgcolor: "background.paper",
+                border: "1px solid",
+                borderColor: "divider",
+              }}
+            >
+              <Typography variant="caption" color="text.secondary" sx={{ flex: 1 }}>
+                <strong>1. Pick a share</strong> — Join an open group or start one for any bulk item.
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ flex: 1 }}>
+                <strong>2. Group fills</strong> — Invite friends on WhatsApp to hit the target shares.
+              </Typography>
+              <Typography variant="caption" color="text.secondary" sx={{ flex: 1 }}>
+                <strong>3. Unlock bulk price</strong> — Individual delivery and no charge until full.
+              </Typography>
+            </Stack>
+
             {tab === 0 ? (
               <>
                 <Stack direction="row" flexWrap="wrap" alignItems="center" gap={1.25} sx={{ mb: 2.5 }}>
+                  <TextField
+                    size="small"
+                    placeholder="Search produce or store..."
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    sx={{ minWidth: { xs: "100%", sm: 210 }, flex: { sm: "1 1 210px" }, maxWidth: { sm: 280 } }}
+                  />
                   {activeModuleId && (
                     <Chip
                       clickable
@@ -135,6 +190,19 @@ const GroupBuysPage = ({ configData }) => {
                       sx={{ fontWeight: 600 }}
                     />
                   )}
+                  <TextField
+                    select
+                    size="small"
+                    label="Sort"
+                    value={sortBy}
+                    onChange={(event) => setSortBy(event.target.value)}
+                    sx={{ minWidth: { xs: 135, sm: 155 } }}
+                  >
+                    <MenuItem value="almost_full">Almost full</MenuItem>
+                    <MenuItem value="ending_soon">Ending soon</MenuItem>
+                    <MenuItem value="lowest_price">Lowest share price</MenuItem>
+                    <MenuItem value="newest">Newest</MenuItem>
+                  </TextField>
                   <TextField
                     select
                     size="small"
