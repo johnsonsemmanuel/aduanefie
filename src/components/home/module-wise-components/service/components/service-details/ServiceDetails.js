@@ -7,10 +7,16 @@ import {
   Chip,
   Divider,
   Grid,
+  MenuItem,
+  Select,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import dayjs from "dayjs";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import CallIcon from "@mui/icons-material/Call";
 import StorefrontIcon from "@mui/icons-material/Storefront";
@@ -29,6 +35,26 @@ const OLIVE_GREEN = "#8B9F69";
 const WARM_SAND = "#EFE7D3";
 
 export const SERVICE_BOOKING_DRAFT_KEY = "aduanefie_service_booking";
+
+// Tapping a time field on mobile normally opens the keyboard. Offer fixed
+// 30-minute slots instead, matching the checkout scheduling sheet.
+const SERVICE_TIME_SLOTS = Array.from({ length: 48 }, (_, index) => {
+  const hours = String(Math.floor(index / 2)).padStart(2, "0");
+  const minutes = index % 2 === 0 ? "00" : "30";
+  return `${hours}:${minutes}`;
+});
+
+// dayjs only parses "HH:mm" with the customParseFormat plugin, which is not
+// registered here. Format the fixed slots directly so we never render
+// "Invalid Date" in the picker.
+const formatTimeSlot = (value) => {
+  const [hours, minutes] = String(value || "").split(":");
+  const hourNumber = Number(hours);
+  if (!Number.isFinite(hourNumber) || minutes === undefined) return value || "";
+  const suffix = hourNumber >= 12 ? "PM" : "AM";
+  const displayHour = hourNumber % 12 === 0 ? 12 : hourNumber % 12;
+  return `${displayHour}:${minutes} ${suffix}`;
+};
 
 export default function ServiceProductDetails({ serviceDetailsData }) {
   const { t } = useTranslation();
@@ -253,32 +279,50 @@ export default function ServiceProductDetails({ serviceDetailsData }) {
             </Stack>
 
             <Stack spacing={2}>
-              <Grid container spacing={2}>
-                <Grid item xs={7}>
-                  <TextField
-                    fullWidth
-                    required
-                    type="date"
-                    label={t("Preferred Date")}
-                    InputLabelProps={{ shrink: true }}
-                    inputProps={{ min: defaultDate }}
-                    value={scheduleDate}
-                    onChange={(e) => setScheduleDate(e.target.value)}
-                    sx={{ bgcolor: "#FFFFFF" }}
-                  />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <Grid container spacing={2}>
+                  <Grid item xs={7}>
+                    <DatePicker
+                      label={t("Preferred Date")}
+                      value={scheduleDate ? dayjs(scheduleDate) : null}
+                      minDate={dayjs(defaultDate)}
+                      onChange={(newValue) =>
+                        setScheduleDate(
+                          newValue?.isValid() ? newValue.format("YYYY-MM-DD") : "",
+                        )
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          fullWidth
+                          required
+                          sx={{ bgcolor: "#FFFFFF" }}
+                        />
+                      )}
+                    />
+                  </Grid>
+                  <Grid item xs={5}>
+                    <Select
+                      fullWidth
+                      value={scheduleTime || ""}
+                      displayEmpty
+                      label={t("Start Time")}
+                      inputProps={{ "aria-label": t("Start Time") }}
+                      renderValue={(value) =>
+                        value ? formatTimeSlot(value) : t("Select time")
+                      }
+                      onChange={(e) => setScheduleTime(e.target.value)}
+                      sx={{ bgcolor: "#FFFFFF" }}
+                    >
+                      {SERVICE_TIME_SLOTS.map((slot) => (
+                        <MenuItem key={slot} value={slot}>
+                          {formatTimeSlot(slot)}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </Grid>
                 </Grid>
-                <Grid item xs={5}>
-                  <TextField
-                    fullWidth
-                    type="time"
-                    label={t("Start Time")}
-                    InputLabelProps={{ shrink: true }}
-                    value={scheduleTime}
-                    onChange={(e) => setScheduleTime(e.target.value)}
-                    sx={{ bgcolor: "#FFFFFF" }}
-                  />
-                </Grid>
-              </Grid>
+              </LocalizationProvider>
 
               <TextField
                 fullWidth

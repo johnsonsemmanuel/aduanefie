@@ -2,6 +2,8 @@ import { useTheme } from "@emotion/react";
 import { Clear } from "@mui/icons-material";
 import { Box, Dialog, Drawer, Stack, useMediaQuery } from "@mui/material";
 import PropTypes from "prop-types";
+import { MOBILE_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
+
 const CustomModal = (props) => {
   const {
     openModal,
@@ -26,7 +28,7 @@ const CustomModal = (props) => {
     }
   };
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isMobile = useMediaQuery(MOBILE_LAYOUT_MEDIA_QUERY);
 
   const closeButtonNode = closeButton && (
     <Stack direction="row" justifyContent="flex-end">

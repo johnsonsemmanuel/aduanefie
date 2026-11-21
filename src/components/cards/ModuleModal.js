@@ -180,7 +180,7 @@ const ModuleModal = (props) => {
         }}
         aria-hidden
       >
-        <i className="fi fi-rr-utensils" style={{ display: "flex" }} />
+        <i className="fi fi-rr-box-open" style={{ display: "flex" }} />
       </Box>
       <Typography fontSize="18px" fontWeight={700} color="text.primary">
         {t("Item not found")}

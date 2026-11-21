@@ -3,8 +3,12 @@ import { get_wish_list_api } from "../../../ApiRoutes";
 import MainApi from "../../../MainApi";
 import { getCurrentModuleId } from "helper-functions/getCurrentModuleType";
 import { getApiContent } from "../../../getApiContent";
+import { getToken } from "helper-functions/getToken";
 
 const getData = async (params = {}) => {
+  // Customer wish-lists are private. Never send the request without a token —
+  // guests produce a console 401 on every page that mounts this hook.
+  if (!getToken()) return undefined;
   const { search = "", sort_by, price_min, price_max, rating, type, quick_action } = params;
 
   const raw = { search, sort_by, price_min, price_max, rating, type, quick_action };
@@ -26,8 +30,8 @@ const getData = async (params = {}) => {
  */
 export const useWishListGet = (params = {}, enabled = false, onSuccess) => {
   const moduleId = typeof window !== "undefined" ? getCurrentModuleId() : null;
-  return useQuery(["wishlist", moduleId, params], () => getData(params), {
-    enabled,
+  return useQuery(["wishlist", getToken(), moduleId, params], () => getData(params), {
+    enabled: enabled && !!getToken(),
     retry: false,
     onSuccess,
   });

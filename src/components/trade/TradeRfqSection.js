@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
+  Alert,
   Box,
   Button,
   Checkbox,
   Chip,
-  Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
@@ -28,6 +28,8 @@ import {
   useGetTradeRfqs,
   useSubmitRfqQuote,
 } from "api-manage/hooks/react-query/trade/useTradeRfqs";
+import CustomModal from "components/modal";
+import { TRADE_COUNTRIES, UNIT_OPTIONS } from "utils/tradeOptions";
 
 const INITIAL_FORM = {
   buyer_name: "",
@@ -89,7 +91,7 @@ const TradeRfqSection = () => {
     notes: "",
   });
 
-  const { data: rfqData, isLoading } = useGetTradeRfqs("all");
+  const { data: rfqData, isLoading, isError: rfqError, refetch: refetchRfqs } = useGetTradeRfqs("all");
   const { mutate: createRfq, isLoading: isSubmitting } = useCreateTradeRfq();
   const { mutate: submitQuote, isLoading: isSubmittingQuote } = useSubmitRfqQuote();
 
@@ -149,7 +151,7 @@ const TradeRfqSection = () => {
   };
 
   return (
-    <Box sx={{ mt: { xs: "28px", md: "44px" } }}>
+    <Box id="rfq" sx={{ mt: { xs: "28px", md: "44px" } }}>
       <Typography
         component="h2"
         sx={{
@@ -242,14 +244,20 @@ const TradeRfqSection = () => {
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    required
-                    label={t("Unit (e.g. 100 kg bag / MT)")}
-                    value={form.unit}
-                    onChange={(e) => setForm({ ...form, unit: e.target.value })}
-                  />
+                  <FormControl fullWidth size="small" required>
+                    <InputLabel>{t("Unit")}</InputLabel>
+                    <Select
+                      value={form.unit}
+                      label={t("Unit")}
+                      onChange={(e) => setForm({ ...form, unit: e.target.value })}
+                    >
+                      {UNIT_OPTIONS.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {t(option.label)}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
@@ -292,14 +300,20 @@ const TradeRfqSection = () => {
                   </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    required
-                    label={t("Destination Country")}
-                    value={form.destination_country}
-                    onChange={(e) => setForm({ ...form, destination_country: e.target.value })}
-                  />
+                  <FormControl fullWidth size="small" required>
+                    <InputLabel>{t("Destination Country")}</InputLabel>
+                    <Select
+                      value={form.destination_country}
+                      label={t("Destination Country")}
+                      onChange={(e) => setForm({ ...form, destination_country: e.target.value })}
+                    >
+                      {TRADE_COUNTRIES.map((country) => (
+                        <MenuItem key={country.code} value={country.name}>
+                          {t(country.name)}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                   <TextField
@@ -368,6 +382,13 @@ const TradeRfqSection = () => {
 
             {isLoading ? (
               <Typography sx={{ color: "text.secondary", fontSize: "14px" }}>{t("Loading RFQs...")}</Typography>
+            ) : rfqError ? (
+              <Alert
+                severity="error"
+                action={<Button size="small" onClick={() => refetchRfqs()}>{t("Retry")}</Button>}
+              >
+                {t("Could not load sourcing requests.")}
+              </Alert>
             ) : rfqs.length === 0 ? (
               <Typography sx={{ color: "text.secondary", fontSize: "14px", py: 3 }}>
                 {t("No open RFQs yet. Be the first buyer to post a bulk agro sourcing request.")}
@@ -419,7 +440,12 @@ const TradeRfqSection = () => {
         </Grid>
       </Grid>
 
-      <Dialog open={Boolean(quoteModalRfq)} onClose={() => setQuoteModalRfq(null)} fullWidth maxWidth="xs">
+      <CustomModal
+        openModal={Boolean(quoteModalRfq)}
+        handleClose={() => setQuoteModalRfq(null)}
+        closeButton
+        maxWidth="xs"
+      >
         <DialogTitle>
           {t("Submit Supplier Quote")} — #{quoteModalRfq?.id}
         </DialogTitle>
@@ -475,7 +501,7 @@ const TradeRfqSection = () => {
             </Button>
           </DialogActions>
         </Box>
-      </Dialog>
+      </CustomModal>
     </Box>
   );
 };

@@ -11,7 +11,6 @@ import { createTheme } from "theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import { RTL } from "components/rtl";
 import { Toaster } from "react-hot-toast";
-import { getServerSideProps } from "./welcome";
 import { SettingsConsumer, SettingsProvider } from "contexts/settings-context";
 import "../src/language/i18n";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -24,7 +23,6 @@ import useScrollToTop from "../src/api-manage/hooks/custom-hooks/useScrollToTop"
 import { useEffect } from "react";
 import ModuleChecker from "../src/components/module-select/ModuleChecker";
 import ProSubscriptionExpiredModal from "../src/components/pro-plan/ProSubscriptionExpiredModal";
-import App from "next/app";
 
 Router.events.on("routeChangeStart", nProgress.start);
 Router.events.on("routeChangeError", nProgress.done);
@@ -32,6 +30,9 @@ Router.events.on("routeChangeComplete", nProgress.done);
 
 export const currentVersion = process.env.NEXT_PUBLIC_SITE_VERSION;
 const clientSideEmotionCache = createEmotionCache();
+// Start persistence once, not on every render. SettingsProvider already reads
+// the theme cookie on the client, so `_app` does not need getInitialProps.
+persistStore(store);
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -57,9 +58,6 @@ function MyApp(props) {
   } = props;
   const getLayout = Component.getLayout ?? ((page) => page);
   const { t } = useTranslation();
-
-  // Persist store
-  let persistor = persistStore(store);
 
   // Version check
   useEffect(() => {
@@ -112,27 +110,3 @@ function MyApp(props) {
 }
 
 export default MyApp;
-export { getServerSideProps };
-
-const getThemeFromCookieHeader = (cookieHeader = "") => {
-  const match = cookieHeader.match(/(?:^|;\s*)themeMode=(dark|light)(?:;|$)/);
-  return match?.[1] || null;
-};
-
-MyApp.getInitialProps = async (appContext) => {
-  const appProps = await App.getInitialProps(appContext);
-  const cookieSource =
-    appContext?.ctx?.req?.headers?.cookie ||
-    (typeof document !== "undefined" ? document.cookie : "");
-
-  const cookieTheme = getThemeFromCookieHeader(cookieSource);
-
-  return {
-    ...appProps,
-    initialSettings: {
-      direction: "ltr",
-      responsiveFontSizes: true,
-      theme: cookieTheme === "dark" ? "dark" : "light",
-    },
-  };
-};

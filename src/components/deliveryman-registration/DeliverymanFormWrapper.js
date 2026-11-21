@@ -1,5 +1,5 @@
-import { Box, useTheme } from "@mui/system";
-import H4 from "components/typographies/H4";
+import { alpha, Box, shadows, useTheme } from "@mui/system";
+import { Typography } from "@mui/material";
 import React from "react";
 import { CustomBoxFullWidth } from "styled-components/CustomStyles.style";
 import { TitleTopSection } from "./CustomStylesDeliveryman";
@@ -7,25 +7,32 @@ import { TitleTopSection } from "./CustomStylesDeliveryman";
 const DeliverymanFormWrapper = ({ title, component }) => {
   const theme = useTheme();
   return (
-    <>
-      <CustomBoxFullWidth
+    <CustomBoxFullWidth
+      sx={{
+        bgcolor: (theme) => theme.palette.neutral[100],
+        mt: "20px",
+        borderRadius: "8px",
+        boxShadow: shadows[1],
+      }}
+    >
+      <TitleTopSection
         sx={{
-          bgcolor: (theme) => theme.palette.neutral[100],
-          mb: "30px",
-          borderRadius: "10px",
+          borderBottom: `1px solid ${alpha(theme.palette.neutral[400], 0.2)}`,
+          p: { xs: 1.2, sm: 2 },
         }}
       >
-        <TitleTopSection
-          sx={{
-            borderBottom: `1px solid ${theme.palette.neutral[200]}`,
-            padding: "1rem",
-          }}
+        <Typography
+          fontSize={{ xs: "16px", sm: "18px" }}
+          fontWeight="500"
+          textAlign="left"
         >
-          <H4 text={title} sx={{ fontWeight: "500", fontSize: "18px" }} />
-        </TitleTopSection>
-        <Box p={3} pt={4}>{component}</Box>
-      </CustomBoxFullWidth>
-    </>
+          {title}
+        </Typography>
+      </TitleTopSection>
+      <Box p={2} mt={2}>
+        {component}
+      </Box>
+    </CustomBoxFullWidth>
   );
 };
 

@@ -46,6 +46,10 @@ export default function SearchableSelect({
 
   const open = Boolean(anchorEl);
   const selectedOption = options.find((opt) => opt.id === value);
+  // A search box is only useful for long lists. Short lists (for example the
+  // four delivery instructions) should be tappable without raising the mobile
+  // keyboard over the options.
+  const showSearch = options.length > 6;
 
   const filteredOptions = useMemo(() => {
     if (!search.trim()) return options;
@@ -154,58 +158,61 @@ export default function SearchableSelect({
           },
         }}
       >
-        {/* Search bar */}
-        <Box
-          sx={{
-            position: "sticky",
-            top: 0,
-            zIndex: 1,
-            backgroundColor: theme.palette.background.paper,
-            borderBottom: `1px solid ${theme.palette.divider}`,
-            px: 1.5,
-            py: 1,
-          }}
-        >
-          <Stack
-            direction="row"
-            alignItems="center"
-            gap={1}
+        {/* Search bar — long lists only, so short option sets never raise
+            the mobile keyboard just to pick a value. */}
+        {showSearch && (
+          <Box
             sx={{
-              backgroundColor:
-                theme.palette.neutral?.[100] ||
-                alpha(theme.palette.text.primary, 0.04),
-              borderRadius: "8px",
-              px: 1.25,
-              height: "36px",
+              position: "sticky",
+              top: 0,
+              zIndex: 1,
+              backgroundColor: theme.palette.background.paper,
+              borderBottom: `1px solid ${theme.palette.divider}`,
+              px: 1.5,
+              py: 1,
             }}
           >
-            <i
-              className="fi fi-rr-search"
-              style={{
-                fontSize: "14px",
-                display: "flex",
-                lineHeight: 1,
-                color: theme.palette.text.secondary,
-              }}
-            />
-            <InputBase
-              autoFocus
-              fullWidth
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder={searchPlaceholder || t("Search...")}
+            <Stack
+              direction="row"
+              alignItems="center"
+              gap={1}
               sx={{
-                fontSize: "13px",
-                color: theme.palette.text.primary,
-                "& input::placeholder": {
-                  color:
-                    theme.palette.neutral?.[450] || theme.palette.text.disabled,
-                  opacity: 1,
-                },
+                backgroundColor:
+                  theme.palette.neutral?.[100] ||
+                  alpha(theme.palette.text.primary, 0.04),
+                borderRadius: "8px",
+                px: 1.25,
+                height: "36px",
               }}
-            />
-          </Stack>
-        </Box>
+            >
+              <i
+                className="fi fi-rr-search"
+                style={{
+                  fontSize: "14px",
+                  display: "flex",
+                  lineHeight: 1,
+                  color: theme.palette.text.secondary,
+                }}
+              />
+              <InputBase
+                fullWidth
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={searchPlaceholder || t("Search...")}
+                sx={{
+                  fontSize: "13px",
+                  color: theme.palette.text.primary,
+                  "& input::placeholder": {
+                    color:
+                      theme.palette.neutral?.[450] ||
+                      theme.palette.text.disabled,
+                    opacity: 1,
+                  },
+                }}
+              />
+            </Stack>
+          </Box>
+        )}
 
         {/* Options list */}
         <Box sx={{ overflowY: "auto", py: 0.5 }}>

@@ -10,10 +10,24 @@ import { useGetAgroPrices } from "api-manage/hooks/react-query/trade/useGetAgroP
 const AgroPriceTickerBar = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const { data } = useGetAgroPrices();
+  const { data, isError } = useGetAgroPrices();
   const prices = data?.prices || [];
 
-  if (prices.length === 0) return null;
+  if (prices.length === 0) {
+    if (isError) {
+      return (
+        <Box sx={{ maxWidth: "1320px", mx: "auto", px: { xs: "16px", md: 0 }, my: "10px" }}>
+          <Typography sx={{ fontSize: "12px", color: "text.secondary" }}>
+            {t("Market prices are temporarily unavailable. ")}
+            <Button component={Link} href="/market-prices" size="small" sx={{ minWidth: 0, p: 0 }}>
+              {t("Check market prices")}
+            </Button>
+          </Typography>
+        </Box>
+      );
+    }
+    return null;
+  }
 
   const tickerItems = [...prices, ...prices];
 

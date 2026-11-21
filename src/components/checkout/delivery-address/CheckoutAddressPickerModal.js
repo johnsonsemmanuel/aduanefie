@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
-  Dialog,
   DialogContent,
   Divider,
   IconButton,
@@ -18,6 +17,7 @@ import AddressSelectionList from "./AddressSelectionList";
 import useGetGeoCode from "api-manage/hooks/react-query/google-api/useGetGeoCode";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { ModuleTypes } from "helper-functions/moduleTypes";
+import CustomModal from "components/modal";
 
 const MapModal = dynamic(() => import("components/Map/MapModal"));
 
@@ -100,15 +100,7 @@ const CheckoutAddressPickerModal = ({
 
   return (
     <>
-      <Dialog
-        open={open}
-        onClose={onClose}
-        maxWidth="xs"
-        fullWidth
-        PaperProps={{
-          sx: { borderRadius: "16px", p: 0 },
-        }}
-      >
+      <CustomModal openModal={open} handleClose={onClose} maxWidth="xs">
         <DialogContent sx={{ p: "16px 16px 20px" }}>
           <Stack spacing={2}>
             {/* Header */}
@@ -226,7 +218,7 @@ const CheckoutAddressPickerModal = ({
 
           </Stack>
         </DialogContent>
-      </Dialog>
+      </CustomModal>
 
       {openMapModal && (
         <MapModal

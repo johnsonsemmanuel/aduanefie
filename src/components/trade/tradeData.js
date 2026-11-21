@@ -1,16 +1,13 @@
-// Static copy of the four regional trade blocs seeded by
-// soft/database/seeders/TradeBlocSeeder.php. It is used only as a fallback so
-// the /trade pages stay useful until the trade API is deployed; when the live
-// endpoints answer, their data replaces this list.
+// Regional trade blocs come from the live read-only trade API. The old seeded
+// list is retained below only for legacy imports; it must not be shown as
+// current data now that /api/v1/trade/blocs is deployed.
 
 export const WHOLESALE_MODULE_ID = 2;
 
-// Phase one shows seeded bloc/corridor copy. The read-only trade API exists in
-// the backend codebase but is not deployed on the live host yet, so its calls
-// 404 and only add console noise. Keep them off until the service ships, then
-// set NEXT_PUBLIC_TRADE_API_ENABLED=true and rebuild.
+// Enable live trade reads by default. Operators can still force them off with
+// NEXT_PUBLIC_TRADE_API_ENABLED=false during an API outage.
 export const TRADE_API_ENABLED =
-  process.env.NEXT_PUBLIC_TRADE_API_ENABLED === "true";
+  process.env.NEXT_PUBLIC_TRADE_API_ENABLED !== "false";
 
 export const FALLBACK_TRADE_BLOCS = [
   {

@@ -3,30 +3,34 @@ import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { CustomDatePicker } from "../CheckOut.style";
-import { styled, Switch, TextField, Typography } from "@mui/material";
+import {
+  MenuItem,
+  Select,
+  styled,
+  Switch,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Stack } from "@mui/system";
 import { t } from "i18next";
 import moment from "moment/moment";
 import { getDayNumber } from "utils/CustomFunctions";
 
-const TimeInput = styled(TextField)(({ theme }) => ({
-  border: "none",
+// Fixed 30-minute slots avoid a mobile text keyboard just to enter a time.
+const TIME_SLOTS = Array.from({ length: 48 }, (_, index) => {
+  const hours = String(Math.floor(index / 2)).padStart(2, "0");
+  const minutes = index % 2 === 0 ? "00" : "30";
+  return `${hours}:${minutes}`;
+});
+
+const TimeSelect = styled(Select)(() => ({
   background: "rgba(118, 118, 128, 0.12)",
   borderRadius: "5px",
-  input: {
-    padding: "5px 0px",
-    textAlign: "center",
-    "&::-webkit-calendar-picker-indicator": {
-      display: "none",
-    },
-    "&::-webkit-datetime-edit-ampm-field": {
-      display: "none",
-    },
-  },
-  "& .MuiOutlinedInput-notchedOutline": {
-    border: "none",
-  },
+  fontSize: "14px",
+  "& .MuiOutlinedInput-notchedOutline": { border: "none" },
+  "& .MuiSelect-select": { padding: "5px 28px 5px 10px" },
 }));
+
 const MaterialUISwitch = styled(Switch)(({ theme, timeValue }) => ({
   width: 100,
   height: 30,
@@ -131,11 +135,21 @@ const ScheduleDelivery = ({ customDispatch, scheduleTime, setDayNumber }) => {
             {t("Time")}
           </Typography>
           <Stack direction="row" spacing={1.7}>
-            <TimeInput
-              type="time"
-              value={scheduleTime}
+            <TimeSelect
+              value={scheduleTime || ""}
+              displayEmpty
+              inputProps={{ "aria-label": t("Time") }}
+              renderValue={(value) =>
+                value ? moment(value, "HH:mm").format("h:mm A") : t("Select time")
+              }
               onChange={(e) => handleChange(e)}
-            />
+            >
+              {TIME_SLOTS.map((slot) => (
+                <MenuItem key={slot} value={slot}>
+                  {moment(slot, "HH:mm").format("h:mm A")}
+                </MenuItem>
+              ))}
+            </TimeSelect>
 
             <MaterialUISwitch
               timeValue={timeValue}

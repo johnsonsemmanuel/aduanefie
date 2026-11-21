@@ -12,7 +12,7 @@ import {
   onErrorResponse,
   onSingleErrorResponse,
 } from "api-manage/api-error-response/ErrorResponses";
-import { getGuestId } from "helper-functions/getToken";
+import { getGuestId, getToken } from "helper-functions/getToken";
 import { RecaptchaVerifier, signInWithPhoneNumber } from "firebase/auth";
 import { useWishListGet } from "api-manage/hooks/react-query/wish-list/useWishListGet";
 import { loginSuccessFull } from "utils/toasterMessages";
@@ -82,7 +82,7 @@ const AuthModal = ({
   };
 
   const { refetch: profileRefatch } = useQuery(
-    ["profile-info"],
+    ["profile-info", getToken()],
     ProfileApi.profileInfo,
     {
       enabled: false,

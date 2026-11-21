@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
-  Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
@@ -13,6 +12,8 @@ import {
 import toast from "react-hot-toast";
 import { useCreateGroupBuy } from "api-manage/hooks/react-query/group-buy/useGroupBuys";
 import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
+import CustomModal from "components/modal";
+import { DESTINATION_COUNTRY_CODES } from "utils/tradeOptions";
 
 const CreateGroupBuyDialog = ({ open, onClose, item, onCreated }) => {
   const [form, setForm] = useState({
@@ -58,13 +59,18 @@ const CreateGroupBuyDialog = ({ open, onClose, item, onCreated }) => {
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="xs">
+    <CustomModal
+      openModal={open}
+      handleClose={onClose}
+      closeButton
+      maxWidth="xs"
+    >
       <DialogTitle>Start a shared group buy</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 0.5 }}>
           <Typography variant="body2" color="text.secondary">
-            Pick a pooled target and how many people share it. ₵2,000 is only an
-            example — use any amount that fits the item.
+            Pick a pooled target and how many people share it. GH₵2,000 is only
+            an example — use any amount that fits the item.
           </Typography>
           <TextField
             label="Item ID"
@@ -100,14 +106,21 @@ const CreateGroupBuyDialog = ({ open, onClose, item, onCreated }) => {
             ))}
           </TextField>
           <TextField
+            select
             label="Destination country (optional)"
             size="small"
             fullWidth
             value={form.destination_country}
             onChange={update("destination_country")}
-            inputProps={{ maxLength: 2 }}
-            helperText="Two-letter code, e.g. NG for Nigeria. Leave blank for local delivery."
-          />
+            helperText="Leave blank for local delivery."
+          >
+            <MenuItem value="">Local delivery</MenuItem>
+            {DESTINATION_COUNTRY_CODES.map((code) => (
+              <MenuItem key={code} value={code}>
+                {code}
+              </MenuItem>
+            ))}
+          </TextField>
         </Stack>
       </DialogContent>
       <DialogActions>
@@ -116,7 +129,7 @@ const CreateGroupBuyDialog = ({ open, onClose, item, onCreated }) => {
           {isLoading ? "Creating…" : "Create group"}
         </Button>
       </DialogActions>
-    </Dialog>
+    </CustomModal>
   );
 };
 

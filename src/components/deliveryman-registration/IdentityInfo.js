@@ -131,6 +131,7 @@ const IdentityInfo = ({
               }}
             >
               {t("Identity Image")}
+              <span style={{ color: "red" }}>*</span>
             </InputLabel>
             <Typography fontSize="10px">
             ({t("JPG, JPEG, PNG, WEBP Less Than 1MB Ratio 1:1, Max 6 Images")})
@@ -142,8 +143,20 @@ const IdentityInfo = ({
             totalFiles={identityImage}
             maxFileSize={1024 * 1024}
             supportedFileFormats={supportedFormatMultiImages}
-            acceptedFileInputFormat={acceptedFileInputFormat}
+            acceptedFileInput={acceptedFileInputFormat}
           />
+          {deliveryManFormik.touched.identity_image &&
+            deliveryManFormik.errors.identity_image && (
+              <Typography
+                sx={{
+                  fontSize: "12px",
+                  fontWeight: "inherit",
+                  color: (theme) => theme.palette.error.main,
+                }}
+              >
+                {deliveryManFormik.errors.identity_image}
+              </Typography>
+            )}
         </CustomStackFullWidth>
       </CustomBoxFullWidth>
     </>

@@ -93,6 +93,12 @@ const CustomMultiSelect = ({
 					placeholder={t(placeholder)}
 					error={Boolean(touched && errors)}
 					helperText={touched && t(errors)}
+					inputProps={{
+						...params.inputProps,
+						// This is a picker, not a text field. readOnly keeps the
+						// chip list tappable without raising the mobile keyboard.
+						readOnly: true,
+					}}
 					InputProps={{
 						...params.InputProps,
 

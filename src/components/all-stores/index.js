@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Box,
+  Button,
   Grid,
   IconButton,
   Pagination,
@@ -64,7 +66,13 @@ const AllStores = () => {
   const { data: categoriesRes } = useGetCategories("");
   const categories = categoriesRes?.data ?? [];
 
-  const { data, isFetching, isLoading } = useGetStoresWithoutInfiniteScroll({
+  const {
+    data,
+    isFetching,
+    isLoading,
+    isError,
+    refetch,
+  } = useGetStoresWithoutInfiniteScroll({
     type: "all",
     offset: page,
     limit: PAGE_LIMIT,
@@ -185,6 +193,14 @@ const AllStores = () => {
             </Grid>
           ))}
         </Grid>
+      ) : isError ? (
+        <Alert
+          severity="error"
+          action={<Button size="small" onClick={() => refetch()}>{t("Retry")}</Button>}
+          sx={{ my: 3 }}
+        >
+          {t("Could not load stores. Please try again.")}
+        </Alert>
       ) : stores.length === 0 ? (
         <Stack alignItems="center" sx={{ py: 6 }}>
           <CustomEmptyResult

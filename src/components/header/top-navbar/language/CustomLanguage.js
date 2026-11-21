@@ -6,7 +6,6 @@ import {
   Grid,
   ListItemIcon,
   MenuItem,
-  Modal,
   Stack,
   Typography,
 } from "@mui/material";
@@ -25,10 +24,10 @@ import {
   setLanguage,
 } from "../../../../redux/slices/configData";
 import {
-  CustomModalWrapper,
   CustomPaperBigCard,
   CustomStackFullWidth,
 } from "../../../../styled-components/CustomStyles.style";
+import CustomModal from "components/modal";
 import { StyledMenu, TopBarButton } from "../../NavBar.style";
 import { languageList } from "./languageList";
 import { haveRtlLanguages } from "./rtlLanguageList";
@@ -231,13 +230,15 @@ const CustomLanguage = ({
           </MenuItem>
         ))}
       </StyledMenu>
-      {openModal && (
-        <Modal open={openModal} onClose={handleCloseModal}>
-          <CustomModalWrapper>
-            <CustomPaperBigCard
-              noboxshadow="true"
-              sx={{ width: { xs: "300px", sm: "400px", md: "500px" } }}
-            >
+      <CustomModal
+        openModal={openModal}
+        closeButton
+        handleClose={handleCloseModal}
+      >
+        <CustomPaperBigCard
+          noboxshadow="true"
+          sx={{ width: "100%" }}
+        >
               <CustomStackFullWidth
                 spacing={2}
                 alignItems="center"
@@ -282,11 +283,9 @@ const CustomLanguage = ({
                     </CustomStackFullWidth>
                   </Grid>
                 </Grid>
-              </CustomStackFullWidth>
-            </CustomPaperBigCard>
-          </CustomModalWrapper>
-        </Modal>
-      )}
+            </CustomStackFullWidth>
+        </CustomPaperBigCard>
+      </CustomModal>
     </>
   );
 };

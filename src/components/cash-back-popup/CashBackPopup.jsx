@@ -7,6 +7,7 @@ import useGetCashbackList from "api-manage/hooks/react-query/cashback/useGetCash
 import { CustomDateFormat } from "components/date-and-time-formators/CustomDateFormat";
 import CloseIcon from "components/icons/CloseIcon";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
+import { getToken } from "helper-functions/getToken";
 import { t } from "i18next";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -26,7 +27,7 @@ const CashBackPopup = () => {
   const { cashbackList } = useSelector((state) => state.cashbackList);
 
   useEffect(() => {
-    if (!cashbackList) refetch();
+    if (!cashbackList && getToken()) refetch();
   }, []);
 
   useEffect(() => {

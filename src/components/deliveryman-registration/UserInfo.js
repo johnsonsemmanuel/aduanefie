@@ -350,6 +350,7 @@ const UserInfo = ({
                   }}
                 >
                   {t("Profile Image")}
+                  <span style={{ color: "red" }}>*</span>
                 </InputLabel>
                 <Typography fontSize="10px" mb="1rem">
                   {t("JPG, JPEG, PNG,WEBP Less Than 1MB (Ratio 2:1)")}
@@ -365,6 +366,18 @@ const UserInfo = ({
                   error={deliveryManFormik.errors.image}
                 // borderRadius={borderRadius ?? "50%"}
                 />
+                {deliveryManFormik.touched.image &&
+                  deliveryManFormik.errors.image && (
+                    <Typography
+                      sx={{
+                        fontSize: "12px",
+                        fontWeight: "inherit",
+                        color: (theme) => theme.palette.error.main,
+                      }}
+                    >
+                      {deliveryManFormik.errors.image}
+                    </Typography>
+                  )}
               </Stack>
             </Box>
           </Grid>

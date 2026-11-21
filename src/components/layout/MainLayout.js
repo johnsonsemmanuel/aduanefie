@@ -59,6 +59,9 @@ const FULL_BLEED_MOBILE_ROUTES = new Set([
   "/trade",
   "/trade/blocs",
   "/trade/blocs/[slug]",
+  "/market-prices",
+  "/group-buys",
+  "/group-buys/[id]",
   // Section + category pages use their own MobileNavBar variant
   "/home/[...slug]",
   "/home/category/[slug]",

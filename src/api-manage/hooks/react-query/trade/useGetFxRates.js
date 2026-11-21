@@ -1,23 +1,31 @@
 import { useQuery } from "react-query";
 import MainApi from "api-manage/MainApi";
 
-const FALLBACK_FX = {
-  base: "GHS",
-  rates: { GHS: 1, USD: 0.068, NGN: 108, XOF: 41.5, KES: 8.8, ZAR: 1.24 },
-  symbols: { GHS: "GH₵", USD: "$", NGN: "₦", XOF: "CFA ", KES: "KSh ", ZAR: "R" },
+// Currency symbols are static presentation data, not a rate. Rates must come
+// from the API — a hard-coded "fallback rate" would be shown as if it were
+// current when the trade service is down.
+const CURRENCY_SYMBOLS = {
+  GHS: "GH₵",
+  USD: "$",
+  NGN: "₦",
+  XOF: "CFA ",
+  KES: "KSh ",
+  ZAR: "R",
 };
 
 export const useGetFxRates = () => {
   return useQuery(
     ["trade-fx-rates"],
     async () => {
-      try {
-        const { data } = await MainApi.get("/api/v1/trade/fx-rates");
-        return data?.rates ? data : FALLBACK_FX;
-      } catch {
-        return FALLBACK_FX;
+      const { data } = await MainApi.get("/api/v1/trade/fx-rates");
+      if (!data?.rates) {
+        throw new Error("Live exchange rates are not available");
       }
+      return {
+        ...data,
+        symbols: { ...CURRENCY_SYMBOLS, ...(data.symbols || {}) },
+      };
     },
-    { staleTime: 1000 * 60 * 30 }
+    { staleTime: 1000 * 60 * 30, retry: false }
   );
 };

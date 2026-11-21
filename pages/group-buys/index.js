@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
+  Alert,
   Box,
   Button,
   CssBaseline,
@@ -15,6 +16,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import CustomContainer from "components/container";
 import MainLayout from "components/layout/MainLayout";
+import SimpleMobileHeader from "components/common/SimpleMobileHeader";
 import SEO from "components/seo";
 import GroupBuyCard from "components/group-buy/GroupBuyCard";
 import CreateGroupBuyDialog from "components/group-buy/CreateGroupBuyDialog";
@@ -23,6 +25,7 @@ import { getCommonServerSideProps } from "utils/serverSidePropsHelper";
 import { useDispatch } from "react-redux";
 import { useGetConfigData } from "api-manage/hooks/useGetConfigData";
 import { setConfigData } from "redux/slices/configData";
+import { DESTINATION_COUNTRY_CODES } from "utils/tradeOptions";
 
 const GroupBuysPage = ({ configData }) => {
   const dispatch = useDispatch();
@@ -52,8 +55,13 @@ const GroupBuysPage = ({ configData }) => {
     }
   }, [router.query.item_id]);
 
-  const { data, isLoading } = useGetGroupBuys({ status, country });
-  const { data: mine } = useGetMyGroupBuys(tab === 1);
+  const { data, isLoading, isError, refetch } = useGetGroupBuys({ status, country });
+  const {
+    data: mine,
+    isLoading: mineLoading,
+    isError: mineError,
+    refetch: refetchMine,
+  } = useGetMyGroupBuys(tab === 1);
   const groups = data?.data?.data || [];
   const myGroups = mine || [];
 
@@ -66,6 +74,7 @@ const GroupBuysPage = ({ configData }) => {
         configData={effectiveConfig}
       />
       <MainLayout configData={effectiveConfig}>
+        <SimpleMobileHeader title="Group Buys" backHref="/trade" />
         <CustomContainer>
           <Box sx={{ py: { xs: 3, md: 5 } }}>
             <Stack
@@ -110,17 +119,31 @@ const GroupBuysPage = ({ configData }) => {
                     <MenuItem value="all">All</MenuItem>
                   </TextField>
                   <TextField
+                    select
                     size="small"
-                    label="Destination (e.g. NG)"
+                    label="Destination"
                     value={country}
-                    onChange={(event) => setCountry(event.target.value.toUpperCase())}
-                    inputProps={{ maxLength: 2 }}
+                    onChange={(event) => setCountry(event.target.value)}
                     sx={{ minWidth: 200 }}
-                  />
+                  >
+                    <MenuItem value="">All destinations</MenuItem>
+                    {DESTINATION_COUNTRY_CODES.map((code) => (
+                      <MenuItem key={code} value={code}>
+                        {code}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Stack>
 
                 {isLoading ? (
                   <Typography color="text.secondary">Loading groups…</Typography>
+                ) : isError ? (
+                  <Alert
+                    severity="error"
+                    action={<Button size="small" onClick={() => refetch()}>Retry</Button>}
+                  >
+                    Could not load shared buying groups.
+                  </Alert>
                 ) : groups.length ? (
                   <Grid container spacing={2}>
                     {groups.map((group) => (
@@ -135,6 +158,15 @@ const GroupBuysPage = ({ configData }) => {
                   </Typography>
                 )}
               </>
+            ) : mineLoading ? (
+              <Typography color="text.secondary">Loading your groups…</Typography>
+            ) : mineError ? (
+              <Alert
+                severity="error"
+                action={<Button size="small" onClick={() => refetchMine()}>Retry</Button>}
+              >
+                Could not load your groups.
+              </Alert>
             ) : myGroups.length ? (
               <Grid container spacing={2}>
                 {myGroups.map((group) => (

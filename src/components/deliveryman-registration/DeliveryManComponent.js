@@ -1,4 +1,4 @@
-import { alpha, Box } from "@mui/material";
+import { alpha, Box, useMediaQuery } from "@mui/material";
 import H1 from "components/typographies/H1";
 import { CustomButton } from "styled-components/CustomStyles.style";
 import { useTranslation } from "react-i18next";
@@ -16,7 +16,6 @@ import { useRouter } from "next/router";
 import {
   ActonButtonsSection,
   FormSection,
-  RegistrationCardWrapper,
   TitleTopSection,
 } from "./CustomStylesDeliveryman";
 import { objectToFormData } from "helper-functions/objectToFormData";
@@ -32,6 +31,8 @@ const DeliveryManComponent = ({
   useScrollToTop();
   const router = useRouter();
   const { t } = useTranslation();
+  // Shared 1180px mobile breakpoint (same one the vendor step-0 action bar uses).
+  const isBottomMenu = useMediaQuery("(max-width: 1180px)");
   const [image, setImage] = useState("");
   const [identityImage, setIdentityImage] = useState("");
   const { mutate: registerDeliveryman, isLoading } =
@@ -154,14 +155,13 @@ const DeliveryManComponent = ({
           text={t(applicationTitle)}
           sx={{
             fontWeight: "700",
-            fontSize: { xs: "26px", md: "36px" },
-            mt: "20px",
-            lineHeight: "36px",
+            fontSize: { xs: "18px", md: "36px" },
+            mt: "1rem",
           }}
         />
       </TitleTopSection>
 
-      <form onSubmit={deliveryManFormik.handleSubmit}>
+      <form noValidate onSubmit={deliveryManFormik.handleSubmit}>
         <Box mt={4}>
           <FormSection>
             <DeliverymanFormWrapper
@@ -204,7 +204,15 @@ const DeliveryManComponent = ({
             />
           </FormSection>
 
-          <ActonButtonsSection>
+          <Box
+            mt="1rem"
+            sx={{
+              position: "sticky",
+              bottom: isBottomMenu ? "66px" : "0",
+              zIndex: 999,
+            }}
+          >
+            <ActonButtonsSection sx={{ display: "inline-flex !important" }}>
             <CustomButton
               onClick={handleReset}
               disabled={isLoading}
@@ -235,7 +243,8 @@ const DeliveryManComponent = ({
             >
               {t(isLoading ? "Submitting..." : "Submit Information")}
             </CustomButton>
-          </ActonButtonsSection>
+            </ActonButtonsSection>
+          </Box>
         </Box>
       </form>
     </>

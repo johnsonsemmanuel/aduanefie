@@ -4,4 +4,7 @@
 export const isModuleAgnosticRoute = (pathname) =>
   pathname === "/welcome" ||
   pathname === "/trade" ||
-  pathname?.startsWith("/trade/");
+  pathname?.startsWith("/trade/") ||
+  pathname === "/market-prices" ||
+  pathname === "/group-buys" ||
+  pathname?.startsWith("/group-buys/");

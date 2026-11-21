@@ -87,9 +87,9 @@ const PaymentSummaryCard = ({
     refetch: refetchOfflinePaymentOptions,
   } = useGetOfflinePaymentOptions();
   const { data: customerData } = useQuery(
-    ["profile-info"],
+    ["profile-info", token],
     ProfileApi.profileInfo,
-    { enabled: openPaymentModal, onError: onSingleErrorResponse }
+    { enabled: openPaymentModal && !!token, onError: onSingleErrorResponse }
   );
 
   useEffect(() => {

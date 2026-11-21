@@ -404,7 +404,7 @@ const SearchResultStoreCard = ({ store, items = [], showAdBadge = false }) => {
             className={`fi ${
               currentModule === ModuleTypes.SERVICE
                 ? "fi-rr-sign-posts-wrench"
-                : "fi-rr-restaurant"
+                : "fi-rr-leaf"
             }`}
             style={{
               fontSize: "16px",

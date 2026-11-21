@@ -1,6 +1,6 @@
 import React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
-import { Box, Typography } from "@mui/material";
+import { Alert, Box, Button, Typography } from "@mui/material";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import MainLayout from "../../../src/components/layout/MainLayout";
@@ -10,15 +10,13 @@ import SEO from "../../../src/components/seo";
 import { processMetadata } from "utils/fetchPageMetaData";
 import { getCommonServerSideProps } from "utils/serverSidePropsHelper";
 import { useTradeBlocs } from "api-manage/hooks/react-query/trade/useTradeData";
-import { FALLBACK_TRADE_BLOCS } from "components/trade/tradeData";
 import BlocCard from "components/trade/BlocCard";
 
 const TradeBlocs = ({ configData, metaData }) => {
   const { t } = useTranslation();
   const router = useRouter();
-  const { data } = useTradeBlocs();
-  // Keep the seeded bloc copy visible while the trade service is not live.
-  const blocs = data?.length ? data : FALLBACK_TRADE_BLOCS;
+  const { data, isError, refetch } = useTradeBlocs();
+  const blocs = data || [];
 
   const metadata = processMetadata(metaData, {
     title: `Trade blocs - ${configData?.business_name}`,
@@ -79,13 +77,26 @@ const TradeBlocs = ({ configData, metaData }) => {
                 gap: "16px",
               }}
             >
-              {blocs.map((bloc) => (
-                <BlocCard
-                  key={bloc.slug}
-                  bloc={bloc}
-                  onOpen={(item) => router.push(`/trade/blocs/${item.slug}`)}
-                />
-              ))}
+              {isError ? (
+                <Alert
+                  severity="error"
+                  action={<Button size="small" onClick={() => refetch()}>{t("Retry")}</Button>}
+                >
+                  {t("Could not load regional trade blocs.")}
+                </Alert>
+              ) : blocs.length === 0 ? (
+                <Typography color="text.secondary">
+                  {t("No regional trade blocs have been published yet.")}
+                </Typography>
+              ) : (
+                blocs.map((bloc) => (
+                  <BlocCard
+                    key={bloc.slug}
+                    bloc={bloc}
+                    onOpen={(item) => router.push(`/trade/blocs/${item.slug}`)}
+                  />
+                ))
+              )}
             </Box>
           </Box>
         </CustomContainer>

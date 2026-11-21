@@ -192,7 +192,7 @@ const ExpressStoreCard = ({
         ) : (
           <EmptyItems>
             <i
-              className="fi fi-rr-restaurant"
+              className="fi fi-rr-leaf"
               style={{
                 fontSize: "16px",
                 lineHeight: 1,

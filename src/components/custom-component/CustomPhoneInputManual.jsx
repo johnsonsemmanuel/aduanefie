@@ -192,7 +192,7 @@ const CustomPhoneInputManual = ({
               }}
               value={value}
               onChange={(e) => changeHandler(e.target.value)}
-              autoFocus={true}
+              autoFocus={false}
             />
           </>
         )}

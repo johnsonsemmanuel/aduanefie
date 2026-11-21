@@ -95,7 +95,7 @@ const MobileTopMenu = ({
     latest: {
       text: `${latest} ${getStoresOrRestaurants()}`,
       items: latestStore?.stores?.slice(0, 12)?.map((i) => i),
-      path:  getCurrentModuleType() === "rental" ? "/rental/provider-details" : "/store",
+      path:  getCurrentModuleType() === "rental" ? "/rental/provider-details" : "/all-stores",
     },
     popularStore: {
       text: `${popular} ${getStoresOrRestaurants()}`,

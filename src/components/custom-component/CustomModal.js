@@ -1,42 +1,22 @@
-import { Modal, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
-import { CustomModalWrapper } from "../../styled-components/CustomStyles.style";
+import SharedCustomModal from "components/modal";
 
+// Legacy API wrapper: callers pass `setModalOpen`, the shared sheet primitive
+// takes `handleClose`. Routing through the shared primitive gives every
+// consumer the same mobile bottom-sheet behaviour.
 const CustomModal = ({
-	openModal,
-	setModalOpen,
-	children,
-	disableAutoFocus,
-}) => {
-	const theme = useTheme();
-	const matches = useMediaQuery(theme.breakpoints.up("sm"));
-
-	const handleClose = (event, reason) => {
-		if (reason && reason == "backdropClick") {
-			if (disableAutoFocus) {
-				return;
-			} else {
-				setModalOpen?.(false);
-			}
-		} else {
-			setModalOpen?.(false);
-		}
-	};
-	return (
-		<div>
-			<Modal
-				open={openModal}
-				onClose={handleClose}
-				aria-labelledby="modal-modal-title"
-				aria-describedby="modal-modal-description"
-				disableAutoFocus={disableAutoFocus}
-				backDrop
-			>
-				<CustomModalWrapper>{children}</CustomModalWrapper>
-			</Modal>
-		</div>
-	);
-};
-// CustomModal.propTypes = {};
+  openModal,
+  setModalOpen,
+  children,
+  disableAutoFocus,
+}) => (
+  <SharedCustomModal
+    openModal={openModal}
+    handleClose={() => setModalOpen?.(false)}
+    disableAutoFocus={disableAutoFocus}
+  >
+    {children}
+  </SharedCustomModal>
+);
 
 export default CustomModal;

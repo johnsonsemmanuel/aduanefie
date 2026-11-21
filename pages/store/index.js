@@ -1,30 +1,17 @@
-import React from "react";
-import CssBaseline from "@mui/material/CssBaseline";
-import MainLayout from "../../src/components/layout/MainLayout";
-import StoresWithFilter from "../../src/components/home/stores-with-filter";
-import { getServerSideProps } from "../index";
-import SEO from "../../src/components/seo";
-import { getImageUrl } from "utils/CustomFunctions";
-
-const AllStore = ({ configData, landingPageData }) => {
-  return (
-    <>
-      <CssBaseline />
-      <SEO
-        title={configData ? `Store` : "Loading..."}
-        image={`${getImageUrl(
-          { value: configData?.logo_storage },
-          "logo_full_url",
-          configData
-        )}/${configData?.fav_icon}`}
-        businessName={configData?.business_name}
-      />
-      <MainLayout configData={configData} landingPageData={landingPageData}>
-        <StoresWithFilter />
-      </MainLayout>
-    </>
-  );
+// `/store` was a legacy alias that redirected to /home before rendering
+// anything. Keep the bookmark working, but send users to the real store grid.
+export const getServerSideProps = async ({ query }) => {
+  const module = query.module
+    ? `?module=${encodeURIComponent(query.module)}`
+    : "";
+  return {
+    redirect: {
+      destination: `/all-stores${module}`,
+      permanent: false,
+    },
+  };
 };
 
-export default AllStore;
-export { getServerSideProps };
+export default function StoreRedirect() {
+  return null;
+}

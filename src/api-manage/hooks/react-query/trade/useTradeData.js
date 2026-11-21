@@ -5,12 +5,10 @@ import {
   trade_blocs_api,
   trade_corridors_by_bloc_api,
 } from "../../../ApiRoutes";
-import { findFallbackBloc, TRADE_API_ENABLED } from "components/trade/tradeData";
+import { TRADE_API_ENABLED } from "components/trade/tradeData";
 
-// Trade endpoints are read-only and optional in phase one: while the trade
-// service is not deployed, the queries stay disabled so they don't 404 on
-// every page view. Set NEXT_PUBLIC_TRADE_API_ENABLED=true once the backend
-// ships; until then the seeded fallback copy is shown instead.
+// Trade endpoints are live and read-only. This flag only exists as an operator
+// escape hatch for outages; seeded data is never substituted for API results.
 const TRADE_QUERY_OPTIONS = {
   retry: 0,
   refetchOnWindowFocus: false,
@@ -50,10 +48,12 @@ export const useTradeBlocCorridors = (slug) =>
     enabled: TRADE_API_ENABLED && Boolean(slug),
   });
 
+// Legacy hook name kept for call sites. It now returns only live API data —
+// no seeded substitute that could be mistaken for current information.
 export const useTradeBlocWithFallback = (slug) => {
   const query = useTradeBloc(slug);
   return {
     ...query,
-    bloc: query.data ?? findFallbackBloc(slug),
+    bloc: query.data ?? null,
   };
 };

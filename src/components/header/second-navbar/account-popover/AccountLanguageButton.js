@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, ListItemIcon, MenuItem, Modal, Typography } from "@mui/material";
+import { Box, ListItemIcon, MenuItem, Typography } from "@mui/material";
 import cookie from "js-cookie";
 import i18n, { t } from "i18next";
 import { useRouter } from "next/router";
@@ -12,10 +12,10 @@ import {
   setLanguage,
 } from "../../../../redux/slices/configData";
 import {
-  CustomModalWrapper,
   CustomPaperBigCard,
   CustomStackFullWidth,
 } from "../../../../styled-components/CustomStyles.style";
+import CustomModal from "components/modal";
 import { StyledMenu } from "../../NavBar.style";
 import { languageList } from "../../top-navbar/language/languageList";
 import { haveRtlLanguages } from "../../top-navbar/language/rtlLanguageList";
@@ -184,23 +184,22 @@ const AccountLanguageButton = () => {
         ))}
       </StyledMenu>
 
-      {openModal && (
-        <Modal
-          open={openModal}
-          onClose={() => {
-            setSelectedLanguage(null);
-            setOpenModal(false);
+      <CustomModal
+        openModal={openModal}
+        closeButton
+        handleClose={() => {
+          setSelectedLanguage(null);
+          setOpenModal(false);
+        }}
+      >
+        <CustomPaperBigCard
+          noboxshadow="true"
+          sx={{
+            width: "100%",
+            borderRadius: "16px",
+            p: { xs: 2, sm: 3 },
           }}
         >
-          <CustomModalWrapper>
-            <CustomPaperBigCard
-              noboxshadow="true"
-              sx={{
-                width: { xs: "300px", sm: "400px", md: "440px" },
-                borderRadius: "16px",
-                p: { xs: 2.5, sm: 3 },
-              }}
-            >
               <CustomStackFullWidth spacing={2.5} alignItems="center">
                 <Box
                   sx={{
@@ -288,11 +287,9 @@ const AccountLanguageButton = () => {
                     {t("Yes")}
                   </CustomButtonPrimary>
                 </Box>
-              </CustomStackFullWidth>
-            </CustomPaperBigCard>
-          </CustomModalWrapper>
-        </Modal>
-      )}
+          </CustomStackFullWidth>
+        </CustomPaperBigCard>
+      </CustomModal>
     </>
   );
 };

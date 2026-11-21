@@ -9,15 +9,15 @@ import CustomContainer from "../../src/components/container";
 import SEO from "../../src/components/seo";
 import { processMetadata } from "utils/fetchPageMetaData";
 import { getCommonServerSideProps } from "utils/serverSidePropsHelper";
-import {
-  FALLBACK_TRADE_BLOCS,
-  getWholesaleMarketHref,
-} from "components/trade/tradeData";
+import { getWholesaleMarketHref } from "components/trade/tradeData";
 import TradeRfqSection from "components/trade/TradeRfqSection";
+import { useTradeBlocs } from "api-manage/hooks/react-query/trade/useTradeData";
 
 const TradeHub = ({ configData, metaData }) => {
   const { t } = useTranslation();
   const router = useRouter();
+  const { data: blocsData } = useTradeBlocs();
+  const liveBlocs = blocsData || [];
   const metadata = processMetadata(metaData, {
     title: `Trade - ${configData?.business_name}`,
     description:
@@ -142,7 +142,7 @@ const TradeHub = ({ configData, metaData }) => {
                 sx={{ mt: "6px", fontSize: "14px", color: "text.secondary" }}
               >
                 {t(
-                  "Start sourcing today. Quote requests and protected payments are being prepared next."
+                  "Post a bulk RFQ and receive quotes from verified farms and cooperatives, with Trade Assurance-backed shipments."
                 )}
               </Typography>
 
@@ -243,7 +243,7 @@ const TradeHub = ({ configData, metaData }) => {
                 gap="10px"
                 sx={{ mt: "14px" }}
               >
-                {FALLBACK_TRADE_BLOCS.map((bloc) => (
+                {liveBlocs.map((bloc) => (
                   <Chip
                     key={bloc.slug}
                     label={bloc.shortName || bloc.slug?.toUpperCase() || bloc.name}

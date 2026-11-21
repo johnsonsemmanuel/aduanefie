@@ -13,7 +13,8 @@ const unwrap = (request) =>
 export const ProfileApi = {
   profileInfo: () => {
     const token = getToken();
-    return token && unwrap(MainApi.get("/api/v1/customer/info"));
+    if (!token) return Promise.resolve(null);
+    return unwrap(MainApi.get("/api/v1/customer/info"));
   },
   profileUpdate: (profileData) =>
     unwrap(MainApi.post("/api/v1/customer/update-profile", profileData)),

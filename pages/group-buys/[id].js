@@ -15,6 +15,7 @@ import {
 } from "@mui/material";
 import CustomContainer from "components/container";
 import MainLayout from "components/layout/MainLayout";
+import SimpleMobileHeader from "components/common/SimpleMobileHeader";
 import SEO from "components/seo";
 import { getGuestId } from "helper-functions/getToken";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
@@ -128,6 +129,7 @@ const GroupBuyDetailPage = ({ configData }) => {
         configData={effectiveConfig}
       />
       <MainLayout configData={effectiveConfig}>
+        <SimpleMobileHeader title="Group Buy" backHref="/group-buys" />
         <CustomContainer>
           <Box sx={{ py: { xs: 3, md: 5 } }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>

@@ -484,9 +484,10 @@ const ItemCheckout = (props) => {
   );
   const userOnSuccessHandler = (res) => {};
   const { isLoading: customerLoading, data: customerData } = useQuery(
-    ["profile-info"],
+    ["profile-info", token],
     ProfileApi.profileInfo,
     {
+      enabled: !!token,
       onSuccess: userOnSuccessHandler,
       onError: onSingleErrorResponse,
     },

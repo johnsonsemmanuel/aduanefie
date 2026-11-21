@@ -338,16 +338,24 @@ const TradeBlocDetail = ({ slug, configData, metaData }) => {
                 </Typography>
                 <Typography sx={{ mt: "4px", fontSize: "13.5px", color: "text.secondary" }}>
                   {t(
-                    "Shop the wholesale market now. Quote requests for cross-border shipments are coming next."
+                    "Shop wholesale commodities or post a bulk RFQ for cross-border shipments and receive quotes from verified suppliers."
                   )}
                 </Typography>
               </Box>
-              <Button
-                variant="contained"
-                onClick={() => router.push(getWholesaleMarketHref())}
-              >
-                {t("Shop Wholesale Market")}
-              </Button>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
+                <Button
+                  variant="outlined"
+                  onClick={() => router.push("/trade#rfq")}
+                >
+                  {t("Post a bulk RFQ")}
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => router.push(getWholesaleMarketHref())}
+                >
+                  {t("Shop Wholesale Market")}
+                </Button>
+              </Stack>
             </Box>
           </Box>
         </CustomContainer>
