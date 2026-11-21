@@ -41,7 +41,7 @@ const LiveFarmingPage = ({ configData }) => {
       <MainLayout configData={effectiveConfig}>
         <SimpleMobileHeader title="Live Farming" backHref="/home" />
         <CustomContainer>
-          <Box sx={{ pt: { xs: 1.5, md: 4 }, pb: { xs: 3, md: 5 } }}>
+          <Box sx={{ pt: { xs: 1, md: 3 }, pb: { xs: 3, md: 5 } }}>
             <LiveFarmingSection limit={24} showViewAll={false} hideIfEmpty={false} />
           </Box>
         </CustomContainer>

@@ -48,7 +48,7 @@ const DEFAULT_REGIONS = [
   "Upper West",
 ];
 
-const RegionalToursPage = ({ configData }) => {
+const RegionalToursPage = ({ configData, initialTours = [], initialRegions = DEFAULT_REGIONS }) => {
   const router = useRouter();
   const dispatch = useDispatch();
   const { data: dataConfig, refetch: configRefetch } = useGetConfigData();
@@ -64,9 +64,9 @@ const RegionalToursPage = ({ configData }) => {
 
   const effectiveConfig = configData || dataConfig;
 
-  const [tours, setTours] = useState([]);
-  const [regions, setRegions] = useState(DEFAULT_REGIONS);
-  const [loading, setLoading] = useState(true);
+  const [tours, setTours] = useState(initialTours);
+  const [regions, setRegions] = useState(initialRegions?.length ? initialRegions : DEFAULT_REGIONS);
+  const [loading, setLoading] = useState(initialTours.length === 0);
   const [submitting, setSubmitting] = useState(false);
   const [submittedMsg, setSubmittedMsg] = useState("");
   const [selectedTourId, setSelectedTourId] = useState("");
@@ -171,28 +171,18 @@ const RegionalToursPage = ({ configData }) => {
             <Paper
               elevation={0}
               sx={{
-                p: { xs: 2, md: 3.5 },
-                borderRadius: "16px",
+                p: { xs: 2, md: 2.5 },
+                borderRadius: "14px",
                 bgcolor: (theme) => theme.palette.primary.deep || "#67513A",
                 color: "#FFFFFF",
-                mb: 3,
+                mb: 2.5,
               }}
             >
-              <Chip
-                size="small"
-                label="Field Onboarding & Farmer Engagement"
-                sx={{
-                  bgcolor: (theme) => theme.palette.primary.main || "#8B9F69",
-                  color: "#FFFFFF",
-                  fontWeight: 600,
-                  mb: 1,
-                }}
-              />
-              <Typography variant="h4" sx={{ fontWeight: 700, fontSize: { xs: "1.35rem", md: "1.95rem" }, mb: 0.75 }}>
-                Aduanefie Regional Farmer Tours
+              <Typography variant="h5" sx={{ fontWeight: 700, fontSize: { xs: "1.2rem", md: "1.55rem" }, mb: 0.35 }}>
+                Regional Farmer Tours
               </Typography>
-              <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.88)", maxWidth: 680 }}>
-                Register for an upcoming regional tour stop or request our field team and regional marketers to visit your farming community for live onboarding, verification, and market access.
+              <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.88)" }}>
+                Register for an upcoming stop or request a field visit in your region.
               </Typography>
             </Paper>
 
@@ -377,5 +367,36 @@ const RegionalToursPage = ({ configData }) => {
   );
 };
 
-export const getServerSideProps = getCommonServerSideProps;
+export const getServerSideProps = async (context) => {
+  const base = await getCommonServerSideProps(context);
+  let initialTours = [];
+  let initialRegions = DEFAULT_REGIONS;
+  try {
+    const apiBase = process.env.NEXT_PUBLIC_BASE_URL || "https://api.aduanefie.com";
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 3500);
+    const res = await fetch(`${apiBase}/api/v1/regional-tours`, {
+      headers: { Accept: "application/json" },
+      signal: ctrl.signal,
+    });
+    clearTimeout(timer);
+    if (res.ok) {
+      const json = await res.json();
+      initialTours = json?.tours || [];
+      if (Array.isArray(json?.regions) && json.regions.length > 0) {
+        initialRegions = json.regions;
+      }
+    }
+  } catch {
+    // fallback to client fetch
+  }
+  return {
+    ...base,
+    props: {
+      ...(base?.props || {}),
+      initialTours,
+      initialRegions,
+    },
+  };
+};
 export default RegionalToursPage;

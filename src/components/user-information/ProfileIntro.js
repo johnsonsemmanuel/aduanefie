@@ -481,7 +481,7 @@ const ProfileIntro = ({
           { label: t("My Group Buys"), path: "/group-buys" },
           { label: t("Live Farms"), path: "/live-farming" },
           { label: t("Monthly Orders"), path: "/profile?page=monthly-cart-list" },
-          { label: t("Regional Tours"), path: "/regional-tours" },
+          { label: t("Track Order"), path: "/track-order" },
         ].map((action) => (
           <Button
             key={action.path}

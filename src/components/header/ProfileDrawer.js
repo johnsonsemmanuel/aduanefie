@@ -13,13 +13,19 @@ import useGetGroupedCart from "../../api-manage/hooks/react-query/add-cart/useGe
 import AccountMenuPanel from "./second-navbar/account-popover/AccountMenuPanel";
 import { CustomButtonPrimary } from "styled-components/CustomButtons.style";
 
-const QUICK_EXPLORE_LINKS = [
-  { label: "Group Buys", path: "/group-buys" },
-  { label: "Live Farming", path: "/live-farming" },
-  { label: "Regional Tours", path: "/regional-tours" },
-  { label: "Become a Marketer", path: "/become-a-marketer" },
-  { label: "Market Prices", path: "/market-prices" },
-  { label: "B2B Trade", path: "/trade" },
+const MARKETPLACE_LINKS = [
+  { label: "Home", path: "/home", icon: "fi fi-rr-home" },
+  { label: "Group Buys", path: "/group-buys", icon: "fi fi-rr-users-alt" },
+  { label: "Live Farming", path: "/live-farming", icon: "fi fi-rr-leaf" },
+  { label: "Market Prices", path: "/market-prices", icon: "fi fi-rr-chart-line-up" },
+  { label: "B2B Trade", path: "/trade", icon: "fi fi-rr-globe" },
+  { label: "Track Order", path: "/track-order", icon: "fi fi-rr-truck-side" },
+];
+
+const PARTNER_SUPPORT_LINKS = [
+  { label: "Become a Marketer", path: "/become-a-marketer", icon: "fi fi-rr-briefcase" },
+  { label: "Register Farm / Store", path: "/store-registration", icon: "fi fi-rr-shop" },
+  { label: "Help & Support", path: "/help-and-support", icon: "fi fi-rr-headset" },
 ];
 
 const ProfileDrawer = ({ open, onClose, onSignInClick }) => {
@@ -121,12 +127,12 @@ const ProfileDrawer = ({ open, onClose, onSignInClick }) => {
           gap: "12px",
         }}
       >
-        {/* Quick marketplace navigation */}
+        {/* Clear, visible mobile marketplace navigation */}
         <Box
           sx={{
             backgroundColor: "background.paper",
             borderRadius: "14px",
-            p: "12px 14px",
+            p: "14px",
             border: `1px solid ${theme.palette.divider}`,
           }}
         >
@@ -134,25 +140,79 @@ const ProfileDrawer = ({ open, onClose, onSignInClick }) => {
             sx={{
               fontSize: "12px",
               fontWeight: 700,
-              color: "text.secondary",
+              color: theme.palette.primary.deep || "text.primary",
+              textTransform: "uppercase",
+              letterSpacing: "0.4px",
+              mb: 1.25,
+            }}
+          >
+            {t("Marketplace")}
+          </Typography>
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+              gap: "8px",
+            }}
+          >
+            {MARKETPLACE_LINKS.map((item) => (
+              <Box
+                key={item.path}
+                onClick={() => {
+                  onClose?.();
+                  router.push(item.path);
+                }}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  px: "10px",
+                  py: "10px",
+                  borderRadius: "10px",
+                  bgcolor: theme.palette.background.secondary || "#EFE7D3",
+                  color: theme.palette.primary.deep || "#67513A",
+                  cursor: "pointer",
+                  "&:active": { opacity: 0.85 },
+                }}
+              >
+                <i className={item.icon} style={{ fontSize: "15px", lineHeight: 1, display: "flex" }} />
+                <Typography sx={{ fontSize: "12.5px", fontWeight: 600, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {t(item.label)}
+                </Typography>
+              </Box>
+            ))}
+          </Box>
+
+          <Typography
+            sx={{
+              fontSize: "12px",
+              fontWeight: 700,
+              color: theme.palette.primary.deep || "text.primary",
+              textTransform: "uppercase",
+              letterSpacing: "0.4px",
+              mt: 1.75,
               mb: 1,
             }}
           >
-            {t("Explore Aduanefie")}
+            {t("Partners & Support")}
           </Typography>
           <Stack direction="row" flexWrap="wrap" gap={0.75}>
-            {QUICK_EXPLORE_LINKS.map((item) => (
+            {PARTNER_SUPPORT_LINKS.map((item) => (
               <Chip
                 key={item.path}
                 label={t(item.label)}
                 size="small"
                 clickable
-                variant="outlined"
                 onClick={() => {
                   onClose?.();
                   router.push(item.path);
                 }}
-                sx={{ fontWeight: 600, fontSize: "12px" }}
+                sx={{
+                  fontWeight: 600,
+                  fontSize: "12px",
+                  bgcolor: theme.palette.primary.deep || "#67513A",
+                  color: "#FFFFFF",
+                }}
               />
             ))}
           </Stack>
