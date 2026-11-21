@@ -222,3 +222,10 @@ Route::group(['prefix' => 'group-buys', 'as' => 'customer.group-buys.'], functio
     Route::get('my', 'CustomerGroupBuyController@my')->name('my');
     Route::post('{id}/leave', 'CustomerGroupBuyController@leave')->name('leave');
 });
+
+// Backyard farming - customer application layer
+Route::group(['prefix' => 'backyard-farmer', 'as' => 'backyard-farmer.'], function () {
+    Route::get('apply', 'BackyardFarmerController@apply')->name('apply');
+    Route::post('apply', 'BackyardFarmerController@store')->name('store');
+    Route::get('status/{id}', 'BackyardFarmerController@status')->name('status');
+});

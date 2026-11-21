@@ -383,6 +383,18 @@ class Helpers
 
                 self::attachAgroLifecycleFields($item);
 
+                $badges = [];
+                if ((bool) ($item['is_backyard'] ?? false)) {
+                    $badges[] = ['label' => 'Backyard Grown', 'type' => 'backyard', 'color' => '#2e7d32'];
+                }
+                if ((string) ($item['farming_status'] ?? '') === 'harvest_ready') {
+                    $badges[] = ['label' => 'Harvest Ready', 'type' => 'harvest_ready', 'color' => '#1565c0'];
+                }
+                if ((string) ($item['farming_status'] ?? '') === 'farming') {
+                    $badges[] = ['label' => 'Currently Farming', 'type' => 'farming', 'color' => '#f9a825'];
+                }
+                $item['badges'] = $badges;
+
                 unset($item['nutritions']);
                 unset($item['allergies']);
                 unset($item['generic']);
@@ -459,7 +471,7 @@ class Helpers
 
             $data['nutritions_name']= $data?->nutritions ? Nutrition::whereIn('id',$data?->nutritions->pluck('id') )->pluck('nutrition') : null;
             $data['allergies_name']= $data?->allergies ?Allergy::whereIn('id',$data?->allergies->pluck('id') )->pluck('allergy') : null;
-            $data['generic_name']= $data?->generic ? GenericName::whereIn('id',$data?->generic->pluck('id') )->pluck('generic_name'): null ;
+            $data['generic_name']= $data?->generic ? GenericName::whereIn('id',$data?->generic->pluck('id') )->get(['generic_name','id']) : null ;
 
             if($temp_product == true){
                 $data['tags']=Tag::whereIn('id',json_decode($data?->tag_ids) )->get(['tag','id']);
@@ -471,6 +483,18 @@ class Helpers
             $data->store['self_delivery_system'] = (int) $data->store->sub_self_delivery;
 
             self::attachAgroLifecycleFields($data);
+
+            $badges = [];
+            if ((bool) ($data['is_backyard'] ?? false)) {
+                $badges[] = ['label' => 'Backyard Grown', 'type' => 'backyard', 'color' => '#2e7d32'];
+            }
+            if ((string) ($data['farming_status'] ?? '') === 'harvest_ready') {
+                $badges[] = ['label' => 'Harvest Ready', 'type' => 'harvest_ready', 'color' => '#1565c0'];
+            }
+            if ((string) ($data['farming_status'] ?? '') === 'farming') {
+                $badges[] = ['label' => 'Currently Farming', 'type' => 'farming', 'color' => '#f9a825'];
+            }
+            $data['badges'] = $badges;
 
             unset($data['pharmacy_item_details']);
             unset($data['store']);

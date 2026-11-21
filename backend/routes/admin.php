@@ -343,6 +343,12 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
             Route::post('release-escrow/{id}', 'GroupBuyController@releaseEscrow')->name('release-escrow');
         });
 
+        Route::group(['prefix' => 'backyard-farmers', 'as' => 'backyard-farmers.', 'middleware' => ['module:settings', 'actch']], function () {
+            Route::get('/', 'BackyardFarmerController@adminIndex')->name('index');
+            Route::post('verify/{id}', 'BackyardFarmerController@verify')->name('verify');
+            Route::post('approve/{id}', 'BackyardFarmerController@approve')->name('approve');
+        });
+
         Route::group(['prefix' => 'footer-links', 'as' => 'footer-links.', 'middleware' => ['module:settings']], function () {
             Route::get('/', 'FooterLinkController@index')->name('index');
             Route::post('update', 'FooterLinkController@update')->name('update');

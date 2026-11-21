@@ -16,7 +16,12 @@
             </p>
         </div>
         <a href="{{ route('customer.group-buys.index') }}" class="btn btn-outline-secondary btn-sm">Back to groups</a>
+        <button class="btn btn-outline-primary btn-sm" onclick="copyGroupLink()" id="copyBtn">
+            <i class="tio-link"></i> Share Group
+        </button>
     </div>
+
+    <input type="hidden" id="groupLink" value="{{ route('customer.group-buys.show', $group->id) }}">
 
     @if ($group->status === 'open' && ! $participant)
         @include('customer.group-buys.partials.consent_modal', ['group' => $group])
@@ -154,6 +159,14 @@
                         @endif
                     @endif
                 </div>
+
+                @if ($group->closes_at)
+                    <div class="card-footer bg-transparent border-0 p-3">
+                        <h6 class="mb-2">Group Closes In</h6>
+                        <div class="countdown-display font-weight-bold text-primary" id="countdown" data-end="{{ $group->closes_at->format('Y-m-d H:i:s') }}">--:--:--</div>
+                        <div class="text-muted small mt-1">After this time, no more members can join.</div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -165,6 +178,41 @@
     document.addEventListener('DOMContentLoaded', function () {
         var consentModal = new bootstrap.Modal(document.getElementById('consentModal'));
         consentModal.show();
+
+        // Countdown timer
+        var endEl = document.getElementById('countdown');
+        if (endEl) {
+            var endTime = new Date(endEl.getAttribute('data-end')).getTime();
+            function updateCountdown() {
+                var now = new Date().getTime();
+                var diff = endTime - now;
+                if (diff <= 0) {
+                    endEl.textContent = 'Group closed';
+                    return;
+                }
+                var h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                var s = Math.floor((diff % (1000 * 60)) / 1000);
+                endEl.textContent =
+                    (h < 10 ? '0' : '') + h + ':' +
+                    (m < 10 ? '0' : '') + m + ':' +
+                    (s < 10 ? '0' : '') + s;
+            }
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        }
+
+        // Copy group link
+        window.copyGroupLink = function () {
+            var linkEl = document.getElementById('groupLink');
+            var btn = document.getElementById('copyBtn');
+            if (!linkEl) return;
+            navigator.clipboard.writeText(linkEl.value).then(function () {
+                var orig = btn.innerHTML;
+                btn.innerHTML = '<i class="tio-check"></i> Copied!';
+                setTimeout(function () { btn.innerHTML = orig; }, 2000);
+            });
+        };
     });
 </script>
 @endpush
