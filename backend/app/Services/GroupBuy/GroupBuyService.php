@@ -431,6 +431,21 @@ class GroupBuyService
         ];
     }
 
+    /**
+     * Shareable links for a group buy: web URL + mobile deep link.
+     * Deep links open the group directly in the mobile app (aduanefie://),
+     * falling back to the web URL if the app isn't installed.
+     *
+     * @return array{web:string,deep:string}
+     */
+    public function shareLink(GroupBuy $group): array
+    {
+        $web = url(route('customer.group-buys.show', $group->id));
+        $deep = 'aduanefie://group-buy/' . $group->id;
+
+        return ['web' => $web, 'deep' => $deep];
+    }
+
     private function log(
         GroupBuy $group,
         string $event,

@@ -50,9 +50,10 @@ class CustomerGroupBuyController extends Controller
 
         $unitPrice = $this->groups->resolvedUnitPrice($group);
         $memberShare = round($unitPrice * $group->share_units, 2);
+        $shareLinks = $this->groups->shareLink($group);
 
         return view('customer.group-buys.show', compact(
-            'group', 'participant', 'unitPrice', 'memberShare', 'userId'
+            'group', 'participant', 'unitPrice', 'memberShare', 'userId', 'shareLinks'
         ));
     }
 

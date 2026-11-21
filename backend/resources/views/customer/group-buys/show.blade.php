@@ -21,7 +21,8 @@
         </button>
     </div>
 
-    <input type="hidden" id="groupLink" value="{{ route('customer.group-buys.show', $group->id) }}">
+    <input type="hidden" id="groupLink" value="{{ $shareLinks['deep'] ?? route('customer.group-buys.show', $group->id) }}">
+    <input type="hidden" id="groupLinkWeb" value="{{ route('customer.group-buys.show', $group->id) }}">
 
     @if ($group->status === 'open' && ! $participant)
         @include('customer.group-buys.partials.consent_modal', ['group' => $group])
@@ -205,12 +206,31 @@
         // Copy group link
         window.copyGroupLink = function () {
             var linkEl = document.getElementById('groupLink');
+            var webEl = document.getElementById('groupLinkWeb');
             var btn = document.getElementById('copyBtn');
             if (!linkEl) return;
-            navigator.clipboard.writeText(linkEl.value).then(function () {
+            var link = linkEl.value;
+            var webLink = webEl ? webEl.value : link;
+            navigator.clipboard.writeText(link).then(function () {
                 var orig = btn.innerHTML;
-                btn.innerHTML = '<i class="tio-check"></i> Copied!';
-                setTimeout(function () { btn.innerHTML = orig; }, 2000);
+                btn.innerHTML = '<i class="tio-check"></i> Copied (app link)!';
+                setTimeout(function () {
+                    btn.innerHTML = orig;
+                    // After 2s, offer the web link too
+                    var toast = document.createElement('div');
+                    toast.className = 'alert alert-success alert-dismissible fade show position-fixed';
+                    toast.style.bottom = '1rem';
+                    toast.style.right = '1rem';
+                    toast.style.zIndex = '9999';
+                    toast.innerHTML = '<strong>Deep link copied:</strong> ' + link +
+                        '<br><small class="text-muted">Web: ' + webLink + '</small>' +
+                        '<button type="button" class="close" data-bs-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+                    document.body.appendChild(toast);
+                    setTimeout(function () {
+                        var bsAlert = new bootstrap.Alert(toast);
+                        bsAlert.close();
+                    }, 5000);
+                }, 1500);
             });
         };
     });

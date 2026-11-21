@@ -9,12 +9,17 @@ use App\Models\Vendor;
 use App\Models\Store;
 use App\Models\User;
 use App\CentralLogics\Helpers;
+use App\Exports\BackyardFarmApplicationExport;
+use App\Mail\BackyardFarmApplicationMail;
+use App\Services\BackyardAnalyticsService;
 use Brian2694\Toastr\Facades\Toastr;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Str;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 /**
  * Backyard farming end-to-end layer.
@@ -87,6 +92,22 @@ class BackyardFarmerController extends Controller
             'status' => BackyardFarmApplication::STATUS_PENDING,
         ]);
 
+        // Email confirmation to the applicant
+        try {
+            Mail::to($request->email)->send(new BackyardFarmApplicationMail(
+                'email-templates.backyard.application-submitted',
+                [
+                    'farmName' => $application->farm_name,
+                    'sizeAcres' => $application->farm_size_acres,
+                    'primaryCrops' => $application->primary_crops,
+                    'submittedAt' => $application->created_at->format('M d, Y H:i'),
+                    'statusUrl' => route('backyard-farmer.status', $application->id) . '?email=' . urlencode($request->email) . '&phone=' . urlencode($request->phone),
+                ]
+            ));
+        } catch (\Throwable $e) {
+            // Email failures must not break the application flow.
+        }
+
         Toastr::success('Your backyard farm application has been submitted. A marketer will verify your farm soon.');
 
         return redirect()->route('backyard-farmer.status', $application->id);
@@ -132,6 +153,30 @@ class BackyardFarmerController extends Controller
     }
 
     /**
+     * Export backyard farm applications to CSV/Excel.
+     */
+    public function adminExport(Request $request)
+    {
+        $this->authorizeSuperAdmin();
+
+        $status = $request->input('status', 'all');
+        $query = BackyardFarmApplication::with('verifier')
+            ->orderByDesc('id');
+
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $filename = 'backyard-farm-applications-' . now()->format('Ymd-His') . '.csv';
+
+        return Excel::download(
+            new BackyardFarmApplicationExport($query),
+            $filename,
+            \Maatwebsite\Excel\Excel::CSV
+        );
+    }
+
+    /**
      * Admin/marketer: verify a backyard farm application.
      */
     public function verify(Request $request, $id)
@@ -160,6 +205,22 @@ class BackyardFarmerController extends Controller
                 'verification_notes' => $request->input('verification_notes'),
             ]);
 
+            // Email the applicant
+            try {
+                Mail::to($application->guest_email)->send(new BackyardFarmApplicationMail(
+                    'email-templates.backyard.application-verified',
+                    [
+                        'farmName' => $application->farm_name,
+                        'verifierName' => $admin->f_name . ' ' . $admin->l_name,
+                        'verifiedAt' => now()->format('M d, Y H:i'),
+                        'notes' => $application->verification_notes,
+                        'statusUrl' => route('backyard-farmer.status', $application->id) . '?email=' . urlencode($application->guest_email) . '&phone=' . urlencode($application->guest_phone),
+                    ]
+                ));
+            } catch (\Throwable $e) {
+                // Email failures must not break the verification flow.
+            }
+
             Toastr::success('Backyard farm verified. Approve it to create the vendor store.');
 
             return redirect()->route('admin.backyard-farmers.index');
@@ -170,6 +231,20 @@ class BackyardFarmerController extends Controller
             'status' => BackyardFarmApplication::STATUS_REJECTED,
             'rejection_reason' => $request->input('rejection_reason'),
         ]);
+
+        // Email the applicant
+        try {
+            Mail::to($application->guest_email)->send(new BackyardFarmApplicationMail(
+                'email-templates.backyard.application-rejected',
+                [
+                    'farmName' => $application->farm_name,
+                    'reason' => $application->rejection_reason,
+                    'applyUrl' => route('backyard-farmer.apply'),
+                ]
+            ));
+        } catch (\Throwable $e) {
+            // Email failures must not break the rejection flow.
+        }
 
         Toastr::warning('Backyard farm application rejected.');
 
@@ -225,6 +300,21 @@ class BackyardFarmerController extends Controller
             'converted_at' => now(),
         ]);
 
+        // Email the applicant
+        try {
+            Mail::to($application->guest_email)->send(new BackyardFarmApplicationMail(
+                'email-templates.backyard.application-approved',
+                [
+                    'farmName' => $application->farm_name,
+                    'storeName' => $store->name,
+                    'approvedAt' => now()->format('M d, Y H:i'),
+                    'vendorLoginUrl' => route('store.login'),
+                ]
+            ));
+        } catch (\Throwable $e) {
+            // Email failures must not break the approval flow.
+        }
+
         Toastr::success('Backyard farm approved. Vendor store created: ' . $store->name);
 
         return redirect()->route('admin.backyard-farmers.index');
@@ -233,7 +323,7 @@ class BackyardFarmerController extends Controller
     /**
      * Dashboard for the backyard farmer (after conversion to vendor).
      */
-    public function dashboard(Request $request)
+    public function dashboard(Request $request, BackyardAnalyticsService $analytics)
     {
         $vendor = Auth::guard('vendor')->user();
         if (! $vendor) {
@@ -255,7 +345,9 @@ class BackyardFarmerController extends Controller
             ->latest()
             ->first();
 
-        return view('vendor.backyard-farmers.dashboard', compact('store', 'items', 'application'));
+        $farmAnalytics = $analytics->farmAnalytics($store);
+
+        return view('vendor.backyard-farmers.dashboard', compact('store', 'items', 'application', 'farmAnalytics'));
     }
 
     private function authorizeSuperAdmin(): void

@@ -1014,6 +1014,7 @@ class Helpers
         $store['verification_tier'] = $store->verification_tier ?? null;
         $store['verification_status'] = $store->verification_status ?? 'pending';
         $store['gold_supplier'] = (bool) ($store->gold_supplier ?? false);
+        $store['delivery_radius_km'] = $store->delivery_radius_km ?? null;
     }
 
     public static function wishlist_data_formatting($data, $multi_data = false)

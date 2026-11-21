@@ -61,6 +61,58 @@
         </div>
     </div>
 
+    @if ($farmAnalytics)
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted mb-2">Estimated Total Yield</h6>
+                        <p class="mb-1 font-weight-bold">{{ number_format($farmAnalytics['total_estimated_yield_kg'], 1) }} kg</p>
+                        <h6 class="text-muted mb-2">Plantable Area</h6>
+                        <p class="mb-0 text-muted small">{{ number_format($farmAnalytics['size_sqm'], 0) }} m²</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted mb-2">Next Harvest</h6>
+                        @if ($farmAnalytics['next_harvest_date'])
+                            <p class="mb-1 font-weight-bold">{{ \Carbon\Carbon::parse($farmAnalytics['next_harvest_date'])->format('M d, Y') }}</p>
+                            <p class="mb-0 text-{{ $farmAnalytics['days_to_harvest'] <= 7 ? 'warning' : 'success' }} small">
+                                {{ $farmAnalytics['days_to_harvest'] }} days away
+                            </p>
+                        @else
+                            <p class="mb-0 text-muted small">No scheduled harvest</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-3">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted mb-2">Yield by Crop</h6>
+                        @foreach($farmAnalytics['estimated_yield_per_crop'] as $crop => $yield)
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-muted small">{{ ucfirst($crop) }}</span>
+                                <span class="font-weight-bold">{{ number_format($yield, 1) }} kg</span>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-header"><h5 class="card-title mb-0">Crop Rotation Suggestion</h5></div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    {{ $farmAnalytics['crop_rotation_suggestion'] }}
+                </div>
+            </div>
+        </div>
+    @endif
+
     <div class="card mt-4">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0">Your Products</h5>

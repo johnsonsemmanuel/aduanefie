@@ -345,6 +345,7 @@ Route::group(['namespace' => 'Admin', 'as' => 'admin.'], function () {
 
         Route::group(['prefix' => 'backyard-farmers', 'as' => 'backyard-farmers.', 'middleware' => ['module:settings', 'actch']], function () {
             Route::get('/', 'BackyardFarmerController@adminIndex')->name('index');
+            Route::get('export', 'BackyardFarmerController@adminExport')->name('export');
             Route::post('verify/{id}', 'BackyardFarmerController@verify')->name('verify');
             Route::post('approve/{id}', 'BackyardFarmerController@approve')->name('approve');
         });

@@ -599,7 +599,7 @@ class ItemController extends Controller
                             cos(radians(?)) * cos(radians(stores.latitude)) *
                             cos(radians(stores.longitude) - radians(?)) +
                             sin(radians(?)) * sin(radians(stores.latitude))
-                        )) <= ?", [$lat, $lng, $lat, $radiusKm]);
+                        )) <= COALESCE(stores.delivery_radius_km, ?)", [$lat, $lng, $lat, $radiusKm]);
             })
             ->orderByRaw("CASE WHEN farming_status = 'harvest_ready' THEN 0 ELSE 1 END")
             ->orderByRaw("
