@@ -116,7 +116,7 @@ const TradeRfqSection = () => {
       monthly: "Standing Monthly Supply Contract",
     };
     const scheduleTag = frequencyLabels[form.supply_frequency]
-      ? `[${frequencyLabels[form.supply_frequency]} — Preferred Dispatch: ${form.preferred_delivery_day}]`
+      ? `[${frequencyLabels[form.supply_frequency]} - Preferred Dispatch: ${form.preferred_delivery_day}]`
       : "";
     const combinedNotes = [scheduleTag, form.notes].filter(Boolean).join(" ").trim();
 
