@@ -60,6 +60,7 @@ const FULL_BLEED_MOBILE_ROUTES = new Set([
   "/trade/blocs",
   "/trade/blocs/[slug]",
   "/market-prices",
+  "/live-farming",
   "/group-buys",
   "/group-buys/[id]",
   // Section + category pages use their own MobileNavBar variant
@@ -110,6 +111,36 @@ const getMobileMarginTop = ({ pathname, currentModuleType }) => {
   }
   if (currentModuleType === ModuleTypes.PARCEL) return "5.4rem";
   return "7.6rem";
+};
+
+// Info/legal routes where the full footer is appropriate even on mobile.
+const MOBILE_FOOTER_ROUTES = new Set([
+  "/about-us",
+  "/privacy-policy",
+  "/terms-and-conditions",
+  "/refund-policy",
+  "/shipping-policy",
+  "/cancellation-policy",
+  "/help-and-support",
+]);
+
+// Transactional / focused routes where the footer is distracting even on desktop.
+const HIDDEN_DESKTOP_FOOTER_ROUTES = new Set([
+  "/checkout",
+  "/profile",
+  "/track-order",
+  "/track-order/[id]",
+  "/group-buys/[id]",
+  "/rental/checkout",
+  "/rental/cart",
+  "/service/checkout",
+  "/service/checkout/[slug]",
+  "/service/checkout/custom-service",
+]);
+
+const shouldShowFooter = ({ pathname, isSmall }) => {
+  if (isSmall) return MOBILE_FOOTER_ROUTES.has(pathname);
+  return !HIDDEN_DESKTOP_FOOTER_ROUTES.has(pathname);
 };
 
 const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
@@ -237,6 +268,11 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
     router.pathname?.startsWith("/home/") ||
     router.pathname?.startsWith("/search");
 
+  const showFooter = shouldShowFooter({
+    pathname: router.pathname,
+    isSmall,
+  });
+
   return (
     <MainLayoutRoot justifyContent="space-between" key={rerenderUi}>
       <header>
@@ -252,6 +288,10 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
             pathname: router.pathname,
             currentModuleType,
           }),
+          paddingBottom:
+            isSmall && showBottomNav && !showFooter
+              ? `calc(${MOBILE_BOTTOM_NAV_HEIGHT}px + env(safe-area-inset-bottom, 0px) + 16px)`
+              : 0,
           [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
             marginTop: RENTAL_COMPACT_DESKTOP_HEADER_ROUTES.has(router.pathname)
               ? "5.4rem"
@@ -280,9 +320,11 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
           {children}
         </CustomStackFullWidth>
       </CustomStackFullWidth>
-      <footer>
-        <FooterComponent configData={configData} />
-      </footer>
+      {showFooter && (
+        <footer>
+          <FooterComponent configData={configData} />
+        </footer>
+      )}
       {isHappyHourRoute && (
         <Box
           sx={{

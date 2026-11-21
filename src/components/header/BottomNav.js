@@ -17,28 +17,33 @@ const AuthModal = dynamic(() => import("components/auth/AuthModal"));
 
 const NAV_ITEMS = [
   {
-    key: "offers",
-    label: t("Offers"),
-    icon: "fi fi-rr-badge-percent",
-    path: "/home/offers",
+    key: "home",
+    label: "Home",
+    icon: "fi fi-rr-home",
+    path: "/home",
+  },
+  {
+    key: "groups",
+    label: "Groups",
+    icon: "fi fi-rr-users-alt",
+    path: "/group-buys",
+  },
+  {
+    key: "live-farm",
+    label: "Live Farm",
+    icon: "fi fi-rr-leaf",
+    path: "/live-farming",
   },
   {
     key: "orders",
-    label: t("Orders"),
+    label: "Orders",
     icon: "fi fi-rr-receipt",
     path: "/profile?page=my-orders",
     requireAuth: true,
   },
   {
-    key: "favourite",
-    label: t("Favourite"),
-    icon: "fi fi-rr-heart",
-    openWishlist: true,
-    requireAuth: true,
-  },
-  {
     key: "profile",
-    label: t("Profile"),
+    label: "Account",
     icon: "fi fi-rr-user",
     openProfile: true,
   },
@@ -57,6 +62,13 @@ const BottomNav = () => {
   const [modalFor, setModalFor] = useState("sign-in");
 
   const isActive = (item) => {
+    if (item.key === "home") {
+      return (
+        router.pathname === "/home" ||
+        (router.pathname.startsWith("/home/") &&
+          router.pathname !== "/home/wishlist")
+      );
+    }
     if (item.openWishlist) {
       return router.pathname === "/home/wishlist";
     }
@@ -112,10 +124,11 @@ const BottomNav = () => {
           left: 0,
           right: 0,
           width: "100%",
-          height: `${MOBILE_BOTTOM_NAV_HEIGHT}px`,
+          height: `calc(${MOBILE_BOTTOM_NAV_HEIGHT}px + env(safe-area-inset-bottom, 0px))`,
+          paddingBottom: "env(safe-area-inset-bottom, 0px)",
           backgroundColor: theme.palette.background.paper,
-          boxShadow:
-            "0px -1px 2px rgba(0,0,0,0.10), 0px -1px 2px rgba(0,0,0,0.05)",
+          borderTop: `1px solid ${theme.palette.divider}`,
+          boxShadow: "0px -2px 8px rgba(0,0,0,0.06)",
           zIndex: 1082,
           display: "flex",
           [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
@@ -126,17 +139,11 @@ const BottomNav = () => {
         <Stack
           direction="row"
           alignItems="stretch"
-          justifyContent="center"
-          gap="12px"
-          sx={{ flex: 1, width: "100%", px: 0 }}
+          justifyContent="space-around"
+          gap="2px"
+          sx={{ flex: 1, width: "100%", px: "4px" }}
         >
-          {NAV_ITEMS.filter((item) =>
-            item.key === "offers"
-              ? !["ride-share", "rental", "parcel"].includes(
-                  currentModuleType
-                )
-              : true
-          ).map((item) => {
+          {NAV_ITEMS.map((item) => {
             const active = isActive(item);
             const color = active ? theme.palette.primary.main : "#757575";
 
@@ -145,32 +152,30 @@ const BottomNav = () => {
                 key={item.key}
                 onClick={() => handleClick(item)}
                 alignItems="center"
-                justifyContent="flex-end"
+                justifyContent="center"
                 gap={"4px"}
                 sx={{
                   flex: 1,
-                  height: "60px",
-                  pt: 0,
-                  pb: "8px",
-                  px: "8px",
+                  minWidth: 0,
+                  height: `${MOBILE_BOTTOM_NAV_HEIGHT}px`,
+                  pt: "6px",
+                  pb: "6px",
+                  px: "4px",
                   cursor: "pointer",
                   userSelect: "none",
                   position: "relative",
                 }}
               >
-                {/* Active indicator - downward triangle */}
+                {/* Active indicator pill */}
                 <Box
                   sx={{
                     position: "absolute",
                     top: 0,
-                    width: 0,
-                    height: 0,
-                    borderLeft: "12px solid transparent",
-                    borderRight: "12px solid transparent",
-                    borderTop: active
-                      ? `6px solid ${theme.palette.primary.main}`
-                      : "6px solid transparent",
-                    transition: "border-top-color 0.2s ease",
+                    width: active ? 28 : 0,
+                    height: 3,
+                    borderRadius: "0 0 3px 3px",
+                    backgroundColor: theme.palette.primary.main,
+                    transition: "width 0.2s ease",
                   }}
                 />
                 {item.key === "profile" && profileInfo?.image_full_url ? (
@@ -219,10 +224,10 @@ const BottomNav = () => {
                 )}
                 <Typography
                   sx={{
-                    fontSize: "12px",
-                    fontWeight: active ? 600 : 400,
-                    lineHeight: 1.2,
-                    letterSpacing: active ? "-0.24px" : "-0.36px",
+                    fontSize: "11px",
+                    fontWeight: active ? 700 : 500,
+                    lineHeight: 1.15,
+                    letterSpacing: "-0.2px",
                     color,
                     whiteSpace: "nowrap",
                     textAlign: "center",

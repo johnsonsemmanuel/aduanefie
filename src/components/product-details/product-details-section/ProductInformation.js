@@ -863,8 +863,38 @@ const ProductInformation = ({
             </Stack>
           ) : null;
 
-          // Shared group buying is available on every physical-goods module.
-          const groupBuyBlock = (
+          // Smart group-buy eligibility: only surface shared group buying on
+          // high-value items, high-MOQ products, bulk agro units, tiered bulk
+          // items, or wholesale listings (never cluttering small retail items
+          // or pharmacy prescriptions).
+          const BULK_AGRO_UNITS = ["bag_50kg", "bag_100kg", "ton", "crate", "box"];
+          const itemUnitPrice = Number(item?.price || 0);
+          const itemMoq = Number(item?.moq || 1);
+          const hasBulkUnit = BULK_AGRO_UNITS.includes(item?.agro_unit);
+          const hasBulkTiers =
+            Array.isArray(item?.bulk_pricing_tiers) &&
+            item.bulk_pricing_tiers.length > 0;
+          const isWholesaleItem = String(item?.module_id) === "2";
+          const isPharmacyItem =
+            item?.module_type === "pharmacy" ||
+            item?.module?.module_type === "pharmacy";
+          const showGroupBuyCta =
+            !isPharmacyItem &&
+            (itemUnitPrice >= 200 ||
+              itemMoq >= 5 ||
+              hasBulkUnit ||
+              hasBulkTiers ||
+              isWholesaleItem);
+          const groupBuyReasonText =
+            itemMoq >= 5
+              ? t("Min. {{moq}} units · Split this bulk order with other buyers", {
+                  moq: itemMoq,
+                })
+              : itemUnitPrice >= 200
+              ? t("High-value item · Split the cost with 2-10 buyers")
+              : t("Split this bulk lot with other buyers");
+
+          const groupBuyBlock = showGroupBuyCta ? (
             <Stack
               direction="row"
               alignItems="center"
@@ -877,17 +907,18 @@ const ProductInformation = ({
                 border: `1px solid ${theme.palette.divider}`,
               }}
             >
-              <Box>
+              <Box sx={{ minWidth: 0 }}>
                 <Typography sx={{ fontSize: "12.5px", fontWeight: 700 }}>
                   {t("Shared group buying")}
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {t("Split a bulk purchase with other buyers")}
+                <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
+                  {groupBuyReasonText}
                 </Typography>
               </Box>
               <Button
                 size="small"
                 variant="outlined"
+                sx={{ flexShrink: 0, whiteSpace: "nowrap" }}
                 onClick={() =>
                   router.push(`/group-buys?item_id=${item?.id ?? ""}`)
                 }
@@ -895,7 +926,7 @@ const ProductInformation = ({
                 {t("Start or join")}
               </Button>
             </Stack>
-          );
+          ) : null;
 
           if (!hasAgroInfo) {
             return (

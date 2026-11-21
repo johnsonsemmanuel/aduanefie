@@ -6,21 +6,27 @@ import {
   Button,
   Chip,
   CssBaseline,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
   LinearProgress,
   Paper,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import CustomContainer from "components/container";
 import MainLayout from "components/layout/MainLayout";
 import SimpleMobileHeader from "components/common/SimpleMobileHeader";
 import SEO from "components/seo";
-import { getGuestId } from "helper-functions/getToken";
+import { getGuestId, getToken } from "helper-functions/getToken";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import useAddCartItem from "api-manage/hooks/react-query/add-cart/useAddCartItem";
 import {
+  useCancelGroupBuy,
   useGetGroupBuy,
   useGetGroupBuyQuote,
   useJoinGroupBuy,
@@ -30,6 +36,9 @@ import { onErrorResponse } from "api-manage/api-error-response/ErrorResponses";
 import EditGroupBuyDialog from "components/group-buy/EditGroupBuyDialog";
 import GroupBuyMembers from "components/group-buy/GroupBuyMembers";
 import GroupBuyChat from "components/group-buy/GroupBuyChat";
+import GroupBuyInviteDialog from "components/group-buy/GroupBuyInviteDialog";
+import OrganizerVerificationDialog from "components/group-buy/OrganizerVerificationDialog";
+import VerifiedBadge from "components/group-buy/VerifiedBadge";
 import { getCommonServerSideProps } from "utils/serverSidePropsHelper";
 import { useDispatch } from "react-redux";
 import { useGetConfigData } from "api-manage/hooks/useGetConfigData";
@@ -41,6 +50,14 @@ const money = (value) =>
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
+
+const LEAVE_REASONS = [
+  "Found a better price",
+  "Taking too long to fill",
+  "Changed my mind",
+  "Delivery location mismatch",
+  "Other",
+];
 
 const GroupBuyDetailPage = ({ configData }) => {
   const router = useRouter();
@@ -62,6 +79,14 @@ const GroupBuyDetailPage = ({ configData }) => {
   const [editOpen, setEditOpen] = useState(false);
   const [membersOpen, setMembersOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [verificationOpen, setVerificationOpen] = useState(false);
+  const [leaveOpen, setLeaveOpen] = useState(false);
+  const [leaveReason, setLeaveReason] = useState("");
+  const [leaveNote, setLeaveNote] = useState("");
+  const [closeOpen, setCloseOpen] = useState(false);
+  const [closeReason, setCloseReason] = useState("");
+  const isSignedIn = Boolean(getToken());
 
   const { data: group, isLoading, refetch } = useGetGroupBuy(id);
   useEffect(() => {
@@ -75,6 +100,7 @@ const GroupBuyDetailPage = ({ configData }) => {
   );
   const { mutate: join, isLoading: joining } = useJoinGroupBuy();
   const { mutate: leave, isLoading: leaving } = useLeaveGroupBuy();
+  const { mutate: cancelGroup, isLoading: closing } = useCancelGroupBuy();
   const { mutate: addToCart, isLoading: adding } = useAddCartItem();
 
   if (isLoading || !group) {
@@ -144,7 +170,10 @@ const GroupBuyDetailPage = ({ configData }) => {
               <Typography variant="h4" sx={{ fontWeight: 700, fontSize: { xs: 22, md: 28 } }}>
                 Shared group buy #{group.id}
               </Typography>
-              <Chip label={group.status} color={group.status === "locked" ? "success" : "primary"} />
+              <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
+                <VerifiedBadge trust={group.organizer_trust} />
+                <Chip label={group.status} color={group.status === "locked" ? "success" : "primary"} />
+              </Stack>
             </Stack>
 
             <Grid container spacing={3}>
@@ -259,8 +288,31 @@ const GroupBuyDetailPage = ({ configData }) => {
                       </Button>
                     )}
                     {isMember && group.status === "open" && (
-                      <Button fullWidth variant="outlined" onClick={() => leave({ id }, actionOptions)} disabled={leaving}>
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        onClick={() => {
+                          setLeaveReason("");
+                          setLeaveNote("");
+                          setLeaveOpen(true);
+                        }}
+                        disabled={leaving}
+                      >
                         Leave group
+                      </Button>
+                    )}
+                    {isOrganizer && group.status === "open" && (
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        color="error"
+                        onClick={() => {
+                          setCloseReason("");
+                          setCloseOpen(true);
+                        }}
+                        disabled={closing}
+                      >
+                        Close group
                       </Button>
                     )}
                     {canCheckout && (
@@ -303,7 +355,27 @@ const GroupBuyDetailPage = ({ configData }) => {
                             Edit group details
                           </Button>
                         )}
+                        <Button
+                          fullWidth
+                          size="small"
+                          variant="text"
+                          onClick={() => setInviteOpen(true)}
+                        >
+                          Recommend to a friend
+                        </Button>
                       </>
+                    )}
+                    {isSignedIn && (
+                      <Button
+                        fullWidth
+                        size="small"
+                        variant="text"
+                        onClick={() => setVerificationOpen(true)}
+                      >
+                        {group.organizer_trust?.verified
+                          ? "Verification details"
+                          : "Get a verified organiser badge"}
+                      </Button>
                     )}
                   </Stack>
                 </Paper>
@@ -331,6 +403,123 @@ const GroupBuyDetailPage = ({ configData }) => {
           onUpdated={() => refetch()}
         />
       )}
+      <GroupBuyInviteDialog
+        open={inviteOpen}
+        onClose={() => setInviteOpen(false)}
+        id={id}
+        itemName={group.item?.name}
+      />
+      <OrganizerVerificationDialog
+        open={verificationOpen}
+        onClose={() => setVerificationOpen(false)}
+      />
+
+      {/* Leave group with reason so the team knows why and can welcome a replacement */}
+      <Dialog open={leaveOpen} onClose={() => setLeaveOpen(false)} fullWidth maxWidth="xs">
+        <DialogTitle sx={{ fontWeight: 700, fontSize: "17px" }}>
+          Why are you leaving this group?
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+            Sharing a quick reason helps the organiser and frees your spot for another buyer to join. No payment was taken.
+          </Typography>
+          <Stack direction="row" flexWrap="wrap" gap={0.75} sx={{ mb: 2 }}>
+            {LEAVE_REASONS.map((reason) => (
+              <Chip
+                key={reason}
+                label={reason}
+                size="small"
+                clickable
+                color={leaveReason === reason ? "primary" : "default"}
+                variant={leaveReason === reason ? "filled" : "outlined"}
+                onClick={() => setLeaveReason(reason)}
+              />
+            ))}
+          </Stack>
+          <TextField
+            fullWidth
+            size="small"
+            multiline
+            rows={2}
+            label="Optional note for the group"
+            placeholder="Add any helpful detail..."
+            value={leaveNote}
+            onChange={(e) => setLeaveNote(e.target.value)}
+            inputProps={{ maxLength: 300 }}
+          />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setLeaveOpen(false)} color="inherit">
+            Stay in group
+          </Button>
+          <Button
+            variant="contained"
+            color="warning"
+            disabled={!leaveReason || leaving}
+            onClick={() => {
+              leave(
+                { id, payload: { reason: leaveReason, note: leaveNote.trim() || undefined } },
+                {
+                  onSuccess: () => {
+                    toast.success("You left the group. Your spot is now open for another buyer.");
+                    setLeaveOpen(false);
+                    refetch();
+                  },
+                  onError: onErrorResponse,
+                }
+              );
+            }}
+          >
+            {leaving ? "Leaving…" : "Confirm leave"}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Organiser close group confirmation */}
+      <Dialog open={closeOpen} onClose={() => setCloseOpen(false)} fullWidth maxWidth="xs">
+        <DialogTitle sx={{ fontWeight: 700, fontSize: "17px" }}>
+          Close this group buy?
+        </DialogTitle>
+        <DialogContent>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5 }}>
+            Closing this group will release all {committed} joined member{committed === 1 ? "" : "s"} automatically. No one has been charged.
+          </Typography>
+          <TextField
+            fullWidth
+            size="small"
+            label="Reason for closing (optional)"
+            placeholder="e.g. Supplier out of stock or changing order size"
+            value={closeReason}
+            onChange={(e) => setCloseReason(e.target.value)}
+            inputProps={{ maxLength: 200 }}
+          />
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setCloseOpen(false)} color="inherit">
+            Keep open
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            disabled={closing}
+            onClick={() => {
+              cancelGroup(
+                { id, payload: { reason: closeReason.trim() || undefined } },
+                {
+                  onSuccess: () => {
+                    toast.success("Group closed. All members were released with no charge.");
+                    setCloseOpen(false);
+                    refetch();
+                  },
+                  onError: onErrorResponse,
+                }
+              );
+            }}
+          >
+            {closing ? "Closing…" : "Close group"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
