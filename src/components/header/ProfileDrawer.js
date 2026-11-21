@@ -30,7 +30,7 @@ const PARTNER_SUPPORT_LINKS = [
 ];
 
 const PARTNER_PORTAL_LINKS = [
-  { label: "Marketer Login", href: "https://partners.aduanefie.com/marketer-login" },
+  { label: "Marketer Login", href: "https://admin.aduanefie.com/marketer-login" },
   { label: "Logistics Login", href: "https://logistics.aduanefie.com/rider-login" },
   { label: "Store / Vendor Login", href: "https://admin.aduanefie.com/store-login" },
 ];

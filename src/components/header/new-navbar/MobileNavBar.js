@@ -10,6 +10,8 @@ import {
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import ModeSwitcherTrigger from "components/module-select/ModeSwitcherTrigger";
+import { WHOLESALE_MODULE_ID } from "components/trade/tradeData";
+import { getModuleId } from "helper-functions/getModuleId";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -226,7 +228,10 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
     }[getCurrentModuleType()];
     if (!sectionsFn) return [];
     try {
-      return sectionsFn() ?? [];
+      const list = sectionsFn() ?? [];
+      const activeId = selectedModule?.id ?? getModuleId();
+      const isWholesale = String(activeId) === String(WHOLESALE_MODULE_ID);
+      return isWholesale ? list : list.filter((s) => s.id !== "live-farming");
     } catch (e) {
       return [];
     }

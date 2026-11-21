@@ -467,7 +467,7 @@ const AccountMenuPanel = ({
               </Typography>
             ))}
             {[
-              { label: "Marketer Login", href: "https://partners.aduanefie.com/marketer-login" },
+              { label: "Marketer Login", href: "https://admin.aduanefie.com/marketer-login" },
               { label: "Logistics Login", href: "https://logistics.aduanefie.com/rider-login" },
             ].map((portal) => (
               <Typography
