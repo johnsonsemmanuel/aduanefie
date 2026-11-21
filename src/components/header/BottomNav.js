@@ -10,6 +10,8 @@ import { getToken } from "helper-functions/getToken";
 import WishListCardView from "../wishlist";
 import ProfileDrawer from "./ProfileDrawer";
 import NextImage from "components/NextImage";
+import { DESKTOP_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
+import { MOBILE_BOTTOM_NAV_HEIGHT } from "utils/mobileBottomNav";
 
 const AuthModal = dynamic(() => import("components/auth/AuthModal"));
 
@@ -110,13 +112,13 @@ const BottomNav = () => {
           left: 0,
           right: 0,
           width: "100%",
-          height: "65px",
+          height: `${MOBILE_BOTTOM_NAV_HEIGHT}px`,
           backgroundColor: theme.palette.background.paper,
           boxShadow:
             "0px -1px 2px rgba(0,0,0,0.10), 0px -1px 2px rgba(0,0,0,0.05)",
           zIndex: 1082,
           display: "flex",
-          "@media (min-width:1180.01px)": {
+          [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
             display: "none",
           },
         }}

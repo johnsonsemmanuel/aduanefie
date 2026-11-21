@@ -16,7 +16,7 @@ import { getModuleIdentifier, saveModuleParam } from "utils/moduleParamManager";
 import CustomModal from "components/modal";
 import CustomImageContainer from "components/CustomImageContainer";
 import StatusBadge from "components/common/StatusBadge";
-import { zoneWiseModule } from "./ModuleSelect";
+import { zoneWiseModule } from "./moduleZone";
 
 export const MODE_CHOSEN_STORAGE_KEY = "aduanefie_mode_chosen";
 
@@ -40,6 +40,20 @@ const ModeSwitcherModal = ({ open, onClose, isGreeting = false }) => {
   const dispatch = useDispatch();
   const { modules } = useSelector((state) => state.configData);
   const { selectedModule } = useSelector((state) => state.utilsData);
+
+  // Shared card surface so the featured and secondary cards cannot drift apart
+  // in border weight, active background, or hover treatment. Size/layout stay
+  // with each card; only the themed surface is shared.
+  const cardSurfaceSx = (isActive) => ({
+    bgcolor: isActive ? theme.palette.primary.lite : theme.palette.background.paper,
+    border: "1.5px solid",
+    borderColor: isActive ? theme.palette.primary.main : theme.palette.divider,
+    transition: "border-color 0.15s ease, background-color 0.15s ease",
+    "&:hover": {
+      borderColor: theme.palette.primary.main,
+      bgcolor: theme.palette.primary.lite,
+    },
+  });
 
   const availableModules = useMemo(() => {
     const zoned = zoneWiseModule(modules);
@@ -103,14 +117,7 @@ const ModeSwitcherModal = ({ open, onClose, isGreeting = false }) => {
             height: "100%",
             p: 2,
             borderRadius: "12px",
-            bgcolor: isActive ? theme.palette.primary.lite : theme.palette.background.paper,
-            border: "1.5px solid",
-            borderColor: isActive ? theme.palette.primary.main : theme.palette.divider,
-            transition: "border-color 0.15s ease, background-color 0.15s ease",
-            "&:hover": {
-              borderColor: theme.palette.primary.main,
-              bgcolor: theme.palette.primary.lite,
-            },
+            ...cardSurfaceSx(isActive),
           }}
         >
           <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 1.25 }}>
@@ -229,21 +236,10 @@ const ModeSwitcherModal = ({ open, onClose, isGreeting = false }) => {
                         cursor: "pointer",
                         p: 1.25,
                         borderRadius: "10px",
-                        bgcolor: isActive
-                          ? theme.palette.primary.lite
-                          : theme.palette.background.paper,
-                        border: "1px solid",
-                        borderColor: isActive
-                          ? theme.palette.primary.main
-                          : theme.palette.divider,
+                        ...cardSurfaceSx(isActive),
                         display: "flex",
                         alignItems: "center",
                         gap: 1.25,
-                        transition: "border-color 0.15s ease, background-color 0.15s ease",
-                        "&:hover": {
-                          borderColor: theme.palette.primary.main,
-                          bgcolor: theme.palette.primary.lite,
-                        },
                       }}
                     >
                       <Box

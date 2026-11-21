@@ -21,9 +21,13 @@ import SearchProductModal from "../home/search/SearchProductModal";
 // import { MainLayoutRoot } from "./LandingLayout";
 import FloatingCartButton from "../header/new-navbar/FloatingCartButton";
 import HappyHourBanner from "../happy-hour/HappyHourBanner";
+import { DESKTOP_LAYOUT_MEDIA_QUERY, MOBILE_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
+import {
+  MOBILE_BOTTOM_NAV_HEIGHT,
+  shouldShowMobileBottomNav,
+} from "utils/mobileBottomNav";
 
 const HAPPY_HOUR_FLOATING_ROUTES = new Set(["/home"]);
-const HAPPY_HOUR_BANNER_BOTTOM = 65;
 
 const RENTAL_COMPACT_DESKTOP_HEADER_ROUTES = new Set([
   "/rental/checkout",
@@ -83,11 +87,16 @@ const FULL_BLEED_MOBILE_ROUTES = new Set([
 // Constant per route/module — sized for the EXPANDED header. The scroll-away
 // collapse is a pure transform on the fixed AppBar (see NavBar.style.js) and
 // never changes layout, so the content offset must not react to it either.
+//
+// These values are intentionally NOT uniform: each module renders a different
+// set of header rows (address, module tabs, search bar, section chips), so the
+// offset has to match that module's real header height. Only the FULL_BLEED
+// routes share a single value because they render their own in-flow header.
 const getMobileMarginTop = ({ pathname, currentModuleType }) => {
   if (FULL_BLEED_MOBILE_ROUTES.has(pathname)) return "0px";
   // BOGO list & details render only the compact address + cart header on
   // mobile (no module tabs, search bar or section chips), so they need a much
-  // smaller offset than the home header's default 11.9rem — otherwise a large
+  // smaller offset than the home header's default 7.6rem — otherwise a large
   // empty gap appears above the content.
   if (pathname === "/bogo-list" || pathname === "/bogo-list/[id]") {
     return "3.25rem";
@@ -104,9 +113,14 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
   const [rerenderUi, setRerenderUi] = useState(false);
   const { data, refetch } = useGetModule();
   const theme = useTheme();
-  const isSmall = useMediaQuery("(max-width:1180px)");
+  const isSmall = useMediaQuery(MOBILE_LAYOUT_MEDIA_QUERY);
   const router = useRouter();
   const { page } = router.query;
+  // Shared with the footer so it reserves clearance only when the nav exists.
+  const showBottomNav = shouldShowMobileBottomNav({
+    pathname: router.pathname,
+    page,
+  });
   const dispatch = useDispatch();
   const [happyHourActive, setHappyHourActive] = useState(false);
   const isHappyHourRoute = HAPPY_HOUR_FLOATING_ROUTES.has(router.pathname);
@@ -227,19 +241,26 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
       </header>
       <CustomStackFullWidth
         sx={{
-          marginTop: {
-            xs: getMobileMarginTop({
-              pathname: router.pathname,
-              currentModuleType,
-            }),
-            md: RENTAL_COMPACT_DESKTOP_HEADER_ROUTES.has(router.pathname)
+          // Keep the mobile offset for the whole range where MobileNavBar
+          // renders (up to MOBILE_LAYOUT_BREAKPOINT = 1180px). The old `md`
+          // key switched at the theme's 1000px, leaving 1000-1180px with a
+          // desktop offset under a still-mobile header.
+          marginTop: getMobileMarginTop({
+            pathname: router.pathname,
+            currentModuleType,
+          }),
+          [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
+            marginTop: RENTAL_COMPACT_DESKTOP_HEADER_ROUTES.has(router.pathname)
               ? "5.4rem"
               : router.pathname?.startsWith("/rental")
               ? "10rem"
               : hasDesktopModuleBar
               ? "5.4rem"
               : "4rem",
-            lg: RENTAL_COMPACT_DESKTOP_HEADER_ROUTES.has(router.pathname)
+          },
+          // Declared after the desktop rule so it wins at >= 1240px.
+          [theme.breakpoints.up("lg")]: {
+            marginTop: RENTAL_COMPACT_DESKTOP_HEADER_ROUTES.has(router.pathname)
               ? "5.4rem"
               : router.pathname?.startsWith("/rental")
               ? "10rem"
@@ -262,9 +283,12 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
       {isHappyHourRoute && (
         <Box
           sx={{
-            display: happyHourActive ? { xs: "block", md: "none" } : "none",
+            display: happyHourActive ? "block" : "none",
+            [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
+              display: "none",
+            },
             position: "fixed",
-            bottom: `${HAPPY_HOUR_BANNER_BOTTOM}px`,
+            bottom: `${MOBILE_BOTTOM_NAV_HEIGHT}px`,
             left: 0,
             right: 0,
             width: "100%",
@@ -277,12 +301,7 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
           />
         </Box>
       )}
-      {isSmall &&
-        page !== "parcel" &&
-        router.pathname !== "/store/[id]" &&
-        router.pathname !== "/product/[id]" &&
-        router.pathname !== "/service/provider/[id]" &&
-        router.pathname !== "/service/service-details/[id]" && <BottomNav />}
+      {isSmall && showBottomNav && <BottomNav />}
       <SearchProductModal />
       <FloatingCartButton />
     </MainLayoutRoot>

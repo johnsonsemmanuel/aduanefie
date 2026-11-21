@@ -24,7 +24,7 @@ import {
 import CustomImageContainer from "../../../CustomImageContainer";
 import CustomAlert from "../../../alert/CustomAlert";
 import CustomModal from "../../../modal";
-import { zoneWiseModule, getCurrentZoneIds } from "../../../module-select/ModuleSelect";
+import { zoneWiseModule, getCurrentZoneIds } from "../../../module-select/moduleZone";
 import CloseIcon from "@mui/icons-material/Close";
 import ErrorIcon from "@mui/icons-material/Error";
 import { setSelectedModule } from "redux/slices/utils";

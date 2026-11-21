@@ -1,12 +1,16 @@
 import { Box, Typography, useMediaQuery } from "@mui/material";
 import useScrollDirection from "hooks/useScrollDirection";
 import { useTranslation } from "react-i18next";
+import {
+  DESKTOP_LAYOUT_MEDIA_QUERY,
+  MOBILE_LAYOUT_MEDIA_QUERY,
+} from "utils/breakpoints";
 
 const SCROLL_THRESHOLD = 300;
 
 const ScrollUpButton = () => {
   const { t } = useTranslation();
-  const isMobile = useMediaQuery("(max-width:900px)");
+  const isMobile = useMediaQuery(MOBILE_LAYOUT_MEDIA_QUERY);
   const { isPastThreshold } = useScrollDirection({
     pastThresholdAt: SCROLL_THRESHOLD,
   });
@@ -28,7 +32,10 @@ const ScrollUpButton = () => {
           ? "translateX(-50%) translateY(0)"
           : "translateX(-50%) translateY(120px)",
         zIndex: 800,
-        display: { xs: "flex", md: "none" },
+        display: "flex",
+        [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
+          display: "none",
+        },
         alignItems: "center",
         gap: "6px",
         px: "16px",

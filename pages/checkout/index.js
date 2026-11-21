@@ -20,6 +20,7 @@ import useScrollToTop from "api-manage/hooks/custom-hooks/useScrollToTop";
 import { setConfigData } from "redux/slices/configData";
 import { useGetConfigData } from "../../src/api-manage/hooks/useGetConfigData";
 import useGetDistance from "../../src/api-manage/hooks/react-query/google-api/useGetDistance";
+import ModeSwitcherTrigger from "components/module-select/ModeSwitcherTrigger";
 
 const CheckoutMobileHeader = () => {
   const router = useRouter();
@@ -58,10 +59,13 @@ const CheckoutMobileHeader = () => {
             color: "neutral.1050",
             letterSpacing: "-0.54px",
             lineHeight: 1.1,
+            flex: 1,
+            minWidth: 0,
           }}
         >
           {t("Checkout")}
         </Typography>
+        <ModeSwitcherTrigger variant="compact" />
       </Stack>
     </Box>
   );

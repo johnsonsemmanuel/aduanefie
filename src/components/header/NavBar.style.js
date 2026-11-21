@@ -11,6 +11,7 @@ import {
   Switch,
 } from "@mui/material";
 import bgImg from "../../../public/bgimge.jpg";
+import { MOBILE_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 
 import React from "react";
 
@@ -25,7 +26,7 @@ export const AppBarStyle = styled(AppBar)(({ theme, scrolling, isSmall }) => ({
   // bar with `transform` runs on the compositor — no reflow, no jank —
   // unlike the old max-height/margin-top animations. The offset is measured
   // from the real header rows by MobileNavBar into --mobile-nav-collapse.
-  [theme.breakpoints.down("md")]: {
+  [`@media ${MOBILE_LAYOUT_MEDIA_QUERY}`]: {
     transform: "translateY(0)",
     transition:
       "transform 0.32s cubic-bezier(0.33, 1, 0.68, 1), box-shadow 0.28s ease",

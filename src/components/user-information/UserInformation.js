@@ -24,6 +24,7 @@ import BodySection from "./BodySection";
 import useScrollToTop from "api-manage/hooks/custom-hooks/useScrollToTop";
 import ProfileIntro from "./ProfileIntro";
 import AccountMenuPanel from "components/header/second-navbar/account-popover/AccountMenuPanel";
+import ModeSwitcherTrigger from "components/module-select/ModeSwitcherTrigger";
 
 // ── Page title map ────────────────────────────────────────────────────────────
 const PAGE_TITLES = {
@@ -220,6 +221,8 @@ const UserInformation = ({ page, configData, orderId }) => {
               color: "neutral.1050",
               lineHeight: 1.1,
               letterSpacing: "-0.54px",
+              flex: 1,
+              minWidth: 0,
             }}
           >
             {t(
@@ -230,6 +233,7 @@ const UserInformation = ({ page, configData, orderId }) => {
                 : "Profile",
             )}
           </Typography>
+          <ModeSwitcherTrigger variant="compact" />
         </Box>
       )}
       {/* ── Profile intro ── */}

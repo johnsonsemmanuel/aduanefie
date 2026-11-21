@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { t } from "i18next";
 import { useRouter } from "next/router";
 import ManageSearch from "../second-navbar/ManageSearch";
+import ModeSwitcherTrigger from "components/module-select/ModeSwitcherTrigger";
 
 /**
  * Fixed search bar shown on mobile at the top of the /search page.
@@ -148,6 +149,8 @@ const MobileSearchPageBar = ({
               query={query}
             />
           </Box>
+
+          <ModeSwitcherTrigger variant="compact" />
 
           {/* Right: submit arrow (focused) or filter (unfocused) */}
           {focused ? (

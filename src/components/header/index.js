@@ -1,17 +1,17 @@
 import { AppBarStyle } from "./NavBar.style";
 
-import { NoSsr, useMediaQuery, useTheme } from "@mui/material";
+import { NoSsr, useMediaQuery } from "@mui/material";
 import { Box } from "@mui/system";
 import { useSelector } from "react-redux";
 import NewNavBar from "./new-navbar/NewNavBar";
 import useGetZoneId from "api-manage/hooks/react-query/google-api/useGetZone";
 import { useEffect, useState } from "react";
+import { MOBILE_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 
 const HeaderComponent = () => {
   const { configData } = useSelector((state) => state.configData);
 
-  const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down("md"));
+  const isSmall = useMediaQuery(MOBILE_LAYOUT_MEDIA_QUERY);
 
   const [currentLocation] = useState(() => {
     if (typeof window === "undefined") return null;

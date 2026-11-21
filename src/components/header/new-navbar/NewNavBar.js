@@ -1,6 +1,4 @@
 import DirectionsCarOutlinedIcon from "@mui/icons-material/DirectionsCarOutlined";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import {
   Avatar,
   Box,
@@ -14,7 +12,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import ModeSwitcherModal from "components/module-select/ModeSwitcherModal";
+import ModeSwitcherTrigger from "components/module-select/ModeSwitcherTrigger";
 import { t } from "i18next";
 import cookie from "js-cookie";
 import dynamic from "next/dynamic";
@@ -53,6 +51,7 @@ import AllCartDrawer from "./AllCartDrawer";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { ModuleTypes } from "helper-functions/moduleTypes";
 import { getModuleIdentifier, saveModuleParam } from "utils/moduleParamManager";
+import { MOBILE_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 
 const AuthModal = dynamic(() => import("components/auth/AuthModal"));
 
@@ -230,7 +229,7 @@ const NewNavBar = ({ configData }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const router = useRouter();
-  const isSmall = useMediaQuery("(max-width:1180px)");
+  const isSmall = useMediaQuery(MOBILE_LAYOUT_MEDIA_QUERY);
   const _scrollTrigger = useScrollTrigger({
     disableHysteresis: true,
     threshold: 60,
@@ -276,7 +275,6 @@ const NewNavBar = ({ configData }) => {
   const [openSignIn, setOpenSignIn] = useState(false);
   const [modalFor, setModalFor] = useState("sign-in");
   const [toggled, setToggled] = useState(false);
-  const [modeModalOpen, setModeModalOpen] = useState(false);
   const anchorRef = useRef(null);
 
   // ── localStorage (client-side only) ──
@@ -605,58 +603,8 @@ const NewNavBar = ({ configData }) => {
         <AddressReselect location={location} />
       </Box>
 
-      {/* Active Mode Switcher — matches AddressReselect inline trigger style */}
-      {modules?.length > 0 && (
-        <Stack
-          direction="row"
-          alignItems="center"
-          onClick={() => setModeModalOpen(true)}
-          spacing={0.75}
-          sx={{
-            ml: "16px",
-            pl: "16px",
-            borderLeft: (t) => `1px solid ${t.palette.divider}`,
-            flexShrink: 0,
-            maxWidth: "220px",
-            cursor: "pointer",
-            color: (t) => t.palette.neutral[1000],
-            transition: "color 0.2s ease",
-            "&:hover": {
-              color: (t) => t.palette.primary.main,
-            },
-          }}
-        >
-          {selectedModule?.icon_full_url ? (
-            <Box
-              component="img"
-              src={selectedModule.icon_full_url}
-              alt=""
-              sx={{
-                width: 18,
-                height: 18,
-                objectFit: "contain",
-                borderRadius: "4px",
-                flexShrink: 0,
-              }}
-            />
-          ) : (
-            <SwapHorizIcon sx={{ fontSize: 18, flexShrink: 0 }} />
-          )}
-          <Typography
-            noWrap
-            sx={{
-              fontSize: { xs: "12px", sm: "15px" },
-              fontWeight: 500,
-              color: "inherit",
-            }}
-          >
-            {selectedModule?.module_name || t("Choose Mode")}
-          </Typography>
-          <KeyboardArrowDownIcon
-            sx={{ fontSize: { xs: "16px", sm: "20px" }, flexShrink: 0 }}
-          />
-        </Stack>
-      )}
+      {/* Active Mode Switcher — shared with the mobile and compact headers */}
+      <ModeSwitcherTrigger variant="desktop" />
 
       {/* Search: grows to fill space, 24px from icons */}
       <Box
@@ -829,11 +777,6 @@ const NewNavBar = ({ configData }) => {
           <ForgotPassword configData={configData} />
         </CustomModal>
       )}
-
-      <ModeSwitcherModal
-        open={modeModalOpen}
-        onClose={() => setModeModalOpen(false)}
-      />
     </>
   );
 };

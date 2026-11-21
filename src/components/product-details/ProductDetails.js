@@ -3,6 +3,7 @@ import useGetStoreDetails from "api-manage/hooks/react-query/store/useGetStoreDe
 import { useAddToWishlist } from "api-manage/hooks/react-query/wish-list/useAddWishList";
 import { useWishListDelete } from "api-manage/hooks/react-query/wish-list/useWishListDelete";
 import CustomPageBreadCrumb from "components/common/CustomPageBreadCrumb";
+import ModeSwitcherTrigger from "components/module-select/ModeSwitcherTrigger";
 import { t } from "i18next";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
@@ -246,6 +247,7 @@ const ProductDetails = ({ productDetailsData, configData }) => {
             />
           </IconButton>
         )}
+        <ModeSwitcherTrigger variant="compact" />
       </Box>
 
       {/* Spacer so content isn't hidden under the fixed bar on mobile */}

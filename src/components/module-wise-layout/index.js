@@ -1,4 +1,3 @@
-import { useMediaQuery } from "@mui/material";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,7 +7,6 @@ import { setSelectedModule } from "redux/slices/utils";
 import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
 import useGetModule from "../../api-manage/hooks/react-query/useGetModule";
 import HomePageComponents from "../home/HomePageComponents";
-import ModuleSelect from "../module-select/ModuleSelect";
 import { getModuleIdentifier, saveModuleParam } from "../../utils/moduleParamManager";
 
 const ModuleWiseLayout = ({ configData, landingPageData, routeSection, routeCategory }) => {
@@ -17,8 +15,6 @@ const ModuleWiseLayout = ({ configData, landingPageData, routeSection, routeCate
 	const { data, refetch } = useGetModule();
 	const dispatch = useDispatch();
 	const router = useRouter();
-
-	const isSmall = useMediaQuery("(max-width:1180px)");
 
 	useEffect(() => {
 		if (router.pathname === "/home") {

@@ -1,4 +1,5 @@
 import { Box, IconButton, Stack, Typography, useTheme } from "@mui/material";
+import ModeSwitcherTrigger from "components/module-select/ModeSwitcherTrigger";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 
@@ -57,6 +58,7 @@ const SimpleMobileHeader = ({ title, action, sx, backHref }) => {
         >
           {t(title)}
         </Typography>
+        <ModeSwitcherTrigger variant="compact" />
         {action}
       </Stack>
     </Box>

@@ -6,6 +6,7 @@ import useGetModule from "api-manage/hooks/react-query/useGetModule";
 import toast from "react-hot-toast";
 import { setModules } from "redux/slices/configData";
 import { getSavedModuleIdentifier, saveModuleParam } from "../../utils/moduleParamManager";
+import { isModuleAgnosticRoute } from "utils/moduleRoutes";
 
 // Whether the module currently in localStorage IS the one the URL asks for
 // (matched loosely by slug/module_type/id, same as the resolver below).
@@ -22,14 +23,6 @@ const storedModuleMatchesUrl = (identifier, storedModule) => {
     String(storedModule?.id) === idStr
   );
 };
-
-// Routes that are not tied to a product module. Adding ?module= to them only
-// pollutes the URL (and on /welcome would make a marketing link look like a
-// marketplace route), so the URL sync is skipped there.
-const isModuleAgnosticRoute = (pathname) =>
-  pathname === "/welcome" ||
-  pathname === "/trade" ||
-  pathname?.startsWith("/trade/");
 
 const ModuleChecker = () => {
   const router = useRouter();

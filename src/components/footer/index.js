@@ -4,6 +4,11 @@ import FooterBottom from "./FooterBottom";
 import FooterMiddle from "./footer-middle/FooterMiddle";
 import FooterTop from "./footer-top/FooterTop";
 import useGetLandingPage from "api-manage/hooks/react-query/useGetLandingPage";
+import { DESKTOP_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
+import {
+  MOBILE_BOTTOM_NAV_HEIGHT,
+  shouldShowMobileBottomNav,
+} from "utils/mobileBottomNav";
 import { useEffect } from "react";
 
 const FooterComponent = ({ configData }) => {
@@ -12,10 +17,21 @@ const FooterComponent = ({ configData }) => {
 
   const isLandingPage = router.pathname === "/welcome";
   const isHomePage = router.pathname === "/home";
+  // MainLayout uses the same helper to decide whether to render the nav, so
+  // the footer can't reserve clearance for a nav that isn't there.
+  const showBottomNav = shouldShowMobileBottomNav({
+    pathname: router.pathname,
+    page: router.query.page,
+  });
 
-  // /home has ScrollUpButton above the BottomNav → needs more clearance
-  // other pages just need BottomNav height (65px)
-  const mobileBottomMargin = isLandingPage ? 0 : isHomePage ? "120px" : "65px";
+  // Only reserve space when fixed bottom chrome is actually rendered.
+  // LandingLayout has no BottomNav; /home also has ScrollUpButton above it.
+  const mobileBottomMargin =
+    isLandingPage || !showBottomNav
+      ? 0
+      : isHomePage
+      ? "120px"
+      : `${MOBILE_BOTTOM_NAV_HEIGHT}px`;
 
   return (
     /* Outer wrapper — #f7f7f7 background */
@@ -24,7 +40,11 @@ const FooterComponent = ({ configData }) => {
       sx={{
         backgroundColor: (theme) => theme.palette.background.default,
         mt: { xs: "1.5rem", sm: "3rem", md: isLandingPage ? "2rem" : "4rem" },
-        mb: { xs: mobileBottomMargin, md: 0 },
+        mb: mobileBottomMargin,
+        // BottomNav hides at the shared 1180px cutoff, not the theme's md=1000px.
+        [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
+          mb: 0,
+        },
         width: "100%",
         maxWidth: "100%",
         overflowX: "hidden",

@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
-import ModeSwitcherModal from "components/module-select/ModeSwitcherModal";
+import ModeSwitcherTrigger from "components/module-select/ModeSwitcherTrigger";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -57,8 +57,6 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
 
   const isSearchPage = router.pathname === "/search";
   const isHomePage = router.pathname === "/home";
-  const showModuleTabs =
-    router.pathname === "/home" || router.pathname.startsWith("/home/");
 
   const SECTION_TITLES = {
     offers: "Offers",
@@ -81,8 +79,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
     ? categoryTitle
     : SECTION_TITLES[sectionSlug];
 
-  const { modules, selectedModule } = useSelector((state) => ({
-    modules: state.configData.modules,
+  const { selectedModule } = useSelector((state) => ({
     selectedModule: state.utilsData.selectedModule,
   }));
   const { cartList } = useSelector((state) => state.cart);
@@ -92,7 +89,6 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [addressPopoverOpen, setAddressPopoverOpen] = useState(false);
   const [address, setAddress] = useState(null);
-  const [modeModalOpen, setModeModalOpen] = useState(false);
   const addressAnchorRef = useRef(null);
   // Single global cart fetch: cart/get-all. Mutations invalidate the
   // "cart-groups" query, triggering auto-refetch.
@@ -325,6 +321,12 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
     "/rental/trip-status/[id]",
     "/service/provider/[id]",
     "/service/service-details/[id]",
+    // These render SimpleMobileHeader in-page and MainLayout gives them a
+    // full-bleed mobile offset — showing the module bar as well produced a
+    // double header (and would now produce two switcher triggers).
+    "/service/all-providers",
+    "/service/checkout",
+    "/service/checkout/[slug]",
     "/campaigns",
     "/campaigns/[id]",
   ];
@@ -386,10 +388,13 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
               color: "neutral.1050",
               letterSpacing: "-0.54px",
               lineHeight: 1.1,
+              flex: 1,
+              minWidth: 0,
             }}
           >
             {t(sectionTitle)}
           </Typography>
+          <ModeSwitcherTrigger variant="compact" />
         </Stack>
       </Box>
     );
@@ -511,73 +516,8 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                 </Stack>
               </Box>
 
-              {/* Mode Switcher — matches the Location selector layout cleanly on the header background */}
-              {showModuleTabs && modules?.length > 0 && (
-                <Box
-                  onClick={() => setModeModalOpen(true)}
-                  sx={{
-                    flexShrink: 0,
-                    maxWidth: { xs: "120px", sm: "155px" },
-                    minWidth: 0,
-                    cursor: "pointer",
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "1px",
-                  }}
-                >
-                  <Stack direction="row" alignItems="center" gap="4px">
-                    <i
-                      className="fi fi-rr-apps"
-                      style={{
-                        fontSize: "12px",
-                        lineHeight: 1,
-                        display: "flex",
-                        color: theme.palette.neutral[1050],
-                      }}
-                    />
-                    <Typography
-                      sx={{
-                        fontSize: "13px",
-                        fontWeight: 600,
-                        color: theme.palette.neutral[1050],
-                        lineHeight: 1.15,
-                        letterSpacing: "-0.42px",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {t("Market")}
-                    </Typography>
-                  </Stack>
-                  <Stack direction="row" alignItems="center" gap="4px">
-                    <Typography
-                      sx={{
-                        fontSize: "11px",
-                        fontWeight: 400,
-                        color: isDark ? theme.palette.text.secondary : "#757575",
-                        lineHeight: 1.15,
-                        letterSpacing: "-0.36px",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {selectedModule?.module_name || t("Choose mode")}
-                    </Typography>
-                    <i
-                      className="fi fi-rr-angle-small-down"
-                      style={{
-                        fontSize: "16px",
-                        lineHeight: 1,
-                        display: "flex",
-                        color: theme.palette.neutral[1050],
-                        flexShrink: 0,
-                      }}
-                    />
-                  </Stack>
-                </Box>
-              )}
+              {/* Mode Switcher — shared trigger keeps availability and theming in sync with desktop */}
+              <ModeSwitcherTrigger variant="mobile" />
 
               {/* Cart / Bookings — hidden on parcel, shows bookings on service */}
               {getCurrentModuleType() === ModuleTypes.PARCEL ? null : getCurrentModuleType() === ModuleTypes.SERVICE ? (
@@ -828,11 +768,6 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
         setAddress={setAddress}
         token={token}
         currentLatLngForMar={currentLatLngForMar}
-      />
-
-      <ModeSwitcherModal
-        open={modeModalOpen}
-        onClose={() => setModeModalOpen(false)}
       />
     </>
   );

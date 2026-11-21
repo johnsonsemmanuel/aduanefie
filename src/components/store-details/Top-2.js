@@ -26,6 +26,7 @@ import { Box, Stack } from "@mui/system";
 import React, { useEffect, useReducer, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
+import ModeSwitcherTrigger from "components/module-select/ModeSwitcherTrigger";
 import { useDispatch, useSelector } from "react-redux";
 import { useAddStoreToWishlist } from "api-manage/hooks/react-query/wish-list/useAddStoreToWishLists";
 import { useWishListStoreDelete } from "api-manage/hooks/react-query/wish-list/useWishListStoreDelete";
@@ -703,6 +704,7 @@ const Top2 = (props) => {
           >
             {storeDetails?.name}
           </Typography>
+          <ModeSwitcherTrigger variant="compact" />
         </Stack>
       </Box>
 
