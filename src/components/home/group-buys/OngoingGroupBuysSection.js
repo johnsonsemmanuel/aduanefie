@@ -37,11 +37,11 @@ const OngoingGroupBuysSection = ({ moduleId, limit = 6 }) => {
         </Typography>
         <Button
           component={Link}
-          href="/group-buys"
+          href={moduleId ? `/group-buys?module_id=${moduleId}` : "/group-buys"}
           size="small"
-          sx={{ whiteSpace: "nowrap", textTransform: "none" }}
+          sx={{ whiteSpace: "nowrap", textTransform: "none", fontWeight: 600 }}
         >
-          {t("View all groups")}
+          {t("View all")}
         </Button>
       </Stack>
 
@@ -55,15 +55,15 @@ const OngoingGroupBuysSection = ({ moduleId, limit = 6 }) => {
           </Button>
         </Stack>
       ) : (
-        <Grid container spacing={2}>
+        <Grid container spacing={{ xs: 1.25, sm: 2 }}>
           {isLoading
-            ? [...Array(3)].map((_, index) => (
-                <Grid item xs={12} sm={6} md={4} key={`skeleton-${index}`}>
-                  <Skeleton variant="rounded" height={232} />
+            ? [...Array(4)].map((_, index) => (
+                <Grid item xs={6} sm={6} md={4} key={`skeleton-${index}`}>
+                  <Skeleton variant="rounded" height={220} sx={{ borderRadius: "12px" }} />
                 </Grid>
               ))
             : visible.map((group) => (
-                <Grid item xs={12} sm={6} md={4} key={group.id}>
+                <Grid item xs={6} sm={6} md={4} key={group.id}>
                   <GroupBuyCard group={group} />
                 </Grid>
               ))}
