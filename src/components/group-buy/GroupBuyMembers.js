@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import { useGetGroupBuyMembers } from "api-manage/hooks/react-query/group-buy/useGroupBuys";
 import CustomModal from "components/modal";
+import VerifiedBadge from "components/group-buy/VerifiedBadge";
 
 const money = (value) =>
   value === null || value === undefined
@@ -74,6 +75,9 @@ const GroupBuyMembers = ({ open, onClose, id }) => {
                     </Typography>
                     {member.role === "organiser" && (
                       <Chip size="small" color="primary" label="Organiser" />
+                    )}
+                    {member.role === "organiser" && (
+                      <VerifiedBadge trust={member.trust_badge} />
                     )}
                   </Stack>
                   <Typography variant="caption" color="text.secondary">

@@ -11,6 +11,8 @@ import {
   group_buy_quote_api,
   group_buy_members_api,
   group_buy_messages_api,
+  group_buy_invite_api,
+  group_buy_verification_api,
 } from "api-manage/ApiRoutes";
 
 // A stable guest id matters here: members, chat and checkout all scope the
@@ -168,6 +170,44 @@ export const useSendGroupBuyMessage = (id) => {
     }
   );
 };
+
+export const useGetOrganizerVerification = (enabled = true) =>
+  useQuery(
+    ["group-buy", "verification"],
+    async () => {
+      const { data } = await MainApi.get(group_buy_verification_api);
+      return data?.data;
+    },
+    { enabled, staleTime: 60 * 1000 }
+  );
+
+export const useSubmitOrganizerVerification = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async (ghanaCardLast4) => {
+      const { data } = await MainApi.post(group_buy_verification_api, {
+        ghana_card_last4: ghanaCardLast4,
+      });
+      return data?.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["group-buy", "verification"]);
+        queryClient.invalidateQueries("group-buys");
+        queryClient.invalidateQueries("group-buy");
+      },
+    }
+  );
+};
+
+export const useInviteToGroupBuy = (id) =>
+  useMutation(async ({ email, message }) => {
+    const { data } = await MainApi.post(group_buy_invite_api(id), {
+      email,
+      message,
+    });
+    return data;
+  });
 
 export const useGetGroupBuyQuote = (id, destinationCountry, enabled = true) =>
   useQuery(

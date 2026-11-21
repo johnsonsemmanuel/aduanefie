@@ -37,6 +37,7 @@ import { getEcommerceSections } from "./ecommerceSectionsConfig";
 import SinglePoster from "./SinglePoster";
 import TrendingItemsSection from "./TrendingItemsSection";
 import LiveFarmingSection from "components/home/live-farming/LiveFarmingSection";
+import OngoingGroupBuysSection from "components/home/group-buys/OngoingGroupBuysSection";
 const FlashSalesSection = dynamic(() => import("./FlashSalesSection"), {
   ssr: false,
 });
@@ -128,6 +129,12 @@ const Shop = ({ configData, routeSection }) => {
       <S>
         <CustomContainer>
           <LiveFarmingSection limit={8} />
+        </CustomContainer>
+      </S>
+
+      <S>
+        <CustomContainer>
+          <OngoingGroupBuysSection moduleId={moduleId} />
         </CustomContainer>
       </S>
 

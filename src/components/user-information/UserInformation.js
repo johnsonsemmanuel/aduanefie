@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Grid,
   IconButton,
   Typography,
@@ -26,6 +27,9 @@ import useScrollToTop from "api-manage/hooks/custom-hooks/useScrollToTop";
 import ProfileIntro from "./ProfileIntro";
 import AccountMenuPanel from "components/header/second-navbar/account-popover/AccountMenuPanel";
 import ModeSwitcherTrigger from "components/module-select/ModeSwitcherTrigger";
+import VerifiedBadge from "components/group-buy/VerifiedBadge";
+import OrganizerVerificationDialog from "components/group-buy/OrganizerVerificationDialog";
+import { useGetOrganizerVerification } from "api-manage/hooks/react-query/group-buy/useGroupBuys";
 
 // ── Page title map ────────────────────────────────────────────────────────────
 const PAGE_TITLES = {
@@ -70,6 +74,7 @@ const UserInformation = ({ page, configData, orderId }) => {
   useScrollToTop();
   const isMobile = useMediaQuery(MOBILE_LAYOUT_MEDIA_QUERY);
   const [accountDeleteStatus, setAccountDeleteStatus] = useState(true);
+  const [verificationOpen, setVerificationOpen] = useState(false);
   const dispatch = useDispatch();
   const router = useRouter();
 
@@ -80,6 +85,9 @@ const UserInformation = ({ page, configData, orderId }) => {
   };
 
   const userToken = getToken();
+  const { data: organizerVerification } = useGetOrganizerVerification(
+    Boolean(userToken)
+  );
   const { data, refetch, isLoading } = useGetUserInfo(handleSuccess);
 
   const onSuccessHandlerForUserDelete = (res) => {
@@ -251,6 +259,16 @@ const UserInformation = ({ page, configData, orderId }) => {
               editAddress={editAddress}
               setEditAddress={setEditAddress}
             />
+            {activePage === "profile-settings" && (
+              <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 2, flexWrap: "wrap" }}>
+                <VerifiedBadge trust={organizerVerification} />
+                <Button size="small" variant="text" onClick={() => setVerificationOpen(true)}>
+                  {organizerVerification?.verified
+                    ? "Verification details"
+                    : "Get a verified organiser badge"}
+                </Button>
+              </Stack>
+            )}
           </Box>
         </CustomContainer>
       )}
@@ -298,10 +316,23 @@ const UserInformation = ({ page, configData, orderId }) => {
     </CustomStackFullWidth>
   );
 
+  const organizerVerificationDialog = (
+    <OrganizerVerificationDialog
+      open={verificationOpen}
+      onClose={() => setVerificationOpen(false)}
+    />
+  );
+
   return hasOwnPushNotificationLayout ? (
-    <>{pageContent}</>
+    <>
+      {pageContent}
+      {organizerVerificationDialog}
+    </>
   ) : (
-    <PushNotificationLayout>{pageContent}</PushNotificationLayout>
+    <PushNotificationLayout>
+      {pageContent}
+      {organizerVerificationDialog}
+    </PushNotificationLayout>
   );
 };
 

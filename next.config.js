@@ -1,5 +1,8 @@
 const nextConfig = {
   reactStrictMode: true,
+  // The workspace has a root lockfile above this app. Pin the tracing root so
+  // Next resolves all build paths from this app only.
+  outputFileTracingRoot: __dirname,
   // Hide Next.js dev-mode indicator (bottom-left "N" badge)
   devIndicators: {
     buildActivity: false,

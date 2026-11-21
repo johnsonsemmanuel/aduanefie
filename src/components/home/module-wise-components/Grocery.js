@@ -42,6 +42,7 @@ import TopPicksSection from "./grocery/TopPicksSection";
 import Brands from "../brands";
 import FlashSalesSection from "./ecommerce/FlashSalesSection";
 import LiveFarmingSection from "components/home/live-farming/LiveFarmingSection";
+import OngoingGroupBuysSection from "components/home/group-buys/OngoingGroupBuysSection";
 
 const menus = ["All", "Beauty", "Bread & Juice", "Drinks", "Milks"];
 
@@ -132,6 +133,13 @@ const Grocery = (props) => {
           <LiveFarmingSection limit={8} />
         </CustomContainer>
       </S>
+
+      <S>
+        <CustomContainer>
+          <OngoingGroupBuysSection moduleId={moduleId} />
+        </CustomContainer>
+      </S>
+
       <S>
         <CustomContainer>
           <FlashSalesSection key="grocery" />

@@ -239,6 +239,8 @@ export const group_buy_cancel_api = (id) => `/api/v1/group-buys/${id}/cancel`;
 export const group_buy_quote_api = (id) => `/api/v1/group-buys/${id}/quote`;
 export const group_buy_members_api = (id) => `/api/v1/group-buys/${id}/members`;
 export const group_buy_messages_api = (id) => `/api/v1/group-buys/${id}/messages`;
+export const group_buy_invite_api = (id) => `/api/v1/group-buys/${id}/invite`;
+export const group_buy_verification_api = "/api/v1/group-buys/organizer/verification";
 
 // ============================================================================
 // Intra-African Agricultural Trade API Routes

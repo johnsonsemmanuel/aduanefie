@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { Box, Button, Card, CardContent, Chip, LinearProgress, Stack, Typography } from "@mui/material";
 import GroupsIcon from "@mui/icons-material/Groups";
 import PublicIcon from "@mui/icons-material/Public";
+import VerifiedBadge from "components/group-buy/VerifiedBadge";
 
 const money = (value) =>
   `GH₵ ${Number(value || 0).toLocaleString(undefined, {
@@ -15,6 +16,12 @@ const statusColor = (status) => {
   if (status === "locked") return "success";
   if (status === "fulfilled") return "success";
   return "default";
+};
+
+const statusLabel = (status) => {
+  if (status === "open") return "Ongoing";
+  if (status === "locked") return "Complete";
+  return status;
 };
 
 const GroupBuyCard = ({ group, onEdit }) => {
@@ -30,13 +37,14 @@ const GroupBuyCard = ({ group, onEdit }) => {
     >
       <CardContent sx={{ flexGrow: 1 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="flex-start" spacing={1}>
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap>
             <GroupsIcon color="primary" fontSize="small" />
             <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>
               {group.item?.name || "Group buy"}
             </Typography>
+            <VerifiedBadge trust={group.organizer_trust} />
           </Stack>
-          <Chip size="small" color={statusColor(group.status)} label={group.status} />
+          <Chip size="small" color={statusColor(group.status)} label={statusLabel(group.status)} />
         </Stack>
 
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
