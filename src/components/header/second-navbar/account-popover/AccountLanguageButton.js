@@ -18,6 +18,7 @@ import {
 import CustomModal from "components/modal";
 import { StyledMenu } from "../../NavBar.style";
 import { languageList } from "../../top-navbar/language/languageList";
+import { clearStoredZoneAndLocationOnCountryChange } from "helper-functions/marketZone";
 import { haveRtlLanguages } from "../../top-navbar/language/rtlLanguageList";
 import { CustomButtonPrimary } from "styled-components/CustomButtons.style";
 
@@ -73,6 +74,7 @@ const AccountLanguageButton = () => {
   const isRTLLanguage = (value) => haveRtlLanguages.includes(value);
 
   const handleChangeLanguage = (lan) => {
+    clearStoredZoneAndLocationOnCountryChange(lan?.countryCode);
     dispatch(setLanguage(lan?.languageCode));
     dispatch(setCountryCode(lan?.countryCode));
     cookie.set("languageSetting", lan?.languageCode);

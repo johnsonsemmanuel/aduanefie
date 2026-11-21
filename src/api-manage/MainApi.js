@@ -1,5 +1,6 @@
 import axios from "axios";
 import { readCurrentLocation } from "helper-functions/validLocation";
+import { getActiveCountry } from "helper-functions/marketZone";
 // NEXT_PUBLIC_BASE_URL may or may not carry a trailing slash. Axios normalises
 // that when joining baseURL + path, but every server-side `${baseUrl}${path}`
 // template does not - it yields `host//api/v1/...`, which the API answers with
@@ -56,11 +57,14 @@ MainApi.interceptors.request.use(function (config) {
         return false;
       }
     })();
-  if (zoneidIsValid) {
+  // A zone is only meaningful together with a supported market. Sending the
+  // old Ghana [1] fallback would scope Nigerian, Togolese and unknown-market
+  // visitors to Ghana, so omit the header and let the API/UI ask for location.
+  const activeCountry = getActiveCountry();
+  if (zoneidIsValid && activeCountry) {
     config.headers.zoneid = zoneid;
-  } else if (typeof window !== "undefined") {
-    // Default to national Ghana zone [1] so first-time visitors can browse immediately
-    config.headers.zoneid = "[1]";
+  } else {
+    delete config.headers.zoneid;
   }
   if (moduleid && !config.headers.moduleId) config.headers.moduleId = moduleid;
   if (token) config.headers.authorization = `Bearer ${token}`;

@@ -31,6 +31,7 @@ import CustomModal from "components/modal";
 import { StyledMenu, TopBarButton } from "../../NavBar.style";
 import { languageList } from "./languageList";
 import { haveRtlLanguages } from "./rtlLanguageList";
+import { clearStoredZoneAndLocationOnCountryChange } from "helper-functions/marketZone";
 
 const getValues = (settings) => ({
   direction: settings.direction,
@@ -117,6 +118,7 @@ const CustomLanguage = ({
   };
 
   const handleChangeLanguage = (lan) => {
+    clearStoredZoneAndLocationOnCountryChange(lan?.countryCode);
     dispatch(setLanguage(lan?.languageCode));
     dispatch(setCountryCode(lan?.countryCode));
     cookie.set("languageSetting", lan?.languageCode);
