@@ -38,8 +38,8 @@ export const french = {
   "Coming soon": "Bientôt disponible",
   "No data yet": "Aucune donnée pour le moment",
   "Not available in your country": "Non disponible dans votre pays",
-  "Currency is set by your delivery country so you always pay in local money.":
-    "La devise est déterminée par votre pays de livraison afin que vous payiez toujours en monnaie locale.",
+  "Currency matches the seller's price. Cross-border conversion and duties are itemised in the summary.":
+    "La devise correspond au prix du vendeur. La conversion et les droits transfrontaliers sont détaillés dans le récapitulatif.",
   "Language has been changed": "La langue a été modifiée",
 };
 

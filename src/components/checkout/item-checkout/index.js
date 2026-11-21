@@ -16,11 +16,7 @@ import { isBundleCartRow } from "helper-functions/bundleCartRow";
 import { getStoresOrRestaurants } from "helper-functions/getStoresOrRestaurants";
 import { getGuestId, getToken } from "helper-functions/getToken";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
-import {
-  getCurrencyOptions,
-  getMarketProfile,
-  DEFAULT_COUNTRY,
-} from "utils/marketProfiles";
+import { getCurrencyOptions, DEFAULT_COUNTRY } from "utils/marketProfiles";
 import moment from "moment/moment";
 import Router from "next/router";
 import React, { useEffect, useMemo, useReducer, useState, useRef } from "react";
@@ -378,10 +374,13 @@ const ItemCheckout = (props) => {
   }, []);
 
   useEffect(() => {
-    // The destination market is the only authority on which currency an order
-    // may be charged in. Never offer an arbitrary global currency list; the
-    // backend rejects any currency outside the destination's presentment set.
-    const options = getCurrencyOptions(destinationCountry, DEFAULT_COUNTRY);
+    // The fulfilling store's market is the authority on which currency the
+    // order amount is denominated in. Order amounts are priced and quoted in
+    // the store's settlement currency (including cross-border landed cost), so
+    // the charge currency must match that market. Never offer an arbitrary
+    // global currency list; the backend rejects currencies outside the
+    // store market's presentment set.
+    const options = getCurrencyOptions(storeCountry, DEFAULT_COUNTRY);
     setCurrencies(options);
     const preferred = options[0];
     if (preferred) {
@@ -389,7 +388,7 @@ const ItemCheckout = (props) => {
         options.some((option) => option.code === current?.code) ? current : preferred
       );
     }
-  }, [destinationCountry]);
+  }, [storeCountry]);
   useEffect(() => {
     if (storeId) {
       refetch();
@@ -1746,7 +1745,7 @@ const ItemCheckout = (props) => {
                       )}
                     </Stack>
                     <Typography variant="caption" color="text.secondary">
-                      {t("Currency is set by your delivery country so you always pay in local money.")}
+                      {t("Currency matches the seller's price. Cross-border conversion and duties are itemised in the summary.")}
                     </Typography>
                   </Box>
 
