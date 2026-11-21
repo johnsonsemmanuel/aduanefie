@@ -1329,18 +1329,20 @@ const ProductCard = (props) => {
                         component="img"
                         src="/static/badges/live-farming-badge.svg"
                         alt={t("Live Farming")}
-                        sx={{ width: 15, height: 15, ml: "4px !important", borderRadius: "4px" }}
+                        sx={{ width: 14, height: 14, ml: "4px !important", borderRadius: "4px" }}
                       />
                     }
                     label={
                       item?.days_to_harvest !== null && item?.days_to_harvest !== undefined
-                        ? t("Live Farming · {{days}}d", { days: item.days_to_harvest })
-                        : t("Live Farming")
+                        ? t("Growing · {{days}}d", { days: item.days_to_harvest })
+                        : t("Growing")
                     }
                     sx={{
                       position: "absolute",
-                      top: 10,
-                      left: 10,
+                      bottom: 8,
+                      left: 8,
+                      height: { xs: 20, sm: 22 },
+                      fontSize: { xs: "10px", sm: "11px" },
                       bgcolor: "#B45309",
                       color: "#FFFFFF",
                       fontWeight: 700,
@@ -1355,8 +1357,10 @@ const ProductCard = (props) => {
                     label={t("Harvest Ready")}
                     sx={{
                       position: "absolute",
-                      top: 10,
-                      left: 10,
+                      bottom: 8,
+                      left: 8,
+                      height: { xs: 20, sm: 22 },
+                      fontSize: { xs: "10px", sm: "11px" },
                       bgcolor: "#155724",
                       color: "#FFFFFF",
                       fontWeight: 700,
@@ -1368,11 +1372,14 @@ const ProductCard = (props) => {
                 {item?.is_backyard && (
                   <Chip
                     size="small"
-                    label={t("Backyard Grown")}
+                    label={t("Backyard")}
                     sx={{
+                      display: { xs: "none", sm: "inline-flex" },
                       position: "absolute",
                       top: 10,
                       right: 10,
+                      height: 22,
+                      fontSize: "11px",
                       bgcolor: "#67513A",
                       color: "#FFFFFF",
                       fontWeight: 600,
@@ -1384,7 +1391,13 @@ const ProductCard = (props) => {
                 <InsuranceBadge
                   item={item}
                   variant="compact"
-                  sx={{ position: "absolute", bottom: 8, left: 8, zIndex: 10 }}
+                  sx={{
+                    display: { xs: "none", sm: "inline-flex" },
+                    position: "absolute",
+                    bottom: 8,
+                    right: 8,
+                    zIndex: 10,
+                  }}
                 />
                 <CustomOverLay hover={state.isTransformed} border_radius="10px">
                   <QuickView

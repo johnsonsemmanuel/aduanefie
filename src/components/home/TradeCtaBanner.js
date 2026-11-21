@@ -27,11 +27,17 @@ const TradeCtaBanner = () => {
     >
       <Stack gap="2px">
         <Typography
-          sx={{ fontSize: { xs: "15px", md: "18px" }, fontWeight: 700 }}
+          sx={{ fontSize: { xs: "14.5px", md: "18px" }, fontWeight: 700 }}
         >
           {t("Buying in bulk?")}
         </Typography>
-        <Typography sx={{ fontSize: "13px", color: "rgba(255,255,255,0.9)" }}>
+        <Typography
+          sx={{
+            display: { xs: "none", sm: "block" },
+            fontSize: "13px",
+            color: "rgba(255,255,255,0.9)",
+          }}
+        >
           {t(
             "Plan cross-border shipments across African trade blocs from one place."
           )}
@@ -40,40 +46,43 @@ const TradeCtaBanner = () => {
       <Stack
         direction="row"
         alignItems="center"
-        gap="10px"
-        flexWrap="wrap"
-        sx={{ flexShrink: 0 }}
+        gap="8px"
+        sx={{ flexShrink: 0, width: { xs: "100%", sm: "auto" } }}
       >
         <Button
           variant="outlined"
           size="small"
           onClick={() => router.push("/market-prices")}
           sx={{
-            flexShrink: 0,
+            flex: { xs: 1, sm: "none" },
             borderColor: "rgba(255,255,255,0.55)",
             color: "#fff",
             fontWeight: 600,
+            fontSize: { xs: "12px", sm: "13px" },
+            whiteSpace: "nowrap",
             "&:hover": {
               borderColor: "#fff",
               bgcolor: "rgba(255,255,255,0.12)",
             },
           }}
         >
-          {t("Live Market Prices")}
+          {t("Market Prices")}
         </Button>
         <Button
           variant="contained"
           size="small"
           onClick={() => router.push("/trade")}
           sx={{
-            flexShrink: 0,
+            flex: { xs: 1, sm: "none" },
             bgcolor: "#fff",
             color: "primary.deep",
             fontWeight: 700,
+            fontSize: { xs: "12px", sm: "13px" },
+            whiteSpace: "nowrap",
             "&:hover": { bgcolor: "rgba(255,255,255,0.9)" },
           }}
         >
-          {t("Explore B2B Trade")}
+          {t("B2B Trade")}
         </Button>
       </Stack>
     </Box>

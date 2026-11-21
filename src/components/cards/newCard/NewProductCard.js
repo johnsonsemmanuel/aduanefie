@@ -850,18 +850,20 @@ export const InfoSection = ({
             >
               / {({
                 kg: "kg",
-                bag_50kg: "50kg Bag",
-                bag_100kg: "100kg Bag",
+                bag_50kg: "50kg",
+                bag_100kg: "100kg",
                 crate: "Crate",
                 bunch: "Bunch",
                 ton: "Ton",
-                box: "Export Box",
+                box: "Box",
               }[item.agro_unit] || item.agro_unit)}
-              {Number(item?.unit_weight_kg) > 0 && displayPrice > 0
-                ? ` (${getAmountWithSign(
+              {Number(item?.unit_weight_kg) > 0 && displayPrice > 0 && (
+                <Box component="span" sx={{ display: { xs: "none", md: "inline" } }}>
+                  {` (${getAmountWithSign(
                     (displayPrice / Number(item.unit_weight_kg)).toFixed(2)
-                  )}/kg)`
-                : ""}
+                  )}/kg)`}
+                </Box>
+              )}
             </Typography>
           )}
           {originalPrice > displayPrice && (
@@ -946,18 +948,25 @@ export const InfoSection = ({
             >
               <Typography
                 sx={{
-                  fontSize: "11px",
+                  fontSize: { xs: "10px", sm: "11px" },
                   fontWeight: 600,
                   color: theme.palette.warning.dark,
                   lineHeight: 1.3,
                   whiteSpace: "nowrap",
                 }}
               >
-                {item?.pre_order_available ? t("Live Farming · Pre-Order") : t("Live Farming")}
+                <Box component="span" sx={{ display: { xs: "inline", sm: "none" } }}>
+                  {item?.pre_order_available ? t("Pre-Order") : t("Growing")}
+                </Box>
+                <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+                  {item?.pre_order_available ? t("Live Farming · Pre-Order") : t("Live Farming")}
+                </Box>
               </Typography>
             </DeliveryBadge>
           )}
-          <InsuranceBadge item={item} variant="compact" />
+          <Box sx={{ display: { xs: "none", sm: "inline-flex" }, flexShrink: 0 }}>
+            <InsuranceBadge item={item} variant="compact" />
+          </Box>
           {item?.effective_farming_status === "harvest_ready" && (
             <DeliveryBadge
               sx={{
@@ -967,7 +976,7 @@ export const InfoSection = ({
             >
               <Typography
                 sx={{
-                  fontSize: "11px",
+                  fontSize: { xs: "10px", sm: "11px" },
                   fontWeight: 600,
                   color: theme.palette.primary.main,
                   lineHeight: 1.3,
@@ -981,6 +990,7 @@ export const InfoSection = ({
           {item?.is_backyard && (
             <DeliveryBadge
               sx={{
+                display: { xs: "none", sm: "inline-flex" },
                 flexShrink: 0,
                 backgroundColor: alpha(theme.palette.success.main, 0.12),
               }}
@@ -1001,6 +1011,7 @@ export const InfoSection = ({
           {item?.crop_grade && (
             <DeliveryBadge
               sx={{
+                display: { xs: "none", sm: "inline-flex" },
                 flexShrink: 0,
                 backgroundColor: alpha(theme.palette.primary.main, 0.1),
               }}
@@ -1027,7 +1038,7 @@ export const InfoSection = ({
             >
               <Typography
                 sx={{
-                  fontSize: "11px",
+                  fontSize: { xs: "10px", sm: "11px" },
                   fontWeight: 600,
                   color: theme.palette.text.primary,
                   lineHeight: 1.3,
@@ -1042,6 +1053,7 @@ export const InfoSection = ({
             item.bulk_pricing_tiers.length > 0 && (
               <DeliveryBadge
                 sx={{
+                  display: { xs: "none", sm: "inline-flex" },
                   flexShrink: 0,
                   backgroundColor: alpha(theme.palette.success.main, 0.12),
                 }}

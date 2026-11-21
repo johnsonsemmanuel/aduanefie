@@ -98,14 +98,14 @@ const ServiceModule = () => {
   return (
     <Box sx={{ pb: 6 }}>
       <CustomContainer>
-        <Stack spacing={4}>
+        <Stack spacing={{ xs: 2.5, md: 4 }}>
           {/* Flat Earth-Toned Service Hero Banner (Zero Gradients) */}
           <Box
             sx={{
               bgcolor: EARTH_DARK,
               color: "#FFFFFF",
-              borderRadius: "20px",
-              p: { xs: 3, md: 4.5 },
+              borderRadius: { xs: "14px", md: "20px" },
+              p: { xs: 2, md: 4.5 },
               border: `1px solid ${EARTH_ACCENT}`,
             }}
           >
@@ -113,13 +113,15 @@ const ServiceModule = () => {
               direction={{ xs: "column", md: "row" }}
               justifyContent="space-between"
               alignItems={{ xs: "flex-start", md: "center" }}
-              spacing={3}
+              spacing={{ xs: 1.75, md: 3 }}
             >
               <Box sx={{ maxWidth: 680 }}>
                 <Chip
                   icon={<HandymanIcon sx={{ color: "#FFFFFF !important", fontSize: 16 }} />}
-                  label={t("Agro Services & Mechanization Hub")}
+                  label={t("Agro Services & Mechanization")}
+                  size="small"
                   sx={{
+                    display: { xs: "none", sm: "inline-flex" },
                     bgcolor: EARTH_ACCENT,
                     color: "#FAF8F5",
                     fontWeight: 600,
@@ -128,46 +130,59 @@ const ServiceModule = () => {
                 />
                 <Typography
                   variant="h4"
-                  sx={{ fontWeight: 700, color: "#FAF8F5", mb: 1, fontSize: { xs: "1.5rem", md: "2rem" } }}
+                  sx={{ fontWeight: 700, color: "#FAF8F5", mb: { xs: 0, sm: 1 }, fontSize: { xs: "1.15rem", md: "2rem" }, lineHeight: 1.25 }}
                 >
-                  {t("Book Trusted Field Teams, Tractor Operators & Agronomists")}
+                  {t("Book Field Teams, Tractors & Agronomists")}
                 </Typography>
-                <Typography variant="body1" sx={{ color: "#EFE7D3", opacity: 0.95 }}>
+                <Typography
+                  variant="body1"
+                  sx={{
+                    display: { xs: "none", sm: "block" },
+                    color: "#EFE7D3",
+                    opacity: 0.95,
+                  }}
+                >
                   {t(
-                    "Schedule on-farm mechanization, drone or manual spraying, land preparation, soil testing, and agricultural contractors without cart friction."
+                    "Schedule on-farm mechanization, spraying, land preparation, and soil testing."
                   )}
                 </Typography>
               </Box>
 
-              <Stack direction={{ xs: "row", sm: "row" }} spacing={1.5} flexWrap="wrap">
+              <Stack direction="row" spacing={1} sx={{ width: { xs: "100%", sm: "auto" } }}>
                 <Button
                   component={Link}
                   href="/service/all-providers"
                   variant="contained"
+                  size="small"
                   sx={{
                     bgcolor: OLIVE_GREEN,
                     color: "#FFFFFF",
                     fontWeight: 600,
                     borderRadius: "10px",
-                    px: 2.5,
-                    py: 1.2,
+                    px: { xs: 1.75, md: 2.5 },
+                    py: { xs: 0.9, md: 1.2 },
+                    fontSize: { xs: "12.5px", md: "14px" },
+                    flex: { xs: 1, sm: "none" },
                     "&:hover": { bgcolor: "#778B56" },
                   }}
                 >
-                  {t("Browse Providers")}
+                  {t("Providers")}
                 </Button>
                 <Button
                   component={Link}
                   href="/profile?page=my-orders"
                   variant="outlined"
-                  startIcon={<CalendarMonthIcon />}
+                  size="small"
+                  startIcon={<CalendarMonthIcon sx={{ fontSize: "16px !important" }} />}
                   sx={{
                     borderColor: WARM_SAND,
                     color: WARM_SAND,
                     fontWeight: 600,
                     borderRadius: "10px",
-                    px: 2.5,
-                    py: 1.2,
+                    px: { xs: 1.75, md: 2.5 },
+                    py: { xs: 0.9, md: 1.2 },
+                    fontSize: { xs: "12.5px", md: "14px" },
+                    flex: { xs: 1, sm: "none" },
                     "&:hover": { borderColor: "#FFFFFF", bgcolor: "rgba(255,255,255,0.08)" },
                   }}
                 >
@@ -183,9 +198,9 @@ const ServiceModule = () => {
               direction="row"
               justifyContent="space-between"
               alignItems="center"
-              sx={{ mb: 1.5 }}
+              sx={{ mb: 1.25 }}
             >
-              <Typography variant="h6" sx={{ fontWeight: 700, color: EARTH_DARK }}>
+              <Typography variant="h6" sx={{ fontWeight: 700, fontSize: { xs: "15px", md: "18px" }, color: EARTH_DARK }}>
                 {t("Service Categories")}
               </Typography>
             </Stack>
@@ -196,11 +211,24 @@ const ServiceModule = () => {
                 ))}
               </Stack>
             ) : (
-              <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+              <Stack
+                direction="row"
+                spacing={1}
+                useFlexGap
+                sx={{
+                  flexWrap: { xs: "nowrap", sm: "wrap" },
+                  overflowX: { xs: "auto", sm: "visible" },
+                  pb: { xs: 0.5, sm: 0 },
+                  scrollbarWidth: "none",
+                  "&::-webkit-scrollbar": { display: "none" },
+                }}
+              >
                 <Chip
-                  label={t("All Services")}
+                  label={t("All")}
+                  size="small"
                   onClick={() => setSelectedCategoryId("all")}
                   sx={{
+                    flexShrink: 0,
                     fontWeight: 600,
                     bgcolor: selectedCategoryId === "all" ? EARTH_DARK : WARM_SAND,
                     color: selectedCategoryId === "all" ? "#FFFFFF" : EARTH_DARK,
@@ -215,8 +243,10 @@ const ServiceModule = () => {
                     <Chip
                       key={cat.id}
                       label={cat.name}
+                      size="small"
                       onClick={() => setSelectedCategoryId(cat.id)}
                       sx={{
+                        flexShrink: 0,
                         fontWeight: 600,
                         bgcolor: active ? EARTH_DARK : WARM_SAND,
                         color: active ? "#FFFFFF" : EARTH_DARK,
@@ -237,13 +267,13 @@ const ServiceModule = () => {
               direction="row"
               justifyContent="space-between"
               alignItems="center"
-              sx={{ mb: 2 }}
+              sx={{ mb: { xs: 1.25, md: 2 } }}
             >
               <Box>
-                <Typography variant="h6" sx={{ fontWeight: 700, color: EARTH_DARK }}>
-                  {t("Bookable Agricultural Services")}
+                <Typography variant="h6" sx={{ fontWeight: 700, fontSize: { xs: "15px", md: "18px" }, color: EARTH_DARK }}>
+                  {t("Bookable Services")}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{ display: { xs: "none", sm: "block" } }}>
                   {t("Select a service package to schedule date, farm location, and crew allocation.")}
                 </Typography>
               </Box>
@@ -285,14 +315,14 @@ const ServiceModule = () => {
                 )}
               </Card>
             ) : (
-              <Grid container spacing={2.5}>
+              <Grid container spacing={{ xs: 1.25, md: 2.5 }}>
                 {filteredServices.map((service) => {
                   const { displayPrice, originalPrice } = getServiceCardPricing(service);
                   const imageSrc =
                     service?.image_full_url ||
                     "/static/no-image-found.png";
                   return (
-                    <Grid item xs={12} sm={6} md={4} lg={3} key={service.id}>
+                    <Grid item xs={6} sm={6} md={4} lg={3} key={service.id}>
                       <Card
                         elevation={0}
                         sx={{
@@ -300,7 +330,7 @@ const ServiceModule = () => {
                           display: "flex",
                           flexDirection: "column",
                           border: `1px solid ${EARTH_BORDER}`,
-                          borderRadius: "16px",
+                          borderRadius: { xs: "12px", md: "16px" },
                           overflow: "hidden",
                           bgcolor: "#FFFFFF",
                         }}
@@ -308,7 +338,7 @@ const ServiceModule = () => {
                         <Box
                           sx={{
                             position: "relative",
-                            height: 165,
+                            height: { xs: 115, sm: 165 },
                             bgcolor: WARM_SAND,
                             overflow: "hidden",
                           }}
@@ -323,6 +353,7 @@ const ServiceModule = () => {
                               size="small"
                               label={service.unit_type}
                               sx={{
+                                display: { xs: "none", sm: "inline-flex" },
                                 position: "absolute",
                                 top: 10,
                                 right: 10,
@@ -340,23 +371,38 @@ const ServiceModule = () => {
                             display: "flex",
                             flexDirection: "column",
                             justifyContent: "space-between",
-                            p: 2,
+                            p: { xs: 1.25, sm: 2 },
+                            "&:last-child": { pb: { xs: 1.25, sm: 2 } },
                           }}
                         >
                           <Box>
                             <Typography
                               variant="caption"
-                              sx={{ color: OLIVE_GREEN, fontWeight: 700, display: "block", mb: 0.5 }}
+                              sx={{
+                                color: OLIVE_GREEN,
+                                fontWeight: 700,
+                                fontSize: { xs: "10.5px", sm: "12px" },
+                                display: "block",
+                                mb: 0.35,
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}
                             >
-                              {service?.store_name || t("Verified Service Provider")}
+                              {service?.store_name || t("Verified Provider")}
                             </Typography>
                             <Typography
                               variant="subtitle1"
                               sx={{
                                 fontWeight: 700,
+                                fontSize: { xs: "13px", sm: "15px" },
                                 color: EARTH_DARK,
                                 lineHeight: 1.3,
-                                mb: 1,
+                                mb: { xs: 0.75, sm: 1 },
+                                display: "-webkit-box",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden",
                               }}
                             >
                               {service.name}
@@ -366,7 +412,7 @@ const ServiceModule = () => {
                                 variant="body2"
                                 color="text.secondary"
                                 sx={{
-                                  display: "-webkit-box",
+                                  display: { xs: "none", sm: "-webkit-box" },
                                   WebkitLineClamp: 2,
                                   WebkitBoxOrient: "vertical",
                                   overflow: "hidden",
@@ -379,13 +425,19 @@ const ServiceModule = () => {
                           </Box>
 
                           <Stack
-                            direction="row"
+                            direction={{ xs: "column", sm: "row" }}
                             justifyContent="space-between"
-                            alignItems="center"
-                            sx={{ pt: 1.5, borderTop: `1px solid ${WARM_SAND}` }}
+                            alignItems={{ xs: "stretch", sm: "center" }}
+                            spacing={{ xs: 0.75, sm: 1 }}
+                            sx={{ pt: { xs: 1, sm: 1.5 }, borderTop: `1px solid ${WARM_SAND}` }}
                           >
                             <Box>
-                              <Typography variant="subtitle1" fontWeight={700} color={EARTH_DARK}>
+                              <Typography
+                                variant="subtitle1"
+                                fontWeight={700}
+                                color={EARTH_DARK}
+                                sx={{ fontSize: { xs: "13px", sm: "15px" }, lineHeight: 1.2 }}
+                              >
                                 {displayPrice > 0 ? getAmountWithSign(displayPrice) : t("Quote")}
                               </Typography>
                               {originalPrice > displayPrice && (
@@ -406,11 +458,13 @@ const ServiceModule = () => {
                                 bgcolor: OLIVE_GREEN,
                                 color: "#FFFFFF",
                                 fontWeight: 600,
+                                fontSize: { xs: "11.5px", sm: "13px" },
+                                py: { xs: 0.5, sm: 0.75 },
                                 borderRadius: "8px",
                                 "&:hover": { bgcolor: "#778B56" },
                               }}
                             >
-                              {t("Book Service")}
+                              {t("Book")}
                             </Button>
                           </Stack>
                         </CardContent>
@@ -431,20 +485,21 @@ const ServiceModule = () => {
               sx={{ mb: 2 }}
             >
               <Box>
-                <Typography variant="h6" sx={{ fontWeight: 700, color: EARTH_DARK }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, fontSize: { xs: "15px", md: "18px" }, color: EARTH_DARK }}>
                   {t("Currently Farming")}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" color="text.secondary" sx={{ display: { xs: "none", sm: "block" } }}>
                   {t("Farm produce actively growing or harvest-ready this season")}
                 </Typography>
               </Box>
               <Button
                 component={Link}
-                href="/items/farming"
+                href="/live-farming"
                 variant="text"
-                sx={{ color: EARTH_ACCENT, fontWeight: 700 }}
+                size="small"
+                sx={{ color: EARTH_ACCENT, fontWeight: 700, whiteSpace: "nowrap" }}
               >
-                {t("View All Farming")}
+                {t("View All")}
               </Button>
             </Stack>
 

@@ -69,17 +69,18 @@ const AgroPriceTickerBar = () => {
         >
           <Typography
             sx={{
-              fontSize: "12px",
+              fontSize: { xs: "11px", sm: "12px" },
               fontWeight: 700,
               color: theme.palette.primary.main,
               lineHeight: 1.2,
               whiteSpace: "nowrap",
             }}
           >
-            {t("Ghana Agro Index")}
+            {t("Agro Index")}
           </Typography>
           <Typography
             sx={{
+              display: { xs: "none", sm: "block" },
               fontSize: "10px",
               color: theme.palette.text.secondary,
               lineHeight: 1.2,
