@@ -11,7 +11,7 @@ Baselines:
 
 Use one module-agnostic Nearby surface. Make it map-first when the customer grants location permission and the map can load within the low-bandwidth budget; otherwise make it list-first. Never invent a location, and never present a fallback coordinate or unsupported country as if it were real nearby data.
 
-## Verified current state
+## Verified state at audit time
 
 ### Frontend
 
@@ -33,6 +33,7 @@ Use one module-agnostic Nearby surface. Make it map-first when the customer gran
 6. `app/Models/AggregationHub.php::scopeNearby()` exists with a haversine radius query, but no caller uses it. `FarmerController::aggregation_hubs()` is vendor-only and scoped to the vendor's own store.
 7. `StoreLogic::get_stores()` sorts `filter=nearby` with `orderByDesc('distance')`, so generic store lists put the farthest stores first. Discounted, search and category nearby paths use ascending distance, so the same user-visible "Nearby" label means opposite things in different places.
 8. Failure shape is inconsistent across nearby-adjacent endpoints. Some require zone only, `ItemController::get_live_farming_items()` silently ignores `nearby=true` when coordinates are absent, and `StoreController::get_quick_delivery_stores()` returns an empty success payload.
+9. `ConfigController::configuration()` falls back to hardcoded Bangladesh coordinates (`23.757989, 90.360587`) for `default_location`, while `MapModal` initialises its pin from `configData.default_location`. A default pin can therefore look like a detected customer location.
 
 ### Cross-cutting consistency
 
@@ -52,6 +53,7 @@ Use one module-agnostic Nearby surface. Make it map-first when the customer gran
 | P1-3 | P1 | `AggregationHub::scopeNearby()` unused; hubs vendor-only | Community aggregation hubs cannot be discovered by customers |
 | P2-1 | P2 | No map/list toggle or low-bandwidth fallback in Nearby | Map load cost and single-marker UX are not appropriate as the only view |
 | P2-2 | P2 | Nearby absent from mobile bottom nav | Discovery depends on section chips, search suggestions and store pages customers may never open |
+| P2-3 | P2 | Backend `default_location` falls back to Bangladesh coordinates and map UI treats it as the starting pin | Foreign default can be mistaken for customer location |
 
 ## Recommended implementation order
 
@@ -63,19 +65,21 @@ Use one module-agnostic Nearby surface. Make it map-first when the customer gran
 6. **P1-3** Expose a customer aggregation-hub endpoint using `scopeNearby()`, with country/zone checks.
 7. **P2-1** Add opt-in map view with list fallback and lazy map loading.
 8. **P2-2** Re-evaluate bottom nav placement only after the Nearby flow is trustworthy.
+9. **P2-3** Replace the hardcoded `default_location` fallback so no foreign coordinate can be mistaken for a customer location.
 
 ## Implementation status
 
 - P0-1: fixed in frontend commit `58acf7d` and backend commit `64acc489`. Verified with frontend `npm run build`, `npx tsc --noEmit`, backend `php -l`, `git diff --check`, and a U+2014 scan. The frontend now sends location headers only for a validated stored location and disables nearby queries until one exists. Backend nearby entry points validate coordinates and reject missing, malformed, out-of-range and placeholder `0,0` values.
-- P0-2: pending.
+- P0-2: fixed in frontend commit `07406b3`. Verified with `npx tsc --noEmit` and `npm run build`. The interceptor now sends `zoneid` only when both a valid stored zone and a supported active market exist; language-selector country changes clear stale zone, coordinate and location cache entries.
 - P0-3: pending.
 - P1-1: pending.
 - P1-2: pending.
 - P1-3: pending.
 - P2-1: pending.
 - P2-2: pending.
+- P2-3: pending.
 
-No code changes have been made for this audit yet. Status will be updated from `git diff` / `git log` after each verified commit, not from memory.
+Status is updated from `git diff` / `git log` after each verified commit, not from memory.
 
 ## Verification commands
 
@@ -88,5 +92,5 @@ No code changes have been made for this audit yet. Status will be updated from `
 
 - Runtime/DB verification is unavailable here, so radius SQL and endpoint responses are reviewed statically.
 - P0-1 disables nearby requests until a valid stored location exists, but the customer-facing explanation and recovery action are deferred to P0-3. Backend error messages are plain English for now; the UI must map the `latitude-longitude` code to localised copy.
-- Store zone/country selection rules are not yet fully mapped from `MarketProfileService` to the frontend zone cache; P0-2 must verify that mapping before choosing a new default.
+- P0-2 resolves the Ghana fallback by omitting `zoneid` when the active market is unsupported or unknown. Zone selection still depends on the existing location picker writing a correct zone for the active market.
 - No analytics exist for nearby permission acceptance, denial, or empty results, so post-release behaviour cannot yet be measured.
