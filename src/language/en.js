@@ -2600,5 +2600,16 @@ export const english = {
   "{{percent}}% off on {{module}}": "{{percent}}% off on {{module}}",
   "{{percent}}% off on {{module}} (on orders above {{min}})": "{{percent}}% off on {{module}} (on orders above {{min}})",
   "{{percent}}% off on {{module}} (up to {{cap}})": "{{percent}}% off on {{module}} (up to {{cap}})",
-  "{{percent}}% off on {{module}} (up to {{cap}}) (on orders above {{min}})": "{{percent}}% off on {{module}} (up to {{cap}}) (on orders above {{min}})"
+  "{{percent}}% off on {{module}} (up to {{cap}}) (on orders above {{min}})": "{{percent}}% off on {{module}} (up to {{cap}}) (on orders above {{min}})",
+  "Use my location": "Use my location",
+  "Getting your location. Please wait...": "Getting your location. Please wait...",
+  "Checking if we serve this area...": "Checking if we serve this area...",
+  "Location saved. Showing results near you.": "Location saved. Showing results near you.",
+  "Turn on location to see results near you.": "Turn on location to see results near you.",
+  "Location permission denied. Enable location access in your browser settings, then try again.":
+    "Location permission denied. Enable location access in your browser settings, then try again.",
+  "We could not get your location. Please try again.": "We could not get your location. Please try again.",
+  "Try again": "Try again",
+  "Not available in your country": "Not available in your country",
+  "Coming soon": "Coming soon"
 };

@@ -41,6 +41,15 @@ export const french = {
   "Currency matches the seller's price. Cross-border conversion and duties are itemised in the summary.":
     "La devise correspond au prix du vendeur. La conversion et les droits transfrontaliers sont détaillés dans le récapitulatif.",
   "Language has been changed": "La langue a été modifiée",
+  "Use my location": "Utiliser ma position",
+  "Getting your location. Please wait...": "Obtention de votre position. Veuillez patienter...",
+  "Checking if we serve this area...": "Vérification de la desserte de cette zone...",
+  "Location saved. Showing results near you.": "Position enregistrée. Résultats affichés près de vous.",
+  "Turn on location to see results near you.": "Activez la position pour voir les résultats près de vous.",
+  "Location permission denied. Enable location access in your browser settings, then try again.":
+    "Autorisation de position refusée. Activez l'accès à la position dans les paramètres de votre navigateur, puis réessayez.",
+  "We could not get your location. Please try again.": "Impossible d'obtenir votre position. Veuillez réessayer.",
+  "Try again": "Réessayer",
 };
 
 export default french;

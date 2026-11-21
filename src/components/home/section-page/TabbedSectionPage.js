@@ -1,7 +1,8 @@
 import { Box, Stack } from "@mui/material";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import useGetSearchPageData from "api-manage/hooks/react-query/search/useGetSearchPageData";
 import { useGetCategories } from "api-manage/hooks/react-query/all-category/all-categorys";
 import FoodSearchFilterDrawer from "components/home/search/FoodSearchFilterDrawer";
@@ -9,6 +10,7 @@ import ModuleSearchBanner from "components/home/module-wise-components/shared/Mo
 import SectionSearchBar from "components/home/module-wise-components/shared/SectionSearchBar";
 import CategoryMobilePageBar from "components/home/category-page/CategoryMobilePageBar";
 import TabbedSectionResult from "./TabbedSectionResult";
+import NearbyLocationControl from "./NearbyLocationControl";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 
 const TAB_ALL = "all";
@@ -39,6 +41,9 @@ const TabbedSectionPage = ({ sectionType, defaultTab }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const moduleType = getCurrentModuleType();
+  const countryCodeFromStore = useSelector(
+    (state) => state.configData?.countryCode,
+  );
 
   const config = SECTION_CONFIG[sectionType];
   const sectionTitle = config?.title ?? "";
@@ -55,6 +60,16 @@ const TabbedSectionPage = ({ sectionType, defaultTab }) => {
   const [filterAnchorEl, setFilterAnchorEl] = useState(null);
   const [appliedFilterCount, setAppliedFilterCount] = useState(0);
   const [appliedFilters, setAppliedFilters] = useState({});
+  const [locationRevision, setLocationRevision] = useState(0);
+
+  const handleLocationStored = useCallback(() => {
+    setLocationRevision((revision) => revision + 1);
+  }, []);
+
+  // The search queries live in this parent, so a child-only location state
+  // would leave them disabled. This key changes whenever the stored location
+  // or the active market changes; it is never sent as an API parameter.
+  const locationKey = `${countryCodeFromStore ?? "unknown"}:${locationRevision}`;
 
   useEffect(() => {
     setAppliedFilters({});
@@ -143,6 +158,7 @@ const TabbedSectionPage = ({ sectionType, defaultTab }) => {
     },
     () => {},
     isReady && !storesOnly && (isAllTab || isItemsTab),
+    locationKey,
   );
 
   const {
@@ -163,6 +179,7 @@ const TabbedSectionPage = ({ sectionType, defaultTab }) => {
     },
     () => {},
     isReady && (storesOnly || isAllTab || isStoresTab),
+    locationKey,
   );
 
   const items = itemsData?.pages?.flatMap((p) => p?.products ?? []) ?? [];
@@ -232,6 +249,10 @@ const TabbedSectionPage = ({ sectionType, defaultTab }) => {
         onFilterOpen={() => setFilterAnchorEl(document.body)}
         filterCount={appliedFilterCount}
       />
+
+      {sectionType === "nearby" && (
+        <NearbyLocationControl onLocationStored={handleLocationStored} />
+      )}
 
       <Stack spacing={{ xs: 2, md: 0.5 }}>
         <Box sx={{ display: { xs: "none", md: "block" } }}>

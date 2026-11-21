@@ -3281,5 +3281,16 @@ export const spain = {
 	"Free": "Gratis",
 	"Buying Item": "Artículo a comprar",
 	"Free Item": "Artículo gratis",
-	"per bogo": "por BOGO"
+	"per bogo": "por BOGO",
+	"Use my location": "Usar mi ubicación",
+	"Getting your location. Please wait...": "Obteniendo tu ubicación. Espera...",
+	"Checking if we serve this area...": "Comprobando si atendemos esta zona...",
+	"Location saved. Showing results near you.": "Ubicación guardada. Mostrando resultados cerca de ti.",
+	"Turn on location to see results near you.": "Activa la ubicación para ver resultados cerca de ti.",
+	"Location permission denied. Enable location access in your browser settings, then try again.":
+		"Permiso de ubicación denegado. Activa el acceso a la ubicación en la configuración de tu navegador y vuelve a intentarlo.",
+	"We could not get your location. Please try again.": "No pudimos obtener tu ubicación. Inténtalo de nuevo.",
+	"Try again": "Reintentar",
+	"Not available in your country": "No disponible en tu país",
+	"Coming soon": "Próximamente"
 };

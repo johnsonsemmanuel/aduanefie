@@ -106,6 +106,7 @@ export default function useGetSearchPageData(
   pageParams,
   handleSuccess,
   enabled = false,
+  locationKey = "",
 ) {
   const currentLocation =
     typeof window !== "undefined"
@@ -115,7 +116,14 @@ export default function useGetSearchPageData(
     pageParams?.quick_action === "nearby" && !currentLocation;
 
   return useInfiniteQuery(
-    ["search-products", getCurrentModuleType(), pageParams, currentLocation?.lat, currentLocation?.lng],
+    [
+      "search-products",
+      getCurrentModuleType(),
+      locationKey,
+      pageParams,
+      currentLocation?.lat,
+      currentLocation?.lng,
+    ],
     ({ pageParam = 1 }) => getSearch({ ...pageParams, pageParam }),
     {
       getNextPageParam: (lastPage, allPages) => {

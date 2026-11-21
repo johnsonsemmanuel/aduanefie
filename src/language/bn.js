@@ -3279,5 +3279,16 @@ export const bengali = {
 	"Free": "বিনামূল্যে",
 	"Buying Item": "ক্রয়যোগ্য আইটেম",
 	"Free Item": "ফ্রি আইটেম",
-	"per bogo": "প্রতি BOGO"
+	"per bogo": "প্রতি BOGO",
+	"Use my location": "আমার অবস্থান ব্যবহার করুন",
+	"Getting your location. Please wait...": "আপনার অবস্থান পাচ্ছি। অনুগ্রহ করে অপেক্ষা করুন...",
+	"Checking if we serve this area...": "এই এলাকায় আমাদের পরিষেবা আছে কিনা যাচাই করছি...",
+	"Location saved. Showing results near you.": "অবস্থান সংরক্ষিত। আপনার কাছাকাছি ফলাফল দেখানো হচ্ছে।",
+	"Turn on location to see results near you.": "আপনার কাছাকাছি ফলাফল দেখতে অবস্থান চালু করুন।",
+	"Location permission denied. Enable location access in your browser settings, then try again.":
+		"অবস্থানের অনুমতি প্রত্যাখ্যাত। আপনার ব্রাউজার সেটিংসে অবস্থান অ্যাক্সেস চালু করে আবার চেষ্টা করুন।",
+	"We could not get your location. Please try again.": "আমরা আপনার অবস্থান পেতে পারিনি। অনুগ্রহ করে আবার চেষ্টা করুন।",
+	"Try again": "আবার চেষ্টা করুন",
+	"Not available in your country": "আপনার দেশে উপলব্ধ নয়",
+	"Coming soon": "শীঘ্রই আসছে"
 };

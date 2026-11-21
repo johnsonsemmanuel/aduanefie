@@ -2950,5 +2950,16 @@ export const arabic = {
 	"Free": "مجاني",
 	"Buying Item": "المنتج المشترى",
 	"Free Item": "المنتج المجاني",
-	"per bogo": "لكل BOGO"
+	"per bogo": "لكل BOGO",
+	"Use my location": "استخدام موقعي",
+	"Getting your location. Please wait...": "جارٍ تحديد موقعك. يرجى الانتظار...",
+	"Checking if we serve this area...": "جارٍ التحقق مما إذا كانت خدمتنا متاحة في هذه المنطقة...",
+	"Location saved. Showing results near you.": "تم حفظ الموقع. عرض النتائج القريبة منك.",
+	"Turn on location to see results near you.": "فعّل الموقع لعرض النتائج القريبة منك.",
+	"Location permission denied. Enable location access in your browser settings, then try again.":
+		"تم رفض إذن الموقع. فعّل الوصول إلى الموقع في إعدادات المتصفح، ثم حاول مرة أخرى.",
+	"We could not get your location. Please try again.": "تعذّر تحديد موقعك. يرجى المحاولة مرة أخرى.",
+	"Try again": "حاول مرة أخرى",
+	"Not available in your country": "غير متاح في بلدك",
+	"Coming soon": "قريبًا"
 };
