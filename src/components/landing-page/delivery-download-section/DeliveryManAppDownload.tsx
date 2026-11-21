@@ -22,6 +22,7 @@ import QRCodeClient from "../QRCodeClients";
 import { t } from "i18next";
 import AppLinks from "components/footer/footer-middle/AppLinks";
 import DollarSignHighlighter from "components/DollarSignHighlighter";
+import { useSanitizedRichText } from "utils/sanitizeRichText";
 import Link from "next/link";
 interface DeliveryManAppDownloadProps {
   title?: string;
@@ -34,6 +35,9 @@ const DeliveryManAppDownload: React.FC<DeliveryManAppDownloadProps> = ({
   deliveryManApp,
 }) => {
   const theme = useTheme();
+  const safeSubtitle = useSanitizedRichText(
+    deliveryManApp?.download_dm_app_sub_title
+  );
 
   return (
     <Box
@@ -114,7 +118,7 @@ const DeliveryManAppDownload: React.FC<DeliveryManAppDownloadProps> = ({
               paddingTop={{ xs: "10px", md: "0px" }}
               textAlign={{ xs: "center", md: "left" }}
               dangerouslySetInnerHTML={{
-                __html: deliveryManApp?.download_dm_app_sub_title,
+                __html: safeSubtitle,
               }}
             />
 

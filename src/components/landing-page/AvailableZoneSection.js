@@ -13,6 +13,7 @@ import CustomContainer from "components/container";
 import DollarSignHighlighter from "components/DollarSignHighlighter";
 import { t } from "i18next";
 import { filterOutRiderShareModules } from "helper-functions/moduleFilter";
+import { useSanitizedRichText } from "utils/sanitizeRichText";
 
 const ComponentTwoContainer = styled(Box)(
 	({ theme, paddingTop, paddingBottom }) => ({
@@ -25,6 +26,9 @@ const ComponentTwoContainer = styled(Box)(
 const AvailableZoneSection = ({ zoneSection }) => {
 	const theme = useTheme();
 	const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
+	const safeZoneDescription = useSanitizedRichText(
+		zoneSection?.available_zone_short_description
+	);
 	const toolTipsContent = (zone) => {
 		const filteredModules = filterOutRiderShareModules(zone?.modules);
 		return (
@@ -109,7 +113,7 @@ const AvailableZoneSection = ({ zoneSection }) => {
 								color={theme.palette.neutral[400]}
 								paddingTop={isSmall ? "10px" : "0rem"}
 								align={isSmall ? "center" : "left"}
-								dangerouslySetInnerHTML={{ __html: zoneSection?.available_zone_short_description }}
+								dangerouslySetInnerHTML={{ __html: safeZoneDescription }}
 							/>
 						</Box>
 					</Grid>

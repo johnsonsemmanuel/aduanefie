@@ -7,6 +7,7 @@ import CustomImageContainer from "components/CustomImageContainer";
 import QRCodeClient from "../QRCodeClients";
 import AppLinks from "components/footer/footer-middle/AppLinks";
 import DollarSignHighlighter from "components/DollarSignHighlighter";
+import { useSanitizedRichText } from "utils/sanitizeRichText";
 
 interface RiderAppDownloadProps {
   riderApp?: any;
@@ -21,6 +22,7 @@ const RiderAppDownload: React.FC<RiderAppDownloadProps> = ({ riderApp }) => {
   const sectionTitle = riderApp?.download_rider_app_title || riderApp?.download_dm_app_title;
   const sectionSubTitle =
     riderApp?.download_rider_app_sub_title || riderApp?.download_dm_app_sub_title;
+  const safeSubTitle = useSanitizedRichText(sectionSubTitle);
   const downloadButtonTitle =
     riderApp?.download_rider_app_button_title || riderApp?.download_dm_app_button_title;
   const downloadButtonSubTitle =
@@ -129,7 +131,7 @@ const RiderAppDownload: React.FC<RiderAppDownloadProps> = ({ riderApp }) => {
               paddingTop={{ xs: "10px", md: "0px" }}
               textAlign={{ xs: "center", md: "center" }}
               dangerouslySetInnerHTML={{
-                __html: sectionSubTitle,
+                __html: safeSubTitle,
               }}
             />
           </Grid>

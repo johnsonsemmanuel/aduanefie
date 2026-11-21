@@ -16,6 +16,7 @@ import { getAmountWithSign } from "helper-functions/CardHelpers";
 import { useGetItemDetails } from "api-manage/hooks/react-query/product-details/useGetItemDetails";
 import { useGetServiceItemDetails } from "components/home/module-wise-components/service/service-api-manage/useGetServiceItemDetails";
 import { StoreRow } from "./NewProductCard";
+import { useSanitizedRichText } from "utils/sanitizeRichText";
 
 // ─── BundleSubItemViewModal - read-only "Item Modal Sheet" (per Figma) for a
 // single bundle sub-item. Fetches the item's own full details (gallery,
@@ -43,9 +44,11 @@ const BundleSubItemViewModal = ({ open, onClose, subItem, storeInfo }) => {
   const isFetched = subItem?.isService ? isServiceFetched : isItemFetched;
   // Service's details API has no plain `description` - falls back to
   // long/short description instead.
-  const description = subItem?.isService
+  const rawDescription = subItem?.isService
     ? itemDetails?.long_description ?? itemDetails?.short_description
     : itemDetails?.description;
+  const safeServiceDescription = useSanitizedRichText(rawDescription);
+  const description = subItem?.isService ? safeServiceDescription : rawDescription;
 
   useEffect(() => {
     setActiveImage(0);
@@ -310,8 +313,9 @@ const BundleSubItemViewModal = ({ open, onClose, subItem, storeInfo }) => {
                       overflow: "hidden",
                     }),
                   }}
-                  // Service's long_description is rich text (HTML tags);
-                  // mart's description is plain text.
+                  // Service's long_description is rich text and is sanitized
+                  // before reaching dangerouslySetInnerHTML; mart's description
+                  // stays plain text via children.
                   {...(subItem?.isService
                     ? { dangerouslySetInnerHTML: { __html: description } }
                     : { children: description })}
