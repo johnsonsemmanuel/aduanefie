@@ -565,7 +565,7 @@ class ItemController extends Controller
         $status = $request->query('status', 'all');
         $backyard = $request->query('backyard');
         $zoneId = $request->header('zoneId') ? json_decode($request->header('zoneId'), true) : null;
-        $moduleId = config('module.current_module_data')['id'] ?? $request->header('moduleId');
+        $moduleId = optional(config('module.current_module_data'))['id'] ?? $request->header('moduleId');
 
         $query = Item::active()
             ->where('is_approved', 1)
@@ -579,11 +579,14 @@ class ItemController extends Controller
             ->when(
                 in_array($status, ['farming', 'harvest_ready'], true),
                 fn ($q) => $q->where('farming_status', $status),
-                fn ($q) => $q->whereIn('farming_status', ['farming', 'harvest_ready'])
+                fn ($q) => $q->where(function ($q) {
+                    $q->whereIn('farming_status', ['farming', 'harvest_ready'])
+                        ->orWhereNull('farming_status');
+                })
             )
             ->when($backyard === '1' || $backyard === 'true', fn ($q) => $q->where('is_backyard', true))
             ->orderByRaw("CASE WHEN farming_status = 'harvest_ready' THEN 0 ELSE 1 END")
-            ->orderBy('expected_harvest_date', 'asc')
+            ->orderByRaw("COALESCE(expected_harvest_date, '9999-12-31') ASC")
             ->latest('id');
 
         $paginator = $query->paginate($limit, ['*'], 'page', $offset);
