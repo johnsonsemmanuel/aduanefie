@@ -204,7 +204,7 @@ const RegionalToursPage = ({ configData }) => {
                   </Stack>
                 ) : tours.length === 0 ? (
                   <Alert severity="info" sx={{ borderRadius: "12px" }}>
-                    No tour dates are published yet. Use the form to request a regional visit — regions with the highest farmer demand are scheduled first.
+                    No tour dates are published yet. Use the form to request a regional visit. Regions with the highest farmer demand are scheduled first.
                   </Alert>
                 ) : (
                   <Stack spacing={1.5}>
