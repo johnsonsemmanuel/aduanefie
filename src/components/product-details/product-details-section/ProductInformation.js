@@ -1,4 +1,6 @@
-import { Button, Skeleton, Typography, useTheme } from "@mui/material";
+import { Button, IconButton, Skeleton, Tooltip, Typography, useTheme } from "@mui/material";
+import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
+import { recordRecentlyViewed } from "utils/recentlyViewed";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
 import { Stack } from "@mui/system";
 import React, { useEffect, useMemo, useReducer, useRef, useState } from "react";
@@ -108,6 +110,33 @@ const ProductInformation = ({
 
   const actionCardRef = useRef(null);
   const [showStickyBar, setShowStickyBar] = useState(false);
+
+  useEffect(() => {
+    if (productDetailsData?.id) {
+      recordRecentlyViewed(productDetailsData);
+    }
+  }, [productDetailsData?.id]);
+
+  const handleShareProduct = async () => {
+    if (typeof window === "undefined") return;
+    const item = state.modalData?.[0] || productDetailsData;
+    const url = window.location.href;
+    const title = item?.name || "Aduanefie Produce";
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title,
+          text: `Check out ${title} on Aduanefie Marketplace`,
+          url,
+        });
+        return;
+      }
+      await navigator.clipboard?.writeText(url);
+      toast.success(t("Product link copied to share!"));
+    } catch {
+      // User cancelled share sheet
+    }
+  };
 
   useEffect(() => {
     const target = actionCardRef.current;
@@ -506,12 +535,30 @@ const ProductInformation = ({
                 lineHeight: { xs: 1.25, md: 1.1 },
                 letterSpacing: { md: "-1.2px" },
                 color: "neutral.1050",
+                flex: 1,
               }}
               component="h1"
             >
               {state.modalData[0]?.name}
             </Typography>
             {renderStockBadge(state.modalData[0])}
+            <Tooltip title={t("Share produce")}>
+              <IconButton
+                size="small"
+                aria-label={t("Share produce")}
+                onClick={handleShareProduct}
+                sx={{
+                  border: `1px solid ${theme.palette.divider}`,
+                  color: theme.palette.text.secondary,
+                  "&:hover": {
+                    color: theme.palette.primary.main,
+                    borderColor: theme.palette.primary.main,
+                  },
+                }}
+              >
+                <ShareRoundedIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
           </CustomStackFullWidth>
         ) : (
           <Skeleton width={100} variant="text" />

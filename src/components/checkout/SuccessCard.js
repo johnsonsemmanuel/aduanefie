@@ -6,7 +6,10 @@ import { useDispatch } from "react-redux";
 import giftbox from "./assets/giftbox.gif";
 
 import { useTranslation } from "react-i18next";
-import { Stack } from "@mui/material";
+import { alpha, Chip, Stack } from "@mui/material";
+import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
+import WhatsAppIcon from "@mui/icons-material/WhatsApp";
+import toast from "react-hot-toast";
 import {
   CustomColouredTypography,
   CustomStackFullWidth,
@@ -54,6 +57,19 @@ const SuccessCard = ({ configData, total, order_id }) => {
   const colorId = () => {
     return <Typography color={theme.palette.primary.main}>234248</Typography>;
   };
+  const cleanPhone = String(configData?.phone || "").replace(/\D/g, "");
+  const supportWhatsApp =
+    cleanPhone.startsWith("0") && cleanPhone.length === 10
+      ? `233${cleanPhone.slice(1)}`
+      : cleanPhone;
+
+  const handleCopyOrderId = () => {
+    if (!order_id || typeof navigator === "undefined") return;
+    navigator.clipboard?.writeText(String(order_id)).then(() => {
+      toast.success(t("Order ID copied"));
+    });
+  };
+
   return (
     <CustomStackFullWidth
       height="100%"
@@ -68,29 +84,35 @@ const SuccessCard = ({ configData, total, order_id }) => {
       >
         <Typography
           align="center"
-          sx={{ fontSize: 24 }}
-          color="text.secondary"
+          sx={{ fontSize: { xs: 20, sm: 24 }, fontWeight: 700 }}
+          color="text.primary"
           gutterBottom
         >
-          {t("You place the order successfully.")}
+          {t("Order placed successfully!")}
         </Typography>
-        <Typography align="center" sx={{ mb: 1.5 }} color="text.secondary">
+        <Typography align="center" sx={{ mb: 1.5, maxWidth: 440 }} color="text.secondary">
           {t(
-            `Your order is placed Successfully. We start our delivery process and you will receive your ${handleText()} soon.`
+            `Thank you for shopping with Aduanefie. We have started preparing your ${handleText()} for delivery.`
           )}
         </Typography>
-        <Typography align="center" sx={{ mb: 1.5 }}>
-          {t(`Your order is`)}
-          <span
-            style={{
-              color: theme.palette.primary.main,
-              marginLeft: "3px",
-            }}
-          >
-            {order_id}
-          </span>
-          {t(`. You can use this ID to track your order later`)}
-        </Typography>
+        {order_id && (
+          <Stack direction="row" alignItems="center" justifyContent="center" spacing={1} sx={{ mb: 1.5 }} flexWrap="wrap">
+            <Typography align="center" fontWeight={600}>
+              {t("Order ID:")}
+            </Typography>
+            <Chip
+              label={`#${order_id}`}
+              onClick={handleCopyOrderId}
+              icon={<ContentCopyRoundedIcon sx={{ fontSize: 15 }} />}
+              sx={{
+                fontWeight: 700,
+                bgcolor: alpha(theme.palette.primary.main, 0.1),
+                color: theme.palette.primary.main,
+                cursor: "pointer",
+              }}
+            />
+          </Stack>
+        )}
         {configData?.loyalty_point_status === 1 && (
           <CustomStackFullWidth
             alignItems="center"
@@ -129,28 +151,59 @@ const SuccessCard = ({ configData, total, order_id }) => {
             {/*</Stack>*/}
           </CustomStackFullWidth>
         )}
-        <Stack pt="2rem" spacing={1}>
+        <Stack pt="1.5rem" spacing={1.25} sx={{ width: "100%", maxWidth: 320 }}>
           <Button
             onClick={() =>
-              router.push("/track-order", undefined, {
-                shallow: true,
-              })
+              router.push(
+                order_id ? `/track-order/${order_id}` : "/track-order",
+                undefined,
+                {
+                  shallow: true,
+                }
+              )
             }
             variant="contained"
+            fullWidth
           >
             {t("Track your order")}
           </Button>
+          {supportWhatsApp && (
+            <Button
+              component="a"
+              href={`https://wa.me/${supportWhatsApp}?text=${encodeURIComponent(
+                `Hi Aduanefie, I just placed Order #${order_id || ""} and would like to coordinate delivery.`
+              )}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="outlined"
+              fullWidth
+              startIcon={<WhatsAppIcon />}
+              sx={{
+                borderColor: "#25D366",
+                color: "#128C7E",
+                fontWeight: 600,
+                textTransform: "none",
+                "&:hover": {
+                  borderColor: "#128C7E",
+                  bgcolor: alpha("#25D366", 0.08),
+                },
+              }}
+            >
+              {t("Confirm / Help on WhatsApp")}
+            </Button>
+          )}
           <Typography
             onClick={() => router.push("/home", undefined, { shallow: true })}
             variant="contained"
             sx={{
-              textDecoration: "underLine",
+              textDecoration: "underline",
               cursor: "pointer",
               textAlign: "center",
+              pt: 0.5,
               color: (theme) => theme.palette.primary.main,
             }}
           >
-            {t("Continue shopping ")}
+            {t("Continue shopping")}
           </Typography>
         </Stack>
       </CustomStackFullWidth>

@@ -11,6 +11,7 @@ import {
   Stack,
   Tab,
   Tabs,
+  TextField,
   Typography,
   alpha,
   useTheme,
@@ -33,6 +34,7 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
   const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState("all");
   const [backyardOnly, setBackyardOnly] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const seasonLabel = getGhanaSeasonLabel();
 
   const { data, isLoading } = useGetLiveFarmingItems({
@@ -42,9 +44,16 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
     offset: 1,
   });
 
-  const products = data?.products || [];
+  const rawProducts = data?.products || [];
+  const normalizedQuery = searchTerm.trim().toLowerCase();
+  const products = normalizedQuery
+    ? rawProducts.filter((p) => {
+        const hay = `${p?.name || ""} ${p?.store_name || ""} ${p?.origin_farm || ""}`.toLowerCase();
+        return hay.includes(normalizedQuery);
+      })
+    : rawProducts;
 
-  if (!isLoading && hideIfEmpty && products.length === 0 && statusFilter === "all" && !backyardOnly) {
+  if (!isLoading && hideIfEmpty && rawProducts.length === 0 && statusFilter === "all" && !backyardOnly) {
     return null;
   }
 
@@ -196,6 +205,25 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
           sx={{ fontWeight: 600, fontSize: "11px", flexShrink: 0 }}
         />
       </Stack>
+
+      {!showViewAll && (
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            size="small"
+            fullWidth
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder={t("Search crops, farms, or regions...")}
+            sx={{
+              maxWidth: 420,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                fontSize: "13.5px",
+              },
+            }}
+          />
+        </Box>
+      )}
 
       {isLoading ? (
         <Grid container spacing={2}>
