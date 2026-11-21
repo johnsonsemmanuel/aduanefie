@@ -8,10 +8,7 @@ const MEDIA_HOSTS = [
   "www.aduanefie.com",
   "web.aduanefie.com",
   "h.aduanefie.com",
-  "aduanefie-dev.6amdev.xyz",
   "aduanefie.ragnar66.com",
-  "6ammart-dev.6amdev.xyz",
-  "6ammart-test.6amdev.xyz",
   "images.unsplash.com",
 ];
 

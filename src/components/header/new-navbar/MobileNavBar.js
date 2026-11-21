@@ -540,6 +540,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
               {/* Cart / Bookings - hidden on parcel, shows bookings on service */}
               {getCurrentModuleType() === ModuleTypes.PARCEL ? null : getCurrentModuleType() === ModuleTypes.SERVICE ? (
                 <IconButton
+                  aria-label={t("My Orders")}
                   onClick={() => router.push("/profile?page=my-orders")}
                   sx={{
                     width: 36,
@@ -557,6 +558,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                 </IconButton>
               ) : (
                 <IconButton
+                  aria-label={t("Cart")}
                   onClick={() => {
                     if (getCurrentModuleType() === ModuleTypes.RENTAL) {
                       setTaxiOpen(true);
