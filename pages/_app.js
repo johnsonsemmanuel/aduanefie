@@ -21,11 +21,19 @@ import { persistStore } from "redux-persist";
 import { useTranslation } from "react-i18next";
 import useScrollToTop from "../src/api-manage/hooks/custom-hooks/useScrollToTop";
 import { useEffect } from "react";
+import dynamic from "next/dynamic";
 import ModuleChecker from "../src/components/module-select/ModuleChecker";
-import ProSubscriptionExpiredModal from "../src/components/pro-plan/ProSubscriptionExpiredModal";
 import ErrorBoundary from "../src/components/common/ErrorBoundary";
-import ComingSoonGate from "../src/components/common/ComingSoonGate";
 import { Analytics } from "@vercel/analytics/next";
+
+const ComingSoonGate = dynamic(
+  () => import("../src/components/common/ComingSoonGate"),
+  { ssr: false }
+);
+const ProSubscriptionExpiredModal = dynamic(
+  () => import("../src/components/pro-plan/ProSubscriptionExpiredModal"),
+  { ssr: false }
+);
 import { setLogoutUser } from "redux/slices/profileInfo";
 import { clearAllCartData } from "redux/slices/cart";
 
