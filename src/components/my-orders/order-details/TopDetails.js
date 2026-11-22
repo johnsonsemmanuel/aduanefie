@@ -532,7 +532,7 @@ const TopDetails = (props) => {
                         body,
                         "div",
                         null,
-                        "display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #2e5a27;padding-bottom:16px"
+                        "display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #67513A;padding-bottom:16px"
                       );
                       const brand = addEl(doc, header, "div");
                       addEl(
@@ -540,7 +540,7 @@ const TopDetails = (props) => {
                         brand,
                         "h2",
                         "ADUANEFIE AGRO PROFORMA & WAYBILL",
-                        "margin:0;color:#2e5a27"
+                        "margin:0;color:#67513A"
                       );
                       addEl(
                         doc,
@@ -647,7 +647,7 @@ const TopDetails = (props) => {
                         body,
                         "button",
                         "Print / Save PDF",
-                        "margin-top:24px;padding:8px 16px;background:#2e5a27;color:#fff;border:none;border-radius:6px;cursor:pointer"
+                        "margin-top:24px;padding:8px 16px;background:#67513A;color:#fff;border:none;border-radius:6px;cursor:pointer"
                       );
                       printButton.addEventListener("click", () => win.print());
                     }
@@ -703,9 +703,9 @@ const TopDetails = (props) => {
                         body,
                         "div",
                         null,
-                        "border-bottom:2px solid #2e5a27;padding-bottom:12px"
+                        "border-bottom:2px solid #67513A;padding-bottom:12px"
                       );
-                      addEl(doc, header, "h2", ctr.title, "margin:0;color:#2e5a27");
+                      addEl(doc, header, "h2", ctr.title, "margin:0;color:#67513A");
                       addEl(
                         doc,
                         header,
@@ -823,14 +823,14 @@ const TopDetails = (props) => {
                         sign,
                         "button",
                         "e-Sign Contract",
-                        "padding:8px 16px;background:#2e5a27;color:#fff;border:none;border-radius:6px;cursor:pointer"
+                        "padding:8px 16px;background:#67513A;color:#fff;border:none;border-radius:6px;cursor:pointer"
                       );
                       const status = addEl(
                         doc,
                         sign,
                         "p",
                         "",
-                        "margin-top:10px;color:#2e5a27;font-weight:bold;font-size:13px"
+                        "margin-top:10px;color:#67513A;font-weight:bold;font-size:13px"
                       );
                       signButton.addEventListener("click", () => {
                         const name = (sigInput.value || "").trim();
@@ -845,7 +845,7 @@ const TopDetails = (props) => {
                         sign,
                         "button",
                         "Print / Save PDF",
-                        "padding:8px 16px;margin-left:8px;border:1px solid #2e5a27;background:#fff;color:#2e5a27;border-radius:6px;cursor:pointer"
+                        "padding:8px 16px;margin-left:8px;border:1px solid #67513A;background:#fff;color:#67513A;border-radius:6px;cursor:pointer"
                       );
                       printButton.addEventListener("click", () => win.print());
                     }
