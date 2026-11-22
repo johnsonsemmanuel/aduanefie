@@ -33,6 +33,7 @@ const AgroPriceTickerBar = () => {
   }
 
   const tickerItems = [...prices, ...prices];
+  const durationSeconds = Math.max(95, prices.length * 10);
 
   return (
     <Box
@@ -116,7 +117,7 @@ const AgroPriceTickerBar = () => {
             sx={{
               display: "inline-flex",
               width: "max-content",
-              animation: "agroTickerScroll 42s linear infinite",
+              animation: `agroTickerScroll ${durationSeconds}s linear infinite`,
             }}
           >
             {tickerItems.map((row, idx) => {

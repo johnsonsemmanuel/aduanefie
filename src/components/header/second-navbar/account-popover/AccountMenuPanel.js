@@ -441,7 +441,6 @@ const AccountMenuPanel = ({
           <Stack direction="row" flexWrap="wrap" gap={0.75}>
             {[
               { label: "Register Farm / Store", path: "/store-registration" },
-              { label: "Become a Rider", path: "/deliveryman-registration" },
               { label: "Become a Marketer", path: "/become-a-marketer" },
             ].map((item) => (
               <Typography
@@ -464,31 +463,6 @@ const AccountMenuPanel = ({
                 }}
               >
                 {t(item.label)}
-              </Typography>
-            ))}
-            {[
-              { label: "Marketer Login", href: "https://admin.aduanefie.com/marketer-login" },
-              { label: "Logistics Login", href: "https://logistics.aduanefie.com/rider-login" },
-            ].map((portal) => (
-              <Typography
-                key={portal.href}
-                component="a"
-                href={portal.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{
-                  fontSize: "12px",
-                  fontWeight: 600,
-                  px: "10px",
-                  py: "5px",
-                  borderRadius: "8px",
-                  border: `1px solid ${theme.palette.divider}`,
-                  color: theme.palette.text.primary,
-                  textDecoration: "none",
-                  "&:hover": { opacity: 0.85 },
-                }}
-              >
-                {t(portal.label)}
               </Typography>
             ))}
           </Stack>

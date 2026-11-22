@@ -69,9 +69,17 @@ export const SettingsContext = createContext({
 
 export const SettingsProvider = (props) => {
   const { children, initialSettings: initialSettingsFromServer } = props;
-  const [settings, setSettings] = useState(() =>
-    restoreSettings(initialSettingsFromServer)
+  const [settings, setSettings] = useState(
+    () => initialSettingsFromServer || initialSettings
   );
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    const restored = restoreSettings(initialSettingsFromServer);
+    setSettings(restored);
+    setHydrated(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (typeof document === "undefined") return;
@@ -88,8 +96,9 @@ export const SettingsProvider = (props) => {
   }, [settings?.theme]);
 
   useEffect(() => {
+    if (!hydrated) return;
     storeSettings(settings);
-  }, [settings]);
+  }, [settings, hydrated]);
 
   const saveSettings = (updatedSettings) => {
     setSettings(updatedSettings);

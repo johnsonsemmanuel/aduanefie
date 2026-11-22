@@ -23,17 +23,12 @@ const MARKETPLACE_LINKS = [
 ];
 
 const PARTNER_SUPPORT_LINKS = [
-  { label: "Become a Marketer", path: "/become-a-marketer", icon: "fi fi-rr-briefcase" },
   { label: "Register Farm / Store", path: "/store-registration", icon: "fi fi-rr-shop" },
-  { label: "Register as Rider / Logistics", path: "/deliveryman-registration", icon: "fi fi-rr-truck-side" },
+  { label: "Become a Marketer", path: "/become-a-marketer", icon: "fi fi-rr-briefcase" },
   { label: "Help & Support", path: "/help-and-support", icon: "fi fi-rr-headset" },
 ];
 
-const PARTNER_PORTAL_LINKS = [
-  { label: "Marketer Login", href: "https://admin.aduanefie.com/marketer-login" },
-  { label: "Logistics Login", href: "https://logistics.aduanefie.com/rider-login" },
-  { label: "Store / Vendor Login", href: "https://admin.aduanefie.com/store-login" },
-];
+const PARTNER_PORTAL_LINKS = [];
 
 const ProfileDrawer = ({ open, onClose, onSignInClick }) => {
   const theme = useTheme();
