@@ -23,6 +23,13 @@ const NAV_ITEMS = [
     path: "/home",
   },
   {
+    key: "nearby",
+    label: "Nearby",
+    icon: "fi fi-rr-marker",
+    path: "/home/nearby",
+    keepModuleQuery: true,
+  },
+  {
     key: "groups",
     label: "Groups",
     icon: "fi fi-rr-users-alt",
@@ -61,13 +68,29 @@ const BottomNav = () => {
   const [authOpen, setAuthOpen] = useState(false);
   const [modalFor, setModalFor] = useState("sign-in");
 
+  const isNearbyRoute = () => {
+    const asPath = router.asPath.split(/[?#]/)[0];
+    if (router.pathname === "/home/nearby" || asPath === "/home/nearby") {
+      return true;
+    }
+    const slug = router.query?.slug;
+    const firstSegment = Array.isArray(slug) ? slug[0] : slug;
+    return (
+      router.pathname === "/home/[...slug]" && firstSegment === "nearby"
+    );
+  };
+
   const isActive = (item) => {
     if (item.key === "home") {
       return (
         router.pathname === "/home" ||
         (router.pathname.startsWith("/home/") &&
-          router.pathname !== "/home/wishlist")
+          router.pathname !== "/home/wishlist" &&
+          !isNearbyRoute())
       );
+    }
+    if (item.key === "nearby") {
+      return isNearbyRoute();
     }
     if (item.openWishlist) {
       return router.pathname === "/home/wishlist";
@@ -109,6 +132,13 @@ const BottomNav = () => {
       router.push({
         pathname: "/home/wishlist",
         query: router.query.module ? { module: router.query.module } : {},
+      });
+      return;
+    }
+    if (item.keepModuleQuery && router.query.module) {
+      router.push({
+        pathname: item.path,
+        query: { module: router.query.module },
       });
       return;
     }
