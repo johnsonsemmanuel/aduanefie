@@ -221,12 +221,11 @@ const SuggestedSearches = ({
   const handleNearMeClick = () => {
     if (!searchValue) return;
     router.push({
-      pathname: "/search",
+      pathname: "/home/nearby",
       query: {
         ...router.query,
-        search: searchValue,
-        data_type: "searched",
-        quick_action: "nearby",
+        module: moduleType,
+        q: searchValue,
       },
     });
   };

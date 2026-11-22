@@ -39,6 +39,28 @@ const SearchPage = ({ configData, metaData }) => {
   }, [configData]);
 
   const moduleType = getCurrentModuleType();
+
+  // Keep one Nearby surface. Old search links that still carry
+  // quick_action=nearby are moved to the section page, which owns the location
+  // control and status banner.
+  useEffect(() => {
+    if (!router.isReady || router.query.quick_action !== "nearby") return;
+
+    const rest = { ...router.query };
+    const search = rest.search;
+    delete rest.quick_action;
+    delete rest.search;
+    delete rest.data_type;
+    router.replace({
+      pathname: "/home/nearby",
+      query: {
+        ...rest,
+        module: typeof rest.module === "string" ? rest.module : moduleType,
+        ...(typeof search === "string" && search ? { q: search } : {}),
+      },
+    });
+  }, [router, router.isReady, router.query, moduleType]);
+
   const isModuleWithSidebar =
     moduleType === ModuleTypes.FOOD ||
     moduleType === ModuleTypes.GROCERY ||
