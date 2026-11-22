@@ -229,6 +229,7 @@ const HeroLocationForm = ({ onLocationSaved }) => {
       }
       localStorage.setItem("location", currentLocation);
       localStorage.setItem("currentLatLng", JSON.stringify(location));
+      document.cookie = `aduanefie_location_set=1; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
       //handleModalClose();
 
       toast.success(t("New location has been set."));

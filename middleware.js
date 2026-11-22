@@ -17,14 +17,19 @@ export function middleware(request) {
     return NextResponse.redirect(canonicalUrl, 308);
   }
 
-  // Get module parameter from cookie (set on client)
+  // Get module & location flags from cookies (set on client)
   const moduleFromCookie = request.cookies.get("selectedModule")?.value;
+  const hasLocation = request.cookies.get("aduanefie_location_set")?.value === "1";
 
-  // Root opens directly into the live marketplace (/home) like Alibaba:
-  // returning visitors get their saved module, first-time visitors land in
-  // module 2 (Wholesale & Cross-Border Trade) with full catalog access.
+  // First-time visitors (no location selected yet) land on /welcome to pick
+  // their location & module and explore platform programs. Returning visitors
+  // who already selected a location go straight into the live marketplace (/home).
   if (pathname === "/") {
     const url = request.nextUrl.clone();
+    if (!hasLocation) {
+      url.pathname = "/welcome";
+      return NextResponse.rewrite(url);
+    }
     url.pathname = "/home";
     if (!url.searchParams.has("module") && !url.searchParams.has("module_id")) {
       url.searchParams.set("module", moduleFromCookie || "2");
