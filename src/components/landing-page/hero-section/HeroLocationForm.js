@@ -1,6 +1,7 @@
 import React, { useEffect, useId, useRef, useState } from "react";
 import {
   alpha,
+  Chip,
   Grid,
   IconButton,
   Stack,
@@ -395,6 +396,45 @@ const HeroLocationForm = ({ onLocationSaved }) => {
             </Grid>
           </Grid>
         </CustomStackFullWidth>
+        <Stack
+          direction="row"
+          flexWrap="wrap"
+          alignItems="center"
+          justifyContent="center"
+          gap={0.75}
+          sx={{ mt: 1.5 }}
+        >
+          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+            {t("Quick select:")}
+          </Typography>
+          {[
+            { label: "Accra", lat: 5.6037, lng: -0.187 },
+            { label: "Kumasi", lat: 6.6885, lng: -1.6244 },
+            { label: "Tamale", lat: 9.4008, lng: -0.8393 },
+            { label: "Takoradi", lat: 4.8986, lng: -1.7554 },
+          ].map((hub) => (
+            <Chip
+              key={hub.label}
+              size="small"
+              clickable
+              variant="outlined"
+              label={hub.label}
+              onClick={() => {
+                const coordsObj = { lat: hub.lat, lng: hub.lng };
+                setLocation(coordsObj);
+                setCurrentLocation(`${hub.label}, Ghana`);
+                setGeoLocationEnable(true);
+                setZoneIdEnabled(true);
+                localStorage.setItem("location", `${hub.label}, Ghana`);
+                localStorage.setItem("currentLatLng", JSON.stringify(coordsObj));
+                document.cookie = `aduanefie_location_set=1; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
+                onLocationSaved?.(`${hub.label}, Ghana`);
+                setOpenModuleSelection(true);
+              }}
+              sx={{ fontWeight: 600 }}
+            />
+          ))}
+        </Stack>
         {open && (
           <MapModal
             open={open}

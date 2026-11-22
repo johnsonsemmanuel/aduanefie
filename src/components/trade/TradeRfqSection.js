@@ -27,6 +27,7 @@ import {
   useCreateTradeRfq,
   useGetTradeRfqs,
   useSubmitRfqQuote,
+  useAcceptRfqQuote,
 } from "api-manage/hooks/react-query/trade/useTradeRfqs";
 import CustomModal from "components/modal";
 import { TRADE_COUNTRIES, UNIT_OPTIONS } from "utils/tradeOptions";
@@ -100,6 +101,7 @@ const TradeRfqSection = () => {
   const matchedMarketPrice = findMatchingAgroPrice(form.commodity, agroPriceData?.prices || []);
   const { mutate: createRfq, isLoading: isSubmitting } = useCreateTradeRfq();
   const { mutate: submitQuote, isLoading: isSubmittingQuote } = useSubmitRfqQuote();
+  const acceptQuote = useAcceptRfqQuote();
 
   const rfqs = rfqData?.requests || [];
 
@@ -477,15 +479,80 @@ const TradeRfqSection = () => {
                         </Stack>
                       </Box>
 
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        onClick={() => handleOpenQuoteModal(rfq)}
-                        sx={{ textTransform: "none", fontWeight: 600, flexShrink: 0 }}
-                      >
-                        {t("Submit Quote")}
-                      </Button>
+                      {rfq.status !== "awarded" && (
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => handleOpenQuoteModal(rfq)}
+                          sx={{ textTransform: "none", fontWeight: 600, flexShrink: 0 }}
+                        >
+                          {t("Submit Quote")}
+                        </Button>
+                      )}
                     </Stack>
+
+                    {Array.isArray(rfq.quotes) && rfq.quotes.length > 0 && (
+                      <Stack spacing={1} sx={{ mt: 1.5, pt: 1.5, borderTop: `1px dashed ${theme.palette.divider}` }}>
+                        {rfq.quotes.map((quote) => {
+                          const isAccepted = quote.status === "accepted";
+                          const totalEst = Number(quote.quoted_unit_price_ghs || 0) * Number(rfq.quantity || 0);
+                          return (
+                            <Stack
+                              key={quote.id}
+                              direction={{ xs: "column", sm: "row" }}
+                              justifyContent="space-between"
+                              alignItems={{ xs: "flex-start", sm: "center" }}
+                              spacing={1}
+                              sx={{
+                                p: 1.25,
+                                borderRadius: "8px",
+                                bgcolor: isAccepted
+                                  ? theme.palette.action.selected
+                                  : theme.palette.background.default,
+                              }}
+                            >
+                              <Box>
+                                <Typography sx={{ fontSize: "13px", fontWeight: 700 }}>
+                                  {quote.supplier_name} · ₵{Number(quote.quoted_unit_price_ghs).toLocaleString()}/{rfq.unit}
+                                </Typography>
+                                <Typography sx={{ fontSize: "11.5px", color: "text.secondary" }}>
+                                  {t("Est. Total")}: ₵{totalEst.toLocaleString()} · {quote.lead_time_days || 7} {t("days lead")} · {quote.incoterm || rfq.incoterm}
+                                </Typography>
+                              </Box>
+
+                              {isAccepted ? (
+                                <Chip size="small" color="success" label={t("Awarded · Trade Assurance")} />
+                              ) : rfq.status !== "awarded" ? (
+                                <Button
+                                  size="small"
+                                  variant="contained"
+                                  disabled={acceptQuote.isLoading}
+                                  onClick={() =>
+                                    acceptQuote.mutate(
+                                      { rfqId: rfq.id, quoteId: quote.id },
+                                      {
+                                        onSuccess: (res) => {
+                                          toast.success(
+                                            res?.message ||
+                                              t("Quote accepted with Trade Assurance protection.")
+                                          );
+                                        },
+                                        onError: () => {
+                                          toast.error(t("Could not accept quote."));
+                                        },
+                                      }
+                                    )
+                                  }
+                                  sx={{ textTransform: "none", fontWeight: 600 }}
+                                >
+                                  {t("Accept Quote")}
+                                </Button>
+                              ) : null}
+                            </Stack>
+                          );
+                        })}
+                      </Stack>
+                    )}
                   </Box>
                 ))}
               </Stack>
