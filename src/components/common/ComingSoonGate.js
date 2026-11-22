@@ -4,20 +4,23 @@ import {
   Box,
   Button,
   Collapse,
+  IconButton,
   MenuItem,
+  Popover,
   Stack,
   TextField,
   Typography,
   useTheme,
 } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import CustomModal from "components/modal";
 import CustomDivider from "components/CustomDivider";
-import CustomLogo from "components/logo/CustomLogo";
+import LogoSide from "components/logo/LogoSide";
 import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
 import MainApi from "api-manage/MainApi";
 
@@ -47,6 +50,7 @@ const ComingSoonGate = () => {
   const [waitlistResult, setWaitlistResult] = useState(null);
   const [waitlistError, setWaitlistError] = useState("");
 
+  const [infoAnchorEl, setInfoAnchorEl] = useState(null);
   const [showAdminAccess, setShowAdminAccess] = useState(false);
   const [accessCode, setAccessCode] = useState("");
   const [accessChecking, setAccessChecking] = useState(false);
@@ -143,135 +147,152 @@ const ComingSoonGate = () => {
   };
 
   return (
-    <Box
-      sx={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 1400,
-        backdropFilter: "blur(10px)",
-        backgroundColor: "rgba(0, 0, 0, 0.45)",
-      }}
+    <CustomModal
+      openModal
+      disableAutoFocus
+      handleClose={() => {}}
+      maxWidth="480px"
     >
-      <CustomModal
-        openModal
-        disableAutoFocus
-        handleClose={() => {}}
-        maxWidth="520px"
+      <CustomStackFullWidth
+        spacing={2.25}
+        sx={{
+          px: { xs: 1, sm: 3.5 },
+          py: { xs: 2, sm: 3.5 },
+          backgroundColor: theme.palette.background.paper,
+          color: theme.palette.text.primary,
+        }}
       >
-        <CustomStackFullWidth
-          spacing={2.5}
-          sx={{
-            p: { xs: 2, sm: 3.5 },
-            backgroundColor: theme.palette.background.paper,
-            color: theme.palette.text.primary,
-          }}
-        >
-          <Stack spacing={1} alignItems="center" textAlign="center">
-            {configData?.logo_full_url && (
-              <CustomLogo
-                logoImg={configData.logo_full_url}
-                atlText={configData?.business_name || "Aduanefie"}
-                height="44px"
-                width="160px"
-                objectFit="contain"
-              />
-            )}
-            <Typography
-              variant="overline"
-              sx={{ color: theme.palette.primary.main, fontWeight: 700, letterSpacing: 1 }}
-            >
+        <Stack spacing={1.25} alignItems="center" textAlign="center">
+          {configData?.logo_full_url && (
+            <LogoSide
+              configData={configData}
+              height="44px"
+              width="160px"
+              objectFit="contain"
+            />
+          )}
+
+          <Stack direction="row" alignItems="center" justifyContent="center" spacing={0.5}>
+            <Typography variant="h5" fontWeight={700} color="text.primary">
               {t("Coming Soon")}
             </Typography>
-            <Typography variant="h5" fontWeight={700} color="text.primary">
-              {t("Explore the New Aduanefie")}
+            <IconButton
+              size="small"
+              aria-label={t("More information")}
+              onClick={(e) => setInfoAnchorEl(e.currentTarget)}
+              sx={{ color: theme.palette.text.secondary }}
+            >
+              <InfoOutlinedIcon fontSize="small" />
+            </IconButton>
+          </Stack>
+
+          <Typography variant="body2" color="text.secondary">
+            {t("Join the waitlist for early access to the new Aduanefie.")}
+          </Typography>
+        </Stack>
+
+        <Popover
+          open={Boolean(infoAnchorEl)}
+          anchorEl={infoAnchorEl}
+          onClose={() => setInfoAnchorEl(null)}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          transformOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Box sx={{ p: 2, maxWidth: 300 }}>
+            <Typography variant="subtitle2" fontWeight={700} gutterBottom>
+              {t("What's Coming")}
             </Typography>
             <Typography variant="body2" color="text.secondary">
               {t(
-                "We are finalizing the new marketplace experience. Join the waitlist below for early access when we launch."
+                "Farm-direct sourcing, shared bulk group buying, live harvest pre-orders, and cross-border African trade."
               )}
             </Typography>
-          </Stack>
+          </Box>
+        </Popover>
 
-          {waitlistResult ? (
-            <Alert severity="success">{waitlistResult}</Alert>
-          ) : (
-            <Box component="form" onSubmit={handleWaitlistSubmit}>
-              <CustomStackFullWidth spacing={1.75}>
-                {waitlistError && <Alert severity="error">{waitlistError}</Alert>}
-                <TextField
-                  label={t("Full Name")}
-                  size="small"
-                  fullWidth
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <TextField
-                  label={t("Email Address")}
-                  type="email"
-                  required
-                  size="small"
-                  fullWidth
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
-                  <TextField
-                    label={t("Phone / WhatsApp (Optional)")}
-                    size="small"
-                    fullWidth
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                  />
-                  <TextField
-                    select
-                    label={t("Interest")}
-                    size="small"
-                    fullWidth
-                    value={interest}
-                    onChange={(e) => setInterest(e.target.value)}
-                  >
-                    {INTEREST_OPTIONS.map((opt) => (
-                      <MenuItem key={opt.value} value={opt.value}>
-                        {t(opt.label)}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Stack>
-                <LoadingButton
-                  type="submit"
-                  variant="contained"
-                  fullWidth
-                  loading={waitlistSubmitting}
-                  sx={{ py: 1.1, fontWeight: 600, textTransform: "none" }}
-                >
-                  {t("Join Waitlist")}
-                </LoadingButton>
-              </CustomStackFullWidth>
-            </Box>
-          )}
+        {waitlistResult ? (
+          <Alert severity="success">{waitlistResult}</Alert>
+        ) : (
+          <Box component="form" onSubmit={handleWaitlistSubmit}>
+            <CustomStackFullWidth spacing={2}>
+              {waitlistError && <Alert severity="error">{waitlistError}</Alert>}
+              <TextField
+                label={t("Full Name")}
+                size="small"
+                fullWidth
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <TextField
+                label={t("Email Address")}
+                type="email"
+                required
+                size="small"
+                fullWidth
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+              <TextField
+                label={t("Phone / WhatsApp (Optional)")}
+                size="small"
+                fullWidth
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+              <TextField
+                select
+                label={t("Interest")}
+                size="small"
+                fullWidth
+                value={interest}
+                onChange={(e) => setInterest(e.target.value)}
+              >
+                {INTEREST_OPTIONS.map((opt) => (
+                  <MenuItem key={opt.value} value={opt.value}>
+                    {t(opt.label)}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <LoadingButton
+                type="submit"
+                variant="contained"
+                fullWidth
+                loading={waitlistSubmitting}
+                sx={{ py: 1.2, fontWeight: 600, textTransform: "none" }}
+              >
+                {t("Join Waitlist")}
+              </LoadingButton>
+            </CustomStackFullWidth>
+          </Box>
+        )}
 
-          <CustomDivider border="1px" />
+        <CustomDivider border="1px" />
 
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
-            <Typography variant="caption" color="text.secondary">
-              {t("Team or owner preview?")}
-            </Typography>
-            <Button
-              size="small"
-              startIcon={<LockOutlinedIcon fontSize="small" />}
-              onClick={() => {
-                setShowAdminAccess((prev) => !prev);
-                setAccessError("");
-              }}
-              sx={{ textTransform: "none", fontWeight: 600 }}
-            >
-              {showAdminAccess ? t("Hide Access Code") : t("Owner Access Code")}
-            </Button>
-          </Stack>
+        <Stack spacing={1.5} alignItems="center">
+          <Button
+            size="small"
+            color="inherit"
+            startIcon={<LockOutlinedIcon fontSize="small" />}
+            onClick={() => {
+              setShowAdminAccess((prev) => !prev);
+              setAccessError("");
+            }}
+            sx={{
+              textTransform: "none",
+              fontWeight: 600,
+              color: theme.palette.text.secondary,
+            }}
+          >
+            {showAdminAccess ? t("Hide Owner Access") : t("Owner Access")}
+          </Button>
 
-          <Collapse in={showAdminAccess}>
+          <Collapse in={showAdminAccess} sx={{ width: "100%" }}>
             <Box component="form" onSubmit={handleVerifyAccess}>
-              <Stack direction="row" spacing={1.25} alignItems="flex-start">
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1.5}
+                alignItems={{ xs: "stretch", sm: "flex-start" }}
+              >
                 <TextField
                   label={t("Access Code")}
                   type="password"
@@ -287,16 +308,16 @@ const ComingSoonGate = () => {
                   type="submit"
                   variant="outlined"
                   loading={accessChecking}
-                  sx={{ height: 40, px: 2.5, textTransform: "none", fontWeight: 600 }}
+                  sx={{ height: 40, px: 3, textTransform: "none", fontWeight: 600 }}
                 >
                   {t("Unlock")}
                 </LoadingButton>
               </Stack>
             </Box>
           </Collapse>
-        </CustomStackFullWidth>
-      </CustomModal>
-    </Box>
+        </Stack>
+      </CustomStackFullWidth>
+    </CustomModal>
   );
 };
 
