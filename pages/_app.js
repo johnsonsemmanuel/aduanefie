@@ -25,6 +25,7 @@ import ModuleChecker from "../src/components/module-select/ModuleChecker";
 import ProSubscriptionExpiredModal from "../src/components/pro-plan/ProSubscriptionExpiredModal";
 import ErrorBoundary from "../src/components/common/ErrorBoundary";
 import ComingSoonGate from "../src/components/common/ComingSoonGate";
+import { Analytics } from "@vercel/analytics/next";
 import { setLogoutUser } from "redux/slices/profileInfo";
 import { clearAllCartData } from "redux/slices/cart";
 
@@ -115,6 +116,7 @@ function MyApp(props) {
                       <ErrorBoundary>
                         {getLayout(<Component {...pageProps} />)}
                       </ErrorBoundary>
+                      <Analytics />
                     </RTL>
                   </ThemeProvider>
                 )}
