@@ -29,6 +29,7 @@ import { ActonButtonsSection } from "components/deliveryman-registration/CustomS
 import BusinessTin from "components/store-resgistration/BusinessTin";
 import { shadows } from "@mui/system";
 import { normalizeCountry } from "utils/marketProfiles";
+import { isValidLocation } from "helper-functions/validLocation";
 
 const STORE_REG_DRAFT_KEY = "aduanefie_store_reg_draft_v1";
 
@@ -166,7 +167,12 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
   );
   let currentLatLng = undefined;
   if (typeof window !== "undefined") {
-    currentLatLng = JSON.parse(window.localStorage.getItem("currentLatLng"));
+    try {
+      const stored = JSON.parse(window.localStorage.getItem("currentLatLng"));
+      currentLatLng = isValidLocation(stored) ? stored : undefined;
+    } catch (e) {
+      currentLatLng = undefined;
+    }
   }
   const {
     data: zoneList,
@@ -329,12 +335,9 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
     RestaurantJoinFormik.setFieldValue("lng", value?.lng);
   };
 
-  const resolvedLatLng =
-    currentLatLng?.lat && currentLatLng?.lng
-      ? currentLatLng
-      : configData?.default_location?.lat && configData?.default_location?.lng
-      ? configData.default_location
-      : null;
+  // Only a previously chosen, validated pin can resolve a zone. The business
+  // default_location is not a store location and must never be written here.
+  const resolvedLatLng = isValidLocation(currentLatLng) ? currentLatLng : null;
 
   const { data: zoneData } = useQuery(
     ["zoneId", resolvedLatLng?.lat, resolvedLatLng?.lng],
@@ -422,16 +425,6 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
       refetch();
     }
   }, [zoneData?.data?.zone_data]);
-  useEffect(() => {
-    if (!currentLatLng && zoneData?.data && configData?.default_location) {
-      localStorage.setItem(
-        "currentLatLng",
-        JSON.stringify(configData.default_location)
-      );
-      localStorage.setItem("zoneid", zoneData?.data?.zone_id);
-    }
-  }, [configData?.default_location, zoneData?.data]);
-
   const handleReset = () => {
     try {
       sessionStorage.removeItem(STORE_REG_DRAFT_KEY);

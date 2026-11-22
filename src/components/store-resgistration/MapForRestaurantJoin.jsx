@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { Box, Stack, Typography, useTheme } from "@mui/material";
 import ErrorIcon from "@mui/icons-material/Error";
 import GoogleMapComponent from "components/Map/GoogleMapComponent";
-import { useSelector } from "react-redux";
 import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
 import useGetGeoCode from "api-manage/hooks/react-query/google-api/useGetGeoCode";
 import useGetPlaceDetails from "api-manage/hooks/react-query/google-api/useGetPlaceDetails";
@@ -15,6 +14,7 @@ import { toast } from "react-hot-toast";
 import CustomMapSearch from "components/Map/CustomMapSearch";
 import { CustomTypography } from "components/landing-page/hero-section/HeroSection.style";
 import ModalExtendShrink from "components/Map/ModalExtendShrink";
+import { isValidLocation } from "helper-functions/validLocation";
 
 const MapForRestaurantJoin = ({
   handleLocation,
@@ -31,13 +31,11 @@ const MapForRestaurantJoin = ({
   inZone
 }) => {
   const theme = useTheme();
-  const { configData } = useSelector((state) => state.configData);
 
   const [locationEnabled, setLocationEnabled] = useState(false);
-  const [location, setLocation] = useState({
-    lat: Number(configData?.default_location?.lat) || 5.6037,
-    lng: Number(configData?.default_location?.lng) || -0.187,
-  });
+  // No Ghana (or any other) hardcoded pin. The vendor must place the marker
+  // themselves; an explicit empty state is shown until they do.
+  const [location, setLocation] = useState(null);
   const [searchKey, setSearchKey] = useState("");
   const [enabled, setEnabled] = useState(false);
   const [placeDetailsEnabled, setPlaceDetailsEnabled] = useState(true);
@@ -46,14 +44,6 @@ const MapForRestaurantJoin = ({
   const [placeId, setPlaceId] = useState("");
   const [isModalExpand, setIsModalExpand] = useState(false);
   const { t } = useTranslation();
-  useEffect(() => {
-    if (configData?.default_location?.lat && configData?.default_location?.lng) {
-      setLocation({
-        lat: Number(configData.default_location.lat),
-        lng: Number(configData.default_location.lng),
-      });
-    }
-  }, [configData?.default_location]);
   const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
     useGeolocated({
       positionOptions: {
@@ -97,11 +87,14 @@ const MapForRestaurantJoin = ({
 
   useEffect(() => {
     if (placeDetails) {
-      setLocation({
+      const candidate = {
         lat: placeDetails?.location?.latitude,
         lng: placeDetails?.location?.longitude,
-      });
-      setLocationEnabled(true);
+      };
+      if (isValidLocation(candidate)) {
+        setLocation(candidate);
+        setLocationEnabled(true);
+      }
     }
   }, [placeDetails]);
   const successHandler = (res) => {
@@ -228,7 +221,36 @@ const MapForRestaurantJoin = ({
               t={t}
             />
           </CustomStackFullWidth>
-          {showZoneWarning || !inZone ? (
+          {!isValidLocation(location) ? (
+            <CustomStackFullWidth
+              sx={{
+                position: "absolute",
+                bottom: "4%",
+                left: "50%",
+                transform: "translateX(-50%)",
+                zIndex: 999,
+                width: "max-content",
+                maxWidth: "95%",
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{
+                  color: theme.palette.neutral[100],
+                  backgroundColor: theme.palette.neutral[800],
+                  padding: "8px 12px",
+                  borderRadius: ".5rem",
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  textAlign: "center",
+                }}
+              >
+                {t(
+                  "Search for your business address to place the marker on the map."
+                )}
+              </Typography>
+            </CustomStackFullWidth>
+          ) : showZoneWarning || !inZone ? (
             <Box
               sx={{
                 position: "absolute",
