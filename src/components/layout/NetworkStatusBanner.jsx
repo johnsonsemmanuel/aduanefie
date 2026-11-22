@@ -70,7 +70,7 @@ const NetworkStatusBanner = () => {
           <Typography fontSize="13px" fontWeight={600} color="#FFFFFF">
             {isOffline
               ? t("You are offline. Check your connection to continue.")
-              : t("Back online — connection restored.")}
+              : t("Back online. Connection restored.")}
           </Typography>
           {isOffline && (
             <Button

@@ -159,13 +159,13 @@ const GroupBuysPage = ({ configData }) => {
               }}
             >
               <Typography variant="caption" color="text.secondary" sx={{ flex: 1 }}>
-                <strong>1. Pick a share</strong> — Join an open group or start one for any bulk item.
+                <strong>1. Pick a share</strong>: Join an open group or start one for any bulk item.
               </Typography>
               <Typography variant="caption" color="text.secondary" sx={{ flex: 1 }}>
-                <strong>2. Group fills</strong> — Invite friends on WhatsApp to hit the target shares.
+                <strong>2. Group fills</strong>: Invite friends on WhatsApp to hit the target shares.
               </Typography>
               <Typography variant="caption" color="text.secondary" sx={{ flex: 1 }}>
-                <strong>3. Unlock bulk price</strong> — Individual delivery and no charge until full.
+                <strong>3. Unlock bulk price</strong>: Individual delivery and no charge until full.
               </Typography>
             </Stack>
 

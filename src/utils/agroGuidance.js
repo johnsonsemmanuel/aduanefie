@@ -40,7 +40,7 @@ export const getPostHarvestTip = (item) => {
 
   if (/yam|cassava|cocoyam|sweet\s*potato|ginger|turmeric/.test(text)) {
     return {
-      storageTip: "Store in a cool, dry, well-ventilated shaded spot — avoid damp floors or sealed plastic bags.",
+      storageTip: "Store in a cool, dry, well-ventilated shaded spot. Avoid damp floors or sealed plastic bags.",
       shelfLifeNote: "Tubers keep best 7–21 days unwashed in dry shade (peeled cassava: freeze or use within 48h).",
     };
   }
@@ -53,7 +53,7 @@ export const getPostHarvestTip = (item) => {
   if (/kontomire|spinach|lettuce|ayoyo|gboma|cabbage|leaf|greens|herb/.test(text)) {
     return {
       storageTip: "Wrap loosely in a slightly damp cloth or breathable bag and refrigerate immediately.",
-      shelfLifeNote: "Highly perishable leafy greens — best used within 2–3 days.",
+      shelfLifeNote: "Highly perishable leafy greens, best used within 2–3 days.",
     };
   }
   if (/plantain|banana|pawpaw|mango|pineapple|avocado|pear|orange|watermelon/.test(text)) {
@@ -76,7 +76,7 @@ export const getPostHarvestTip = (item) => {
   }
   return {
     storageTip: "Unpack promptly on delivery and store in a cool, clean, ventilated place (or refrigerate if chilled).",
-    shelfLifeNote: "Inspect fresh produce on delivery — report any transit damage with a photo within 6 hours.",
+    shelfLifeNote: "Inspect fresh produce on delivery. Report any transit damage with a photo within 6 hours.",
   };
 };
 

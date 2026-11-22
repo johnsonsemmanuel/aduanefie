@@ -127,7 +127,7 @@ const ChatWithAdmin = ({ automateMessageData, orderID, isBooking }) => {
                 component="a"
                 href={`https://wa.me/${supportWhatsApp}?text=${encodeURIComponent(
                   `Hi Aduanefie, I need help with ${isBooking ? "Booking" : "Order"} #${orderID || ""}${
-                    value || text ? ` — ${[value, text].filter(Boolean).join(" ")}` : ""
+                    value || text ? `: ${[value, text].filter(Boolean).join(" ")}` : ""
                   }`
                 )}`}
                 target="_blank"
