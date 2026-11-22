@@ -14,6 +14,7 @@ const CustomModal = (props) => {
     maxWidth,
     drawerHeight,
     disableContentOverflowClip,
+    blurBackdrop,
   } = props;
   const handleCloseModal = (event, reason) => {
     event?.stopPropagation?.();
@@ -53,6 +54,18 @@ const CustomModal = (props) => {
         open={openModal}
         onClose={handleCloseModal}
         sx={{ zIndex: 1500 }}
+        slotProps={
+          blurBackdrop
+            ? {
+                backdrop: {
+                  sx: {
+                    backdropFilter: "blur(16px)",
+                    backgroundColor: "rgba(0, 0, 0, 0.55)",
+                  },
+                },
+              }
+            : undefined
+        }
         PaperProps={{
           sx: {
             width: "calc(100% - 16px)",
@@ -92,6 +105,18 @@ const CustomModal = (props) => {
       open={openModal}
       onClose={handleCloseModal}
       maxWidth={maxWidth ? false : "sm"}
+      slotProps={
+        blurBackdrop
+          ? {
+              backdrop: {
+                sx: {
+                  backdropFilter: "blur(16px)",
+                  backgroundColor: "rgba(0, 0, 0, 0.55)",
+                },
+              },
+            }
+          : undefined
+      }
       sx={{
         zIndex: 1500,
         ".MuiDialog-paper": {
