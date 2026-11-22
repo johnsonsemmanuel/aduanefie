@@ -2,7 +2,7 @@
 
 Status: **NOT EXECUTED.** This is an operator plan only. No key has been revoked, no Passport key has been regenerated, and no Git history has been rewritten. Destructive steps require explicit confirmation and a maintenance window.
 
-Current verified refs as of 2026-11-22 (for the deployment-pin update in Phase 4): canonical backend worktree `/tmp/opencode/backend-market-profiles`, `backend/main` at `1934e0fb`; canonical frontend worktree `/tmp/opencode/aduanefie-market-frontend`, `origin/main` at `9b8dd57`. Both remotes were fetched, merged, pushed and re-fetched to 0 ahead / 0 behind. The remote secret blobs listed below are still present in history; these new tips do not change that.
+Current verified refs as of 2026-11-22 (for the deployment-pin update in Phase 4): canonical backend worktree `/tmp/opencode/backend-market-profiles`, `backend/main` at `6ac71e7d`; canonical frontend worktree `/tmp/opencode/aduanefie-market-frontend`, `origin/main` at `fd68b61`. Both remotes were fetched, merged, pushed and re-fetched to 0 ahead / 0 behind (later unrelated upstream commits were fast-forwarded locally after re-verification). The remote secret blobs listed below are still present in history; these new tips do not change that.
 
 ## Facts established on 2026-11-21
 
