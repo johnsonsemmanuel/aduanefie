@@ -23,6 +23,8 @@ import { useQuery } from "react-query";
 import { setUser } from "redux/slices/profileInfo";
 import { auth } from "firebase";
 import PhoneInputForm from "components/auth/sign-in/social-login/PhoneInputForm";
+import LogoSide from "components/logo/LogoSide";
+import { Box, Stack, Typography } from "@mui/material";
 import { toast } from "react-hot-toast";
 import { t } from "i18next";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
@@ -307,7 +309,7 @@ const AuthModal = ({
       handleClose={handleClose}
       openModal={open}
       drawerHeight="90dvh"
-      maxWidth={modalFor === "sign-up" ? "700px" : "500px"}
+      maxWidth="880px"
       disableContentOverflowClip={
         modalFor === "sign-in" && internalView === "otp"
       }
@@ -315,7 +317,40 @@ const AuthModal = ({
       <div ref={recaptchaWrapperRef}>
         <div id="recaptcha-container"></div>
       </div>
-      {renderModalContent()}
+      <Stack direction={{ xs: "column", md: "row" }} alignItems="stretch">
+        <Box sx={{ flex: 1, minWidth: 0 }}>{renderModalContent()}</Box>
+        <Stack
+          spacing={2}
+          alignItems="center"
+          justifyContent="center"
+          textAlign="center"
+          sx={{
+            display: { xs: "none", md: "flex" },
+            width: 340,
+            flexShrink: 0,
+            p: 4,
+            backgroundColor: theme.palette.background.default,
+            borderLeft: `1px solid ${theme.palette.divider}`,
+          }}
+        >
+          {configData?.logo_full_url && (
+            <LogoSide
+              configData={configData}
+              height="48px"
+              width="170px"
+              objectFit="contain"
+            />
+          )}
+          <Typography variant="h6" fontWeight={700} color="text.primary">
+            {configData?.business_name || t("Aduanefie")}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {t(
+              "Direct farm-to-table sourcing, bulk group buying, and cross-border African trade."
+            )}
+          </Typography>
+        </Stack>
+      </Stack>
     </CustomModal>
   );
 };
