@@ -11,6 +11,7 @@ import SectionSearchBar from "components/home/module-wise-components/shared/Sect
 import CategoryMobilePageBar from "components/home/category-page/CategoryMobilePageBar";
 import TabbedSectionResult from "./TabbedSectionResult";
 import NearbyLocationControl from "./NearbyLocationControl";
+import NearbyAggregationHubs from "./NearbyAggregationHubs";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 
 const TAB_ALL = "all";
@@ -251,7 +252,10 @@ const TabbedSectionPage = ({ sectionType, defaultTab }) => {
       />
 
       {sectionType === "nearby" && (
-        <NearbyLocationControl onLocationStored={handleLocationStored} />
+        <>
+          <NearbyLocationControl onLocationStored={handleLocationStored} />
+          <NearbyAggregationHubs locationKey={locationKey} />
+        </>
       )}
 
       <Stack spacing={{ xs: 2, md: 0.5 }}>

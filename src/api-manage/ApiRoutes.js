@@ -242,6 +242,9 @@ export const group_buy_messages_api = (id) => `/api/v1/group-buys/${id}/messages
 export const group_buy_invite_api = (id) => `/api/v1/group-buys/${id}/invite`;
 export const group_buy_verification_api = "/api/v1/group-buys/organizer/verification";
 
+// Customer discovery for nearby aggregation hubs
+export const aggregation_hubs_nearby = "/api/v1/aggregation-hubs/nearby";
+
 // ============================================================================
 // Intra-African Agricultural Trade API Routes
 // ============================================================================
