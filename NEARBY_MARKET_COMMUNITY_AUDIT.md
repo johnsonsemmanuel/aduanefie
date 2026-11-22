@@ -71,7 +71,7 @@ Use one module-agnostic Nearby surface. Make it map-first when the customer gran
 
 - P0-1: fixed in frontend commit `58acf7d` and backend commit `64acc489`. Verified with frontend `npm run build`, `npx tsc --noEmit`, backend `php -l`, `git diff --check`, and a U+2014 scan. The frontend now sends location headers only for a validated stored location and disables nearby queries until one exists. Backend nearby entry points validate coordinates and reject missing, malformed, out-of-range and placeholder `0,0` values.
 - P0-2: fixed in frontend commit `07406b3`. Verified with `npx tsc --noEmit` and `npm run build`. The interceptor now sends `zoneid` only when both a valid stored zone and a supported active market exist; language-selector country changes clear stale zone, coordinate and location cache entries.
-- P0-3: pending.
+- P0-3: fixed in frontend commits `601f7e7` and `c86e3ad`. Verified with `npm run build`, `npx tsc --noEmit`, `git diff --check`, and a U+2014 scan of the changed files. The Nearby section now owns an explicit `Use my location` control with requesting, checking, saved, denied, unavailable, outside-area and unsupported-country states. A successful zone lookup stores validated coordinates and the zone key before notifying the parent, and the parent-owned revision key refetches both item and store queries. The map location button now calls `getPosition()` on demand, suppresses auto-request on mount, validates returned coordinates, applies the result without a second press, and shows denied/unavailable/progress messaging in the permission dialog.
 - P1-1: pending.
 - P1-2: pending.
 - P1-3: pending.
@@ -91,6 +91,6 @@ Status is updated from `git diff` / `git log` after each verified commit, not fr
 ## Known gaps
 
 - Runtime/DB verification is unavailable here, so radius SQL and endpoint responses are reviewed statically.
-- P0-1 disables nearby requests until a valid stored location exists, but the customer-facing explanation and recovery action are deferred to P0-3. Backend error messages are plain English for now; the UI must map the `latitude-longitude` code to localised copy.
+- P0-3 now explains a missing or denied location and offers a retry, but the explicit Nearby control maps zone-check failures (`coordinates`, 403/404) rather than the backend `latitude-longitude` code. Backend error messages remain plain English, so that code is still not mapped to localised UI copy.
 - P0-2 resolves the Ghana fallback by omitting `zoneid` when the active market is unsupported or unknown. Zone selection still depends on the existing location picker writing a correct zone for the active market.
 - No analytics exist for nearby permission acceptance, denial, or empty results, so post-release behaviour cannot yet be measured.
