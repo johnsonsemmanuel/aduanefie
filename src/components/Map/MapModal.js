@@ -40,13 +40,13 @@ import { useRouter } from "next/router";
 import { ModuleSelection } from "../landing-page/hero-section/module-selection";
 import { useGeolocated } from "react-geolocated";
 import { module_select_success } from "src/utils/toasterMessages";
-import { FacebookCircularProgress } from "../loading-spinners/FacebookLoading";
 import { setWishList } from "src/redux/slices/wishList";
 import { useWishListGet } from "src/api-manage/hooks/react-query/wish-list/useWishListGet";
 import { getToken } from "src/helper-functions/getToken";
 import ModalExtendShrink from "./ModalExtendShrink";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { useGetWishList } from "api-manage/hooks/react-query/rental-wishlist/useGetWishlist";
+import { isValidLocation } from "helper-functions/validLocation";
 
 const MapModal = ({
   open,
@@ -64,7 +64,6 @@ const MapModal = ({
   const theme = useTheme();
 
   const isXSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  const { configData } = useSelector((state) => state.configData);
   const { t } = useTranslation();
   const [searchKey, setSearchKey] = useState("");
   const [enabled, setEnabled] = useState(false);
@@ -74,8 +73,10 @@ const MapModal = ({
   const [locationEnabled, setLocationEnabled] = useState(false);
   const [placeId, setPlaceId] = useState("");
   const [placeDescription, setPlaceDescription] = useState(undefined);
+  // The configured default_location is a business map centre, not a customer
+  // pin. Start empty unless the caller supplied a validated location.
   const [location, setLocation] = useState(
-    selectedLocation ? selectedLocation : configData?.default_location
+    isValidLocation(selectedLocation) ? selectedLocation : null
   );
   const { selectedModule } = useSelector((state) => state.utilsData);
   const [zoneId, setZoneId] = useState(undefined);
@@ -193,10 +194,12 @@ const MapModal = ({
     // Google no longer recognises. That body is truthy but carries no
     // `location`, and writing it here parks `location` as `{lat: undefined}`
     // - which keeps the Pick/Discover button disabled with no way to recover.
-    const lat = placeDetails?.location?.latitude;
-    const lng = placeDetails?.location?.longitude;
-    if (lat !== undefined && lng !== undefined) {
-      setLocation({ lat, lng });
+    const candidate = {
+      lat: placeDetails?.location?.latitude,
+      lng: placeDetails?.location?.longitude,
+    };
+    if (isValidLocation(candidate)) {
+      setLocation(candidate);
     }
   }, [placeDetails]);
   useEffect(() => {
@@ -233,7 +236,7 @@ const MapModal = ({
   );
   const { refetch: rentalWishlistRefetch } = useGetWishList(onSuccessHandler);
   const handlePickLocationOnClick = () => {
-    if (zoneId && geoCodeResults && location) {
+    if (zoneId && geoCodeResults && isValidLocation(location)) {
       if (getToken()) {
         if (moduleType === "rental") {
           rentalWishlistRefetch();
@@ -478,13 +481,15 @@ const MapModal = ({
                         </Typography>
                       </>
                     ) : (
-                      <>
-                        <Skeleton variant="rounded" width={300} height={20} />
-                      </>
+                      <Typography variant="body2" color="text.secondary">
+                        {isValidLocation(location)
+                          ? t("Resolving the address for your selected pin...")
+                          : t("Search for a place or use your current location to choose a location.")}
+                      </Typography>
                     )}
                   </LocationView>
                 )}
-                {!!location ? (
+                {isValidLocation(location) ? (
                   <GoogleMapComponent
                     mapmodal
                     setDisablePickButton={setDisablePickButton}
@@ -509,9 +514,10 @@ const MapModal = ({
                       minHeight: "300px",
                     }}
                   >
-                    <FacebookCircularProgress />
                     <CustomTypographyGray nodefaultfont="true">
-                      {t("Please wait sometimes")}
+                      {t(
+                        "Choose a location by searching above or using your current location."
+                      )}
                     </CustomTypographyGray>
                   </CustomStackFullWidth>
                 )}
@@ -605,6 +611,7 @@ const MapModal = ({
                     <Button
                       disabled={
                         isLoading ||
+                        !isValidLocation(location) ||
                         !geoCodeResults?.results?.[0]?.formatted_address ||
                         !zoneId
                       }
