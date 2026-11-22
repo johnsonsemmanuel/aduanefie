@@ -1,7 +1,10 @@
 import axios from "axios";
 import { safeJsonParse } from "utils/safeJsonParse";
 import { readCurrentLocation } from "helper-functions/validLocation";
-import { getActiveCountry } from "helper-functions/marketZone";
+import {
+  clearStoredZoneAndLocation,
+  getActiveCountry,
+} from "helper-functions/marketZone";
 // NEXT_PUBLIC_BASE_URL may or may not carry a trailing slash. Axios normalises
 // that when joining baseURL + path, but every server-side `${baseUrl}${path}`
 // template does not - it yields `host//api/v1/...`, which the API answers with
@@ -67,6 +70,14 @@ MainApi.interceptors.request.use(function (config) {
   } else {
     delete config.headers.zoneid;
   }
+  // The backend needs the market alongside the zone id to reject a stale zone
+  // carried over from another country. Unsupported/unknown markets send no
+  // header at all, matching the P0-2 omission of zoneid above.
+  if (activeCountry) {
+    config.headers["X-Market-Country"] = activeCountry;
+  } else {
+    delete config.headers["X-Market-Country"];
+  }
   if (moduleid && !config.headers.moduleId) config.headers.moduleId = moduleid;
   if (token) config.headers.authorization = `Bearer ${token}`;
   if (language) config.headers["X-localization"] = language;
@@ -81,6 +92,17 @@ MainApi.interceptors.response.use(
   (error) => {
     const status = error?.response?.status;
     const reqUrl = String(error?.config?.url || "");
+    const errors = error?.response?.data?.errors;
+    const isZoneMismatch =
+      Array.isArray(errors) &&
+      errors.some((item) => item?.code === "zone_mismatch");
+    if (typeof window !== "undefined" && isZoneMismatch) {
+      // The server proved this zone belongs to another market. Drop it and
+      // every dependent location value now so back-navigation cannot resurrect
+      // stale location state, then let the app refetch under the new market.
+      clearStoredZoneAndLocation();
+      window.dispatchEvent(new Event("aduanefie:zone-mismatch"));
+    }
     const isAuthEndpoint = /\/auth\/(login|sign-up|register|verify|forgot-password|reset-password)/i.test(
       reqUrl,
     );

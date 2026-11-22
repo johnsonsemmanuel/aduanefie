@@ -40,20 +40,23 @@ export const clearStoredZoneAndLocation = (): void => {
 };
 
 /**
- * Call before overwriting the stored country. A market change invalidates any
- * zone or coordinate selected under the previous market.
+ * Call before overwriting the stored country. Any zone or coordinate selected
+ * under a different, unknown or unsupported market is invalid. Clearing also
+ * covers the common first-run case where a zone exists but no country was ever
+ * recorded, which previously left a stale zone attached to the new market.
  */
 export const clearStoredZoneAndLocationOnCountryChange = (
   nextCountry: unknown,
 ): void => {
   if (typeof window === "undefined") return;
+  if (!localStorage.getItem("zoneid")) return;
 
   const previousCountry = toCountryCode(
     parseStoredValue(localStorage.getItem("country")),
   );
   const nextCode = toCountryCode(nextCountry);
 
-  if (previousCountry && nextCode && previousCountry !== nextCode) {
+  if (previousCountry === null || nextCode === null || previousCountry !== nextCode) {
     clearStoredZoneAndLocation();
   }
 };
