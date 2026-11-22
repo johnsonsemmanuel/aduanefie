@@ -24,6 +24,7 @@ import { useEffect } from "react";
 import ModuleChecker from "../src/components/module-select/ModuleChecker";
 import ProSubscriptionExpiredModal from "../src/components/pro-plan/ProSubscriptionExpiredModal";
 import ErrorBoundary from "../src/components/common/ErrorBoundary";
+import ComingSoonGate from "../src/components/common/ComingSoonGate";
 import { setLogoutUser } from "redux/slices/profileInfo";
 import { clearAllCartData } from "redux/slices/cart";
 
@@ -108,6 +109,7 @@ function MyApp(props) {
                     <RTL direction={value?.settings?.direction}>
                       <CssBaseline />
                       <Toaster position="top-center" containerStyle={{ zIndex: 99999 }} />
+                      <ComingSoonGate />
                       <ModuleChecker />
                       <ProSubscriptionExpiredModal />
                       <ErrorBoundary>
