@@ -1,4 +1,5 @@
 import axios from "axios";
+import { safeJsonParse } from "utils/safeJsonParse";
 import { readCurrentLocation } from "helper-functions/validLocation";
 import { getActiveCountry } from "helper-functions/marketZone";
 // NEXT_PUBLIC_BASE_URL may or may not carry a trailing slash. Axios normalises
@@ -24,11 +25,11 @@ MainApi.interceptors.request.use(function (config) {
   if (typeof window !== "undefined") {
     zoneid = localStorage.getItem("zoneid");
     token = localStorage.getItem("token");
-    language = JSON.parse(localStorage.getItem("language-setting"));
+    language = safeJsonParse(localStorage.getItem("language-setting"), null);
     currentLocation = readCurrentLocation(
       localStorage.getItem("currentLatLng"),
     );
-    moduleid = JSON.parse(localStorage.getItem("module"))?.id;
+    moduleid = safeJsonParse(localStorage.getItem("module"), null)?.id;
   }
   if (currentLocation) {
     config.headers.latitude = currentLocation.lat;
@@ -89,9 +90,10 @@ MainApi.interceptors.response.use(
       !isAuthEndpoint &&
       localStorage.getItem("token")
     ) {
-      // Stale or revoked session token: clear it so background React Query hooks
-      // stop firing repeated 401 storms on /customer/info, /address/list, /message/list.
+      // Stale or revoked session token: clear it and notify app state so Redux
+      // user/cart state resets cleanly without waiting for a full reload.
       localStorage.removeItem("token");
+      window.dispatchEvent(new Event("aduanefie:session-expired"));
     }
     return Promise.reject(error);
   },

@@ -42,6 +42,7 @@ import TopPicksSection from "./grocery/TopPicksSection";
 import Brands from "../brands";
 import FlashSalesSection from "./ecommerce/FlashSalesSection";
 import LiveFarmingSection from "components/home/live-farming/LiveFarmingSection";
+import { WHOLESALE_MODULE_ID } from "components/trade/tradeData";
 import OngoingGroupBuysSection from "components/home/group-buys/OngoingGroupBuysSection";
 
 const menus = ["All", "Beauty", "Bread & Juice", "Drinks", "Milks"];
@@ -128,11 +129,13 @@ const Grocery = (props) => {
           <Banners />
         </CustomContainer>
       </S>
-      <S>
-        <CustomContainer>
-          <LiveFarmingSection limit={8} />
-        </CustomContainer>
-      </S>
+      {String(moduleId) === String(WHOLESALE_MODULE_ID) && (
+        <S>
+          <CustomContainer>
+            <LiveFarmingSection limit={8} />
+          </CustomContainer>
+        </S>
+      )}
 
       <S>
         <CustomContainer>

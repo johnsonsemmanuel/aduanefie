@@ -419,6 +419,81 @@ const AccountMenuPanel = ({
           })}
         </Stack>
 
+        {/* Partner registrations & portals for signed-in users on mobile/desktop */}
+        <Box
+          sx={{
+            pt: 1.25,
+            borderTop: `1px solid ${theme.palette.divider}`,
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: "11px",
+              fontWeight: 700,
+              color: theme.palette.text.secondary,
+              textTransform: "uppercase",
+              letterSpacing: "0.4px",
+              mb: 0.75,
+            }}
+          >
+            {t("Grow With Aduanefie")}
+          </Typography>
+          <Stack direction="row" flexWrap="wrap" gap={0.75}>
+            {[
+              { label: "Register Farm / Store", path: "/store-registration" },
+              { label: "Become a Rider", path: "/deliveryman-registration" },
+              { label: "Become a Marketer", path: "/become-a-marketer" },
+            ].map((item) => (
+              <Typography
+                key={item.path}
+                component="span"
+                onClick={() => {
+                  onClose?.();
+                  router.push(item.path);
+                }}
+                sx={{
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  px: "10px",
+                  py: "5px",
+                  borderRadius: "8px",
+                  bgcolor: theme.palette.background.secondary || "#EFE7D3",
+                  color: theme.palette.primary.deep || "#67513A",
+                  cursor: "pointer",
+                  "&:hover": { opacity: 0.85 },
+                }}
+              >
+                {t(item.label)}
+              </Typography>
+            ))}
+            {[
+              { label: "Marketer Login", href: "https://admin.aduanefie.com/marketer-login" },
+              { label: "Logistics Login", href: "https://logistics.aduanefie.com/rider-login" },
+            ].map((portal) => (
+              <Typography
+                key={portal.href}
+                component="a"
+                href={portal.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  px: "10px",
+                  py: "5px",
+                  borderRadius: "8px",
+                  border: `1px solid ${theme.palette.divider}`,
+                  color: theme.palette.text.primary,
+                  textDecoration: "none",
+                  "&:hover": { opacity: 0.85 },
+                }}
+              >
+                {t(portal.label)}
+              </Typography>
+            ))}
+          </Stack>
+        </Box>
+
         {/* Bottom button: Login/Signup (guest) or Logout (auth).
             When `hideLoginButton` is true and user is logged out, hide entirely
             (used by ProfileDrawer which has its own top login promo). */}

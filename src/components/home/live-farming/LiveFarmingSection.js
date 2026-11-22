@@ -31,11 +31,18 @@ const getGhanaSeasonLabel = () => {
   return "Irrigated Season";
 };
 
-const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true }) => {
+const LiveFarmingSection = ({
+  limit = 8,
+  showViewAll = true,
+  hideIfEmpty = true,
+  initialBackyardOnly = false,
+  titleOverride = null,
+  subtitleOverride = null,
+}) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState("all");
-  const [backyardOnly, setBackyardOnly] = useState(false);
+  const [backyardOnly, setBackyardOnly] = useState(initialBackyardOnly);
   const [searchTerm, setSearchTerm] = useState("");
   const seasonLabel = getGhanaSeasonLabel();
 
@@ -107,7 +114,7 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
                   textOverflow: "ellipsis",
                 }}
               >
-                {t("Live Farming")}
+                {t(titleOverride || "Live Farming")}
               </Typography>
               <Chip
                 size="small"

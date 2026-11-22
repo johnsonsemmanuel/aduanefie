@@ -114,7 +114,7 @@ const getMobileMarginTop = ({ pathname, currentModuleType }) => {
     return pathname?.startsWith("/rental") ? "3rem" : "6.3rem";
   }
   if (currentModuleType === ModuleTypes.PARCEL) return "5.4rem";
-  return "7.6rem";
+  return "8.75rem";
 };
 
 // Info/legal routes where the full footer is appropriate even on mobile.
@@ -278,7 +278,7 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
   });
 
   return (
-    <MainLayoutRoot justifyContent="space-between" key={rerenderUi}>
+    <MainLayoutRoot justifyContent={showFooter ? "space-between" : "flex-start"} key={rerenderUi}>
       <header>
         <HeaderComponent />
       </header>

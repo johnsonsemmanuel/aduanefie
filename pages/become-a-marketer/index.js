@@ -64,6 +64,8 @@ const BecomeAMarketerPage = ({ configData }) => {
   const countryOptions = getCountryOptions();
 
   const [submitting, setSubmitting] = useState(false);
+  const [verifyingPayout, setVerifyingPayout] = useState(false);
+  const [verifiedAccountName, setVerifiedAccountName] = useState("");
   const [submittedMsg, setSubmittedMsg] = useState("");
   const [form, setForm] = useState({
     country: normalizeCountry(effectiveConfig?.country) || "GH",
@@ -93,6 +95,36 @@ const BecomeAMarketerPage = ({ configData }) => {
       district: "",
       momo_network: profile?.payouts?.networks?.[0] || "",
     }));
+  };
+
+  const handleVerifyPhoneName = async () => {
+    const cleanPhone = form.phone.trim();
+    if (cleanPhone.length < 9) {
+      toast.error("Enter a valid mobile money number first.");
+      return;
+    }
+    setVerifyingPayout(true);
+    setVerifiedAccountName("");
+    try {
+      const { data } = await MainApi.post("/api/v1/marketer-applications/verify-payout", {
+        account_number: cleanPhone,
+        momo_network: form.momo_network || "MTN",
+      });
+      if (data?.verified && data?.account_name) {
+        setVerifiedAccountName(data.account_name);
+        setForm((prev) => ({
+          ...prev,
+          full_name: data.account_name,
+        }));
+        toast.success(`Verified via Paystack: ${data.account_name}`);
+      } else {
+        toast.error(data?.message || "Could not verify this number.");
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Could not verify number via Paystack.");
+    } finally {
+      setVerifyingPayout(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -148,71 +180,28 @@ const BecomeAMarketerPage = ({ configData }) => {
             <Paper
               elevation={0}
               sx={{
-                p: { xs: 2, md: 3.5 },
+                p: { xs: 2, md: 3 },
                 borderRadius: "16px",
                 bgcolor: (theme) => theme.palette.primary.deep || "#67513A",
                 color: "#FFFFFF",
-                mb: 3,
+                mb: 2.5,
               }}
             >
-              <Chip
-                size="small"
-                label="Aduanefie Partners Program"
-                sx={{
-                  bgcolor: (theme) => theme.palette.primary.main || "#8B9F69",
-                  color: "#FFFFFF",
-                  fontWeight: 600,
-                  mb: 1,
-                }}
-              />
-              <Typography variant="h4" sx={{ fontWeight: 700, fontSize: { xs: "1.35rem", md: "1.95rem" }, mb: 0.75 }}>
-                Earn by Onboarding Farmers in Your Region
+              <Typography variant="h4" sx={{ fontWeight: 700, fontSize: { xs: "1.35rem", md: "1.8rem" }, mb: 0.5 }}>
+                Become a Regional Marketer
               </Typography>
-              <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.9)", maxWidth: 680 }}>
-                Join Aduanefie&apos;s regional field network. Earn an onboarding bounty in your local currency for every verified farm or agro-vendor you onboard, plus a recurring share of Aduanefie&apos;s commission on their delivered orders.
+              <Typography variant="body2" sx={{ color: "rgba(255,255,255,0.9)", maxWidth: 560 }}>
+                Onboard farmers and agro-vendors in your region and earn on every verified farm and delivered order.
               </Typography>
             </Paper>
 
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={5}>
-                <Stack spacing={1.5}>
-                  {[
-                    {
-                      title: "Onboarding Bounty",
-                      desc: "Paid in your local currency per verified farmer, backyard grower, or agro-input vendor who joins through your referral code.",
-                    },
-                    {
-                      title: "20% Recurring Order Commission",
-                      desc: "Earn ongoing commissions on every delivered order from farms you bring onto Aduanefie.",
-                    },
-                    {
-                      title: "Lead Regional Tours & Field Verification",
-                      desc: "Host farmer onboarding stops in your region and verify backyard farms directly from partners.aduanefie.com.",
-                    },
-                  ].map((item) => (
-                    <Paper
-                      key={item.title}
-                      variant="outlined"
-                      sx={{ p: 2, borderRadius: "12px", bgcolor: "background.paper" }}
-                    >
-                      <Typography sx={{ fontWeight: 700, fontSize: "14.5px", mb: 0.35 }}>
-                        {item.title}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary" sx={{ display: "block", lineHeight: 1.45 }}>
-                        {item.desc}
-                      </Typography>
-                    </Paper>
-                  ))}
-                </Stack>
-              </Grid>
-
-              <Grid item xs={12} md={7}>
+            <Box sx={{ maxWidth: 680, mx: "auto" }}>
                 <Paper variant="outlined" sx={{ p: { xs: 2, md: 3 }, borderRadius: "14px" }}>
                   <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.5 }}>
-                    Apply as a Regional Marketer
+                    Partner Application
                   </Typography>
                   <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2 }}>
-                    Once approved, your partner portal credentials and referral code are sent via SMS.
+                    Verify your MoMo number via Paystack to confirm your name, then submit your details.
                   </Typography>
 
                   {submittedMsg && (
@@ -256,16 +245,35 @@ const BecomeAMarketerPage = ({ configData }) => {
                           value={form.email}
                           onChange={(e) => setForm({ ...form, email: e.target.value })}
                         />
-                        <TextField
-                          required
-                          fullWidth
-                          size="small"
-                          label="Phone Number (MoMo / SMS)"
-                          placeholder={phoneExample}
-                          helperText={`${phoneDialCode} mobile number`}
-                          value={form.phone}
-                          onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                        />
+                        <Stack direction="row" spacing={1} alignItems="flex-start" sx={{ width: "100%" }}>
+                          <TextField
+                            required
+                            fullWidth
+                            size="small"
+                            label="Phone Number (MoMo / SMS)"
+                            placeholder={phoneExample}
+                            helperText={
+                              verifiedAccountName
+                                ? `Paystack verified: ${verifiedAccountName}`
+                                : `${phoneDialCode} mobile number`
+                            }
+                            value={form.phone}
+                            onChange={(e) => {
+                              setVerifiedAccountName("");
+                              setForm({ ...form, phone: e.target.value });
+                            }}
+                          />
+                          <Button
+                            type="button"
+                            variant="outlined"
+                            size="small"
+                            disabled={verifyingPayout || form.phone.trim().length < 9}
+                            onClick={handleVerifyPhoneName}
+                            sx={{ whiteSpace: "nowrap", height: "40px", flexShrink: 0 }}
+                          >
+                            {verifyingPayout ? "Verifying..." : "Verify Name"}
+                          </Button>
+                        </Stack>
                       </Stack>
                       <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
                         {usesGhanaRegions ? (
@@ -338,8 +346,7 @@ const BecomeAMarketerPage = ({ configData }) => {
                     </Stack>
                   </Box>
                 </Paper>
-              </Grid>
-            </Grid>
+            </Box>
           </Box>
         </CustomContainer>
       </MainLayout>

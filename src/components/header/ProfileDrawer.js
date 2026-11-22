@@ -25,7 +25,14 @@ const MARKETPLACE_LINKS = [
 const PARTNER_SUPPORT_LINKS = [
   { label: "Become a Marketer", path: "/become-a-marketer", icon: "fi fi-rr-briefcase" },
   { label: "Register Farm / Store", path: "/store-registration", icon: "fi fi-rr-shop" },
+  { label: "Register as Rider / Logistics", path: "/deliveryman-registration", icon: "fi fi-rr-truck-side" },
   { label: "Help & Support", path: "/help-and-support", icon: "fi fi-rr-headset" },
+];
+
+const PARTNER_PORTAL_LINKS = [
+  { label: "Marketer Login", href: "https://admin.aduanefie.com/marketer-login" },
+  { label: "Logistics Login", href: "https://logistics.aduanefie.com/rider-login" },
+  { label: "Store / Vendor Login", href: "https://admin.aduanefie.com/store-login" },
 ];
 
 const ProfileDrawer = ({ open, onClose, onSignInClick }) => {
@@ -212,6 +219,41 @@ const ProfileDrawer = ({ open, onClose, onSignInClick }) => {
                   fontSize: "12px",
                   bgcolor: theme.palette.primary.deep || "#67513A",
                   color: "#FFFFFF",
+                }}
+              />
+            ))}
+          </Stack>
+
+          <Typography
+            sx={{
+              fontSize: "11px",
+              fontWeight: 700,
+              color: theme.palette.text.secondary,
+              textTransform: "uppercase",
+              letterSpacing: "0.4px",
+              mt: 1.5,
+              mb: 0.75,
+            }}
+          >
+            {t("Partner Portals")}
+          </Typography>
+          <Stack direction="row" flexWrap="wrap" gap={0.75}>
+            {PARTNER_PORTAL_LINKS.map((portal) => (
+              <Chip
+                key={portal.href}
+                label={t(portal.label)}
+                size="small"
+                variant="outlined"
+                clickable
+                component="a"
+                href={portal.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{
+                  fontWeight: 600,
+                  fontSize: "12px",
+                  borderColor: theme.palette.primary.deep || "#67513A",
+                  color: theme.palette.primary.deep || "#67513A",
                 }}
               />
             ))}

@@ -468,7 +468,7 @@ const TradeRfqSection = () => {
                         </Stack>
                         <Typography sx={{ fontSize: "12.5px", color: "text.secondary", mt: 0.5 }}>
                           {rfq.origin_country} → {rfq.destination_country} {rfq.destination_city ? `(${rfq.destination_city})` : ""} · {rfq.trade_bloc} · {rfq.incoterm}
-                          {rfq.target_price_ghs ? ` · Target GH₵${Number(rfq.target_price_ghs).toLocaleString()}` : ""}
+                          {rfq.target_price_ghs ? ` · Target ₵${Number(rfq.target_price_ghs).toLocaleString()}` : ""}
                         </Typography>
                         <Stack direction="row" spacing={0.75} sx={{ mt: 1 }} flexWrap="wrap">
                           {rfq.requires_insurance && <Chip size="small" color="success" variant="outlined" label={t("Insured")} />}
@@ -527,7 +527,7 @@ const TradeRfqSection = () => {
                 size="small"
                 required
                 type="number"
-                label={t("Quoted Unit Price (GH₵)")}
+                label={t("Quoted Unit Price (₵)")}
                 value={quoteForm.quoted_unit_price_ghs}
                 onChange={(e) => setQuoteForm({ ...quoteForm, quoted_unit_price_ghs: e.target.value })}
               />

@@ -1,30 +1,8 @@
 import { NextResponse } from "next/server";
+import { isModuleAgnosticRoute } from "./src/utils/moduleRoutes";
 
 // Define the protected routes
 const protectedRoutes = ["/rental/cart"];
-
-// Routes where module parameter should NOT be added automatically
-const excludeModuleRoutes = [
-  "/",
-  "/welcome",
-  "/trade",
-  "/404",
-  "/500",
-  "/app-redirect",
-  "/maintainance",
-  "/checkout",
-  "/profile",
-  "/about-us",
-  "/cancellation-policy",
-  "/privacy-policy",
-  "/refund-policy",
-  "/shipping-policy",
-  "/terms-and-conditions",
-  "/help-and-support",
-  "/forgot-password",
-  "/deliveryman-registration",
-  "/store-registration",
-];
 
 export function middleware(request) {
   const { pathname, searchParams } = request.nextUrl;
@@ -59,9 +37,7 @@ export function middleware(request) {
     searchParams.has("module") || searchParams.has("module_id");
 
   // Check if this route should skip module parameter
-  const shouldSkipModule = excludeModuleRoutes.some(
-    (route) => pathname === route || pathname.startsWith(route + "/")
-  );
+  const shouldSkipModule = isModuleAgnosticRoute(pathname);
 
   // If no module param in URL but we have one saved, and route is not excluded, add it
   if (!hasModuleParam && moduleFromCookie && !shouldSkipModule) {

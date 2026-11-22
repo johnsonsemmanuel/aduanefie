@@ -26,6 +26,7 @@ import { getAmountWithSign } from "helper-functions/CardHelpers";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { haveRtlLanguages } from "components/header/top-navbar/language/rtlLanguageList";
 import { getGuestId } from "helper-functions/getToken";
+import { showAddedToCartToast } from "utils/cartToast";
 import {
   handleProductRedirect,
   handleServiceRedirect,
@@ -328,9 +329,7 @@ export const StoreRow = ({
 
   const moduleType = getCurrentModuleType();
   const verifiedLabel =
-    moduleType === ModuleTypes.FOOD
-      ? t("Verified Restaurant")
-      : moduleType === ModuleTypes.RENTAL
+    moduleType === ModuleTypes.RENTAL
       ? t("Verified Provider")
       : t("Verified Store");
 
@@ -1681,7 +1680,7 @@ const NewProductCard = ({
       };
     });
     reduxDispatch(setCart(product));
-    toast.success(t("Item added to cart"));
+    showAddedToCartToast(t, router);
     dispatch({ type: ACTION.setClearCartModal, payload: false });
   };
 

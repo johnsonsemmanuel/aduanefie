@@ -151,7 +151,7 @@ const ItemCheckout = (props) => {
   const [selectedCurrency, setSelectedCurrency] = useState(
     getCurrencyOptions(DEFAULT_COUNTRY)[0] || {
       code: "GHS",
-      symbol: "GH₵",
+      symbol: "₵",
       name: "Ghanaian Cedi",
     },
   );
@@ -273,6 +273,42 @@ const ItemCheckout = (props) => {
     Boolean(storeCountry) &&
     Boolean(destinationCountry) &&
     storeCountry !== destinationCountry;
+
+  // Auto-select a valid default payment method so Place Order never fails silently
+  // with "payment method not selected" when the customer hasn't clicked a radio yet.
+  useEffect(() => {
+    if (paymentMethod) return;
+    if (
+      configData?.cash_on_delivery &&
+      storeData?.cash_on_delivery &&
+      !isCrossBorder
+    ) {
+      setPaymentMethod("cash_on_delivery");
+      return;
+    }
+    const firstGateway = configData?.active_payment_method_list?.[0]?.gateway;
+    if (configData?.digital_payment && firstGateway) {
+      setPaymentMethod(firstGateway);
+      return;
+    }
+    if (
+      token &&
+      configData?.customer_wallet_status === 1 &&
+      Number(customerData?.data?.wallet_balance ?? 0) > 0
+    ) {
+      setPaymentMethod("wallet");
+    }
+  }, [
+    paymentMethod,
+    configData?.cash_on_delivery,
+    configData?.digital_payment,
+    configData?.active_payment_method_list,
+    configData?.customer_wallet_status,
+    storeData?.cash_on_delivery,
+    isCrossBorder,
+    token,
+    customerData?.data?.wallet_balance,
+  ]);
   // Bundles and BOGO rows have no `item_id` the catalogue can re-price, so
   // they cannot be quoted for an international lane. Surface that instead of
   // silently dropping them from the freight calculation.
@@ -771,7 +807,11 @@ const ItemCheckout = (props) => {
         : 0;
       formData.append("extra_packaging_amount", resolvedPackagingAmount);
       formData.append("is_insured", isInsuranceApplied ? 1 : 0);
-      formData.append("cutlery", cartPrefs?.addCutlery ? 1 : cutlery ? 1 : 0);
+      const isFoodOrder = getCurrentModuleType() === "food";
+      formData.append(
+        "cutlery",
+        isFoodOrder && (cartPrefs?.addCutlery || cutlery) ? 1 : 0,
+      );
       formData.append(
         "unavailable_item_note",
         cartPrefs?.unavailableChoice ?? unavailable_item_note ?? "",
@@ -785,7 +825,9 @@ const ItemCheckout = (props) => {
       formData.append("password", formik.values.password);
       return formData;
     } else {
-      const resolvedCutlery = cartPrefs?.addCutlery ? 1 : cutlery ? 1 : 0;
+      const isFoodOrder = getCurrentModuleType() === "food";
+      const resolvedCutlery =
+        isFoodOrder && (cartPrefs?.addCutlery || cutlery) ? 1 : 0;
       const resolvedUnavailableNote =
         cartPrefs?.unavailableChoice ?? unavailable_item_note;
       const resolvedPackagingAmount = cartPrefs?.extraPackaging
@@ -942,11 +984,14 @@ const ItemCheckout = (props) => {
             orderMutation(order, {
               onSuccess: handleSuccessSecond,
               onError: (error) => {
-                error?.response?.data?.errors?.forEach((item) =>
-                  toast.error(item.message, {
-                    position: "bottom-right",
-                  }),
-                );
+                const firstMsg =
+                  error?.response?.data?.errors?.[0]?.message ||
+                  error?.response?.data?.message ||
+                  t("Could not place order. Please check your details.");
+                toast.error(firstMsg, {
+                  id: "order-place-error",
+                  position: "bottom-right",
+                });
               },
             });
           }
@@ -1060,11 +1105,14 @@ const ItemCheckout = (props) => {
             orderMutation(order, {
               onSuccess: handleSuccess,
               onError: (error) => {
-                error?.response?.data?.errors?.forEach((item) =>
-                  toast.error(item.message, {
-                    position: "bottom-right",
-                  }),
-                );
+                const firstMsg =
+                  error?.response?.data?.errors?.[0]?.message ||
+                  error?.response?.data?.message ||
+                  t("Could not place order. Please check your details.");
+                toast.error(firstMsg, {
+                  id: "order-place-error",
+                  position: "bottom-right",
+                });
               },
             });
           }
@@ -1085,11 +1133,7 @@ const ItemCheckout = (props) => {
   // getStoresOrRestaurants() output produces a string that never matches a
   // translation entry, so the toast showed untranslated mixed text.
   const storeCloseToast = () =>
-    toast.error(
-      getCurrentModuleType() === "food"
-        ? t("Restaurant is closed. Try again later.")
-        : t("Store is closed. Try again later."),
-    );
+    toast.error(t("Store is closed. Try again later."));
   //totalAmount
   const handlePlaceOrderBasedOnAvailability = () => {
     //cod -> cash on delivery
@@ -1146,6 +1190,12 @@ const ItemCheckout = (props) => {
     }
   };
   const placeOrder = () => {
+    if (!paymentMethod) {
+      toast.error(t("Please select a payment method to continue."), {
+        id: "payment-method-required",
+      });
+      return;
+    }
     // International checkout is priced by the shipping-options quote, not by
     // checkout-summary. Never let an order through without a lane the server
     // can re-quote, and never carry a lane from a different destination.

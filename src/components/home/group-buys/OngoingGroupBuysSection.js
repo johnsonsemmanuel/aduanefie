@@ -2,23 +2,32 @@ import React from "react";
 import Link from "next/link";
 import { Button, Grid, Skeleton, Stack, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import GroupBuyCard from "components/group-buy/GroupBuyCard";
 import { useGetGroupBuys } from "api-manage/hooks/react-query/group-buy/useGroupBuys";
 
+const INCOMPATIBLE_MODULE_TYPES = new Set(["parcel", "rental", "service", "food", "pharmacy"]);
+
 /**
  * Marketplace discovery strip for open groups. It only renders when the module
- * is known and there is real data, so empty modules do not get a dead section.
+ * is compatible (physical goods with bulk/group-buy suppliers) and has real data,
+ * so incompatible or retail-only modules do not get a dead section.
  */
 const OngoingGroupBuysSection = ({ moduleId, limit = 6 }) => {
   const { t } = useTranslation();
+  const selectedModule = useSelector((state) => state.utilsData?.selectedModule);
+  const moduleType = String(selectedModule?.module_type || "").toLowerCase();
+  const isModuleTypeCompatible = !moduleType || !INCOMPATIBLE_MODULE_TYPES.has(moduleType);
+
   const { data, isLoading, isError, refetch } = useGetGroupBuys({
     status: "open",
     moduleId,
-    enabled: Boolean(moduleId),
+    enabled: Boolean(moduleId) && isModuleTypeCompatible,
   });
   const groups = data?.data?.data || [];
 
-  if (!moduleId) return null;
+  if (!moduleId || !isModuleTypeCompatible) return null;
+  if (data?.module_supported === false) return null;
   if (!isLoading && !isError && groups.length === 0) return null;
 
   const visible = groups.slice(0, limit);

@@ -17,6 +17,7 @@ import {
   Stack,
   TextField,
   Typography,
+  alpha,
 } from "@mui/material";
 import CustomContainer from "components/container";
 import MainLayout from "components/layout/MainLayout";
@@ -203,7 +204,16 @@ const GroupBuyDetailPage = ({ configData }) => {
                   </Box>
 
                   {group.status === "open" && (
-                    <Alert severity="info" sx={{ mt: 3 }}>
+                    <Alert
+                      severity="info"
+                      sx={{
+                        mt: 3,
+                        bgcolor: (theme) => alpha(theme.palette.primary.main, 0.08),
+                        color: "text.primary",
+                        border: (theme) => `1px solid ${alpha(theme.palette.primary.main, 0.28)}`,
+                        "& .MuiAlert-icon": { color: "primary.main" },
+                      }}
+                    >
                       Nobody is charged while the group is filling. If it does not
                       reach {limit} members, everyone is released automatically.
                     </Alert>

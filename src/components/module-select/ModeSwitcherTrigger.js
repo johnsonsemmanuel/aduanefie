@@ -32,7 +32,7 @@ const ModeSwitcherTrigger = ({ variant = "mobile", sx }) => {
     selectedModule: state.utilsData.selectedModule,
   }));
 
-  if (!modules?.length || isModuleAgnosticRoute(router.pathname)) return null;
+  if (!modules || modules.length <= 1 || isModuleAgnosticRoute(router.pathname)) return null;
 
   const moduleName = selectedModule?.module_name || t("Choose Mode");
   const moduleIcon = selectedModule?.icon_full_url ? (

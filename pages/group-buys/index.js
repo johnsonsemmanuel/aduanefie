@@ -48,7 +48,9 @@ const GroupBuysPage = ({ configData }) => {
   const selectedModule = useSelector((state) => state.utilsData?.selectedModule);
   const activeModuleId = router.query.module_id || selectedModule?.id || getModuleId() || "";
   const activeModuleName = selectedModule?.module_name || "Current Marketplace";
-  const [scopeToModule, setScopeToModule] = useState(Boolean(router.query.module_id));
+  const activeModuleType = String(selectedModule?.module_type || "").toLowerCase();
+  const isIncompatibleModuleType = ["parcel", "rental", "service", "food", "pharmacy"].includes(activeModuleType);
+  const [scopeToModule, setScopeToModule] = useState(Boolean(router.query.module_id || activeModuleId));
   const [tab, setTab] = useState(0);
   const [status, setStatus] = useState("open");
   const [country, setCountry] = useState("");
@@ -75,7 +77,9 @@ const GroupBuysPage = ({ configData }) => {
     status,
     country,
     moduleId: scopeToModule && activeModuleId ? activeModuleId : undefined,
+    allModules: !scopeToModule || !activeModuleId,
   });
+  const moduleSupported = !scopeToModule || (!isIncompatibleModuleType && data?.module_supported !== false);
   const {
     data: mine,
     isLoading: mineLoading,
@@ -136,10 +140,26 @@ const GroupBuysPage = ({ configData }) => {
                   delivery, and no charge until the group is complete.
                 </Typography>
               </Box>
-              <Button variant="contained" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)}>
-                Start a group
-              </Button>
+              {moduleSupported && (
+                <Button variant="contained" startIcon={<AddIcon />} onClick={() => setCreateOpen(true)}>
+                  Start a group
+                </Button>
+              )}
             </Stack>
+
+            {!moduleSupported && (
+              <Alert
+                severity="info"
+                sx={{ mb: 2.5 }}
+                action={
+                  <Button color="inherit" size="small" onClick={() => setScopeToModule(false)}>
+                    View All Marketplaces
+                  </Button>
+                }
+              >
+                Group buying is not available in <strong>{activeModuleName}</strong> because suppliers in this module do not offer larger bulk quantities.
+              </Alert>
+            )}
 
             <Tabs value={tab} onChange={(_, value) => setTab(value)} sx={{ mb: 2 }}>
               <Tab label="Discover groups" />

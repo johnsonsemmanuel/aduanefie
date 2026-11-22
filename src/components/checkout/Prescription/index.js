@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { safeJsonParse } from "utils/safeJsonParse";
 import { Grid, Typography, useMediaQuery } from "@mui/material";
 import DeliveryDetails from "../item-checkout/DeliveryDetails";
 import { Stack } from "@mui/system";
@@ -70,7 +71,7 @@ const PrescriptionCheckout = ({ storeId, page }) => {
     refetch();
   }, [storeId]);
   useEffect(() => {
-    const currentLatLng = JSON.parse(localStorage.getItem("currentLatLng"));
+    const currentLatLng = safeJsonParse(localStorage.getItem("currentLatLng"), {});
     const location = localStorage.getItem("location");
     setAddress({
       ...currentLatLng,

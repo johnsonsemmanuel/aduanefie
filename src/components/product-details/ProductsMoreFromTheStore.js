@@ -5,53 +5,6 @@ import useGetMoreFromStores from "../../api-manage/hooks/react-query/product-det
 import NewProductCard from "components/cards/newCard/NewProductCard";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 
-const STATIC_MORE_ITEMS = [
-  {
-    "id": 65,
-    "name": "Avia Men's Tenon",
-    "image_full_url": "https://aduanefie-dev.6amdev.xyz/storage/app/public/product/2024-10-29-6720ca16a11cf.png",
-    "price": 120,
-    "discounted_price": 90,
-    "discount": 25,
-    "discount_type": "percent",
-    "order_count": 2,
-    "avg_rating": 0
-  },
-  {
-    "id": 126,
-    "name": "YOTAMI Womens Tops",
-    "image_full_url": "https://aduanefie-dev.6amdev.xyz/storage/app/public/product/2024-10-29-6720d11e0b7da.png",
-    "price": 150,
-    "discounted_price": 112.5,
-    "discount": 25,
-    "discount_type": "percent",
-    "order_count": 1,
-    "avg_rating": 0
-  },
-  {
-    "id": 49,
-    "name": "Men's Jeans Pant",
-    "image_full_url": "https://aduanefie-dev.6amdev.xyz/storage/app/public/product/2024-10-29-6720c943ae303.png",
-    "price": 49,
-    "discounted_price": 43.12,
-    "discount": 12,
-    "discount_type": "percent",
-    "order_count": 0,
-    "avg_rating": 0
-  },
-  {
-    "id": 475,
-    "name": "Men's Black Leather Sandals",
-    "image_full_url": "https://aduanefie-dev.6amdev.xyz/storage/app/public/product/2026-04-29-69f1a447d1082.WebP",
-    "price": 2500,
-    "discounted_price": 1875,
-    "discount": 25,
-    "discount_type": "percent",
-    "order_count": 0,
-    "avg_rating": 0
-  }
-];
-
 const ProductsMoreFromTheStore = ({ productDetails }) => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -79,12 +32,10 @@ const ProductsMoreFromTheStore = ({ productDetails }) => {
   //   refetch();
   // }, []);
   useEffect(() => {
-    if (isServiceModule) {
-      setMoreItem(STATIC_MORE_ITEMS);
-    } else {
+    if (productDetails?.id) {
       refetch();
     }
-  }, [isServiceModule, productDetails?.id]);
+  }, [productDetails?.id]);
 
   if (!moreItem || moreItem.length === 0) return null;
 

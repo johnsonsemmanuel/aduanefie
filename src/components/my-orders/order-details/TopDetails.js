@@ -48,9 +48,9 @@ import { baseUrl } from "api-manage/MainApi";
 // contract values are always assigned through textContent; interpolating them
 // into document.write() allowed stored HTML/script to execute with access to
 // the opener's localStorage (including the auth token).
-const buildPrintDoc = (title) => {
+const buildPrintDoc = (title, existingWin = null) => {
   if (typeof window === "undefined") return null;
-  const win = window.open("", "_blank");
+  const win = existingWin || window.open("", "_blank");
   if (!win) return null;
   const doc = win.document;
   doc.open();
@@ -78,6 +78,7 @@ const CELL = "padding:8px;border-bottom:1px solid #ddd";
 const MUTED = "margin:4px 0;font-size:13px;color:#555";
 
 import MainApi from "api-manage/MainApi";
+import { WHOLESALE_MODULE_ID } from "components/trade/tradeData";
 import Router, { useRouter } from "next/router";
 import { useGetFailedPayment } from "api-manage/hooks/react-query/useGetFailedPayment";
 import useServiceBusinessConfig from "components/home/module-wise-components/service/service-api-manage/hooks/custom-hooks/useServiceBusinessConfig";
@@ -486,7 +487,11 @@ const TopDetails = (props) => {
               {trackData?.otp}
             </Typography>
           ) : null}
-          {!isServiceBooking && (
+          {!isServiceBooking &&
+            (Boolean(trackData?.is_cross_border) ||
+              Boolean(trackData?.is_wholesale) ||
+              String(trackData?.module_id) === String(WHOLESALE_MODULE_ID) ||
+              trackData?.order_type === "wholesale") && (
             <Stack direction="row" spacing={1} flexWrap="wrap" sx={{ mt: 1 }}>
               <Button
                 size="small"
@@ -496,21 +501,30 @@ const TopDetails = (props) => {
                   const targetId =
                     trackData?.id ?? data?.[0]?.order_id ?? data?.id ?? id;
                   if (!targetId) return;
+                  const preWin = window.open("", "_blank");
                   try {
                     const res = await MainApi.post(
                       `/api/v1/trade/orders/${targetId}/esperworks-invoice`
                     );
                     const payload = res?.data;
                     if (payload?.esperworks_url) {
-                      window.open(payload.esperworks_url, "_blank", "noopener");
+                      if (preWin) {
+                        preWin.location.href = payload.esperworks_url;
+                      } else {
+                        window.open(payload.esperworks_url, "_blank", "noopener");
+                      }
                       return;
                     }
                     const inv = payload?.invoice;
                     if (inv) {
                       const print = buildPrintDoc(
-                        `${payload.invoice_number || "Invoice"} - EsperWorks Proforma & Waybill`
+                        `${payload.invoice_number || "Invoice"} - EsperWorks Proforma & Waybill`,
+                        preWin
                       );
-                      if (!print) return;
+                      if (!print) {
+                        toast.error(t("Please allow popups to view the Proforma & Waybill."));
+                        return;
+                      }
                       const { win, doc, body } = print;
 
                       const header = addEl(
@@ -518,7 +532,7 @@ const TopDetails = (props) => {
                         body,
                         "div",
                         null,
-                        "display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #2e5a27;padding-bottom:16px"
+                        "display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #67513A;padding-bottom:16px"
                       );
                       const brand = addEl(doc, header, "div");
                       addEl(
@@ -526,7 +540,7 @@ const TopDetails = (props) => {
                         brand,
                         "h2",
                         "ADUANEFIE AGRO PROFORMA & WAYBILL",
-                        "margin:0;color:#2e5a27"
+                        "margin:0;color:#67513A"
                       );
                       addEl(
                         doc,
@@ -597,7 +611,7 @@ const TopDetails = (props) => {
                           doc,
                           row,
                           "td",
-                          `GH₵ ${Number(it.line_total || 0).toFixed(2)}`,
+                          `₵ ${Number(it.line_total || 0).toFixed(2)}`,
                           `${CELL};text-align:right`
                         );
                       });
@@ -617,15 +631,15 @@ const TopDetails = (props) => {
                       totalRow("Total Payload Weight:", `${inv.total_weight_kg} kg`);
                       totalRow(
                         "Delivery Charge:",
-                        `GH₵ ${Number(inv.delivery_charge || 0).toFixed(2)}`
+                        `₵ ${Number(inv.delivery_charge || 0).toFixed(2)}`
                       );
                       totalRow(
                         "Trade & Crop Insurance:",
-                        `GH₵ ${Number(inv.insurance_fee || 0).toFixed(2)}`
+                        `₵ ${Number(inv.insurance_fee || 0).toFixed(2)}`
                       );
                       totalRow(
                         "Total:",
-                        `GH₵ ${Number(inv.total_amount || 0).toFixed(2)}`,
+                        `₵ ${Number(inv.total_amount || 0).toFixed(2)}`,
                         "h3"
                       );
                       const printButton = addEl(
@@ -633,11 +647,12 @@ const TopDetails = (props) => {
                         body,
                         "button",
                         "Print / Save PDF",
-                        "margin-top:24px;padding:8px 16px;background:#2e5a27;color:#fff;border:none;border-radius:6px;cursor:pointer"
+                        "margin-top:24px;padding:8px 16px;background:#67513A;color:#fff;border:none;border-radius:6px;cursor:pointer"
                       );
                       printButton.addEventListener("click", () => win.print());
                     }
                   } catch (e) {
+                    if (preWin && !preWin.closed) preWin.close();
                     toast.error(t("Unable to generate EsperWorks invoice"));
                   }
                 }}
@@ -653,25 +668,34 @@ const TopDetails = (props) => {
                   const targetId =
                     trackData?.id ?? data?.[0]?.order_id ?? data?.id ?? id;
                   if (!targetId) return;
+                  const preWin = window.open("", "_blank");
                   try {
                     const res = await MainApi.post(
                       `/api/v1/trade/orders/${targetId}/esperworks-contract`
                     );
                     const payload = res?.data;
                     if (payload?.esperworks_signing_url) {
-                      window.open(
-                        payload.esperworks_signing_url,
-                        "_blank",
-                        "noopener"
-                      );
+                      if (preWin) {
+                        preWin.location.href = payload.esperworks_signing_url;
+                      } else {
+                        window.open(
+                          payload.esperworks_signing_url,
+                          "_blank",
+                          "noopener"
+                        );
+                      }
                       return;
                     }
                     const ctr = payload?.contract;
                     if (ctr) {
                       const print = buildPrintDoc(
-                        `${payload.contract_number || "Contract"} - EsperWorks Trade Contract`
+                        `${payload.contract_number || "Contract"} - EsperWorks Trade Contract`,
+                        preWin
                       );
-                      if (!print) return;
+                      if (!print) {
+                        toast.error(t("Please allow popups to view the Trade Contract."));
+                        return;
+                      }
                       const { win, doc, body } = print;
 
                       const header = addEl(
@@ -679,9 +703,9 @@ const TopDetails = (props) => {
                         body,
                         "div",
                         null,
-                        "border-bottom:2px solid #2e5a27;padding-bottom:12px"
+                        "border-bottom:2px solid #67513A;padding-bottom:12px"
                       );
-                      addEl(doc, header, "h2", ctr.title, "margin:0;color:#2e5a27");
+                      addEl(doc, header, "h2", ctr.title, "margin:0;color:#67513A");
                       addEl(
                         doc,
                         header,
@@ -730,7 +754,7 @@ const TopDetails = (props) => {
                         addEl(doc, item, "strong", it.name);
                         item.appendChild(
                           doc.createTextNode(
-                            ` - ${it.quantity} × ${it.unit} (${it.crop_grade}) · ${it.line_weight_kg || 0} kg · GH₵ ${Number(it.line_total || 0).toFixed(2)}`
+                            ` - ${it.quantity} × ${it.unit} (${it.crop_grade}) · ${it.line_weight_kg || 0} kg · ₵ ${Number(it.line_total || 0).toFixed(2)}`
                           )
                         );
                       });
@@ -739,7 +763,7 @@ const TopDetails = (props) => {
                       addEl(doc, value, "strong", "Total Contract Value:");
                       value.appendChild(
                         doc.createTextNode(
-                          ` GH₵ ${Number(ctr.total_amount || 0).toFixed(2)} · Total Payload: ${ctr.total_weight_kg} kg`
+                          ` ₵ ${Number(ctr.total_amount || 0).toFixed(2)} · Total Payload: ${ctr.total_weight_kg} kg`
                         )
                       );
 
@@ -799,14 +823,14 @@ const TopDetails = (props) => {
                         sign,
                         "button",
                         "e-Sign Contract",
-                        "padding:8px 16px;background:#2e5a27;color:#fff;border:none;border-radius:6px;cursor:pointer"
+                        "padding:8px 16px;background:#67513A;color:#fff;border:none;border-radius:6px;cursor:pointer"
                       );
                       const status = addEl(
                         doc,
                         sign,
                         "p",
                         "",
-                        "margin-top:10px;color:#2e5a27;font-weight:bold;font-size:13px"
+                        "margin-top:10px;color:#67513A;font-weight:bold;font-size:13px"
                       );
                       signButton.addEventListener("click", () => {
                         const name = (sigInput.value || "").trim();
@@ -821,11 +845,12 @@ const TopDetails = (props) => {
                         sign,
                         "button",
                         "Print / Save PDF",
-                        "padding:8px 16px;margin-left:8px;border:1px solid #2e5a27;background:#fff;color:#2e5a27;border-radius:6px;cursor:pointer"
+                        "padding:8px 16px;margin-left:8px;border:1px solid #67513A;background:#fff;color:#67513A;border-radius:6px;cursor:pointer"
                       );
                       printButton.addEventListener("click", () => win.print());
                     }
                   } catch (e) {
+                    if (preWin && !preWin.closed) preWin.close();
                     toast.error(t("Unable to load EsperWorks contract"));
                   }
                 }}

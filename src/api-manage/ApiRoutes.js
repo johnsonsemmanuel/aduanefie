@@ -59,6 +59,7 @@ export const similar_product_api = "/api/v1/items/related-items";
 export const discounted_product_api = "/api/v1/items/discounted";
 export const discounted_stores_api = "/api/v1/stores/discounted";
 export const popular_items_in_store = "api/v1/items/recommended";
+export const for_you_items_api = "api/v1/items/for-you";
 export const suggested_items_api = "/api/v1/items/suggested";
 export const common_condition_product_in_store =
   "/api/v1/items/common-conditions";

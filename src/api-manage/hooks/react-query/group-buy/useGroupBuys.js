@@ -30,14 +30,15 @@ const identity = () => {
   return { guest_id: guestId };
 };
 
-export const useGetGroupBuys = ({ status = "all", country, moduleId, enabled = true } = {}) =>
+export const useGetGroupBuys = ({ status = "all", country, moduleId, allModules = false, enabled = true } = {}) =>
   useQuery(
-    ["group-buys", status, country, moduleId],
+    ["group-buys", status, country, moduleId, allModules],
     async () => {
       const params = new URLSearchParams();
       if (status && status !== "all") params.set("status", status);
       if (country) params.set("country", country);
       if (moduleId) params.set("module_id", moduleId);
+      if (allModules) params.set("all_modules", "1");
       const qs = params.toString();
       const { data } = await MainApi.get(`${group_buys_api}${qs ? `?${qs}` : ""}`);
       return data;

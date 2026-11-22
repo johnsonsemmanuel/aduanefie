@@ -17,6 +17,8 @@ import NearbyViewToggle from "./NearbyViewToggle";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 
 const TAB_ALL = "all";
+import LiveFarmingSection from "components/home/live-farming/LiveFarmingSection";
+
 const TAB_ITEMS = "items";
 const TAB_STORES = "stores";
 
@@ -337,6 +339,17 @@ const TabbedSectionPage = ({ sectionType, defaultTab }) => {
             onFilterOpen={(e) =>
               setFilterAnchorEl(e?.currentTarget ?? document.body)
             }
+          />
+        )}
+
+        {sectionType === "nearby" && (
+          <LiveFarmingSection
+            limit={8}
+            initialBackyardOnly={true}
+            showViewAll={true}
+            hideIfEmpty={true}
+            titleOverride="Backyard Farming Nearby"
+            subtitleOverride="Fresh produce grown by verified backyard farmers near you."
           />
         )}
       </Stack>

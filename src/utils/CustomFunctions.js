@@ -1,4 +1,5 @@
 import moment from "moment";
+import { safeJsonParse } from "utils/safeJsonParse";
 import { currentDate, nextday, today } from "./formatedDays";
 import { t } from "i18next";
 import {
@@ -263,8 +264,12 @@ export const getCouponDiscount = (
     if (purchasedAmount >= couponDiscount.min_purchase) {
       switch (couponDiscount.coupon_type) {
         case "zone_wise":
-          let zoneId = JSON.parse(localStorage.getItem("zoneid"));
+          let zoneId = safeJsonParse(localStorage.getItem("zoneid"), []);
           if (
+            Array.isArray(zoneId) &&
+            zoneId.length > 0 &&
+            Array.isArray(couponDiscount.zoneId) &&
+            couponDiscount.zoneId.length > 0 &&
             Number.parseInt(zoneId[0]) ===
             Number.parseInt(couponDiscount.zoneId[0])
           ) {
