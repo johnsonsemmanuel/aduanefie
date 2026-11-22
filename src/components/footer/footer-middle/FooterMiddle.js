@@ -10,6 +10,7 @@ import LocationViewOnMap from "../../Map/location-view/LocationViewOnMap";
 import AppLinks from "./AppLinks";
 import RouteLinks from "./RouteLinks";
 import SomeInfo from "./SomeInfo";
+import { isValidLocation } from "helper-functions/validLocation";
 
 const VerticalDivider = () => (
   <Box
@@ -29,6 +30,15 @@ const HorizontalDivider = () => (
 const FooterMiddle = ({ configData, landingPageData }) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
+  // The backend now returns null when no valid business pin is configured.
+  // Show the address, but never open a floating/placeholder map.
+  const hasBusinessLocation = isValidLocation({
+    lat: configData?.default_location?.lat,
+    lng: configData?.default_location?.lng,
+  });
+  const openLocationMap = () => {
+    if (hasBusinessLocation) setOpen(true);
+  };
 
   const appLinkData = {
     app_store_link:
@@ -172,7 +182,7 @@ const FooterMiddle = ({ configData, landingPageData }) => {
               minWidth: 0,
               gridColumn: { xs: "1 / -1", sm: "auto" },
             }}
-            onClick={() => setOpen(true)}
+            onClick={openLocationMap}
           >
             <SomeInfo
               image={magnifying}
@@ -320,8 +330,11 @@ const FooterMiddle = ({ configData, landingPageData }) => {
             />
           </Box>
           <Box
-            onClick={() => setOpen(true)}
-            sx={{ minWidth: 0, cursor: "pointer" }}
+            onClick={openLocationMap}
+            sx={{
+              minWidth: 0,
+              cursor: hasBusinessLocation ? "pointer" : "default",
+            }}
           >
             <SomeInfo
               image={magnifying}
@@ -335,7 +348,7 @@ const FooterMiddle = ({ configData, landingPageData }) => {
         </Box>
       </Box>
 
-      {open && (
+      {open && hasBusinessLocation && (
         <LocationViewOnMap
           open={open}
           handleClose={() => setOpen(false)}
