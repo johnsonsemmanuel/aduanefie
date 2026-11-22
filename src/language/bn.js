@@ -3291,5 +3291,11 @@ export const bengali = {
 	"Try again": "আবার চেষ্টা করুন",
 	"Not available in your country": "আপনার দেশে উপলব্ধ নয়",
 	"Coming soon": "শীঘ্রই আসছে",
-	"Location is not available on this device.": "এই ডিভাইসে অবস্থান উপলব্ধ নয়।"
+	"Location is not available on this device.": "এই ডিভাইসে অবস্থান উপলব্ধ নয়।",
+	"No location selected yet. Search for a place or use your current location to choose one.": "এখনো কোনো অবস্থান নির্বাচন করা হয়নি। একটি জায়গা খুঁজুন বা আপনার বর্তমান অবস্থান ব্যবহার করে একটি বেছে নিন।",
+	"Resolving the address for your selected pin...": "আপনার নির্বাচিত পিনের ঠিকানা নির্ধারণ করা হচ্ছে...",
+	"Search for a place or use your current location to choose a location.": "একটি জায়গা খুঁজুন বা আপনার বর্তমান অবস্থান ব্যবহার করে একটি অবস্থান বেছে নিন।",
+	"Choose a location by searching above or using your current location.": "উপরে অনুসন্ধান করে বা আপনার বর্তমান অবস্থান ব্যবহার করে একটি অবস্থান বেছে নিন।",
+	"Use your current location to choose a delivery address": "ডেলিভারি ঠিকানা বেছে নিতে আপনার বর্তমান অবস্থান ব্যবহার করুন",
+	"Search for your business address to place the marker on the map.": "মানচিত্রে চিহ্ন রাখতে আপনার ব্যবসার ঠিকানা অনুসন্ধান করুন।"
 };

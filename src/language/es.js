@@ -3291,5 +3291,11 @@ export const spain = {
 	"Try again": "Reintentar",
 	"Not available in your country": "No disponible en tu país",
 	"Coming soon": "Próximamente",
-	"Location is not available on this device.": "La ubicación no está disponible en este dispositivo."
+	"Location is not available on this device.": "La ubicación no está disponible en este dispositivo.",
+	"No location selected yet. Search for a place or use your current location to choose one.": "Aún no has seleccionado una ubicación. Busca un lugar o usa tu ubicación actual para elegir uno.",
+	"Resolving the address for your selected pin...": "Resolviendo la dirección de tu marcador seleccionado...",
+	"Search for a place or use your current location to choose a location.": "Busca un lugar o usa tu ubicación actual para elegir una ubicación.",
+	"Choose a location by searching above or using your current location.": "Elige una ubicación buscando arriba o usando tu ubicación actual.",
+	"Use your current location to choose a delivery address": "Usa tu ubicación actual para elegir una dirección de entrega",
+	"Search for your business address to place the marker on the map.": "Busca la dirección de tu negocio para colocar el marcador en el mapa."
 };

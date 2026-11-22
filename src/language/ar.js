@@ -2962,5 +2962,11 @@ export const arabic = {
 	"Try again": "حاول مرة أخرى",
 	"Not available in your country": "غير متاح في بلدك",
 	"Coming soon": "قريبًا",
-	"Location is not available on this device.": "الموقع غير متاح على هذا الجهاز."
+	"Location is not available on this device.": "الموقع غير متاح على هذا الجهاز.",
+	"No location selected yet. Search for a place or use your current location to choose one.": "لم يتم تحديد موقع بعد. ابحث عن مكان أو استخدم موقعك الحالي لاختيار واحد.",
+	"Resolving the address for your selected pin...": "جارٍ تحديد العنوان للنقطة المحددة...",
+	"Search for a place or use your current location to choose a location.": "ابحث عن مكان أو استخدم موقعك الحالي لاختيار موقع.",
+	"Choose a location by searching above or using your current location.": "اختر موقعًا بالبحث أعلاه أو باستخدام موقعك الحالي.",
+	"Use your current location to choose a delivery address": "استخدم موقعك الحالي لاختيار عنوان تسليم",
+	"Search for your business address to place the marker on the map.": "ابحث عن عنوان عملك لوضع العلامة على الخريطة."
 };

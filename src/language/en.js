@@ -2612,5 +2612,11 @@ export const english = {
   "Try again": "Try again",
   "Not available in your country": "Not available in your country",
   "Coming soon": "Coming soon",
-  "Location is not available on this device.": "Location is not available on this device."
+  "Location is not available on this device.": "Location is not available on this device.",
+  "No location selected yet. Search for a place or use your current location to choose one.": "No location selected yet. Search for a place or use your current location to choose one.",
+  "Resolving the address for your selected pin...": "Resolving the address for your selected pin...",
+  "Search for a place or use your current location to choose a location.": "Search for a place or use your current location to choose a location.",
+  "Choose a location by searching above or using your current location.": "Choose a location by searching above or using your current location.",
+  "Use your current location to choose a delivery address": "Use your current location to choose a delivery address",
+  "Search for your business address to place the marker on the map.": "Search for your business address to place the marker on the map."
 };
