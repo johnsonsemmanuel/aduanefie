@@ -3292,5 +3292,6 @@ export const spain = {
 	"We could not get your location. Please try again.": "No pudimos obtener tu ubicación. Inténtalo de nuevo.",
 	"Try again": "Reintentar",
 	"Not available in your country": "No disponible en tu país",
-	"Coming soon": "Próximamente"
+	"Coming soon": "Próximamente",
+	"Location is not available on this device.": "La ubicación no está disponible en este dispositivo."
 };

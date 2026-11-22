@@ -97,14 +97,22 @@ const MapModal = ({
   );
 
   const dispatch = useDispatch();
-  const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
-    useGeolocated({
-      positionOptions: {
-        enableHighAccuracy: false,
-      },
-      userDecisionTimeout: 5000,
-      isGeolocationEnabled: true,
-    });
+  const {
+    coords,
+    isGeolocationAvailable,
+    isGeolocationEnabled,
+    positionError,
+    getPosition,
+  } = useGeolocated({
+    positionOptions: {
+      enableHighAccuracy: false,
+      maximumAge: 60 * 1000,
+      timeout: 10 * 1000,
+    },
+    userDecisionTimeout: 10 * 1000,
+    suppressLocationOnMount: true,
+    isOptimisticGeolocationEnabled: false,
+  });
 
   useEffect(() => {
     if (!places) return;
@@ -526,6 +534,9 @@ const MapModal = ({
                     setRerenderMap={setRerenderMap}
                     isLoadingCurrentLocation={isLoadingCurrentLocation}
                     isGeolocationEnabled={isGeolocationEnabled}
+                    isGeolocationAvailable={isGeolocationAvailable}
+                    positionError={positionError}
+                    getPosition={getPosition}
                     fromMapModal={true}
                     onZoomRequest={() =>
                       setZoomToLocationToken((prev) => prev + 1)

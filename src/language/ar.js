@@ -2961,5 +2961,6 @@ export const arabic = {
 	"We could not get your location. Please try again.": "تعذّر تحديد موقعك. يرجى المحاولة مرة أخرى.",
 	"Try again": "حاول مرة أخرى",
 	"Not available in your country": "غير متاح في بلدك",
-	"Coming soon": "قريبًا"
+	"Coming soon": "قريبًا",
+	"Location is not available on this device.": "الموقع غير متاح على هذا الجهاز."
 };

@@ -50,6 +50,7 @@ export const french = {
     "Autorisation de position refusée. Activez l'accès à la position dans les paramètres de votre navigateur, puis réessayez.",
   "We could not get your location. Please try again.": "Impossible d'obtenir votre position. Veuillez réessayer.",
   "Try again": "Réessayer",
+  "Location is not available on this device.": "La position n'est pas disponible sur cet appareil.",
 };
 
 export default french;

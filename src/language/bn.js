@@ -3290,5 +3290,6 @@ export const bengali = {
 	"We could not get your location. Please try again.": "আমরা আপনার অবস্থান পেতে পারিনি। অনুগ্রহ করে আবার চেষ্টা করুন।",
 	"Try again": "আবার চেষ্টা করুন",
 	"Not available in your country": "আপনার দেশে উপলব্ধ নয়",
-	"Coming soon": "শীঘ্রই আসছে"
+	"Coming soon": "শীঘ্রই আসছে",
+	"Location is not available on this device.": "এই ডিভাইসে অবস্থান উপলব্ধ নয়।"
 };

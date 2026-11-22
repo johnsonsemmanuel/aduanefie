@@ -2611,5 +2611,6 @@ export const english = {
   "We could not get your location. Please try again.": "We could not get your location. Please try again.",
   "Try again": "Try again",
   "Not available in your country": "Not available in your country",
-  "Coming soon": "Coming soon"
+  "Coming soon": "Coming soon",
+  "Location is not available on this device.": "Location is not available on this device."
 };
