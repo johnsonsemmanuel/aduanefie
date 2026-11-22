@@ -2,7 +2,6 @@ import React, { useEffect, useReducer, useState } from "react";
 import {
   Grid,
   IconButton,
-  Skeleton,
   Stack,
   Typography,
   useMediaQuery,
@@ -33,6 +32,7 @@ import AddressForm from "./AddressForm";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
 import GpsFixedIcon from "@mui/icons-material/GpsFixed";
+import { isValidLocation } from "helper-functions/validLocation";
 export const AddAddressSearchBox = styled(Box)(({ theme }) => ({
   position: "absolute",
   zIndex: "999",
@@ -59,8 +59,15 @@ const AddAddressComponent = ({
   const { configData } = useSelector((state) => state.configData);
   const [isDisablePickButton, setDisablePickButton] = useState(false);
   const [locationEnabled, setLocationEnabled] = useState(false);
+  // Seed only from a validated edit address. The configured default_location
+  // is a business map centre and must never become a customer pin.
   const [location, setLocation] = useState(
-    configData && configData?.default_location
+    isValidLocation({ lat: editAddress?.latitude, lng: editAddress?.longitude })
+      ? {
+          lat: Number(editAddress.latitude),
+          lng: Number(editAddress.longitude),
+        }
+      : null
   );
   const [searchKey, setSearchKey] = useState("");
   const [enabled, setEnabled] = useState(false);
@@ -111,11 +118,14 @@ const AddAddressComponent = ({
 
   useEffect(() => {
     if (placeDetails) {
-      setLocation({
+      const candidate = {
         lat: placeDetails?.location?.latitude,
         lng: placeDetails?.location?.longitude,
-      });
-      setLocationEnabled(true);
+      };
+      if (isValidLocation(candidate)) {
+        setLocation(candidate);
+        setLocationEnabled(true);
+      }
     }
   }, [placeDetails]);
   const { data: geoCodeResults, isFetching: isFetchingGeoCode } =
@@ -140,7 +150,9 @@ const AddAddressComponent = ({
   };
   const [zoomToLocationToken, setZoomToLocationToken] = useState(0);
   const getCurrentLocation = () => {
-    setLocation({ lat: coords.latitude, lng: coords.longitude });
+    const candidate = { lat: coords?.latitude, lng: coords?.longitude };
+    if (!isValidLocation(candidate)) return;
+    setLocation(candidate);
     setZoomToLocationToken((prev) => prev + 1);
   };
 
@@ -193,7 +205,7 @@ const AddAddressComponent = ({
           />
         </AddAddressSearchBox>
         <Stack>
-          {location ? (
+          {isValidLocation(location) ? (
             <GoogleMapComponent
               setLocation={setLocation}
               location={location}
@@ -207,12 +219,26 @@ const AddAddressComponent = ({
               zoomToLocationToken={zoomToLocationToken}
             />
           ) : (
-            <Skeleton
-              variant="rectangular"
-              width="100%"
-              height="350px"
-              sx={{ borderRadius: "10px" }}
-            />
+            <CustomStackFullWidth
+              alignItems="center"
+              justifyContent="center"
+              sx={{
+                minHeight: "350px",
+                borderRadius: "10px",
+                backgroundColor: theme.palette.background.default,
+              }}
+            >
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                textAlign="center"
+                px={2}
+              >
+                {t(
+                  "Choose a location by searching above or using your current location."
+                )}
+              </Typography>
+            </CustomStackFullWidth>
           )}
           <IconButton
             onClick={getCurrentLocation}
