@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import NearMeOutlinedIcon from "@mui/icons-material/NearMeOutlined";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
 import { t } from "i18next";
 import { toast } from "react-hot-toast";
 import RentalSearchLocation from "components/home/module-wise-components/rental/components/global/search/RentalSearchLocation";
@@ -18,16 +17,16 @@ import useGetPlaceDetails from "api-manage/hooks/react-query/google-api/useGetPl
 import MapModal from "components/Map/MapModal";
 import ParcelInformationModal from "components/parcel/parcel-information/ParcelInformationModal";
 import useParcelZoneId from "api-manage/hooks/react-query/percel/useParcelZoneId";
+import { isValidLocation } from "helper-functions/validLocation";
 
 const ParcelSearchPanel = () => {
   const theme = useTheme();
   const router = useRouter();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-  const { configData } = useSelector((state) => state.configData);
 
-  const [locations, setLocations] = useState({
-    ...configData?.default_location,
-  });
+  // A parcel destination must be chosen by the customer. The business map
+  // centre in configData.default_location is not a delivery destination.
+  const [locations, setLocations] = useState(null);
   const [searchKey, setSearchKey] = useState("");
   const [placeId, setPlaceId] = useState("");
   const [predictions, setPredictions] = useState([]);
@@ -57,8 +56,10 @@ const ParcelSearchPanel = () => {
         lat: placeDetails?.location?.latitude,
         lng: placeDetails?.location?.longitude,
       };
-      setLocations(next);
-      setSearchKey(placeDetails?.formattedAddress);
+      if (isValidLocation(next)) {
+        setLocations(next);
+        setSearchKey(placeDetails?.formattedAddress);
+      }
     }
   }, [placeDetails]);
 
@@ -72,26 +73,29 @@ const ParcelSearchPanel = () => {
   const handleFocus = () => setIsFocused(true);
 
   const pickLocationFormAddress = (value) => {
-    setSearchKey(value?.address);
-    setLocations({
+    const next = {
       lat: value?.latitude,
       lng: value?.longitude,
       location_name: value?.address,
-    });
+    };
+    if (!isValidLocation(next)) return;
+    setSearchKey(value?.address);
+    setLocations(next);
   };
 
   // Callback fired by MapModal once the user confirms a pin location.
   const handleLocation = (location, locationName) => {
+    if (!isValidLocation(location)) return;
     setLocations({
-      lat: location?.lat,
-      lng: location?.lng,
+      lat: location.lat,
+      lng: location.lng,
       location_name: locationName,
     });
     setSearchKey(locationName || "");
   };
 
   const handleSearchClick = () => {
-    if (!searchKey || !locations?.lat || !locations?.lng) {
+    if (!searchKey || !isValidLocation(locations)) {
       toast.error(t("Please select a delivery destination!"));
       return;
     }
@@ -107,6 +111,7 @@ const ParcelSearchPanel = () => {
   };
 
   const handleParcelInfoConfirm = () => {
+    if (!isValidLocation(locations)) return;
     setOpenParcelInfo(false);
     router.push(
       {
