@@ -3,7 +3,6 @@ import {
   Alert,
   Box,
   Button,
-  Collapse,
   IconButton,
   MenuItem,
   Popover,
@@ -150,6 +149,7 @@ const ComingSoonGate = () => {
     <CustomModal
       openModal
       disableAutoFocus
+      blurBackdrop
       handleClose={() => {}}
       maxWidth="480px"
     >
@@ -177,6 +177,7 @@ const ComingSoonGate = () => {
               {t("Coming Soon")}
             </Typography>
             <IconButton
+              type="button"
               size="small"
               aria-label={t("More information")}
               onClick={(e) => setInfoAnchorEl(e.currentTarget)}
@@ -197,6 +198,7 @@ const ComingSoonGate = () => {
           onClose={() => setInfoAnchorEl(null)}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
           transformOrigin={{ vertical: "top", horizontal: "center" }}
+          sx={{ zIndex: 1600 }}
         >
           <Box sx={{ p: 2, maxWidth: 300 }}>
             <Typography variant="subtitle2" fontWeight={700} gutterBottom>
@@ -246,6 +248,11 @@ const ComingSoonGate = () => {
                 fullWidth
                 value={interest}
                 onChange={(e) => setInterest(e.target.value)}
+                SelectProps={{
+                  MenuProps: {
+                    sx: { zIndex: 1600 },
+                  },
+                }}
               >
                 {INTEREST_OPTIONS.map((opt) => (
                   <MenuItem key={opt.value} value={opt.value}>
@@ -270,6 +277,7 @@ const ComingSoonGate = () => {
 
         <Stack spacing={1.5} alignItems="center">
           <Button
+            type="button"
             size="small"
             color="inherit"
             startIcon={<LockOutlinedIcon fontSize="small" />}
@@ -286,8 +294,8 @@ const ComingSoonGate = () => {
             {showAdminAccess ? t("Hide Owner Access") : t("Owner Access")}
           </Button>
 
-          <Collapse in={showAdminAccess} sx={{ width: "100%" }}>
-            <Box component="form" onSubmit={handleVerifyAccess}>
+          {showAdminAccess && (
+            <Box component="form" onSubmit={handleVerifyAccess} sx={{ width: "100%" }}>
               <Stack
                 direction={{ xs: "column", sm: "row" }}
                 spacing={1.5}
@@ -302,7 +310,7 @@ const ComingSoonGate = () => {
                   onChange={(e) => setAccessCode(e.target.value)}
                   error={Boolean(accessError)}
                   helperText={accessError}
-                  inputProps={{ autoComplete: "off" }}
+                  inputProps={{ autoComplete: "off", inputMode: "numeric" }}
                 />
                 <LoadingButton
                   type="submit"
@@ -314,7 +322,7 @@ const ComingSoonGate = () => {
                 </LoadingButton>
               </Stack>
             </Box>
-          </Collapse>
+          )}
         </Stack>
       </CustomStackFullWidth>
     </CustomModal>
