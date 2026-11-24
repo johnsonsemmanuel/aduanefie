@@ -11,7 +11,7 @@ const fetchAgroPrices = async ({ category = "all", marketHub = "all", search = "
   return data;
 };
 
-export const useGetAgroPrices = ({ category = "all", marketHub = "all", search = "", enabled = true } = {}) => {
+export const useGetAgroPrices = ({ category = "all", marketHub = "all", search = "", enabled = (process.env.NEXT_PUBLIC_ENABLE_AGRO === 'true') } = {}) => {
   return useQuery(
     ["ghana-agro-prices", category, marketHub, search],
     () => fetchAgroPrices({ category, marketHub, search }),

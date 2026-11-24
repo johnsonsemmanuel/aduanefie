@@ -22,7 +22,7 @@ const SP = "'self'";
 // inline script carries a per-request nonce.
 const CONTENT_SECURITY_POLICY = [
   `default-src ${SP}`,
-  `script-src ${SP} 'unsafe-inline' https://accounts.google.com https://appleid.cdn-apple.com https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://analytics.tiktok.com https://tr.snapchat.com https://static.ads-twitter.com https://s.pinimg.com https://www.gstatic.com`,
+  `script-src ${SP} 'unsafe-inline' https://accounts.google.com https://appleid.cdn-apple.com https://www.googletagmanager.com https://www.google-analytics.com https://connect.facebook.net https://analytics.tiktok.com https://tr.snapchat.com https://static.ads-twitter.com https://s.pinimg.com https://www.gstatic.com https://maps.googleapis.com`,
   `style-src ${SP} 'unsafe-inline' https://fonts.googleapis.com`,
   `font-src ${SP} data: https://fonts.gstatic.com`,
   `img-src ${SP} data: blob: https:`,

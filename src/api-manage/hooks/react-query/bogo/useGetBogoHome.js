@@ -15,8 +15,9 @@ const getData = async () => {
 };
 
 const useGetBogoHome = (enabled = true) => {
+  const finalEnabled = enabled && (process.env.NEXT_PUBLIC_ENABLE_BOGO === 'true');
   return useQuery(["bogo-home", getCurrentModuleType()], getData, {
-    enabled,
+    enabled: finalEnabled,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
     retry: false,
