@@ -12,6 +12,7 @@ import {
   FormControlLabel,
   Grid,
   MenuItem,
+  NoSsr,
   Paper,
   Skeleton,
   Stack,
@@ -19,6 +20,7 @@ import {
   Typography,
 } from "@mui/material";
 import CustomContainer from "components/container";
+import AuthGuard from "components/route-guard/AuthGuard";
 import MainLayout from "components/layout/MainLayout";
 import SimpleMobileHeader from "components/common/SimpleMobileHeader";
 import SEO from "components/seo";
@@ -94,7 +96,13 @@ const RegionalToursPage = ({ configData, initialTours = [], initialRegions = DEF
           setRegions(res.data.regions);
         }
       })
-      .catch(() => {})
+      .catch((err) => {
+        // An expired token must not leave an empty, apparently public page.
+        if (err?.response?.status === 401) {
+          localStorage.removeItem("token");
+          router.replace("/home?from=regional-tours");
+        }
+      })
       .finally(() => {
         if (active) setLoading(false);
       });
@@ -151,6 +159,10 @@ const RegionalToursPage = ({ configData, initialTours = [], initialRegions = DEF
         err?.response?.data?.message ||
         "Could not submit registration. Please check your details.";
       toast.error(msg);
+      if (err?.response?.status === 401) {
+        localStorage.removeItem("token");
+        router.replace("/home?from=regional-tours");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -165,6 +177,8 @@ const RegionalToursPage = ({ configData, initialTours = [], initialRegions = DEF
         configData={effectiveConfig}
       />
       <MainLayout configData={effectiveConfig}>
+        <NoSsr>
+        <AuthGuard from="regional-tours" requireToken>
         <SimpleMobileHeader title="Regional Tours" backHref="/home" />
         <CustomContainer>
           <Box sx={{ pt: { xs: 1.5, md: 3 }, pb: { xs: 4, md: 6 } }}>
@@ -362,6 +376,8 @@ const RegionalToursPage = ({ configData, initialTours = [], initialRegions = DEF
             </Grid>
           </Box>
         </CustomContainer>
+        </AuthGuard>
+        </NoSsr>
       </MainLayout>
     </>
   );
@@ -369,27 +385,10 @@ const RegionalToursPage = ({ configData, initialTours = [], initialRegions = DEF
 
 export const getServerSideProps = async (context) => {
   const base = await getCommonServerSideProps(context);
-  let initialTours = [];
-  let initialRegions = DEFAULT_REGIONS;
-  try {
-    const apiBase = process.env.NEXT_PUBLIC_BASE_URL || "https://api.aduanefie.com";
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 3500);
-    const res = await fetch(`${apiBase}/api/v1/regional-tours`, {
-      headers: { Accept: "application/json" },
-      signal: ctrl.signal,
-    });
-    clearTimeout(timer);
-    if (res.ok) {
-      const json = await res.json();
-      initialTours = json?.tours || [];
-      if (Array.isArray(json?.regions) && json.regions.length > 0) {
-        initialRegions = json.regions;
-      }
-    }
-  } catch {
-    // fallback to client fetch
-  }
+  // Tours are account-only now. The browser fetches them with the signed-in
+  // user's token; SSR has no access to localStorage and must not call the API.
+  const initialTours = [];
+  const initialRegions = DEFAULT_REGIONS;
   return {
     ...base,
     props: {
