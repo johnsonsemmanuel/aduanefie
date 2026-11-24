@@ -2,13 +2,13 @@ import { alpha, Box, Typography, useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 /**
- * Order status badge — pill shape with color variants.
+ * Order status badge - pill shape with color variants.
  * Dark mode supported via theme palette.
  *
  * Props:
- *  - status: string  — order status (case-insensitive)
- *  - label: string   — custom label override
- *  - sx: object      — additional MUI sx overrides
+ *  - status: string  - order status (case-insensitive)
+ *  - label: string   - custom label override
+ *  - sx: object      - additional MUI sx overrides
  */
 
 const useStatusConfig = (key) => {
@@ -16,100 +16,57 @@ const useStatusConfig = (key) => {
   const p = theme.palette;
   const isDark = theme.palette.mode === "dark";
 
-  // Success (green) pill — the fixed pale-green bg glares on dark surfaces,
-  // so derive a translucent tint from the palette there instead.
+  // High-contrast brand-aligned pill styles (no washed-out papayawhip / unreadable tints).
   const successStyle = {
-    bg: isDark ? alpha(p.success?.main ?? "#14B8A6", 0.16) : "#cff7d3",
-    color: isDark
-      ? p.success?.light ?? "#43C6B7"
-      : p.success?.dark ?? "#009951",
+    bg: isDark ? alpha(p.primary?.main ?? "#8B9F69", 0.25) : p.primary?.main ?? "#8B9F69",
+    color: "#FFFFFF",
+  };
+
+  const brandEarthStyle = {
+    bg: isDark ? alpha(p.primary?.deep ?? "#67513A", 0.35) : p.primary?.deep ?? "#67513A",
+    color: "#FFFFFF",
+  };
+
+  const warningStyle = {
+    bg: isDark ? alpha(p.warning?.secondary ?? "#bf6a02", 0.3) : p.warning?.secondary ?? "#bf6a02",
+    color: "#FFFFFF",
+  };
+
+  const dangerStyle = {
+    bg: isDark ? alpha(p.error?.danger ?? "#ec221f", 0.3) : p.error?.danger ?? "#ec221f",
+    color: "#FFFFFF",
+  };
+
+  const neutralSandStyle = {
+    bg: isDark ? alpha(p.background?.secondary ?? "#EFE7D3", 0.18) : p.background?.secondary ?? "#EFE7D3",
+    color: isDark ? "#FAF8F5" : p.primary?.deep ?? "#67513A",
   };
 
   const map = {
-    pending: {
-      bg: p.info?.tertiary ?? "#f1f6fd",
-      color: p.info?.blue ?? "#224a8a",
-    },
+    pending: brandEarthStyle,
     accepted: successStyle,
     booked: successStyle,
-    processing: {
-      bg: p.warning?.lighter ?? "#fffbeb",
-      color: p.warning?.secondary ?? "#bf6a02",
-    },
-    "on the way": {
-      bg: p.warning?.lighter ?? "#fffbeb",
-      color: p.warning?.secondary ?? "#bf6a02",
-    },
+    processing: warningStyle,
+    "on the way": warningStyle,
     delivered: successStyle,
-    cancelled: {
-      bg: p.error?.dangerLight ?? "#fdd3d0",
-      color: p.error?.dangerText ?? "#c00f0c",
-    },
-    refunded: {
-      bg: p.info?.tertiary ?? "#f1f6fd",
-      color: p.info?.blue ?? "#2a61ba",
-    },
-    confirmed: {
-      bg: p.error?.dangerLight ?? "#fdd3d0",
-      color: p.error?.dangerText ?? "#c00f0c",
-    },
-    failed: {
-      bg: p.error?.dangerLight ?? "#fdd3d0",
-      color: p.error?.dangerText ?? "#c00f0c",
-    },
-    cancelled: {
-      bg: p.error?.dangerLight ?? "#fdd3d0",
-      color: p.error?.dangerText ?? "#c00f0c",
-    },
-    canceled: {
-      bg: p.error?.dangerLight ?? "#fdd3d0",
-      color: p.error?.dangerText ?? "#c00f0c",
-    },
-    refund_requested: {
-      bg: p.warning?.lighter ?? "#fffbeb",
-      color: p.warning?.secondary ?? "#bf6a02",
-    },
-    returned: {
-      bg: p.background?.secondary ?? "#f2f2f2",
-      color: p.text?.primary ?? "#303030",
-    },
-    handover: {
-      bg: p.warning?.lighter ?? "#fffbeb",
-      color: p.warning?.secondary ?? "#bf6a02",
-    },
-    picked_up: {
-      bg: p.warning?.lighter ?? "#fffbeb",
-      color: p.warning?.secondary ?? "#bf6a02",
-    },
-    ongoing: {
-      bg: p.warning?.lighter ?? "#fffbeb",
-      color: p.warning?.secondary ?? "#bf6a02",
-    },
-    completed: {
-      bg: p.background?.secondary ?? "#f2f2f2",
-      color: p.text?.primary ?? "#303030",
-    },
+    cancelled: dangerStyle,
+    refunded: neutralSandStyle,
+    confirmed: successStyle,
+    failed: dangerStyle,
+    canceled: dangerStyle,
+    refund_requested: warningStyle,
+    returned: neutralSandStyle,
+    handover: warningStyle,
+    picked_up: warningStyle,
+    ongoing: brandEarthStyle,
+    completed: successStyle,
     paid: successStyle,
-    unpaid: {
-      bg: p.error?.dangerLight ?? "#fdd3d0",
-      color: p.error?.dangerText ?? "#c00f0c",
-    },
-    partially_paid: {
-      bg: p.warning?.lighter ?? "#fffbeb",
-      color: p.warning?.secondary ?? "#bf6a02",
-    },
-    expired: {
-      bg: p.error?.dangerLight ?? "#fdd3d0",
-      color: p.error?.dangerText ?? "#c00f0c",
-    },
+    unpaid: dangerStyle,
+    partially_paid: warningStyle,
+    expired: dangerStyle,
   };
 
-  return (
-    map[key] ?? {
-      bg: p.info?.tertiary ?? "#f1f6fd",
-      color: p.info?.blue ?? "#224a8a",
-    }
-  );
+  return map[key] ?? brandEarthStyle;
 };
 
 const StatusBadge = ({ status = "pending", label, sx = {} }) => {

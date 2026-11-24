@@ -17,7 +17,7 @@ const NewCouponCard = ({ coupon, setCopy, copy, onApply }) => {
 
   const isProCoupon = coupon?.coupon_type === "pro_customer";
 
-  // Pro badge — reused before the code. Purple "premium" gradient that holds
+  // Pro badge - reused before the code. Purple "premium" gradient that holds
   // up in both light and dark mode.
   const proBadge = (
     <Stack
@@ -352,7 +352,7 @@ const NewCouponCard = ({ coupon, setCopy, copy, onApply }) => {
       >
         {/* Pro badge sits before the code for pro-only coupons */}
         {isProCoupon && proBadge}
-        {/* Coupon code — truncates if too long */}
+        {/* Coupon code - truncates if too long */}
         <Typography
           noWrap
           sx={{

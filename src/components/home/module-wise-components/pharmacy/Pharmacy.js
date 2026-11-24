@@ -43,7 +43,7 @@ const Pharmacy = ({ configData, routeSection }) => {
   const { orderDetailsModalOpen } = useSelector((state) => state.utilsData);
   const [storeData, setStoreData] = React.useState([]);
   const { data, refetch, isLoading } = useGetOtherBanners();
-  // The other-banners query is enabled:false — fetch it here so the
+  // The other-banners query is enabled:false - fetch it here so the
   // promotional banner doesn't depend on another page priming the cache.
   useEffect(() => {
     refetch();

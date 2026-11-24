@@ -120,7 +120,7 @@ const ProfileOrdersList = ({
     });
   };
 
-  // Tab definitions — `text` and `count` are kept separate so the count can
+  // Tab definitions - `text` and `count` are kept separate so the count can
   // render as a shimmer while the orders request is in flight (instead of a
   // misleading "(0)").
   const tabs = [

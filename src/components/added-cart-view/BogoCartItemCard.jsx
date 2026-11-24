@@ -23,7 +23,7 @@ import {
 import BogoOrderDetailsViewModal from "components/my-orders/order-details/other-order/BogoOrderDetailsViewModal";
 
 // Same visual/prop convention as CartBundleItem.jsx (this project's closest
-// existing "multi-item offer" row) — a BOGO cart row just has two avatar
+// existing "multi-item offer" row) - a BOGO cart row just has two avatar
 // clusters (buy/free) instead of one, and an offer title instead of a
 // bundle name.
 
@@ -99,7 +99,7 @@ const ItemAvatars = ({ items, size = 32, max = 2 }) => {
 };
 
 // `bogoDetails` is a cart row's `bogo_details` object (GET /customer/cart/list
-// §6.2 of the BOGO API guide) — `buy_items`/`free_items` are raw cart lines
+// §6.2 of the BOGO API guide) - `buy_items`/`free_items` are raw cart lines
 // with a nested `.item`, so avatars are mapped from `row.item_id`/`row.item.name`.
 const mapAvatarItem = (row) => ({
   item_id: row?.item_id,

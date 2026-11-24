@@ -1,4 +1,9 @@
-import { Button, Skeleton, Typography, useTheme } from "@mui/material";
+import { Button, IconButton, Skeleton, Tooltip, Typography, useTheme } from "@mui/material";
+import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
+import { recordRecentlyViewed } from "utils/recentlyViewed";
+import { computePricePerKg, getPostHarvestTip } from "utils/agroGuidance";
+import { useGetAgroPrices } from "api-manage/hooks/react-query/trade/useGetAgroPrices";
+import { findMatchingAgroPrice, formatCedi } from "utils/agroPriceMatch";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
 import { Stack } from "@mui/system";
 import React, { useEffect, useMemo, useReducer, useRef, useState } from "react";
@@ -21,6 +26,7 @@ import { getGuestId } from "helper-functions/getToken";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
+import { showAddedToCartToast } from "utils/cartToast";
 import { useDispatch, useSelector } from "react-redux";
 import { setCart, setCartList } from "redux/slices/cart";
 import { setCartSidebarOpen } from "redux/slices/utils";
@@ -108,6 +114,35 @@ const ProductInformation = ({
 
   const actionCardRef = useRef(null);
   const [showStickyBar, setShowStickyBar] = useState(false);
+  const { data: agroPriceData } = useGetAgroPrices();
+  const agroPrices = agroPriceData?.prices || [];
+
+  useEffect(() => {
+    if (productDetailsData?.id) {
+      recordRecentlyViewed(productDetailsData);
+    }
+  }, [productDetailsData?.id]);
+
+  const handleShareProduct = async () => {
+    if (typeof window === "undefined") return;
+    const item = state.modalData?.[0] || productDetailsData;
+    const url = window.location.href;
+    const title = item?.name || "Aduanefie Produce";
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title,
+          text: `Check out ${title} on Aduanefie Marketplace`,
+          url,
+        });
+        return;
+      }
+      await navigator.clipboard?.writeText(url);
+      toast.success(t("Product link copied to share!"));
+    } catch {
+      // User cancelled share sheet
+    }
+  };
 
   useEffect(() => {
     const target = actionCardRef.current;
@@ -275,7 +310,7 @@ const ProductInformation = ({
     );
     //alert("Item added to cart");
     // dispatchRedux(setCartSidebarOpen(true));
-    toast.success(t("Item added to cart"));
+    showAddedToCartToast(t, router);
     handleModalClose?.();
     setClearCartModal(false);
   };
@@ -296,7 +331,7 @@ const ProductInformation = ({
   const addToCard = () => {
     //handleAddToCartOnDispatch();
     if (cartList?.length > 0) {
-      // Multi-store carts allowed — always proceed with add.
+      // Multi-store carts allowed - always proceed with add.
       const isStoreExist = true;
       if (isStoreExist) {
         handleAddToCartOnDispatch();
@@ -333,7 +368,7 @@ const ProductInformation = ({
         icon: "⚠️",
       });
     } else {
-      // Detail APIs return store id in different shapes — flat `store_id`,
+      // Detail APIs return store id in different shapes - flat `store_id`,
       // nested `store.id`, or only present on the cart-list snapshot. Resolve
       // through every candidate so the update call never goes out without one.
       const resolvedStoreId =
@@ -410,7 +445,7 @@ const ProductInformation = ({
           md: "0px",
         }}
       >
-        {/* Store name row — verified badge / logo + name */}
+        {/* Store name row - verified badge / logo + name */}
         {(state.modalData[0]?.store_name || productDetailsData?.store_name) &&
           router?.pathname !== "/store/[id]" &&
           router?.pathname !== "/product/[id]" &&
@@ -506,12 +541,30 @@ const ProductInformation = ({
                 lineHeight: { xs: 1.25, md: 1.1 },
                 letterSpacing: { md: "-1.2px" },
                 color: "neutral.1050",
+                flex: 1,
               }}
               component="h1"
             >
               {state.modalData[0]?.name}
             </Typography>
             {renderStockBadge(state.modalData[0])}
+            <Tooltip title={t("Share produce")}>
+              <IconButton
+                size="small"
+                aria-label={t("Share produce")}
+                onClick={handleShareProduct}
+                sx={{
+                  border: `1px solid ${theme.palette.divider}`,
+                  color: theme.palette.text.secondary,
+                  "&:hover": {
+                    color: theme.palette.primary.main,
+                    borderColor: theme.palette.primary.main,
+                  },
+                }}
+              >
+                <ShareRoundedIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
           </CustomStackFullWidth>
         ) : (
           <Skeleton width={100} variant="text" />
@@ -593,7 +646,7 @@ const ProductInformation = ({
           </Stack>
         )}
 
-        {/* Brand tag — shown right after Unit; click navigates to the
+        {/* Brand tag - shown right after Unit; click navigates to the
             brand's search results, same route the home page brand grid uses. */}
         {(state.modalData[0]?.brand_id || state.modalData[0]?.brand?.id) &&
           (state.modalData[0]?.brand_name ||
@@ -652,7 +705,7 @@ const ProductInformation = ({
           productDetailsData={productDetailsData}
         />
 
-        {/* Halal + veg/non-veg + organic badges — right after price.
+        {/* Halal + veg/non-veg + organic badges - right after price.
             Discount + free delivery moved onto the image (see ProductImageView),
             matching the Figma layout. */}
         {(() => {
@@ -743,7 +796,7 @@ const ProductInformation = ({
           );
         })()}
 
-        {/* Agro info — origin, seasonality, certification, cold chain, dates */}
+        {/* Agro info - origin, seasonality, certification, cold chain, dates */}
         {(() => {
           const item = state.modalData[0];
           const seasonality = item?.seasonality
@@ -863,8 +916,38 @@ const ProductInformation = ({
             </Stack>
           ) : null;
 
-          // Shared group buying is available on every physical-goods module.
-          const groupBuyBlock = (
+          // Smart group-buy eligibility: only surface shared group buying on
+          // high-value items, high-MOQ products, bulk agro units, tiered bulk
+          // items, or wholesale listings (never cluttering small retail items
+          // or pharmacy prescriptions).
+          const BULK_AGRO_UNITS = ["bag_50kg", "bag_100kg", "ton", "crate", "box"];
+          const itemUnitPrice = Number(item?.price || 0);
+          const itemMoq = Number(item?.moq || 1);
+          const hasBulkUnit = BULK_AGRO_UNITS.includes(item?.agro_unit);
+          const hasBulkTiers =
+            Array.isArray(item?.bulk_pricing_tiers) &&
+            item.bulk_pricing_tiers.length > 0;
+          const isWholesaleItem = String(item?.module_id) === "2";
+          const isPharmacyItem =
+            item?.module_type === "pharmacy" ||
+            item?.module?.module_type === "pharmacy";
+          const showGroupBuyCta =
+            !isPharmacyItem &&
+            (itemUnitPrice >= 200 ||
+              itemMoq >= 5 ||
+              hasBulkUnit ||
+              hasBulkTiers ||
+              isWholesaleItem);
+          const groupBuyReasonText =
+            itemMoq >= 5
+              ? t("Min. {{moq}} units · Split this bulk order with other buyers", {
+                  moq: itemMoq,
+                })
+              : itemUnitPrice >= 200
+              ? t("High-value item · Split the cost with 2-10 buyers")
+              : t("Split this bulk lot with other buyers");
+
+          const groupBuyBlock = showGroupBuyCta ? (
             <Stack
               direction="row"
               alignItems="center"
@@ -877,17 +960,18 @@ const ProductInformation = ({
                 border: `1px solid ${theme.palette.divider}`,
               }}
             >
-              <Box>
+              <Box sx={{ minWidth: 0 }}>
                 <Typography sx={{ fontSize: "12.5px", fontWeight: 700 }}>
                   {t("Shared group buying")}
                 </Typography>
-                <Typography variant="caption" color="text.secondary">
-                  {t("Split a bulk purchase with other buyers")}
+                <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
+                  {groupBuyReasonText}
                 </Typography>
               </Box>
               <Button
                 size="small"
                 variant="outlined"
+                sx={{ flexShrink: 0, whiteSpace: "nowrap" }}
                 onClick={() =>
                   router.push(`/group-buys?item_id=${item?.id ?? ""}`)
                 }
@@ -895,11 +979,72 @@ const ProductInformation = ({
                 {t("Start or join")}
               </Button>
             </Stack>
-          );
+          ) : null;
+
+          const isPerishableCrop =
+            ["farming", "harvest_ready"].includes(item?.effective_farming_status || item?.farming_status) ||
+            ["bunch", "crate"].includes(item?.agro_unit) ||
+            Boolean(item?.is_backyard);
+
+          const provenanceStrip =
+            item?.origin_country || item?.crop_grade || isPerishableCrop ? (
+              <Stack
+                direction="row"
+                flexWrap="wrap"
+                gap={0.75}
+                sx={{
+                  mt: 1,
+                  p: "8px 10px",
+                  borderRadius: "10px",
+                  bgcolor: theme.palette.background.secondary || "#EFE7D3",
+                }}
+              >
+                {item?.origin_country && (
+                  <Chip
+                    size="small"
+                    label={`${t("Origin")}: ${item.origin_country}`}
+                    sx={{
+                      height: 22,
+                      fontSize: "11px",
+                      fontWeight: 600,
+                      bgcolor: theme.palette.background.paper,
+                      color: theme.palette.primary.deep,
+                    }}
+                  />
+                )}
+                {item?.crop_grade && (
+                  <Chip
+                    size="small"
+                    label={`${t("Grade")}: ${item.crop_grade}`}
+                    sx={{
+                      height: 22,
+                      fontSize: "11px",
+                      fontWeight: 600,
+                      bgcolor: theme.palette.background.paper,
+                      color: theme.palette.primary.deep,
+                    }}
+                  />
+                )}
+                {isPerishableCrop && (
+                  <Chip
+                    size="small"
+                    label={t("Fresh Produce · Fast delivery recommended")}
+                    sx={{
+                      height: 22,
+                      fontSize: "11px",
+                      fontWeight: 600,
+                      bgcolor: theme.palette.primary.main,
+                      color: "#FFFFFF",
+                    }}
+                  />
+                )}
+              </Stack>
+            ) : null;
 
           if (!hasAgroInfo) {
             return (
               <>
+                {provenanceStrip}
                 <InsuranceBadge item={item} variant="card" sx={{ mt: 1.25 }} />
                 {bulkBlock}
                 {groupBuyBlock}
@@ -924,6 +1069,7 @@ const ProductInformation = ({
 
           return (
             <>
+              {provenanceStrip}
               <InsuranceBadge item={item} variant="card" sx={{ mt: 1.25 }} />
               {bulkBlock}
               {groupBuyBlock}
@@ -1249,6 +1395,63 @@ const ProductInformation = ({
             </>
           );
         })()}
+
+        {state.modalData[0]?.id &&
+          state.modalData[0]?.module_type !== "pharmacy" &&
+          state.modalData[0]?.module?.module_type !== "pharmacy" &&
+          (() => {
+            const item = state.modalData[0];
+            const perKg = computePricePerKg(item, item?.totalPrice || item?.price);
+            const tip = getPostHarvestTip(item);
+            const marketMatch = findMatchingAgroPrice(item, agroPrices);
+            return (
+              <Stack
+                spacing={0.75}
+                sx={{
+                  mt: 1.5,
+                  p: { xs: 1.25, md: 1.5 },
+                  borderRadius: "10px",
+                  border: `1px solid ${theme.palette.divider}`,
+                  bgcolor: alpha(theme.palette.success.main, 0.04),
+                }}
+              >
+                <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={1} flexWrap="wrap" useFlexGap>
+                  <Typography sx={{ fontSize: "12.5px", fontWeight: 700, color: theme.palette.text.primary }}>
+                    {t("Post-Harvest Freshness & Storage Guide")}
+                  </Typography>
+                  {perKg && (
+                    <Chip
+                      size="small"
+                      label={`≈ ${getAmountWithSign(perKg.pricePerKg)} / kg (${perKg.weightKg} kg)`}
+                      sx={{
+                        height: 22,
+                        fontSize: "11px",
+                        fontWeight: 700,
+                        bgcolor: alpha(theme.palette.primary.main, 0.1),
+                        color: theme.palette.primary.main,
+                      }}
+                    />
+                  )}
+                </Stack>
+                {marketMatch && (
+                  <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={0.75}>
+                    <Typography sx={{ fontSize: "12px", fontWeight: 600, color: theme.palette.primary.main }}>
+                      {t("Market Index")}: {formatCedi(marketMatch.wholesale_price_ghs)} {t("wholesale")} / {formatCedi(marketMatch.retail_price_ghs)} {t("retail")} ({marketMatch.unit})
+                    </Typography>
+                    <Typography sx={{ fontSize: "11px", color: theme.palette.text.secondary }}>
+                      {t("Powered by")} {marketMatch.source_platform}
+                    </Typography>
+                  </Stack>
+                )}
+                <Typography sx={{ fontSize: "12.5px", color: theme.palette.text.secondary, lineHeight: 1.45 }}>
+                  {t(tip.storageTip)}
+                </Typography>
+                <Typography sx={{ fontSize: "11.5px", color: theme.palette.text.secondary }}>
+                  {t(tip.shelfLifeNote)} · {t("Perishable quality claims accepted within 6h of delivery with photo.")}
+                </Typography>
+              </Stack>
+            );
+          })()}
 
         {(state.modalData[0]?.module_type === "pharmacy" ||
           state.modalData[0]?.module?.module_type === "pharmacy") &&

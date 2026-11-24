@@ -86,14 +86,14 @@ const info = {
 
 const warning = {
   main: "#FFB020",
-  light: "#FFF8D5",
-  lite: "#FFBD8B",
-  liter: "#FFF8F2",
-  lighter: "#fffbeb",
-  dark: "#FE961C",
+  light: "#EFE7D3",
+  lite: "#E6DCC4",
+  liter: "#FAF8F5",
+  lighter: "#EFE7D3",
+  dark: "#bf6a02",
   secondary: "#bf6a02",
-  contrastText: "#FFFFFF",
-  new: "#FFC817",
+  contrastText: "#2B1F16",
+  new: "#bf6a02",
 };
 
 const error = {

@@ -180,7 +180,7 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
       unread: 0,
       messages: [greeting],
       isDraft: true,
-      // Bind to whatever module is active right now — the backend will bind
+      // Bind to whatever module is active right now - the backend will bind
       // the real conversation to this same module once the first message
       // is sent (it reads the moduleId header MainApi attaches).
       moduleId: getCurrentModuleId(),
@@ -325,7 +325,7 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
   // OLDER conversation, getCurrentModuleType() may point at a completely
   // different module. Item/store ids are only unique *within* a module, so
   // opening the in-page quick-view (or a same-module-assuming redirect) in
-  // that mismatched state fetches the wrong record — same id, wrong module.
+  // that mismatched state fetches the wrong record - same id, wrong module.
   // Resolve the conversation's real module first and compare before deciding
   // how to handle the click.
   const resolveModuleItem = useCallback(
@@ -336,8 +336,8 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
     [modules]
   );
 
-  // Makes the item's own module the active one — same localStorage/cookie/
-  // Redux write the module switcher itself does (see ModuleChecker.js) —
+  // Makes the item's own module the active one - same localStorage/cookie/
+  // Redux write the module switcher itself does (see ModuleChecker.js) -
   // so every subsequent request (details fetch, add-to-cart, wishlist) uses
   // the correct moduleId header instead of whatever was active before.
   const switchActiveModule = useCallback(
@@ -371,7 +371,7 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
         !!itemModuleType && itemModuleType !== activeModuleType;
 
       const openStore = () => {
-        // No in-page quick-view exists for stores — always a full
+        // No in-page quick-view exists for stores - always a full
         // navigation, so an explicit module override on the URL is enough.
         if (isCrossModule) {
           const moduleParam = getModuleIdentifier(moduleItem);
@@ -389,7 +389,7 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
       };
 
       // Item belongs to a different module than what's active (an older
-      // chat conversation) — ask before switching instead of doing it
+      // chat conversation) - ask before switching instead of doing it
       // silently, since it also resets the cart.
       if (isCrossModule) {
         setPendingModuleSwitch({
@@ -413,7 +413,7 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
         !!itemModuleType && itemModuleType !== activeModuleType;
       const moduleType = itemModuleType || activeModuleType;
 
-      // Food/grocery/pharmacy items always open their in-page quick-view —
+      // Food/grocery/pharmacy items always open their in-page quick-view -
       // never redirect to a details page. Ecommerce/service already redirect
       // in the same-module case too (matches NewProductCard's behavior).
       const openProduct = () => {
@@ -448,7 +448,7 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
       };
 
       // Item is from a different module than what's active (an older chat
-      // conversation) — ask before switching instead of doing it silently,
+      // conversation) - ask before switching instead of doing it silently,
       // since switching modules also resets the cart.
       if (isCrossModule) {
         setPendingModuleSwitch({
@@ -490,7 +490,7 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
       };
 
       // Category is from a different module than what's active (an older
-      // chat conversation) — ask before switching instead of doing it
+      // chat conversation) - ask before switching instead of doing it
       // silently, since switching modules also resets the cart.
       if (isCrossModule) {
         setPendingModuleSwitch({
@@ -505,7 +505,7 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
     [router, onClose, activeChat, resolveModuleItem]
   );
 
-  // BOGO offers only exist for item modules — mirrors
+  // BOGO offers only exist for item modules - mirrors
   // pages/bogo-list/[id]/index.js's own BOGO_ALLOWED_MODULES guard, which
   // would otherwise bounce a rental/service module straight back to /home.
   const handleBogoOfferSelect = useCallback(
@@ -545,7 +545,7 @@ const ChatBotPopover = ({ open, onClose }: ChatBotPopoverProps) => {
 
   // Unlike StackFood's bogo bundle (which deep-links to the offer page), a
   // 6amMart bundle belongs to a single store and has no standalone details
-  // page — so the card opens that store instead, same as a plain store
+  // page - so the card opens that store instead, same as a plain store
   // suggestion.
   const handleBundleSelect = useCallback(
     (bundle: ChatBundle) => {

@@ -12,9 +12,9 @@ import { setModules } from "redux/slices/configData";
  * `onModuleChange` (e.g. to reset paging / refetch with the new module id).
  *
  * Props:
- *  - activeModuleId: number | null     — currently selected module id
- *  - onModuleChange: (module) => void  — fired when a tab is clicked
- *  - children: ReactNode               — content rendered inside the card
+ *  - activeModuleId: number | null     - currently selected module id
+ *  - onModuleChange: (module) => void  - fired when a tab is clicked
+ *  - children: ReactNode               - content rendered inside the card
  */
 const ModuleTabbedLayout = ({
   activeModuleId,
@@ -36,7 +36,7 @@ const ModuleTabbedLayout = ({
     if (fetchedModules?.length) dispatch(setModules(fetchedModules));
   }, [fetchedModules, dispatch]);
 
-  // Hide the rider/rental (ride-share) module from the order/coupon tab bar —
+  // Hide the rider/rental (ride-share) module from the order/coupon tab bar -
   // it doesn't belong to the order or coupon flows.
   const modules = allModules?.filter((m) => m?.module_type !== "ride-share");
 
@@ -142,7 +142,7 @@ const ModuleTabbedLayout = ({
                 onClick={() => onModuleChange?.(mod)}
                 sx={{
                   // Grow to share the row, but never shrink below the nowrap
-                  // label — a fixed 100px minimum let long module names
+                  // label - a fixed 100px minimum let long module names
                   // (centered) overflow their tab and overlap the neighbors.
                   // If all tabs can't fit, the row scrolls instead.
                   flex: "1 0 auto",

@@ -9,7 +9,31 @@ const AllowLocationDialog = ({
   handleCloseLocation,
   openLocation,
   isGeolocationEnabled,
+  isGeolocationAvailable = true,
+  positionError,
+  isLoadingCurrentLocation,
 }) => {
+  const isDenied = positionError?.code === 1;
+  const isUnavailable = !isGeolocationAvailable || (positionError && !isDenied);
+
+  const title = isUnavailable
+    ? t("Location is not available on this device.")
+    : isDenied
+    ? t(
+        "Location permission denied. Enable location access in your browser settings, then try again.",
+      )
+    : isLoadingCurrentLocation
+    ? t("Getting your location. Please wait...")
+    : t("Please allow browser location permission");
+
+  const description = isUnavailable
+    ? t("We could not get your location. Please try again.")
+    : isLoadingCurrentLocation
+    ? t("Getting your location. Please wait...")
+    : t(
+        "Your browser location track permission is off. Please turn on the location permission to detect current location",
+      );
+
   return (
     <Dialog
       open={openLocation}
@@ -17,41 +41,34 @@ const AllowLocationDialog = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      {!isGeolocationEnabled && (
-        <>
-          <DialogContent>
-
-            <CustomStackFullWidth
-              gap="10px"
-              alignItems="center"
-              maxWidth="500px"
-              textAlign="center"
-              padding={{ xs: "0 10px", sm: "0 40px", md: "0 60px" }}
-            >
-              <LocationPermissionIcon />
-              <Typography fontSize={{ xs: "14px", sm: "16px", md: "18px" }} fontWeight={500}>{t("Please allow browser location permission")}</Typography>
-
-              <CustomTypography>
-                {t("Your browser location track permission is off. Please turn on the location permission to detect current location")}
-              </CustomTypography>
-            </CustomStackFullWidth>
-          </DialogContent>
-          <DialogActions>
-            <CustomStackFullWidth
-              direction="row"
-              alignItems="center"
-              justifyContent="center"
-              spacing={2}
-              paddingBottom="35px"
-            >
-
-              <Button onClick={() => handleCloseLocation()} variant="contained">
-                {t("Okay")}
-              </Button>
-            </CustomStackFullWidth>
-          </DialogActions>
-        </>
-      )}
+      <DialogContent>
+        <CustomStackFullWidth
+          gap="10px"
+          alignItems="center"
+          maxWidth="500px"
+          textAlign="center"
+          padding={{ xs: "0 10px", sm: "0 40px", md: "0 60px" }}
+        >
+          <LocationPermissionIcon />
+          <Typography fontSize={{ xs: "14px", sm: "16px", md: "18px" }} fontWeight={500}>
+            {title}
+          </Typography>
+          <CustomTypography>{description}</CustomTypography>
+        </CustomStackFullWidth>
+      </DialogContent>
+      <DialogActions>
+        <CustomStackFullWidth
+          direction="row"
+          alignItems="center"
+          justifyContent="center"
+          spacing={2}
+          paddingBottom="35px"
+        >
+          <Button onClick={() => handleCloseLocation()} variant="contained">
+            {t("Okay")}
+          </Button>
+        </CustomStackFullWidth>
+      </DialogActions>
     </Dialog>
   );
 };

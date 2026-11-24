@@ -5,7 +5,7 @@ import NextImage from "components/NextImage";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
 
 // Read-only row card for a single buy/free line inside the BOGO item-details
-// modal — the "bogo" variant of NewProductCard. There is no cart control on
+// modal - the "bogo" variant of NewProductCard. There is no cart control on
 // this card itself; the modal owns one shared quantity stepper + add/update
 // button for the whole bundle (mirrors Stackfood's NewFoodBogoCard).
 

@@ -574,7 +574,7 @@ const MonthlyCartListPage = ({ configData }) => {
 
   return (
     <Box sx={{ backgroundColor: "background.default" }}>
-      {/* ── Module tabs — content-width only, not stretched ── */}
+      {/* ── Module tabs - content-width only, not stretched ── */}
       {isMobile ? (
         <Box
           sx={{

@@ -43,7 +43,7 @@ const InterestOptions = ({ configData }) => {
   } = useGetCategories(searchKey, onSuccessHandler, queryKey);
 
   // Loading state of the LIST fetch (module-aware). The `isLoading` further
-  // down belongs to the save mutation — using it here made the empty state
+  // down belongs to the save mutation - using it here made the empty state
   // flash before the categories arrived.
   const isRental = getModule()?.module_type === "rental";
   const listLoading = isRental

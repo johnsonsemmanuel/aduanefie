@@ -21,10 +21,13 @@ export const onErrorResponse = (error) => {
   const status = error?.response?.status;
   if (Array.isArray(errors)) {
     errors.forEach((item) => {
-      handleTokenExpire(item);
+      // The status must be passed here too: a 401 with the common
+      // `{ errors: [{ message: "Unauthorized" }] }` shape otherwise leaves an
+      // expired token in localStorage and stale authenticated UI state.
+      handleTokenExpire(item, status);
     });
   } else if (errors && typeof errors === "object") {
-    // A few endpoints hand back Laravel's raw validator bag — a field-keyed
+    // A few endpoints hand back Laravel's raw validator bag - a field-keyed
     // object of message arrays ({ rating: ["The rating must be a number."] })
     // instead of the usual [{ code, message }]. rental/user/review/add is one,
     // and reading `.message` off that object toasted nothing at all.
@@ -35,7 +38,7 @@ export const onErrorResponse = (error) => {
       handleTokenExpire({ message: errors?.message }, status);
     }
   } else if (errors) {
-    // Some endpoints return a plain value instead of the usual array —
+    // Some endpoints return a plain value instead of the usual array -
     // e.g. { "errors": "Unauthorized" } on auth failures.
     handleTokenExpire(
       { message: typeof errors === "string" ? errors : undefined },

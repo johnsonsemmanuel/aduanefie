@@ -12,6 +12,9 @@ const AgroPriceTickerBar = () => {
   const { t } = useTranslation();
   const { data, isError } = useGetAgroPrices();
   const prices = data?.prices || [];
+  const sourceLabel = data?.sources?.length
+    ? data.sources.slice(0, 2).join(" · ")
+    : "World Bank · MoFA SRID";
 
   if (prices.length === 0) {
     if (isError) {
@@ -30,6 +33,7 @@ const AgroPriceTickerBar = () => {
   }
 
   const tickerItems = [...prices, ...prices];
+  const durationSeconds = Math.max(95, prices.length * 10);
 
   return (
     <Box
@@ -69,24 +73,25 @@ const AgroPriceTickerBar = () => {
         >
           <Typography
             sx={{
-              fontSize: "12px",
+              fontSize: { xs: "11px", sm: "12px" },
               fontWeight: 700,
               color: theme.palette.primary.main,
               lineHeight: 1.2,
               whiteSpace: "nowrap",
             }}
           >
-            {t("Ghana Agro Index")}
+            {t("Agro Index")}
           </Typography>
           <Typography
             sx={{
+              display: { xs: "none", sm: "block" },
               fontSize: "10px",
               color: theme.palette.text.secondary,
               lineHeight: 1.2,
               whiteSpace: "nowrap",
             }}
           >
-            GCX · MoFA · Esoko
+            {sourceLabel}
           </Typography>
         </Stack>
 
@@ -112,7 +117,7 @@ const AgroPriceTickerBar = () => {
             sx={{
               display: "inline-flex",
               width: "max-content",
-              animation: "agroTickerScroll 42s linear infinite",
+              animation: `agroTickerScroll ${durationSeconds}s linear infinite`,
             }}
           >
             {tickerItems.map((row, idx) => {
@@ -163,7 +168,7 @@ const AgroPriceTickerBar = () => {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    GH₵{Number(row.wholesale_price_ghs).toLocaleString()}
+                    ₵{Number(row.wholesale_price_ghs).toLocaleString()}
                   </Typography>
                   <Typography
                     sx={{

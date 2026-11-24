@@ -11,6 +11,7 @@ import {
   Stack,
   Tab,
   Tabs,
+  TextField,
   Typography,
   alpha,
   useTheme,
@@ -18,14 +19,32 @@ import {
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useGetLiveFarmingItems } from "api-manage/hooks/react-query/useGetLiveFarmingItems";
+import { useGetAgroPrices } from "api-manage/hooks/react-query/trade/useGetAgroPrices";
+import { findMatchingAgroPrice, formatCedi } from "utils/agroPriceMatch";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
 import InsuranceBadge from "components/badges/InsuranceBadge";
 
-const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true }) => {
+const getGhanaSeasonLabel = () => {
+  const month = new Date().getMonth() + 1;
+  if (month >= 3 && month <= 7) return "Major Season";
+  if (month >= 9 && month <= 11) return "Minor Season";
+  return "Irrigated Season";
+};
+
+const LiveFarmingSection = ({
+  limit = 8,
+  showViewAll = true,
+  hideIfEmpty = true,
+  initialBackyardOnly = false,
+  titleOverride = null,
+  subtitleOverride = null,
+}) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const [statusFilter, setStatusFilter] = useState("all");
-  const [backyardOnly, setBackyardOnly] = useState(false);
+  const [backyardOnly, setBackyardOnly] = useState(initialBackyardOnly);
+  const [searchTerm, setSearchTerm] = useState("");
+  const seasonLabel = getGhanaSeasonLabel();
 
   const { data, isLoading } = useGetLiveFarmingItems({
     status: statusFilter,
@@ -33,10 +52,19 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
     limit,
     offset: 1,
   });
+  const { data: agroPriceData } = useGetAgroPrices();
+  const agroPrices = agroPriceData?.prices || [];
 
-  const products = data?.products || [];
+  const rawProducts = data?.products || [];
+  const normalizedQuery = searchTerm.trim().toLowerCase();
+  const products = normalizedQuery
+    ? rawProducts.filter((p) => {
+        const hay = `${p?.name || ""} ${p?.store_name || ""} ${p?.origin_farm || ""}`.toLowerCase();
+        return hay.includes(normalizedQuery);
+      })
+    : rawProducts;
 
-  if (!isLoading && hideIfEmpty && products.length === 0 && statusFilter === "all" && !backyardOnly) {
+  if (!isLoading && hideIfEmpty && rawProducts.length === 0 && statusFilter === "all" && !backyardOnly) {
     return null;
   }
 
@@ -50,17 +78,17 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
       }}
     >
       <Stack
-        direction={{ xs: "column", sm: "row" }}
+        direction="row"
         justifyContent="space-between"
-        alignItems={{ xs: "flex-start", sm: "center" }}
-        spacing={1.5}
-        sx={{ mb: 2 }}
+        alignItems="center"
+        spacing={1}
+        sx={{ mb: { xs: 1.25, sm: 2 } }}
       >
-        <Stack direction="row" spacing={1.5} alignItems="center">
+        <Stack direction="row" spacing={{ xs: 1, sm: 1.5 }} alignItems="center" sx={{ minWidth: 0 }}>
           <Box
             sx={{
-              width: 36,
-              height: 36,
+              width: { xs: 32, sm: 36 },
+              height: { xs: 32, sm: 36 },
               borderRadius: "8px",
               bgcolor: alpha(theme.palette.success.main, 0.1),
               color: theme.palette.success.main,
@@ -70,27 +98,58 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
               flexShrink: 0,
             }}
           >
-            <i className="fi fi-rr-leaf" style={{ fontSize: "18px", lineHeight: 1, display: "flex" }} />
+            <i className="fi fi-rr-leaf" style={{ fontSize: "16px", lineHeight: 1, display: "flex" }} />
           </Box>
-          <Box>
-            <Stack direction="row" spacing={1} alignItems="center">
-              <Typography variant="h6" sx={{ fontWeight: 700, color: theme.palette.text.primary, lineHeight: 1.2 }}>
-                {t("Live Farming Marketplace")}
+          <Box sx={{ minWidth: 0 }}>
+            <Stack direction="row" spacing={0.75} alignItems="center">
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 700,
+                  fontSize: { xs: "15px", sm: "18px" },
+                  color: theme.palette.text.primary,
+                  lineHeight: 1.2,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {t(titleOverride || "Live Farming")}
               </Typography>
               <Chip
                 size="small"
-                color="success"
                 variant="outlined"
                 label={t("LIVE")}
                 sx={{
-                  height: 20,
-                  fontSize: "10px",
+                  height: 18,
+                  fontSize: "9.5px",
                   fontWeight: 700,
+                  borderColor: theme.palette.primary.main,
+                  color: theme.palette.primary.deep,
+                }}
+              />
+              <Chip
+                size="small"
+                label={t(seasonLabel)}
+                sx={{
+                  display: { xs: "none", sm: "inline-flex" },
+                  height: 18,
+                  fontSize: "10px",
+                  fontWeight: 600,
+                  bgcolor: theme.palette.background.secondary,
+                  color: theme.palette.primary.deep,
                 }}
               />
             </Stack>
-            <Typography sx={{ fontSize: "12.5px", color: theme.palette.text.secondary, mt: 0.25 }}>
-              {t("Track active crops in cultivation, view harvest progress, and reserve or pre-order directly from farms.")}
+            <Typography
+              sx={{
+                display: { xs: "none", sm: "block" },
+                fontSize: "12.5px",
+                color: theme.palette.text.secondary,
+                mt: 0.25,
+              }}
+            >
+              {t("Track active crops in cultivation, view harvest progress, and reserve directly from farms.")}
             </Typography>
           </Box>
         </Stack>
@@ -103,53 +162,79 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
             size="small"
             sx={{
               fontWeight: 600,
+              fontSize: { xs: "11.5px", sm: "13px" },
+              px: { xs: 1.25, sm: 1.75 },
               borderRadius: "8px",
               textTransform: "none",
+              flexShrink: 0,
+              whiteSpace: "nowrap",
             }}
           >
-            {t("View All Live Farms")}
+            {t("View All")}
           </Button>
         )}
       </Stack>
 
       <Stack
         direction="row"
-        flexWrap="wrap"
+        flexWrap="nowrap"
         alignItems="center"
         justifyContent="space-between"
         gap={1}
-        sx={{ mb: 2 }}
+        sx={{ mb: { xs: 1.5, sm: 2 }, overflowX: "auto", scrollbarWidth: "none", "&::-webkit-scrollbar": { display: "none" } }}
       >
         <Tabs
           value={statusFilter}
           onChange={(_, val) => setStatusFilter(val)}
+          variant="scrollable"
+          scrollButtons={false}
           sx={{
-            minHeight: 34,
+            minHeight: 32,
             "& .MuiTab-root": {
-              minHeight: 34,
+              minHeight: 32,
+              minWidth: "auto",
               py: 0.5,
-              px: 1.5,
-              fontSize: "12px",
+              px: { xs: 1, sm: 1.5 },
+              fontSize: { xs: "11.5px", sm: "12px" },
               fontWeight: 600,
               textTransform: "none",
             },
           }}
         >
-          <Tab value="all" label={t("All Active")} />
-          <Tab value="farming" label={t("Growing Now")} />
+          <Tab value="all" label={t("All")} />
+          <Tab value="farming" label={t("Growing")} />
           <Tab value="harvest_ready" label={t("Harvest Ready")} />
         </Tabs>
 
         <Chip
           clickable
           size="small"
-          label={t("Backyard Farms Only")}
+          label={t("Backyard")}
           onClick={() => setBackyardOnly((prev) => !prev)}
           color={backyardOnly ? "success" : "default"}
           variant={backyardOnly ? "filled" : "outlined"}
-          sx={{ fontWeight: 600, fontSize: "11.5px" }}
+          sx={{ fontWeight: 600, fontSize: "11px", flexShrink: 0 }}
         />
       </Stack>
+
+      {!showViewAll && (
+        <Box sx={{ mb: 2 }}>
+          <TextField
+            size="small"
+            fullWidth
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder={t("Search crops, farms, or regions...")}
+            sx={{
+              maxWidth: 420,
+              "& .MuiOutlinedInput-root": {
+                borderRadius: "10px",
+                fontSize: "13.5px",
+              },
+            }}
+          />
+        </Box>
+      )}
 
       {isLoading ? (
         <Grid container spacing={2}>
@@ -160,22 +245,35 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
           ))}
         </Grid>
       ) : products.length === 0 ? (
-        <Box sx={{ py: 4, textAlign: "center" }}>
-          <Typography sx={{ color: "text.secondary", fontSize: "14px" }}>
+        <Box sx={{ py: 3, textAlign: "center" }}>
+          <Typography sx={{ color: "text.secondary", fontSize: "13.5px", mb: 1.25 }}>
             {t("No crops match this live farming filter right now.")}
           </Typography>
+          {(statusFilter !== "all" || backyardOnly) && (
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={() => {
+                setStatusFilter("all");
+                setBackyardOnly(false);
+              }}
+              sx={{ textTransform: "none", fontWeight: 600 }}
+            >
+              {t("Show all active crops")}
+            </Button>
+          )}
         </Box>
       ) : (
-        <Grid container spacing={2}>
+        <Grid container spacing={{ xs: 1.25, sm: 2 }}>
           {products.map((item) => {
             const status = item?.effective_farming_status || item?.farming_status || "farming";
             const isHarvestReady = status === "harvest_ready";
-            const progress = typeof item?.cultivation_progress_pct === "number" ? item.cultivation_progress_pct : isHarvestReady ? 100 : 45;
+            const progress = typeof item?.cultivation_progress_pct === "number" ? item.cultivation_progress_pct : isHarvestReady ? 100 : 0;
             const daysLeft = item?.days_to_harvest;
             const imgSrc = item?.image_full_url || item?.image || "/static/empty_img.png";
 
             return (
-              <Grid item xs={12} sm={6} md={3} key={item.id}>
+              <Grid item xs={6} sm={6} md={3} key={item.id}>
                 <Card
                   component={Link}
                   href={`/product/${item?.slug || item?.id}`}
@@ -186,16 +284,16 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
                     textDecoration: "none",
                     borderRadius: "12px",
                     border: "1px solid",
-                    borderColor: alpha("#15803D", 0.14),
+                    borderColor: alpha(theme.palette.primary.main, 0.28),
                     boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
                     transition: "transform 0.2s ease, box-shadow 0.2s ease",
                     "&:hover": {
                       transform: "translateY(-3px)",
-                      boxShadow: "0 8px 20px rgba(21,128,61,0.12)",
+                      boxShadow: `0 8px 20px ${alpha(theme.palette.primary.deep, 0.14)}`,
                     },
                   }}
                 >
-                  <Box sx={{ position: "relative", height: 155, overflow: "hidden", bgcolor: "#F3F4F6" }}>
+                  <Box sx={{ position: "relative", height: { xs: 118, sm: 155 }, overflow: "hidden", bgcolor: theme.palette.background.secondary }}>
                     <Box
                       component="img"
                       src={imgSrc}
@@ -205,37 +303,31 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
                     <Stack
                       direction="row"
                       spacing={0.5}
-                      sx={{ position: "absolute", top: 8, left: 8, right: 8, flexWrap: "wrap", gap: 0.5 }}
+                      sx={{ position: "absolute", top: 6, left: 6, right: 6, flexWrap: "nowrap", gap: 0.5 }}
                     >
                       <Chip
                         size="small"
-                        icon={
-                          <Box
-                            component="img"
-                            src={LIVE_FARMING_BADGE}
-                            alt=""
-                            sx={{ width: 15, height: 15, ml: "4px !important", borderRadius: "4px" }}
-                          />
-                        }
-                        label={isHarvestReady ? t("Harvest Ready") : t("Live Farming")}
+                        label={isHarvestReady ? t("Harvest Ready") : t("Growing")}
                         sx={{
-                          height: 22,
-                          bgcolor: isHarvestReady ? "#15803D" : "#B45309",
+                          height: { xs: 20, sm: 22 },
+                          bgcolor: isHarvestReady ? theme.palette.primary.main : (theme.palette.warning.secondary || "#bf6a02"),
                           color: "#FFFFFF",
                           fontWeight: 700,
-                          fontSize: "10.5px",
+                          fontSize: { xs: "9.5px", sm: "10.5px" },
                         }}
                       />
-                      <InsuranceBadge item={item} variant="compact" />
+                      <Box sx={{ display: { xs: "none", sm: "inline-flex" } }}>
+                        <InsuranceBadge item={item} variant="compact" />
+                      </Box>
                     </Stack>
                   </Box>
 
-                  <CardContent sx={{ p: 1.5, flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                  <CardContent sx={{ p: { xs: 1, sm: 1.5 }, "&:last-child": { pb: { xs: 1, sm: 1.5 } }, flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                     <Box>
                       <Typography
                         sx={{
                           fontWeight: 700,
-                          fontSize: "14px",
+                          fontSize: { xs: "12.5px", sm: "14px" },
                           color: "text.primary",
                           overflow: "hidden",
                           textOverflow: "ellipsis",
@@ -244,22 +336,33 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
                       >
                         {item?.name}
                       </Typography>
-                      <Typography sx={{ fontSize: "11.5px", color: "text.secondary", mt: 0.25 }}>
+                      <Typography
+                        sx={{
+                          fontSize: { xs: "10.5px", sm: "11.5px" },
+                          color: "text.secondary",
+                          mt: 0.2,
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
                         {item?.store_name || t("Verified Farm")}
-                        {item?.origin_country ? ` · ${item.origin_country}` : ""}
-                        {item?.is_backyard ? ` · ${t("Backyard")}` : ""}
+                        <Box component="span" sx={{ display: { xs: "none", sm: "inline" } }}>
+                          {item?.origin_country ? ` · ${item.origin_country}` : ""}
+                          {item?.is_backyard ? ` · ${t("Backyard")}` : ""}
+                        </Box>
                       </Typography>
 
-                      <Box sx={{ mt: 1.25 }}>
-                        <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.4 }}>
-                          <Typography sx={{ fontSize: "11px", fontWeight: 600, color: "#15803D" }}>
+                      <Box sx={{ mt: { xs: 0.9, sm: 1.25 } }}>
+                        <Stack direction="row" justifyContent="space-between" sx={{ mb: 0.35 }}>
+                          <Typography sx={{ fontSize: { xs: "10px", sm: "11px" }, fontWeight: 600, color: theme.palette.primary.deep, whiteSpace: "nowrap" }}>
                             {isHarvestReady
-                              ? t("Ready for Dispatch")
+                              ? t("Ready")
                               : daysLeft !== null && daysLeft !== undefined
-                              ? t("{{days}}d to harvest", { days: daysLeft })
-                              : t("In Cultivation")}
+                              ? t("{{days}}d left", { days: daysLeft })
+                              : t("Growing")}
                           </Typography>
-                          <Typography sx={{ fontSize: "11px", fontWeight: 700, color: "text.secondary" }}>
+                          <Typography sx={{ fontSize: { xs: "10px", sm: "11px" }, fontWeight: 700, color: "text.secondary" }}>
                             {progress}%
                           </Typography>
                         </Stack>
@@ -267,31 +370,45 @@ const LiveFarmingSection = ({ limit = 8, showViewAll = true, hideIfEmpty = true 
                           variant="determinate"
                           value={Math.min(100, Math.max(5, progress))}
                           sx={{
-                            height: 6,
+                            height: { xs: 5, sm: 6 },
                             borderRadius: 4,
-                            bgcolor: alpha("#15803D", 0.12),
+                            bgcolor: alpha(theme.palette.primary.main, 0.16),
                             "& .MuiLinearProgress-bar": {
                               borderRadius: 4,
-                              bgcolor: isHarvestReady ? "#15803D" : "#D97706",
+                              bgcolor: isHarvestReady ? theme.palette.primary.main : (theme.palette.warning.secondary || "#bf6a02"),
                             },
                           }}
                         />
                       </Box>
                     </Box>
 
-                    <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mt: 1.5 }}>
-                      <Typography sx={{ fontWeight: 800, fontSize: "14.5px", color: "#67513A" }}>
-                        {getAmountWithSign(item?.price || 0)}
-                      </Typography>
+                    <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={0.5} sx={{ mt: { xs: 1, sm: 1.5 } }}>
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography sx={{ fontWeight: 800, fontSize: { xs: "12.5px", sm: "14.5px" }, color: theme.palette.primary.deep, whiteSpace: "nowrap" }}>
+                          {getAmountWithSign(item?.price || 0)}
+                        </Typography>
+                        {(() => {
+                          const m = findMatchingAgroPrice(item, agroPrices);
+                          if (!m) return null;
+                          const mktRetail = Number(m.retail_price_ghs || 0);
+                          const itemPrice = Number(item?.price || 0);
+                          const savePct = mktRetail > itemPrice && itemPrice > 0 ? Math.round(((mktRetail - itemPrice) / mktRetail) * 100) : 0;
+                          return (
+                            <Typography sx={{ fontSize: "10px", fontWeight: 600, color: savePct >= 5 ? theme.palette.success.dark : "text.secondary", whiteSpace: "nowrap" }}>
+                              {savePct >= 5 ? `${t("Save")} ${savePct}%` : `${t("Mkt")} ${formatCedi(m.wholesale_price_ghs)}`}
+                            </Typography>
+                          );
+                        })()}
+                      </Box>
                       <Chip
                         size="small"
-                        label={item?.pre_order_available ? t("Pre-Order") : t("View Crop")}
+                        label={item?.pre_order_available ? t("Pre-Order") : t("View")}
                         sx={{
-                          height: 22,
-                          fontSize: "11px",
+                          height: { xs: 20, sm: 22 },
+                          fontSize: { xs: "10px", sm: "11px" },
                           fontWeight: 700,
-                          bgcolor: alpha("#67513A", 0.1),
-                          color: "#67513A",
+                          bgcolor: theme.palette.background.secondary,
+                          color: theme.palette.primary.deep,
                         }}
                       />
                     </Stack>

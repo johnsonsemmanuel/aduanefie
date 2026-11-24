@@ -129,14 +129,14 @@ export const getLowToHigh = (data) => {
   }
 };
 // The /store-categories/items endpoint changed shape: instead of a flat
-// `products` array it now returns `category_wise_items` — a dict keyed by
+// `products` array it now returns `category_wise_items` - a dict keyed by
 // category id ({"11": [...items]}) whose items no longer carry
 // category_id/category_ids. Flatten it back to a products array, tagging
 // each item with its group's category id (merging ids when the same item
 // appears under several categories) so the section grouping keeps working.
 export const normalizeItemsResponse = (res) => {
   const cwi = res?.category_wise_items;
-  // Prefer the grouped payload whenever it has content — a flat `products`
+  // Prefer the grouped payload whenever it has content - a flat `products`
   // array may coexist in the response but carries no category tags, which
   // would leave every category section empty.
   const cwiHasContent =
@@ -209,7 +209,7 @@ const MiddleSection = (props) => {
   // Tabs use first-page `categories`; respect `ownCategories` whitelist if
   // provided by the parent store config.
 
-  // Section refs — tab click scrolls to the matching category section instead
+  // Section refs - tab click scrolls to the matching category section instead
   // of filtering. The "Most Popular" tab scrolls to the top section.
   const popularSliderRef = useRef(null);
   const [popularCurrentSlide, setPopularCurrentSlide] = useState(0);
@@ -331,7 +331,7 @@ const MiddleSection = (props) => {
     });
     window.addEventListener("resize", onScroll);
 
-    // Initial passes — refs may still be empty on the very first effect run,
+    // Initial passes - refs may still be empty on the very first effect run,
     // so re-check shortly after to catch sections that mounted in the same
     // commit.
     computeActiveKey();
@@ -437,7 +437,7 @@ const MiddleSection = (props) => {
       if (normalizedProducts.length > 0) {
         handleLocalStorageSave(normalizedProducts);
       }
-      // Sort is performed by the backend via the `sort_by` query param —
+      // Sort is performed by the backend via the `sort_by` query param -
       // do NOT re-order client-side here. Previously this called
       // getHighToLow() which forced a price-desc order regardless of the
       // user's selected sort, overriding the backend response.
@@ -513,11 +513,11 @@ const MiddleSection = (props) => {
   } = useGetStoreCategoriesItems(pageParams);
 
   // "Most Popular" is its own backend-ranked list (order_count DESC by
-  // default) from /stores/popular-items/{id} — not a slice of the main
+  // default) from /stores/popular-items/{id} - not a slice of the main
   // category-wise query. It's sent the exact same filter/sort payload as
   // /store-categories/items (type, price range, rating, sort_by) so both
   // requests stay in sync whenever the filter bar is applied, but the
-  // response itself is rendered as-is — no client-side re-sort/reformat.
+  // response itself is rendered as-is - no client-side re-sort/reformat.
   const { data: popularData } = useGetStorePopularItems({
     storeId: storeId,
     offset: 1,
@@ -639,7 +639,7 @@ const MiddleSection = (props) => {
     }
   }, [state.minMax]);
 
-  // Client-side resort removed — sort_by is sent to the backend (see the
+  // Client-side resort removed - sort_by is sent to the backend (see the
   // refetch effect above) and the API returns items in the correct order.
 
   const handleChangePrice = (value) => {
@@ -674,7 +674,7 @@ const MiddleSection = (props) => {
     setOffset(1);
   }, [checkState?.veg, checkState.non_veg]);
 
-  // Shared links carry the module SLUG (?module=grocery) — parseInt on a slug
+  // Shared links carry the module SLUG (?module=grocery) - parseInt on a slug
   // yields NaN, and `{NaN && ...}` makes React render the literal text "NaN".
   // Resolve to a finite id or null so the section simply waits for data.
   const parsedQueryModuleId = Number.parseInt(
@@ -695,7 +695,7 @@ const MiddleSection = (props) => {
     }
   };
 
-  // Removed `sortWiseDataHandle` — sorting is delegated to the backend via
+  // Removed `sortWiseDataHandle` - sorting is delegated to the backend via
   // the `sort_by` query parameter (see pageParams).
 
   const handleSortBy = (value) => {
@@ -1375,11 +1375,11 @@ const MiddleSection = (props) => {
                         );
                       })}
 
-                      {/* Inline DotSpin removed — the overlay loader at
+                      {/* Inline DotSpin removed - the overlay loader at
                           the top of this Grid item now handles the
                           "applying filter" indicator. */}
 
-                      {/* Infinite-scroll sentinel removed — see `limit`
+                      {/* Infinite-scroll sentinel removed - see `limit`
                           and the disabled inView effect above. */}
                     </Stack>
                   );

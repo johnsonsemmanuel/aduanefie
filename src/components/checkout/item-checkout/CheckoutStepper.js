@@ -32,7 +32,7 @@ const CheckoutStepper = ({
   );
 
   // The checkout store comes from the URL (store_id). Only trust a cart item as
-  // a name/id fallback when it actually belongs to that store — otherwise a
+  // a name/id fallback when it actually belongs to that store - otherwise a
   // stale item from another store/module would mislabel the breadcrumb.
   const queryStoreId =
     router?.query?.store_id != null ? String(router.query.store_id) : null;

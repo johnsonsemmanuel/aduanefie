@@ -42,12 +42,14 @@ import TopPicksSection from "./grocery/TopPicksSection";
 import Brands from "../brands";
 import FlashSalesSection from "./ecommerce/FlashSalesSection";
 import LiveFarmingSection from "components/home/live-farming/LiveFarmingSection";
+import { WHOLESALE_MODULE_ID } from "components/trade/tradeData";
+import OngoingGroupBuysSection from "components/home/group-buys/OngoingGroupBuysSection";
 
 const menus = ["All", "Beauty", "Bread & Juice", "Drinks", "Milks"];
 
 // Wrapper that renders its children as-is. When a section returns null (no
 // data / feature off), this element doesn't exist in the DOM at all, so the
-// parent Stack skips it — no leftover gap.
+// parent Stack skips it - no leftover gap.
 const S = ({ children }) => children ?? null;
 
 const Grocery = (props) => {
@@ -60,7 +62,7 @@ const Grocery = (props) => {
     (state) => state.utilsData,
   );
   const { data, refetch, isLoading } = useGetOtherBanners();
-  // The other-banners query is enabled:false — fetch it here so the
+  // The other-banners query is enabled:false - fetch it here so the
   // promotional banner doesn't depend on another page priming the cache.
   useEffect(() => {
     refetch();
@@ -127,11 +129,20 @@ const Grocery = (props) => {
           <Banners />
         </CustomContainer>
       </S>
+      {String(moduleId) === String(WHOLESALE_MODULE_ID) && (
+        <S>
+          <CustomContainer>
+            <LiveFarmingSection limit={8} />
+          </CustomContainer>
+        </S>
+      )}
+
       <S>
         <CustomContainer>
-          <LiveFarmingSection limit={8} />
+          <OngoingGroupBuysSection moduleId={moduleId} />
         </CustomContainer>
       </S>
+
       <S>
         <CustomContainer>
           <FlashSalesSection key="grocery" />

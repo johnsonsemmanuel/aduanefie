@@ -1,4 +1,5 @@
 import moment from "moment";
+import { safeJsonParse } from "utils/safeJsonParse";
 import { currentDate, nextday, today } from "./formatedDays";
 import { t } from "i18next";
 import {
@@ -153,7 +154,7 @@ const handleValuesSum = (productVariations) => {
       // Service module cart items store `selectedOption[0]` as an ARRAY of
       // `{variation, quantity}` picks (multi-variation selection), not a
       // single flat variation object with its own `.price` like every other
-      // module — sum each pick's own price * quantity instead of reading a
+      // module - sum each pick's own price * quantity instead of reading a
       // non-existent `.price` off the array itself (parsed to NaN, which
       // made `getCouponDiscount` silently return 0 for service bookings).
       if (Array.isArray(pVal)) {
@@ -263,8 +264,12 @@ export const getCouponDiscount = (
     if (purchasedAmount >= couponDiscount.min_purchase) {
       switch (couponDiscount.coupon_type) {
         case "zone_wise":
-          let zoneId = JSON.parse(localStorage.getItem("zoneid"));
+          let zoneId = safeJsonParse(localStorage.getItem("zoneid"), []);
           if (
+            Array.isArray(zoneId) &&
+            zoneId.length > 0 &&
+            Array.isArray(couponDiscount.zoneId) &&
+            couponDiscount.zoneId.length > 0 &&
             Number.parseInt(zoneId[0]) ===
             Number.parseInt(couponDiscount.zoneId[0])
           ) {
@@ -330,7 +335,7 @@ export const getCouponDiscount = (
         case "default":
         // Fall through to the default handler so any other coupon_type
         // ("first_order", "loyal_customer", etc.) also gets the standard
-        // amount/percent discount applied — previously they returned
+        // amount/percent discount applied - previously they returned
         // undefined and the UI showed nothing.
         default:
           if (couponDiscount && couponDiscount.discount_type === "amount") {
@@ -440,7 +445,7 @@ const handleProductWiseDiscount = (items) => {
   items?.forEach((item) => {
     if (item?.bundle_details?.bundle_id) {
       // Surface the bundle's own discount (base_price − final_price) instead
-      // of dropping it — matches the order-details breakdown, where the
+      // of dropping it - matches the order-details breakdown, where the
       // backend shows the base price under "Items Price" and this gap under
       // "Discount" rather than folding it into a lower item price.
       const basePrice = Number(item.bundle_details?.base_price) || 0;
@@ -996,7 +1001,7 @@ export const getCalculatedTotal = (
   referDiscount,
   vatAmount,
   surgePrice,
-  // The delivery charge `checkout-summary` quoted for this order — already
+  // The delivery charge `checkout-summary` quoted for this order - already
   // surged, free-delivery-adjusted and Pro-discounted by the server. Passed
   // by the item checkout; omitted by any caller that still has no quote, in
   // which case the legacy client-side estimate below is used.
@@ -1076,15 +1081,15 @@ export const isFoodAvailableBySchedule = (cart, selectedTime) => {
     if (cart.length > 0) {
       let isAvailable = cart.every((item) => {
         // A bundle row carries no `available_time_starts`/`available_time_ends`
-        // — that's a per-item time-of-day window and bundles don't have one
-        // — so `moment(undefined, ...)` built an Invalid Date here and
+        // - that's a per-item time-of-day window and bundles don't have one
+        // - so `moment(undefined, ...)` built an Invalid Date here and
         // `isBetween` against it always returned false, blocking every
         // bundle-only order. The bundle's own validity window is checked
         // separately (`bundle_details.is_available`), not here.
         if (item?.bundle_details?.bundle_id) return true;
         // BOGO items also have no top-level `available_time_starts`/`available_time_ends`
         // (the item field is null; real data lives inside bogo_details.buy_items).
-        // Skip them the same way as bundles — the offer's own `is_available` flag
+        // Skip them the same way as bundles - the offer's own `is_available` flag
         // is checked server-side.
         if (item?.bogo_details?.bogo_group_id) return true;
         const startTime = moment(item.available_time_starts, "HH:mm:ss");
@@ -1275,7 +1280,7 @@ export function capitalizeText(text) {
 }
 export function formatPhoneNumber(number) {
   const str = number?.toString();
-  // Empty input must clear the field — without this guard, clearing the
+  // Empty input must clear the field - without this guard, clearing the
   // phone input leaves a lone "+" behind.
   if (!str) return "";
   if (str.startsWith("+")) return str;

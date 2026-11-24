@@ -12,6 +12,7 @@ import Shimmer from "../home/stores-with-filter/Shimmer";
 import useGetTopOffers from "api-manage/hooks/react-query/product-details/useGetTopOffers";
 import useScrollToTop from "api-manage/hooks/custom-hooks/useScrollToTop";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
+import NearbyLocationControl from "components/home/section-page/NearbyLocationControl";
 
 const TypeWiseStore = ({ storeType, title }) => {
   useScrollToTop();
@@ -91,6 +92,9 @@ const TypeWiseStore = ({ storeType, title }) => {
 
   return (
     <>
+      {storeType === "top_offer_near_me" && (
+        <NearbyLocationControl onLocationStored={() => nearbyRefetch()} />
+      )}
       <CustomPaperBigCard minHeight="50vh">
         <H1 text={title} textAlign="left" />
         {handleStoreList()}

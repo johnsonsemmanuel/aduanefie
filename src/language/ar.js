@@ -215,8 +215,8 @@ export const arabic = {
   "Are you sure, you want to reset?": "هل أنت متأكد أنك تريد إعادة تعيين؟",
   Ascending: "تصاعدي",
   "Ask AI Assistant": "اسأل المساعد الذكي",
-  "Ask anything — orders, deals, restaurants, recommendations.":
-    "اسأل عن أي شيء — الطلبات، العروض، المطاعم، التوصيات.",
+  "Ask anything - orders, deals, restaurants, recommendations.":
+    "اسأل عن أي شيء - الطلبات، العروض، المطاعم، التوصيات.",
   "Attach photo": "إرفاق صورة",
   "Automatically reorder these items every month.":
     "إعادة طلب هذه العناصر تلقائيًا كل شهر.",
@@ -2062,8 +2062,8 @@ export const arabic = {
   "Type your opinion": "اكتب رأيك",
   "Type your tin number": "اكتب رقمك الضريبي",
   "Typing…": "يكتب…",
-  "Unable to renew — plan information unavailable.":
-    "تعذّر التجديد — معلومات الخطة غير متوفرة.",
+  "Unable to renew - plan information unavailable.":
+    "تعذّر التجديد - معلومات الخطة غير متوفرة.",
   "Unavailable item note": "ملاحظة غير متوفرة",
   Unit: "وحدة",
   "Unit Price": "سعر الوحدة",
@@ -2950,5 +2950,23 @@ export const arabic = {
 	"Free": "مجاني",
 	"Buying Item": "المنتج المشترى",
 	"Free Item": "المنتج المجاني",
-	"per bogo": "لكل BOGO"
+	"per bogo": "لكل BOGO",
+	"Use my location": "استخدام موقعي",
+	"Getting your location. Please wait...": "جارٍ تحديد موقعك. يرجى الانتظار...",
+	"Checking if we serve this area...": "جارٍ التحقق مما إذا كانت خدمتنا متاحة في هذه المنطقة...",
+	"Location saved. Showing results near you.": "تم حفظ الموقع. عرض النتائج القريبة منك.",
+	"Turn on location to see results near you.": "فعّل الموقع لعرض النتائج القريبة منك.",
+	"Location permission denied. Enable location access in your browser settings, then try again.":
+		"تم رفض إذن الموقع. فعّل الوصول إلى الموقع في إعدادات المتصفح، ثم حاول مرة أخرى.",
+	"We could not get your location. Please try again.": "تعذّر تحديد موقعك. يرجى المحاولة مرة أخرى.",
+	"Try again": "حاول مرة أخرى",
+	"Not available in your country": "غير متاح في بلدك",
+	"Coming soon": "قريبًا",
+	"Location is not available on this device.": "الموقع غير متاح على هذا الجهاز.",
+	"No location selected yet. Search for a place or use your current location to choose one.": "لم يتم تحديد موقع بعد. ابحث عن مكان أو استخدم موقعك الحالي لاختيار واحد.",
+	"Resolving the address for your selected pin...": "جارٍ تحديد العنوان للنقطة المحددة...",
+	"Search for a place or use your current location to choose a location.": "ابحث عن مكان أو استخدم موقعك الحالي لاختيار موقع.",
+	"Choose a location by searching above or using your current location.": "اختر موقعًا بالبحث أعلاه أو باستخدام موقعك الحالي.",
+	"Use your current location to choose a delivery address": "استخدم موقعك الحالي لاختيار عنوان تسليم",
+	"Search for your business address to place the marker on the map.": "ابحث عن عنوان عملك لوضع العلامة على الخريطة."
 };

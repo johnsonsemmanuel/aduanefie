@@ -3,7 +3,7 @@ import { bundle_cart_remove_api } from "../../../ApiRoutes";
 import { getApiContent } from "../../../getApiContent";
 import { useMutation, useQueryClient } from "react-query";
 
-// DELETE /customer/cart/bundle/remove — body: { bundle_group_id, guest_id }.
+// DELETE /customer/cart/bundle/remove - body: { bundle_group_id, guest_id }.
 // Removes every row in the group.
 const removeData = async (postData) => {
   const { data } = await MainApi.delete(bundle_cart_remove_api, {

@@ -18,7 +18,7 @@ export interface UploadedFilesPreviewStripProps {
   onPreviewClick?: (index: number) => void;
 }
 
-// Fixed card width — never changes regardless of how many files exist
+// Fixed card width - never changes regardless of how many files exist
 const CARD_WIDTH_MD = 110;
 const CARD_WIDTH_XS = 80;
 

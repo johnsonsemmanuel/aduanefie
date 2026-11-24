@@ -17,7 +17,7 @@ import {
 /**
  * Area / ZIP Code picker for the delivery address section.
  *
- * Only rendered where the zone actually prices by area or zip code — the
+ * Only rendered where the zone actually prices by area or zip code - the
  * coverage endpoint's `type` decides, so distance-wise and fixed zones never
  * see the field, and neither does take-away (TC_67).
  *
@@ -28,7 +28,7 @@ import {
 
 /**
  * Everything comes from the `useAreaZipSelection` instance that also gates the
- * confirm button — the field must never resolve its own coverage list, or the
+ * confirm button - the field must never resolve its own coverage list, or the
  * two can end up on different zones and disagree about whether a selection is
  * required.
  */
@@ -57,7 +57,7 @@ const AreaZipCodeSelect: React.FC<AreaZipCodeSelectProps> = ({ areaZip }) => {
 
   const options = coverage?.coverage ?? [];
 
-  // TC_93 — self-delivery stores price their own fee, and take-away / dine-in
+  // TC_93 - self-delivery stores price their own fee, and take-away / dine-in
   // carry no delivery charge, so neither is ever asked for an area or zip.
   if (hidden) return null;
   if (isLoading) {
@@ -68,7 +68,7 @@ const AreaZipCodeSelect: React.FC<AreaZipCodeSelectProps> = ({ areaZip }) => {
       </Stack>
     );
   }
-  // TC_67 — the field belongs to the area-wise / zip-code-wise rules only. A
+  // TC_67 - the field belongs to the area-wise / zip-code-wise rules only. A
   // distance-wise or fixed zone answers `type: null` and is asked nothing.
   if (!coverageRequiresSelection(coverage)) return null;
 

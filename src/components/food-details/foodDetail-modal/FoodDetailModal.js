@@ -303,9 +303,9 @@ const FoodDetailModal = ({
 
   // Builds a comparable signature of selected variation labels. Cart rows
   // store `selectedOption` in different shapes depending on which flow wrote
-  // them — flat `[{label, isSelected}]`, the API's
+  // them - flat `[{label, isSelected}]`, the API's
   // `[{name, values: {label: [...]}}]`, or raw food_variations
-  // `[{name, values: [{label, isSelected}]}]` — so normalize all of them.
+  // `[{name, values: [{label, isSelected}]}]` - so normalize all of them.
   const variationSigOf = (opts) => {
     const labels = [];
     (opts ?? []).forEach((o) => {
@@ -332,7 +332,7 @@ const FoodDetailModal = ({
 
   const addOrUpdateToCartByDispatch = () => {
     // We should hit the update API whenever the item is already in the
-    // user's cart for this store — not only when the modal was opened from
+    // user's cart for this store - not only when the modal was opened from
     // the cart (productUpdate=true). Without this branch the "Update to
     // Cart" button silently called the add API when the modal was opened
     // from a product card.
@@ -633,7 +633,7 @@ const FoodDetailModal = ({
       let checkingFor = status ? status : "cart";
       if (cartList?.length > 0) {
         //checking same restaurant items already exist or not
-        // Multi-store carts allowed — always proceed with add.
+        // Multi-store carts allowed - always proceed with add.
         const isRestaurantExist = true;
         if (isRestaurantExist) {
           if (productUpdate) {
@@ -670,7 +670,7 @@ const FoodDetailModal = ({
   // (cart content, store cart sidebar, running campaigns, wishlist). The
   // add-to-cart success path closed via `setOpen` alone, so on those screens
   // the modal stayed open after a successful add. Close through whichever
-  // the caller supplied — passing both is idempotent.
+  // the caller supplied - passing both is idempotent.
   const handleClose = () => {
     setOpen?.(false);
     handleModalClose?.();
@@ -1352,7 +1352,7 @@ const FoodDetailModal = ({
         />
       );
     }
-    // Campaign items can be ordered directly — checkout goes to
+    // Campaign items can be ordered directly - checkout goes to
     // `?page=campaign` (handled by `orderNow`). Detect them by the
     // presence of `available_date_starts` on the source modal data,
     // matching the same signal already used by `hasCampaignSchedule`.

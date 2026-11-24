@@ -593,7 +593,7 @@ const StoresResult = ({
     // Grid + card sizing mirrors `src/components/home/stores/AllStores.js` so
     // the search/category Restaurants tab matches the home overview's grid.
     // The inner Box `width: 100% !important` is what forces the card to fill
-    // its grid item — without it cards render at a smaller intrinsic width.
+    // its grid item - without it cards render at a smaller intrinsic width.
     <Stack
       spacing={2}
       sx={{

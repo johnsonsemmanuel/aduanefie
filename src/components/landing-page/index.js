@@ -1,4 +1,6 @@
-import { alpha, NoSsr, useMediaQuery, useTheme } from "@mui/material";
+import { alpha, Button, NoSsr, Stack, Typography, useMediaQuery, useTheme } from "@mui/material";
+import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import AvailableZoneSection from "components/landing-page/AvailableZoneSection";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -6,24 +8,36 @@ import React, { useEffect, useState } from "react";
 import { useGeolocated } from "react-geolocated";
 import CookiesConsent from "../CookiesConsent";
 import PushNotificationLayout from "../PushNotificationLayout";
-import ComponentTwo from "./ComponentTwo";
-import DiscountBanner from "./DiscountBanner";
 import HeroSection from "./hero-section/HeroSection";
-import Registration from "./Registration";
 import CustomContainer from "components/container";
 import Banners from "components/landing-page/Banners";
 import Box from "@mui/material/Box";
-import StatsSection from "./stats-section";
-import ClientSection from "./our-client/ClientSection";
-import DeliveryManAppDownload from "./delivery-download-section";
-import RiderAppDownload from "./rider-download-section";
-import { GallerySection } from "./gallery-section";
-import ImageTitleSection from "./ImageTitleSection";
-import FaqTabSection from "./FaqTabSection";
+
+const ComponentTwo = dynamic(() => import("./ComponentTwo"));
+const DiscountBanner = dynamic(() => import("./DiscountBanner"));
+const Registration = dynamic(() => import("./Registration"));
+const StatsSection = dynamic(() => import("./stats-section"));
+const ClientSection = dynamic(() => import("./our-client/ClientSection"));
+const DeliveryManAppDownload = dynamic(() => import("./delivery-download-section"));
+const RiderAppDownload = dynamic(() => import("./rider-download-section"));
+const GallerySection = dynamic(() => import("./gallery-section").then((m) => m.GallerySection));
+const ImageTitleSection = dynamic(() => import("./ImageTitleSection"));
+const FaqTabSection = dynamic(() => import("./FaqTabSection"));
 
 const MapModal = dynamic(() => import("../Map/MapModal"));
 
+const WELCOME_PLATFORM_LINKS = [
+  { label: "B2B & Cross-Border Trade", href: "/trade" },
+  { label: "Live Farming", href: "/live-farming" },
+  { label: "Ghana Agro Index", href: "/market-prices" },
+  { label: "Group Buys", href: "/group-buys" },
+  { label: "Register Farm / Store", href: "/store-registration" },
+  { label: "Become a Marketer", href: "/become-a-marketer" },
+  { label: "Become a Rider", href: "/deliveryman-registration" },
+];
+
 const LandingPage = ({ configData, landingPageData }) => {
+  const { t } = useTranslation();
   const Testimonials = dynamic(() => import("./Testimonials"), {
     ssr: false,
   });
@@ -74,6 +88,36 @@ const LandingPage = ({ configData, landingPageData }) => {
     <>
       <PushNotificationLayout>
         <HeroSection landingPageDataheroSection={landingPageData?.hero_section} />
+        <CustomContainer>
+          <Stack
+            direction="row"
+            flexWrap="wrap"
+            alignItems="center"
+            justifyContent="center"
+            gap={1.25}
+            sx={{ py: 2.5 }}
+          >
+            <Typography variant="body2" fontWeight={600} color="text.secondary" sx={{ mr: 0.5 }}>
+              {t("Explore Aduanefie:")}
+            </Typography>
+            {WELCOME_PLATFORM_LINKS.map((item) => (
+              <Button
+                key={item.href}
+                component={Link}
+                href={item.href}
+                variant="outlined"
+                size="small"
+                sx={{
+                  textTransform: "none",
+                  fontWeight: 600,
+                  borderRadius: "8px",
+                }}
+              >
+                {t(item.label)}
+              </Button>
+            ))}
+          </Stack>
+        </CustomContainer>
         {landingPageData?.trust_section?.trust_section_status === 1 ? (
           <StatsSection trustSectionData={landingPageData?.trust_section} />
         ) : null}

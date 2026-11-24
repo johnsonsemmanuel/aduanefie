@@ -1,27 +1,36 @@
 import React, { useEffect } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { Skeleton } from "@mui/material";
 import { Stack } from "@mui/system";
 import useGetModule from "api-manage/hooks/react-query/useGetModule";
 import { setModules } from "redux/slices/configData";
-import Wallet from "../wallet";
-import Profile from "../profile";
-import OrderDetails from "../my-orders/order-details";
-import BookingDetails from "../home/module-wise-components/service/components/my-bookings/booking-details";
 import ProfileOrdersPage, { ORDER_TAB_MODULE_KEY } from "./ProfileOrdersPage";
 import { ModuleTypes } from "helper-functions/moduleTypes";
-import LoyaltyPoints from "../loyalty-points";
-import ReferralCode from "../referral-code";
-import CouponsTabbedPage from "./CouponsTabbedPage";
-import Chatting from "../chat/Chatting";
-import Settings from "../settings";
-import MyTrips from "components/home/module-wise-components/rental/components/my-trips/MyTrips";
-import SubscriptionPlanPage from "./subscription/SubscriptionPlanPage";
-import MonthlyCartListPage from "./MonthlyCartListPage";
-import TrackOrderInput from "../track-order/TrackOrderInput";
-import CustomService from "../home/module-wise-components/service/components/custom-service";
-import ServiceRequest from "components/home/module-wise-components/service/components/service-request";
+
+const TabFallback = () => (
+  <Stack spacing={2} sx={{ py: 2 }}>
+    <Skeleton variant="rounded" height={120} />
+    <Skeleton variant="rounded" height={240} />
+  </Stack>
+);
+
+const Wallet = dynamic(() => import("../wallet"), { loading: TabFallback });
+const Profile = dynamic(() => import("../profile"), { loading: TabFallback });
+const OrderDetails = dynamic(() => import("../my-orders/order-details"), { loading: TabFallback });
+const BookingDetails = dynamic(() => import("../home/module-wise-components/service/components/my-bookings/booking-details"), { loading: TabFallback });
+const LoyaltyPoints = dynamic(() => import("../loyalty-points"), { loading: TabFallback });
+const ReferralCode = dynamic(() => import("../referral-code"), { loading: TabFallback });
+const CouponsTabbedPage = dynamic(() => import("./CouponsTabbedPage"), { loading: TabFallback });
+const Chatting = dynamic(() => import("../chat/Chatting"), { loading: TabFallback });
+const Settings = dynamic(() => import("../settings"), { loading: TabFallback });
+const MyTrips = dynamic(() => import("components/home/module-wise-components/rental/components/my-trips/MyTrips"), { loading: TabFallback });
+const SubscriptionPlanPage = dynamic(() => import("./subscription/SubscriptionPlanPage"), { loading: TabFallback });
+const MonthlyCartListPage = dynamic(() => import("./MonthlyCartListPage"), { loading: TabFallback });
+const TrackOrderInput = dynamic(() => import("../track-order/TrackOrderInput"), { loading: TabFallback });
+const CustomService = dynamic(() => import("../home/module-wise-components/service/components/custom-service"), { loading: TabFallback });
+const ServiceRequest = dynamic(() => import("components/home/module-wise-components/service/components/service-request"), { loading: TabFallback });
 
 const ORDER_DETAIL_PAGES = [
   "my-orders",

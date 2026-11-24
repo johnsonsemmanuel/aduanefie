@@ -16,11 +16,12 @@ import { getAmountWithSign } from "helper-functions/CardHelpers";
 import { useGetItemDetails } from "api-manage/hooks/react-query/product-details/useGetItemDetails";
 import { useGetServiceItemDetails } from "components/home/module-wise-components/service/service-api-manage/useGetServiceItemDetails";
 import { StoreRow } from "./NewProductCard";
+import { useSanitizedRichText } from "utils/sanitizeRichText";
 
-// ─── BundleSubItemViewModal — read-only "Item Modal Sheet" (per Figma) for a
+// ─── BundleSubItemViewModal - read-only "Item Modal Sheet" (per Figma) for a
 // single bundle sub-item. Fetches the item's own full details (gallery,
 // description, store, rating) for richer display, but shows only the
-// variation/add-on already locked in by the bundle — no editing, no cart
+// variation/add-on already locked in by the bundle - no editing, no cart
 // controls, no discount (bundle pricing is handled by the drawer itself).
 
 const BundleSubItemViewModal = ({ open, onClose, subItem, storeInfo }) => {
@@ -33,7 +34,7 @@ const BundleSubItemViewModal = ({ open, onClose, subItem, storeInfo }) => {
   const descRef = useRef(null);
 
   // Service sub-items use `service_id` and the service module's own details
-  // endpoint — mart's item-details API 404s for a service id.
+  // endpoint - mart's item-details API 404s for a service id.
   const { data: itemDetailsRaw, isFetched: isItemFetched } = useGetItemDetails(
     { id: subItem?.isService ? undefined : subItem?.id },
   );
@@ -41,11 +42,13 @@ const BundleSubItemViewModal = ({ open, onClose, subItem, storeInfo }) => {
     useGetServiceItemDetails({ id: subItem?.isService ? subItem?.id : undefined });
   const itemDetails = subItem?.isService ? serviceDetailsRaw : itemDetailsRaw;
   const isFetched = subItem?.isService ? isServiceFetched : isItemFetched;
-  // Service's details API has no plain `description` — falls back to
+  // Service's details API has no plain `description` - falls back to
   // long/short description instead.
-  const description = subItem?.isService
+  const rawDescription = subItem?.isService
     ? itemDetails?.long_description ?? itemDetails?.short_description
     : itemDetails?.description;
+  const safeServiceDescription = useSanitizedRichText(rawDescription);
+  const description = subItem?.isService ? safeServiceDescription : rawDescription;
 
   useEffect(() => {
     setActiveImage(0);
@@ -91,7 +94,7 @@ const BundleSubItemViewModal = ({ open, onClose, subItem, storeInfo }) => {
 
   const body = (
     <Stack sx={{ height: "100%", minHeight: 0 }}>
-      {/* Top bar — close only, per Figma */}
+      {/* Top bar - close only, per Figma */}
       <Box
         sx={{
           display: "flex",
@@ -143,7 +146,7 @@ const BundleSubItemViewModal = ({ open, onClose, subItem, storeInfo }) => {
             />
           </Box>
 
-          {/* Thumbnail gallery — only when the item actually has more than one image */}
+          {/* Thumbnail gallery - only when the item actually has more than one image */}
           {images.length > 1 && (
             <Stack direction="row" gap="8px" sx={{ mt: "10px", overflowX: "auto" }}>
               {images.map((src, i) => (
@@ -280,7 +283,7 @@ const BundleSubItemViewModal = ({ open, onClose, subItem, storeInfo }) => {
             </Box>
           </Stack>
 
-          {/* Description — from the item's own details, not part of the
+          {/* Description - from the item's own details, not part of the
               bundle summary. Skeleton while the item fetch hasn't settled
               yet, so the layout doesn't jump once it arrives. */}
           {!isFetched ? (
@@ -310,8 +313,9 @@ const BundleSubItemViewModal = ({ open, onClose, subItem, storeInfo }) => {
                       overflow: "hidden",
                     }),
                   }}
-                  // Service's long_description is rich text (HTML tags);
-                  // mart's description is plain text.
+                  // Service's long_description is rich text and is sanitized
+                  // before reaching dangerouslySetInnerHTML; mart's description
+                  // stays plain text via children.
                   {...(subItem?.isService
                     ? { dangerouslySetInnerHTML: { __html: description } }
                     : { children: description })}
@@ -355,7 +359,7 @@ const BundleSubItemViewModal = ({ open, onClose, subItem, storeInfo }) => {
             )
           )}
 
-          {/* Selected variation + add-ons — the only "options" shown, since
+          {/* Selected variation + add-ons - the only "options" shown, since
               this is a locked-in bundle line, not an editable product */}
           {!!subItem.variationText && (
             <Stack sx={{ mt: "16px", gap: "4px" }}>

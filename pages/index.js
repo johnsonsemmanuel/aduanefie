@@ -8,6 +8,15 @@ export default function Root() {
 }
 
 export const getServerSideProps = async ({ req }) => {
+  const hasLocation = req.cookies?.aduanefie_location_set === "1";
+  if (!hasLocation) {
+    return {
+      redirect: {
+        destination: "/welcome",
+        permanent: false,
+      },
+    };
+  }
   const selectedModule = req.cookies?.selectedModule || "2";
   return {
     redirect: {

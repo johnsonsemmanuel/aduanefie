@@ -89,7 +89,7 @@ const DeliveryInfo = ({
   // Derived from `selectedPaymentMethod` (only updated when the picker
   // modal's "Update" button is pressed) rather than the live `paymentMethod`/
   // `paymentMethodImage` state the modal mutates while the user is still
-  // browsing radios — otherwise the icon in the summary row would flip
+  // browsing radios - otherwise the icon in the summary row would flip
   // before the choice is confirmed, while the text label (already driven by
   // `selectedPaymentMethod`) stayed put.
   const confirmedPaymentMethodImage = useMemo(() => {

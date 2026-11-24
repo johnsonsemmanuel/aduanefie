@@ -1,7 +1,8 @@
 import { Box, Stack } from "@mui/material";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 import useGetSearchPageData from "api-manage/hooks/react-query/search/useGetSearchPageData";
 import { useGetCategories } from "api-manage/hooks/react-query/all-category/all-categorys";
 import FoodSearchFilterDrawer from "components/home/search/FoodSearchFilterDrawer";
@@ -9,9 +10,15 @@ import ModuleSearchBanner from "components/home/module-wise-components/shared/Mo
 import SectionSearchBar from "components/home/module-wise-components/shared/SectionSearchBar";
 import CategoryMobilePageBar from "components/home/category-page/CategoryMobilePageBar";
 import TabbedSectionResult from "./TabbedSectionResult";
+import NearbyLocationControl from "./NearbyLocationControl";
+import NearbyAggregationHubs from "./NearbyAggregationHubs";
+import NearbyMapView from "./NearbyMapView";
+import NearbyViewToggle from "./NearbyViewToggle";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 
 const TAB_ALL = "all";
+import LiveFarmingSection from "components/home/live-farming/LiveFarmingSection";
+
 const TAB_ITEMS = "items";
 const TAB_STORES = "stores";
 
@@ -39,6 +46,9 @@ const TabbedSectionPage = ({ sectionType, defaultTab }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const moduleType = getCurrentModuleType();
+  const countryCodeFromStore = useSelector(
+    (state) => state.configData?.countryCode,
+  );
 
   const config = SECTION_CONFIG[sectionType];
   const sectionTitle = config?.title ?? "";
@@ -55,6 +65,42 @@ const TabbedSectionPage = ({ sectionType, defaultTab }) => {
   const [filterAnchorEl, setFilterAnchorEl] = useState(null);
   const [appliedFilterCount, setAppliedFilterCount] = useState(0);
   const [appliedFilters, setAppliedFilters] = useState({});
+  const [locationRevision, setLocationRevision] = useState(0);
+  const [nearbyView, setNearbyView] = useState("list");
+  const [lowBandwidth, setLowBandwidth] = useState(false);
+
+  const handleLocationStored = useCallback(() => {
+    setLocationRevision((revision) => revision + 1);
+  }, []);
+
+  useEffect(() => {
+    const connection =
+      typeof navigator !== "undefined"
+        ? navigator.connection ||
+          navigator.mozConnection ||
+          navigator.webkitConnection
+        : null;
+
+    const update = () => {
+      const effectiveType = String(connection?.effectiveType ?? "").toLowerCase();
+      setLowBandwidth(
+        Boolean(connection?.saveData || /2g|slow/.test(effectiveType)),
+      );
+    };
+
+    update();
+    connection?.addEventListener?.("change", update);
+    return () => connection?.removeEventListener?.("change", update);
+  }, []);
+
+  useEffect(() => {
+    if (lowBandwidth) setNearbyView("list");
+  }, [lowBandwidth]);
+
+  // The search queries live in this parent, so a child-only location state
+  // would leave them disabled. This key changes whenever the stored location
+  // or the active market changes; it is never sent as an API parameter.
+  const locationKey = `${countryCodeFromStore ?? "unknown"}:${locationRevision}`;
 
   useEffect(() => {
     setAppliedFilters({});
@@ -143,6 +189,7 @@ const TabbedSectionPage = ({ sectionType, defaultTab }) => {
     },
     () => {},
     isReady && !storesOnly && (isAllTab || isItemsTab),
+    locationKey,
   );
 
   const {
@@ -163,6 +210,7 @@ const TabbedSectionPage = ({ sectionType, defaultTab }) => {
     },
     () => {},
     isReady && (storesOnly || isAllTab || isStoresTab),
+    locationKey,
   );
 
   const items = itemsData?.pages?.flatMap((p) => p?.products ?? []) ?? [];
@@ -233,6 +281,27 @@ const TabbedSectionPage = ({ sectionType, defaultTab }) => {
         filterCount={appliedFilterCount}
       />
 
+      {sectionType === "nearby" && (
+        <>
+          <NearbyLocationControl onLocationStored={handleLocationStored} />
+          <NearbyViewToggle
+            value={nearbyView}
+            onChange={setNearbyView}
+            lowBandwidth={lowBandwidth}
+            locationKey={locationKey}
+          />
+          {nearbyView === "map" ? (
+            <NearbyMapView
+              stores={stores}
+              items={items}
+              locationKey={locationKey}
+            />
+          ) : (
+            <NearbyAggregationHubs locationKey={locationKey} />
+          )}
+        </>
+      )}
+
       <Stack spacing={{ xs: 2, md: 0.5 }}>
         <Box sx={{ display: { xs: "none", md: "block" } }}>
           <ModuleSearchBanner
@@ -247,29 +316,42 @@ const TabbedSectionPage = ({ sectionType, defaultTab }) => {
           />
         </Box>
 
-        <TabbedSectionResult
-          breadcrumbItems={breadcrumbItems}
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-          items={items}
-          stores={stores}
-          itemsLabel={itemsLabel}
-          storesLabel={storesLabel}
-          itemsLoading={itemsLoading}
-          storesLoading={storesLoading}
-          itemsHasNext={itemsHasNext}
-          storesHasNext={storesHasNext}
-          itemsFetchingNext={itemsFetchingNext}
-          storesFetchingNext={storesFetchingNext}
-          fetchMoreItems={fetchMoreItems}
-          fetchMoreStores={fetchMoreStores}
-          appliedFilterCount={appliedFilterCount}
-          storesOnly={storesOnly}
-          hideAllTab={hideAllTab}
-          onFilterOpen={(e) =>
-            setFilterAnchorEl(e?.currentTarget ?? document.body)
-          }
-        />
+        {!(sectionType === "nearby" && nearbyView === "map") && (
+          <TabbedSectionResult
+            breadcrumbItems={breadcrumbItems}
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+            items={items}
+            stores={stores}
+            itemsLabel={itemsLabel}
+            storesLabel={storesLabel}
+            itemsLoading={itemsLoading}
+            storesLoading={storesLoading}
+            itemsHasNext={itemsHasNext}
+            storesHasNext={storesHasNext}
+            itemsFetchingNext={itemsFetchingNext}
+            storesFetchingNext={storesFetchingNext}
+            fetchMoreItems={fetchMoreItems}
+            fetchMoreStores={fetchMoreStores}
+            appliedFilterCount={appliedFilterCount}
+            storesOnly={storesOnly}
+            hideAllTab={hideAllTab}
+            onFilterOpen={(e) =>
+              setFilterAnchorEl(e?.currentTarget ?? document.body)
+            }
+          />
+        )}
+
+        {sectionType === "nearby" && (
+          <LiveFarmingSection
+            limit={8}
+            initialBackyardOnly={true}
+            showViewAll={true}
+            hideIfEmpty={true}
+            titleOverride="Backyard Farming Nearby"
+            subtitleOverride="Fresh produce grown by verified backyard farmers near you."
+          />
+        )}
       </Stack>
 
       <FoodSearchFilterDrawer

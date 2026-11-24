@@ -60,7 +60,7 @@ const ProPlanPaymentModal = ({
     if (res) dispatch(setUser(res));
   });
 
-  // Memo to keep useEffect deps stable — without it `gateways` is a new
+  // Memo to keep useEffect deps stable - without it `gateways` is a new
   // array each render and the preselect effect re-fires every paint.
   const gateways = useMemo(
     () =>
@@ -70,7 +70,7 @@ const ProPlanPaymentModal = ({
     [configData?.active_payment_method_list]
   );
   // Wallet is only a valid choice if the feature is on AND the user's
-  // balance can cover the plan price — otherwise the payment would fail
+  // balance can cover the plan price - otherwise the payment would fail
   // server-side and the option would be a dead-end for the user.
   const walletBalance = Number(profileInfo?.wallet_balance) || 0;
   const planPrice = Number(plan?.price) || 0;
@@ -87,7 +87,7 @@ const ProPlanPaymentModal = ({
       return;
     }
     // Pull the latest profile (and wallet balance) every time the modal
-    // opens — otherwise a debit from a previous purchase would leave the
+    // opens - otherwise a debit from a previous purchase would leave the
     // user looking at the stale balance.
     refetchProfile();
     // Preselect the first available method so the Proceed button is enabled.
@@ -124,7 +124,7 @@ const ProPlanPaymentModal = ({
           return;
         }
         // Wallet payments debit the balance server-side. The refetch is
-        // async, so we *also* optimistically deduct the price locally —
+        // async, so we *also* optimistically deduct the price locally -
         // this avoids the "stale balance" flash users see between the
         // success modal closing and the profile API returning.
         if (selection?.kind === "wallet") {
@@ -132,7 +132,7 @@ const ProPlanPaymentModal = ({
           dispatch(setUser({ ...profileInfo, wallet_balance: nextBalance }));
           refetchProfile();
         }
-        // No success toast here — callers (e.g. SubscriptionPlanPage)
+        // No success toast here - callers (e.g. SubscriptionPlanPage)
         // already surface the result via a modal/result dialog.
         onSuccess?.(res);
         onClose?.();
@@ -184,7 +184,7 @@ const ProPlanPaymentModal = ({
               </Typography>
               {plan && (
                 <Typography fontSize="13px" color="text.secondary">
-                  {t(plan.title)} — {getAmountWithSign(plan.price)} /{" "}
+                  {t(plan.title)} - {getAmountWithSign(plan.price)} /{" "}
                   {plan.days} {t("days")}
                 </Typography>
               )}

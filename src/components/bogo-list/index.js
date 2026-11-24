@@ -53,7 +53,7 @@ const BogoListPage = () => {
   const { data: bogoOffers, isLoading } = useGetBogoOffers();
 
   // Read the module from the URL (not localStorage) so the breadcrumb label
-  // matches on the server-rendered HTML and the client's first paint —
+  // matches on the server-rendered HTML and the client's first paint -
   // localStorage isn't available during SSR and would cause a hydration
   // mismatch here.
   const moduleParam =

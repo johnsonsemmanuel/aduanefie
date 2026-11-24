@@ -1,4 +1,5 @@
 import { Grid, Card, IconButton, Box } from "@mui/material";
+import { safeJsonParse } from "utils/safeJsonParse";
 import { CustomButtonPrimary } from "styled-components/CustomButtons.style";
 import { Stack } from "@mui/system";
 import { useFormik } from "formik";
@@ -136,7 +137,7 @@ const PercelDelivery = ({ configData }) => {
   const proOfferResolved =
     !(proFeatureEnabled && hasToken) || !activeOfferLoading;
   const proSavingsMessage = (() => {
-    // Parcel only ships things — never say "order" anywhere in the copy.
+    // Parcel only ships things - never say "order" anywhere in the copy.
     const minOrderAmount = Number(proBenefit?.min_order_amount);
     const hasMin =
       proBenefit?.min_order_status === 1 &&
@@ -391,7 +392,7 @@ const PercelDelivery = ({ configData }) => {
   let zoneid = undefined;
   if (typeof window !== "undefined") {
     zoneid = localStorage.getItem("zoneid");
-    currentLocation = JSON.parse(localStorage.getItem("currentLatLng"));
+    currentLocation = safeJsonParse(localStorage.getItem("currentLatLng"), {});
   }
   const formSubmitHandler = (values) => {
     if (!parcelCategories?.id) {

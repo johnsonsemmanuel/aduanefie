@@ -64,7 +64,7 @@ const AddPaymentMethod = (props) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   // The modal mutates these DRAFT copies while the user is still browsing
-  // radios — the summary row below keeps showing the last CONFIRMED choice
+  // radios - the summary row below keeps showing the last CONFIRMED choice
   // (`paymentMethod`/`paymentMethodImage`, the real lifted state) until
   // "Proceed" is pressed, which commits draft → real via `handleProceed`.
   const [draftPaymentMethod, setDraftPaymentMethod] = useState(paymentMethod);
@@ -100,7 +100,7 @@ const AddPaymentMethod = (props) => {
 
   // The summary row shows the last CONFIRMED method. For the bundled local
   // methods (COD / wallet) the parent may set `paymentMethod` without ever
-  // setting `paymentMethodImage` — e.g. COD auto-selected on first load — which
+  // setting `paymentMethodImage` - e.g. COD auto-selected on first load - which
   // left the icon broken until the modal was opened and "Proceed" pressed.
   // Fall back to the bundled asset so the icon always renders.
   const resolvedPaymentMethodImage =

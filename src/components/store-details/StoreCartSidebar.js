@@ -473,9 +473,9 @@ const CartItemRow = ({ cartItem }) => {
   );
 };
 
-// Min-order / free-delivery hint — shown in the empty state AND below the
+// Min-order / free-delivery hint - shown in the empty state AND below the
 // item list. Free delivery is set up per (zone, module) now, not a single
-// admin-wide setting — read it off the current module's entry in the zone
+// admin-wide setting - read it off the current module's entry in the zone
 // lookup response (zoneData.zone_data), via the same getInfoFromZoneData()
 // lookup used elsewhere for delivery pivots (matches by module_type AND
 // module id across every zone the location falls into).
@@ -762,7 +762,7 @@ const StoreCartSidebar = ({
   const { configData } = useSelector((state) => state.configData);
 
   // Free delivery is set up per (zone, module) now, not a single admin-wide
-  // setting — same lookup the header already fires (same react-query key,
+  // setting - same lookup the header already fires (same react-query key,
   // so this piggybacks its cache instead of a second network call).
   const currentLatLng =
     typeof window !== "undefined"
@@ -780,7 +780,7 @@ const StoreCartSidebar = ({
   );
 
   // Packaging fee comes from the parent's `storeDetails` (the store-details
-  // page already has it from SSR — no need for a second fetch).
+  // page already has it from SSR - no need for a second fetch).
   const extraPackagingAmount =
     Number(storeDetails?.extra_packaging_amount) || 0;
 
@@ -809,10 +809,10 @@ const StoreCartSidebar = ({
     );
   }, [monthlySubKey]);
   // Default `extraPackaging` to false to match ItemCheckout's `isPackaging`
-  // initial state — the user explicitly opts in instead of being silently
+  // initial state - the user explicitly opts in instead of being silently
   // charged.
   const [extraPackaging, setExtraPackaging] = useState(false);
-  const [addCutlery, setAddCutlery] = useState(true);
+  const [addCutlery, setAddCutlery] = useState(false);
   const [unavailableExpanded, setUnavailableExpanded] = useState(false);
   const [unavailableChoice, setUnavailableChoice] = useState("remove");
   const [subtotalCollapsed, setSubtotalCollapsed] = useState(false);
@@ -842,7 +842,7 @@ const StoreCartSidebar = ({
   }, [monthlyOrder, monthlySubKey]);
 
   // Pro Plan: only fetch active offer when feature is enabled AND the user
-  // is authenticated. The endpoint is auth-only — skipping the call for
+  // is authenticated. The endpoint is auth-only - skipping the call for
   // guests avoids a guaranteed-401 round trip.
   const proFeatureEnabled = configData?.pro_member_status === 1;
   const hasToken = !!getToken();
@@ -850,7 +850,7 @@ const StoreCartSidebar = ({
     useGetProActiveOffer({
       enabled: proFeatureEnabled && hasToken,
     });
-  // "Also Brought Together" — store-scoped recommended items.
+  // "Also Brought Together" - store-scoped recommended items.
   // The /store/[id] route param is the slug, so use the numeric id from
   // storeDetails instead.
   const { data: suggestedItemsRaw } = useGetSuggestedItems({
@@ -907,7 +907,7 @@ const StoreCartSidebar = ({
     const amountToReachMin = Math.max(0, minOrderAmount - cartSubtotal);
 
     if (!qualifiesForOffer) {
-      // Below the min order amount — surface a single, actionable
+      // Below the min order amount - surface a single, actionable
       // "Add ৳X more to save" message regardless of benefit type.
       const amountToReachText = getAmountWithSign(amountToReachMin);
       return `${t("Add")} ${amountToReachText} ${t(
@@ -1043,7 +1043,7 @@ const StoreCartSidebar = ({
     const bundleDetails = item?.bundle_details;
     let unitPrice;
     if (bundleDetails?.bundle_id) {
-      // A bundle row's `price` is already the discounted bundle price — the
+      // A bundle row's `price` is already the discounted bundle price - the
       // "before discount" reference is `bundle_details.base_price`, or this
       // row's own discount never shows up in Items Total.
       unitPrice = Number(bundleDetails?.base_price) || 0;
@@ -1452,7 +1452,7 @@ const StoreCartSidebar = ({
 
                 <FreeDeliveryHint zoneData={zoneData} sx={{ mt: 1 }} />
 
-                {/* Add To Monthly Order — grocery & pharmacy only, hidden when any cart item is a flash sale */}
+                {/* Add To Monthly Order - grocery & pharmacy only, hidden when any cart item is a flash sale */}
                 {[ModuleTypes.GROCERY, ModuleTypes.PHARMACY].includes(
                   getCurrentModuleType(),
                 ) &&
@@ -1563,7 +1563,7 @@ const StoreCartSidebar = ({
                     </Stack>
                   )}
 
-                  {getCurrentModuleType() !== ModuleTypes.GROCERY && (
+                  {getCurrentModuleType() === ModuleTypes.FOOD && (
                     <Stack
                       direction="row"
                       alignItems="center"
@@ -1706,7 +1706,7 @@ const StoreCartSidebar = ({
                 for active members. Hidden entirely when the feature flag
                 (configData.pro_member_status) is off. */}
 
-                {/* Also Brought Together — falls back to demo data when the
+                {/* Also Brought Together - falls back to demo data when the
                 backend hasn't returned related_items yet. */}
                 {(() => {
                   const broughtItems = suggestedItems;
@@ -1828,7 +1828,7 @@ const StoreCartSidebar = ({
                         />
                       </Box>
                     )}
-                  {/* Breakdown — animated expand/collapse */}
+                  {/* Breakdown - animated expand/collapse */}
                   <Collapse in={!subtotalCollapsed} timeout={250} unmountOnExit>
                     <Stack
                       spacing={0.75}

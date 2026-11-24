@@ -29,6 +29,7 @@ import {
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import TrendingDownIcon from "@mui/icons-material/TrendingDown";
 import TrendingFlatIcon from "@mui/icons-material/TrendingFlat";
+import Link from "next/link";
 import CustomContainer from "components/container";
 import MainLayout from "components/layout/MainLayout";
 import SimpleMobileHeader from "components/common/SimpleMobileHeader";
@@ -37,6 +38,7 @@ import { useTranslation } from "react-i18next";
 import { useGetAgroPrices } from "api-manage/hooks/react-query/trade/useGetAgroPrices";
 import { useGetFxRates } from "api-manage/hooks/react-query/trade/useGetFxRates";
 import { getCommonServerSideProps } from "utils/serverSidePropsHelper";
+import { GHANA_UNIT_GUIDE, getGhanaSeasonalGuide } from "utils/agroGuidance";
 import { useDispatch } from "react-redux";
 import { useGetConfigData } from "api-manage/hooks/useGetConfigData";
 import { setConfigData } from "redux/slices/configData";
@@ -78,7 +80,8 @@ const MarketPricesPage = ({ configData }) => {
   // the GH₵ source prices and say so explicitly.
   const activeCurrency = fxError ? "GHS" : currency;
   const rate = Number(fxData?.rates?.[activeCurrency] || 1);
-  const symbol = fxData?.symbols?.[activeCurrency] || "GH₵";
+  const rawSymbol = fxData?.symbols?.[activeCurrency] || "₵";
+  const symbol = activeCurrency === "GHS" ? "₵" : rawSymbol;
   const formatFx = (ghsAmount) => {
     const converted = Number(ghsAmount || 0) * rate;
     return `${symbol}${converted.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
@@ -86,6 +89,7 @@ const MarketPricesPage = ({ configData }) => {
   const prices = data?.prices || [];
   const categories = data?.categories || [];
   const hubs = data?.hubs || [];
+  const sources = data?.sources?.length ? data.sources : ["World Bank RTFP", "FAO FPMA / MoFA SRID"];
 
   return (
     <>
@@ -130,14 +134,30 @@ const MarketPricesPage = ({ configData }) => {
                       fontSize: "14px",
                     }}
                   >
-                    {t("Wholesale and retail commodity benchmarks managed from the Aduanefie trade desk across major Ghana market hubs.")}
+                    {t("Live wholesale & retail prices across Ghana's key agro hubs.")}
                   </Typography>
+                  <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap" useFlexGap sx={{ mt: 1 }}>
+                    <Chip
+                      size="small"
+                      label={`${t("Powered by")}: ${sources.join(" · ")}`}
+                      sx={{ fontSize: "11px", fontWeight: 600 }}
+                    />
+                    <Button
+                      component={Link}
+                      href="/live-farming"
+                      size="small"
+                      variant="text"
+                      sx={{ fontSize: "12px", fontWeight: 700, textTransform: "none", p: 0, minWidth: 0 }}
+                    >
+                      {t("Reserve growing crops →")}
+                    </Button>
+                  </Stack>
                 </Box>
               </Stack>
             </Paper>
 
-            {/* Stakeholder Value Cards */}
-            <Grid container spacing={2} sx={{ mb: 3 }}>
+            {/* Stakeholder Value Cards (desktop only to keep mobile compact) */}
+            <Grid container spacing={2} sx={{ mb: 3, display: { xs: "none", md: "flex" } }}>
               <Grid item xs={12} md={4}>
                 <Card
                   elevation={0}
@@ -240,7 +260,7 @@ const MarketPricesPage = ({ configData }) => {
                       disabled={fxError}
                       onChange={(e) => setCurrency(e.target.value)}
                     >
-                      <MenuItem value="GHS">GHS (GH₵)</MenuItem>
+                      <MenuItem value="GHS">₵ (Cedi)</MenuItem>
                       <MenuItem value="USD">USD ($)</MenuItem>
                       <MenuItem value="NGN">NGN (₦)</MenuItem>
                       <MenuItem value="XOF">XOF (CFA)</MenuItem>
@@ -254,9 +274,57 @@ const MarketPricesPage = ({ configData }) => {
 
             {fxError && (
               <Alert severity="info" sx={{ mb: 2.5, borderRadius: "12px" }}>
-                {t("Live exchange rates are unavailable. Showing GH₵ reference prices.")}
+                {t("Live exchange rates are unavailable. Showing ₵ reference prices.")}
               </Alert>
             )}
+
+            {/* Ghana Seasonal Crop Guide & Standard Unit Reference */}
+            {(() => {
+              const guide = getGhanaSeasonalGuide();
+              return (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: { xs: 2, md: 2.5 },
+                    mb: 2.5,
+                    borderRadius: "12px",
+                    border: `1px solid ${theme.palette.divider}`,
+                    bgcolor: alpha(theme.palette.success.main, 0.04),
+                  }}
+                >
+                  <Stack spacing={1.25}>
+                    <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ sm: "center" }} spacing={1}>
+                      <Typography sx={{ fontWeight: 700, fontSize: "14px", color: theme.palette.text.primary }}>
+                        {t("Ghana Seasonal Supply")}: {guide.seasonName} ({guide.monthsLabel})
+                      </Typography>
+                      <Typography sx={{ fontSize: "12px", color: theme.palette.text.secondary }}>
+                        {t("Next harvest")}: {guide.harvestSoon}
+                      </Typography>
+                    </Stack>
+                    <Stack direction="row" spacing={0.75} alignItems="center" flexWrap="wrap" useFlexGap>
+                      <Typography sx={{ fontSize: "12px", fontWeight: 600, color: theme.palette.text.secondary }}>
+                        {t("Best Value / Peak Now:")}
+                      </Typography>
+                      {guide.peakCrops.map((crop) => (
+                        <Chip
+                          key={crop}
+                          component={Link}
+                          href={`/search?search_value=${encodeURIComponent(crop)}`}
+                          clickable
+                          size="small"
+                          label={crop}
+                          sx={{ fontSize: "11.5px", fontWeight: 600, height: 24 }}
+                        />
+                      ))}
+                    </Stack>
+                    <Typography sx={{ fontSize: "11.5px", color: theme.palette.text.secondary }}>
+                      <strong>{t("Standard Ghana Units")}:</strong>{" "}
+                      {GHANA_UNIT_GUIDE.map((u) => `${u.label} (${u.approx})`).join(" · ")}
+                    </Typography>
+                  </Stack>
+                </Paper>
+              );
+            })()}
 
             {/* Price Table */}
             <Box sx={{ display: { xs: "none", md: "block" } }}>
@@ -282,18 +350,19 @@ const MarketPricesPage = ({ configData }) => {
                     <TableCell align="right" sx={{ fontWeight: 700, whiteSpace: "nowrap" }}>{t("Retail Spread")}</TableCell>
                     <TableCell align="center" sx={{ fontWeight: 700, whiteSpace: "nowrap" }}>{t("Trend")}</TableCell>
                     <TableCell sx={{ fontWeight: 700, whiteSpace: "nowrap" }}>{t("Source")}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 700, whiteSpace: "nowrap" }}>{t("Actions")}</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {isLoading ? (
                     [1, 2, 3, 4, 5].map((i) => (
                       <TableRow key={i}>
-                        <TableCell colSpan={8}><Skeleton height={36} /></TableCell>
+                        <TableCell colSpan={9}><Skeleton height={36} /></TableCell>
                       </TableRow>
                     ))
                   ) : pricesError ? (
                     <TableRow>
-                      <TableCell colSpan={8} align="center" sx={{ py: 4, color: "text.secondary" }}>
+                      <TableCell colSpan={9} align="center" sx={{ py: 4, color: "text.secondary" }}>
                         <Stack spacing={1.5} alignItems="center">
                           <Typography>{t("Could not load market prices.")}</Typography>
                           <Button size="small" onClick={() => refetchPrices()}>
@@ -304,7 +373,7 @@ const MarketPricesPage = ({ configData }) => {
                     </TableRow>
                   ) : prices.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} align="center" sx={{ py: 4, color: "text.secondary" }}>
+                      <TableCell colSpan={9} align="center" sx={{ py: 4, color: "text.secondary" }}>
                         {t("No market price data yet.")}
                       </TableCell>
                     </TableRow>
@@ -348,6 +417,28 @@ const MarketPricesPage = ({ configData }) => {
                           </TableCell>
                           <TableCell>
                             <Chip size="small" label={row.source_platform} sx={{ fontSize: "11px", fontWeight: 600 }} />
+                          </TableCell>
+                          <TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
+                            <Stack direction="row" spacing={0.75} justifyContent="flex-end">
+                              <Button
+                                component={Link}
+                                href={`/search?search_value=${encodeURIComponent(row.commodity || "")}`}
+                                size="small"
+                                variant="contained"
+                                sx={{ fontSize: "11.5px", py: 0.35, px: 1.2, textTransform: "none", borderRadius: "7px" }}
+                              >
+                                {t("Shop")}
+                              </Button>
+                              <Button
+                                component={Link}
+                                href={`/trade?commodity=${encodeURIComponent(row.commodity || "")}&unit=${encodeURIComponent(row.unit || "")}#rfq`}
+                                size="small"
+                                variant="outlined"
+                                sx={{ fontSize: "11.5px", py: 0.35, px: 1.1, textTransform: "none", borderRadius: "7px" }}
+                              >
+                                {t("Bulk RFQ")}
+                              </Button>
+                            </Stack>
                           </TableCell>
                         </TableRow>
                       );
@@ -427,7 +518,29 @@ const MarketPricesPage = ({ configData }) => {
                               </Typography>
                             </Box>
                           </Stack>
-                          <Chip size="small" label={row.source_platform} sx={{ mt: 1.5, fontSize: "11px" }} />
+                          <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1} sx={{ mt: 1.5 }} flexWrap="wrap" useFlexGap>
+                            <Chip size="small" label={row.source_platform} sx={{ fontSize: "11px" }} />
+                            <Stack direction="row" spacing={0.75}>
+                              <Button
+                                component={Link}
+                                href={`/search?search_value=${encodeURIComponent(row.commodity || "")}`}
+                                size="small"
+                                variant="contained"
+                                sx={{ fontSize: "11.5px", py: 0.35, px: 1.25, textTransform: "none", borderRadius: "7px" }}
+                              >
+                                {t("Shop")}
+                              </Button>
+                              <Button
+                                component={Link}
+                                href={`/trade?commodity=${encodeURIComponent(row.commodity || "")}&unit=${encodeURIComponent(row.unit || "")}#rfq`}
+                                size="small"
+                                variant="outlined"
+                                sx={{ fontSize: "11.5px", py: 0.35, px: 1.1, textTransform: "none", borderRadius: "7px" }}
+                              >
+                                {t("Bulk RFQ")}
+                              </Button>
+                            </Stack>
+                          </Stack>
                         </CardContent>
                       </Card>
                     );

@@ -9,19 +9,36 @@ import {
   group_buy_leave_api,
   group_buy_cancel_api,
   group_buy_quote_api,
+  group_buy_members_api,
+  group_buy_messages_api,
+  group_buy_invite_api,
+  group_buy_verification_api,
 } from "api-manage/ApiRoutes";
 
-const identity = () =>
-  getToken() ? {} : { guest_id: getGuestId() || `guest_${Date.now()}` };
+// A stable guest id matters here: members, chat and checkout all scope the
+// caller by this value. Generating a fresh one per call made the same guest
+// look like a different member on every request.
+const identity = () => {
+  if (getToken()) return {};
+  let guestId = getGuestId();
+  if (!guestId) {
+    guestId = `guest_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("guest_id", guestId);
+    }
+  }
+  return { guest_id: guestId };
+};
 
-export const useGetGroupBuys = ({ status = "all", country, moduleId, enabled = true } = {}) =>
+export const useGetGroupBuys = ({ status = "all", country, moduleId, allModules = false, enabled = true } = {}) =>
   useQuery(
-    ["group-buys", status, country, moduleId],
+    ["group-buys", status, country, moduleId, allModules],
     async () => {
       const params = new URLSearchParams();
       if (status && status !== "all") params.set("status", status);
       if (country) params.set("country", country);
       if (moduleId) params.set("module_id", moduleId);
+      if (allModules) params.set("all_modules", "1");
       const qs = params.toString();
       const { data } = await MainApi.get(`${group_buys_api}${qs ? `?${qs}` : ""}`);
       return data;
@@ -91,6 +108,119 @@ const groupAction = (urlBuilder, invalidate = true) => {
 export const useJoinGroupBuy = () => groupAction(group_buy_join_api);
 export const useLeaveGroupBuy = () => groupAction(group_buy_leave_api);
 export const useCancelGroupBuy = () => groupAction(group_buy_cancel_api);
+
+export const useUpdateGroupBuy = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async ({ id, payload }) => {
+      const { data } = await MainApi.put(group_buy_detail_api(id), {
+        ...identity(),
+        ...payload,
+      });
+      return data?.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("group-buys");
+        queryClient.invalidateQueries("group-buy");
+      },
+    }
+  );
+};
+
+export const useGetGroupBuyMembers = (id, enabled = true) =>
+  useQuery(
+    ["group-buy", id, "members"],
+    async () => {
+      const { data } = await MainApi.get(group_buy_members_api(id), {
+        params: identity(),
+      });
+      return data?.data || [];
+    },
+    { enabled: Boolean(id) && enabled, staleTime: 15 * 1000 }
+  );
+
+export const useGetGroupBuyMessages = (id, enabled = true) =>
+  useQuery(
+    ["group-buy", id, "messages"],
+    async () => {
+      const { data } = await MainApi.get(group_buy_messages_api(id), {
+        params: { ...identity(), limit: 100 },
+      });
+      return data?.data || [];
+    },
+    // Low-bandwidth polling: 8s is enough for a group chat and avoids a
+    // realtime transport on metered mobile connections.
+    { enabled: Boolean(id) && enabled, refetchInterval: enabled ? 8000 : false }
+  );
+
+export const useSendGroupBuyMessage = (id) => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async (message) => {
+      const { data } = await MainApi.post(group_buy_messages_api(id), {
+        ...identity(),
+        message,
+      });
+      return data?.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["group-buy", id, "messages"]);
+      },
+    }
+  );
+};
+
+export const useGetOrganizerVerification = (enabled = true, countryCode = "GH") => {
+  const hasToken =
+    typeof window !== "undefined" && Boolean(localStorage.getItem("token"));
+  return useQuery(
+    ["group-buy", "verification", countryCode],
+    async () => {
+      const { data } = await MainApi.get(group_buy_verification_api, {
+        params: { country_code: countryCode },
+      });
+      return data?.data;
+    },
+    { enabled: Boolean(enabled && hasToken), staleTime: 60 * 1000, retry: false }
+  );
+};
+
+export const useSubmitOrganizerVerification = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async (payload) => {
+      // Accept the legacy string form during rollout; new callers send an
+      // explicit object with the market country code.
+      const body =
+        typeof payload === "string"
+          ? { identity_last4: payload, ghana_card_last4: payload, country_code: "GH" }
+          : {
+              identity_last4: payload?.identity_last4,
+              country_code: payload?.country_code || "GH",
+            };
+      const { data } = await MainApi.post(group_buy_verification_api, body);
+      return data?.data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["group-buy", "verification"]);
+        queryClient.invalidateQueries("group-buys");
+        queryClient.invalidateQueries("group-buy");
+      },
+    }
+  );
+};
+
+export const useInviteToGroupBuy = (id) =>
+  useMutation(async ({ email, message }) => {
+    const { data } = await MainApi.post(group_buy_invite_api(id), {
+      email,
+      message,
+    });
+    return data;
+  });
 
 export const useGetGroupBuyQuote = (id, destinationCountry, enabled = true) =>
   useQuery(

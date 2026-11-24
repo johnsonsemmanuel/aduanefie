@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { Typography } from "@mui/material";
 // import { useGetRecommendProductsForHome } from "api-manage/hooks/react-query/useGetRecommendProductsForHome";
-// replaced with useGetMostReviewed — Love Item section now shows best reviewed items (same card, same data shape)
+// replaced with useGetMostReviewed - Love Item section now shows best reviewed items (same card, same data shape)
 import useGetMostReviewed from "api-manage/hooks/react-query/useGetMostReviewed";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";

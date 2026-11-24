@@ -6,7 +6,7 @@ const useHappyHourActive = () => {
   const happyHour = data?.is_running ? data?.happy_hour : null;
 
   // Anchored to the server-computed `remaining_seconds` at response time, so
-  // the countdown is immune to client clock / timezone drift — unlike parsing
+  // the countdown is immune to client clock / timezone drift - unlike parsing
   // `ends_at` locally.
   const [expireAt, setExpireAt] = useState(null);
   useEffect(() => {

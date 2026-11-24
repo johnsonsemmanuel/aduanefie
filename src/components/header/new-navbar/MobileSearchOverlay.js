@@ -57,7 +57,7 @@ const MobileSearchOverlay = ({ open, onClose }) => {
           },
         }}
       >
-        {/* Top nav: X close — search input — arrow submit */}
+        {/* Top nav: X close - search input - arrow submit */}
         <Stack
           direction="row"
           alignItems="center"

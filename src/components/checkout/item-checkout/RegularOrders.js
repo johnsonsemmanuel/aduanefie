@@ -130,7 +130,7 @@ const RegularOrders = (props) => {
 						{(() => {
 							// Addons are never discounted (mirrors the order-details API,
 							// which always keeps `addon_discount` separate from the item's
-							// own discount) — so the % / fixed discount applies only to the
+							// own discount) - so the % / fixed discount applies only to the
 							// base item price, and the addon total is added back afterward.
 							const baseOriginalPrice = handleProductValueWithOutDiscount(item);
 							const addonTotal = selectedAddonsTotal(item?.selectedAddons);
@@ -170,7 +170,7 @@ const RegularOrders = (props) => {
 							);
 						})()}
 						{/* `!== 0` was true for `undefined` too, and cart items carry the
-						    list-shaped payload which omits this flag entirely — so the
+						    list-shaped payload which omits this flag entirely - so the
 						    label showed on every product, pharmacy or not. Only show it
 						    when the API explicitly says it is required. */}
 						{item?.is_prescription_required === 1 && (

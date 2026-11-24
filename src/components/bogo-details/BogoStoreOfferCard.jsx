@@ -31,7 +31,7 @@ const StoreLogo = styled(Box)(({ theme }) => ({
   border: `1px solid ${theme.palette.customColor.tagBg}`,
 }));
 
-// Overlapping circular thumbnails with a "+N" overflow badge — same visual
+// Overlapping circular thumbnails with a "+N" overflow badge - same visual
 // convention as `ItemAvatars` in components/cards/newCard/CartStoreCard.js.
 const ItemAvatars = ({ items = [], size, max = 2 }) => {
   const theme = useTheme();
@@ -88,7 +88,7 @@ const ItemAvatars = ({ items = [], size, max = 2 }) => {
   );
 };
 
-// `bundle` is one row of `GET /bogo/offers/{id}`'s `content.data` — one
+// `bundle` is one row of `GET /bogo/offers/{id}`'s `content.data` - one
 // store's terms for the offer: { bundle_id, store, buy_items, free_items,
 // bundle_price, original_price, final_price, ... }. See §5.3 of the BOGO API guide.
 const BogoStoreOfferCard = ({ bundle, onClick }) => {

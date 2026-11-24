@@ -23,7 +23,7 @@ const ALLOWED_PATHNAMES = new Set([
   "/all-stores",
 ]);
 
-/** Abbreviate a number with currency symbol — e.g. 1200 → "$ 1.2k" */
+/** Abbreviate a number with currency symbol - e.g. 1200 → "$ 1.2k" */
 const abbreviateAmount = (amount) => {
   const { configData } = store?.getState()?.configData || {};
   const symbol = configData?.currency_symbol || "$";
@@ -63,12 +63,12 @@ const FloatingCartButton = () => {
   const isAllowedPage = ALLOWED_PATHNAMES.has(router.pathname);
   const { refetch } = useGetGroupedCart();
 
-  // Badge count — current module items only
+  // Badge count - current module items only
   const cartItems = getCartListModuleWise(cartList) ?? [];
   const itemCount = cartItems.length;
 
   // Grand total = sum of every cart line's (price × quantity).
-  // `price` on the cart line already includes variation/addon pricing — prefer
+  // `price` on the cart line already includes variation/addon pricing - prefer
   // it over `item.price`, which is only the base item price.
   const lineTotal = (ci) =>
     (ci?.price ?? ci?.item?.price ?? 0) * (ci?.quantity ?? 1);
@@ -151,7 +151,7 @@ const FloatingCartButton = () => {
                 color: theme.palette.text.primary,
               }}
             />
-            {/* Badge — top-right of the icon */}
+            {/* Badge - top-right of the icon */}
             <Box
               sx={{
                 position: "absolute",

@@ -59,7 +59,7 @@ const DeliveryManTip = ({
       // Anything not in the default pill list is treated as a custom amount.
       if (!DEFAULT_TIPS.includes(saved)) setIsCustom(true);
     } catch {
-      /* localStorage unavailable — ignore */
+      /* localStorage unavailable - ignore */
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -67,7 +67,7 @@ const DeliveryManTip = ({
   // Persist whenever the checkbox is on and the committed tip changes.
   // We watch `deliveryTip` (the parent's debounced value) rather than the
   // raw `fieldValue` so the custom-input flow doesn't write on every
-  // keystroke — the parent's 300ms debounce coalesces them for us.
+  // keystroke - the parent's 300ms debounce coalesces them for us.
   useEffect(() => {
     const key = buildSavedTipKey();
     if (!key) return;
@@ -78,7 +78,7 @@ const DeliveryManTip = ({
         window.localStorage.removeItem(key);
       }
     } catch {
-      /* localStorage unavailable — ignore */
+      /* localStorage unavailable - ignore */
     }
   }, [saveForLater, deliveryTip]);
 

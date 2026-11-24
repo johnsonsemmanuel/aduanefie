@@ -23,7 +23,7 @@ const BannerShell = styled(Stack)(({ theme }) => ({
 
 // `storeId` (store-details page): gates on this store's own BOGO offers
 // instead of the home `is_live` flag. `onClick`: overrides the default
-// navigation to /bogo-list — e.g. the store-details page opens its own
+// navigation to /bogo-list - e.g. the store-details page opens its own
 // offers drawer instead.
 const BogoBanner = ({ storeId, onClick } = {}) => {
   const theme = useTheme();

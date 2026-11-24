@@ -3,6 +3,7 @@ import { onSingleErrorResponse } from "../../../api-error-response/ErrorResponse
 import MainApi from "api-manage/MainApi";
 import { top_offer_near_me } from "api-manage/ApiRoutes";
 import { getModuleId } from "helper-functions/getModuleId";
+import { readCurrentLocation } from "helper-functions/validLocation";
 import { getApiCollection } from "../../../getApiContent";
 
 const getTopOffers = async (sortby,searchKey,type) => {
@@ -11,8 +12,12 @@ const getTopOffers = async (sortby,searchKey,type) => {
 };
 
 export default function useGetTopOffers(sortby,searchKey,type) {
-	return useQuery(["top-offer-near-me",getModuleId()], () => getTopOffers(sortby,searchKey,type), {
-		enabled: true,
+	const currentLocation = typeof window !== "undefined"
+		? readCurrentLocation(window.localStorage.getItem("currentLatLng"))
+		: null;
+
+	return useQuery(["top-offer-near-me",getModuleId(),currentLocation?.lat,currentLocation?.lng], () => getTopOffers(sortby,searchKey,type), {
+		enabled: !!currentLocation,
 		staleTime: 60 * 1000,
 		cacheTime: 60 * 1000,
 		onError: onSingleErrorResponse,

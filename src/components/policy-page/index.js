@@ -6,6 +6,7 @@ import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style
 import { Skeleton } from "@mui/material";
 import { isObjectEmpty } from "../../utils/CustomFunctions";
 import CustomContainer from "../container";
+import { useSanitizedRichText } from "utils/sanitizeRichText";
 export const PolicyShimmer = () => (
   <CustomStackFullWidth>
     <Skeleton variant="text" width="100%" height="20px" />
@@ -15,6 +16,7 @@ export const PolicyShimmer = () => (
 );
 const PolicyPage = (props) => {
   const { title, data, isFetching } = props;
+  const safeData = useSanitizedRichText(data);
   return (
     <CustomContainer>
       <Box minHeight="80vh">
@@ -35,7 +37,7 @@ const PolicyPage = (props) => {
               ) : (
                 data &&
                 !isObjectEmpty(data) && (
-                  <div dangerouslySetInnerHTML={{ __html: data }}></div>
+                  <div dangerouslySetInnerHTML={{ __html: safeData }}></div>
                 )
               )}
             </Box>

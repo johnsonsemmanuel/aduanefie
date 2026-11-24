@@ -68,7 +68,7 @@ const StoreDetailsSkeleton = () => {
           {/* Main column */}
           <Box sx={{ flex: { xs: "1 1 auto", md: 8.5 }, minWidth: 0 }}>
             <CustomStackFullWidth spacing={1.5}>
-              {/* Hero card — info left, banner/logo right */}
+              {/* Hero card - info left, banner/logo right */}
               <Box
                 sx={{
                   backgroundColor: "background.paper",
@@ -186,7 +186,7 @@ const StoreDetailsSkeleton = () => {
             </CustomStackFullWidth>
           </Box>
 
-          {/* Cart sidebar column — desktop only */}
+          {/* Cart sidebar column - desktop only */}
           <Box
             sx={{
               display: { xs: "none", md: "block" },

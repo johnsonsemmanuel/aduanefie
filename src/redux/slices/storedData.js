@@ -99,7 +99,7 @@ export const storedDataSlice = createSlice({
     },
     // Clears the module-scoped lists on a module switch. `landingPage` is
     // global CMS content and `searchPlaceholderCategories` carries its own
-    // module tag, so neither is what this reset is for — dropping them just
+    // module tag, so neither is what this reset is for - dropping them just
     // forces a needless refetch on the next page load.
     setResetStoredData: (state) => ({
       ...initialState,

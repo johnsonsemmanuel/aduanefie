@@ -73,10 +73,10 @@ export interface ChatBogoOffer {
   get_qty?: number;
 }
 
-// A bundle suggestion card — same shape as the `bundles` row nested under a
+// A bundle suggestion card - same shape as the `bundles` row nested under a
 // store in GET .../get-combined-data (one summary thumbnail, not a
 // per-item image set). Carries enough of its owning store to navigate there
-// — unlike StackFood's bogo bundle (which deep-links to the offer page), a
+// - unlike StackFood's bogo bundle (which deep-links to the offer page), a
 // 6amMart bundle belongs to one store and has no separate details page, so
 // the card opens that store instead.
 export interface ChatBundle {
@@ -88,7 +88,7 @@ export interface ChatBundle {
   base_price?: number;
   bundle_price?: number;
   discount_percentage?: number;
-  // Names only, no images — what the backend actually sends. Shown as a
+  // Names only, no images - what the backend actually sends. Shown as a
   // tooltip on the item count instead of per-item avatars.
   member_items?: string[];
   store_id?: number;
@@ -152,7 +152,7 @@ export interface ChatConversation {
   messages?: ChatMessage[];
   isDraft?: boolean;
   // Module the conversation was created under (from AiChatConversationApi.module_id).
-  // The active site module can change after a conversation is created — items
+  // The active site module can change after a conversation is created - items
   // rendered in its history still belong to THIS module, not whatever is
   // currently active, so redirects/quick-view must key off this, not
   // getCurrentModuleType().
@@ -211,7 +211,7 @@ export interface AiChatMessagesResponse {
 }
 
 // Persisted messages group the cart under metadata.cart.stores[].items[]
-// while the live send response uses a flat metadata.cart_items — flatten the
+// while the live send response uses a flat metadata.cart_items - flatten the
 // grouped shape (carrying each store's id/name onto its items) so the UI can
 // always read cart_items.
 const flattenCartStores = (
@@ -228,7 +228,7 @@ const flattenCartStores = (
 };
 
 // The messages API may deliver `metadata` as a JSON string (unparsed DB
-// column) — normalize so consumers can always read metadata.cart_items etc.
+// column) - normalize so consumers can always read metadata.cart_items etc.
 export const normalizeMetadata = (
   metadata: unknown
 ): ChatMessageMetadata | null => {

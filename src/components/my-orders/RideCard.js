@@ -10,7 +10,7 @@ const prettyStatus = (status = "") =>
   status.replaceAll("_", " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
 /**
- * RideShare order card — display only (no click / details action).
+ * RideShare order card - display only (no click / details action).
  *
  * Kept as a separate component from NewOrderCard on purpose: the ride-share
  * payload uses a completely different key shape (driver / vehicle / time / fare

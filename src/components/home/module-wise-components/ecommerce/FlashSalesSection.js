@@ -40,7 +40,7 @@ const Container = styled(Box)(({ theme }) => ({
   },
 }));
 
-// absolute bg image overlay — avoids ::before emotion issues
+// absolute bg image overlay - avoids ::before emotion issues
 const BgOverlay = styled(Box)(({ theme }) => ({
   position: "absolute",
   top: 0,

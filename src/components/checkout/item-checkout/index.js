@@ -16,6 +16,7 @@ import { isBundleCartRow } from "helper-functions/bundleCartRow";
 import { getStoresOrRestaurants } from "helper-functions/getStoresOrRestaurants";
 import { getGuestId, getToken } from "helper-functions/getToken";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
+import { getCurrencyOptions, DEFAULT_COUNTRY } from "utils/marketProfiles";
 import moment from "moment/moment";
 import Router from "next/router";
 import React, { useEffect, useMemo, useReducer, useState, useRef } from "react";
@@ -130,7 +131,7 @@ const ItemCheckout = (props) => {
   // Lane picked from the cross-border shipping selector. Shape mirrors one
   // entry of `cross-border/shipping-options` (`shipping_rate_id`,
   // `shipping_method_id`, `amount`, `landed_cost`, …). Only the ids go back to
-  // the server — the amount is display-only and is re-quoted at placement.
+  // the server - the amount is display-only and is re-quoted at placement.
   const [shippingOption, setShippingOption] = useState(null);
   const { couponInfo } = useSelector((state) => state.profileInfo);
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -147,8 +148,16 @@ const ItemCheckout = (props) => {
   const [total_order_amount, setTotalOrderAmount] = useState(0);
   const [deliveryTip, setDeliveryTip] = useState(0);
   const [deliveryFee, setDeliveryFee] = useState(0);
-  const [selectedCurrency, setSelectedCurrency] = useState({ code: "GHS", symbol: "GH₵", name: "Ghanaian Cedi" });
-  const [currencies, setCurrencies] = useState([]);
+  const [selectedCurrency, setSelectedCurrency] = useState(
+    getCurrencyOptions(DEFAULT_COUNTRY)[0] || {
+      code: "GHS",
+      symbol: "₵",
+      name: "Ghanaian Cedi",
+    },
+  );
+  const [currencies, setCurrencies] = useState(
+    getCurrencyOptions(DEFAULT_COUNTRY),
+  );
   const [deliveryFeeBeforeProDiscount, setDeliveryFeeBeforeProDiscount] =
     useState(0);
   const [minDeliveryCharge, setMinDeliveryCharge] = useState(0);
@@ -264,6 +273,42 @@ const ItemCheckout = (props) => {
     Boolean(storeCountry) &&
     Boolean(destinationCountry) &&
     storeCountry !== destinationCountry;
+
+  // Auto-select a valid default payment method so Place Order never fails silently
+  // with "payment method not selected" when the customer hasn't clicked a radio yet.
+  useEffect(() => {
+    if (paymentMethod) return;
+    if (
+      configData?.cash_on_delivery &&
+      storeData?.cash_on_delivery &&
+      !isCrossBorder
+    ) {
+      setPaymentMethod("cash_on_delivery");
+      return;
+    }
+    const firstGateway = configData?.active_payment_method_list?.[0]?.gateway;
+    if (configData?.digital_payment && firstGateway) {
+      setPaymentMethod(firstGateway);
+      return;
+    }
+    if (
+      token &&
+      configData?.customer_wallet_status === 1 &&
+      Number(customerData?.data?.wallet_balance ?? 0) > 0
+    ) {
+      setPaymentMethod("wallet");
+    }
+  }, [
+    paymentMethod,
+    configData?.cash_on_delivery,
+    configData?.digital_payment,
+    configData?.active_payment_method_list,
+    configData?.customer_wallet_status,
+    storeData?.cash_on_delivery,
+    isCrossBorder,
+    token,
+    customerData?.data?.wallet_balance,
+  ]);
   // Bundles and BOGO rows have no `item_id` the catalogue can re-price, so
   // they cannot be quoted for an international lane. Surface that instead of
   // silently dropping them from the freight calculation.
@@ -277,7 +322,7 @@ const ItemCheckout = (props) => {
     }
     return null;
   }, [isCrossBorder, checkoutProductList, t]);
-  // Quantity only — the server resolves price, HS code and billable weight
+  // Quantity only - the server resolves price, HS code and billable weight
   // from the catalogue, never from this payload.
   const crossBorderLines = useMemo(() => {
     if (!isCrossBorder) return [];
@@ -365,24 +410,21 @@ const ItemCheckout = (props) => {
   }, []);
 
   useEffect(() => {
-    // Load available currencies for multi-currency support
-    const africanCurrencies = [
-      { code: "GHS", symbol: "GH₵", name: "Ghanaian Cedi" },
-      { code: "NGN", symbol: "₦", name: "Nigerian Naira" },
-      { code: "KES", symbol: "Ksh", name: "Kenyan Shilling" },
-      { code: "XAF", symbol: "FCFA", name: "CFA Franc BEAC" },
-      { code: "XOF", symbol: "CFA", name: "CFA Franc BCEAO" },
-      { code: "ZAR", symbol: "R", name: "South African Rand" },
-      { code: "USD", symbol: "$", name: "US Dollar" },
-      { code: "EUR", symbol: "€", name: "Euro" },
-      { code: "GBP", symbol: "£", name: "British Pound" },
-    ];
-    setCurrencies(africanCurrencies);
-    // Default to store's currency or GHS
-    const storeCurrency = storeData?.currency || "GHS";
-    const found = africanCurrencies.find(c => c.code === storeCurrency);
-    if (found) setSelectedCurrency(found);
-  }, [storeData]);
+    // The fulfilling store's market is the authority on which currency the
+    // order amount is denominated in. Order amounts are priced and quoted in
+    // the store's settlement currency (including cross-border landed cost), so
+    // the charge currency must match that market. Never offer an arbitrary
+    // global currency list; the backend rejects currencies outside the
+    // store market's presentment set.
+    const options = getCurrencyOptions(storeCountry, DEFAULT_COUNTRY);
+    setCurrencies(options);
+    const preferred = options[0];
+    if (preferred) {
+      setSelectedCurrency((current) =>
+        options.some((option) => option.code === current?.code) ? current : preferred
+      );
+    }
+  }, [storeCountry]);
   useEffect(() => {
     if (storeId) {
       refetch();
@@ -409,7 +451,7 @@ const ItemCheckout = (props) => {
   const { data: zoneData } = useQuery(
     ["zoneId", zoneLookupLatLng],
     // GoogleApi.getZoneId hands back the raw axios response (with the v4.2
-    // envelope already unwrapped onto `.data`) — every consumer below reads
+    // envelope already unwrapped onto `.data`) - every consumer below reads
     // `zoneData.zone_data` directly, so unwrap that last layer here instead
     // of leaving each call site to do it (most didn't, which is why
     // additional_delivery_option_status/pivot lookups silently came back
@@ -423,7 +465,7 @@ const ItemCheckout = (props) => {
 
   // `stores/details` no longer returns the store's latitude/longitude, so
   // distance-api was being called with `origin_lat=undefined` and answering
-  // 422 ("The origin lat must be a number") — and handleDistance's haversine
+  // 422 ("The origin lat must be a number") - and handleDistance's haversine
   // fallback used the same undefined coords, so the delivery fee had no usable
   // distance at all. Only call the API when we actually have both coordinate
   // pairs; otherwise fall back to `distance_km`, which the store payload does
@@ -611,7 +653,7 @@ const ItemCheckout = (props) => {
     });
   };
   // areaZip.summaryParams is keyed `areaId`/`zipCodeId` (useGetCheckoutSummary's
-  // param names) — the order-place API wants `area_id`/`zip_code_id`.
+  // param names) - the order-place API wants `area_id`/`zip_code_id`.
   const AREA_ZIP_BACKEND_KEY = { areaId: "area_id", zipCodeId: "zip_code_id" };
   const getAreaZipOrderParams = (summaryParams) =>
     Object.fromEntries(
@@ -621,7 +663,7 @@ const ItemCheckout = (props) => {
       ]),
     );
 
-  // profileInfo has no `.name` field — it's `f_name`/`l_name` (see
+  // profileInfo has no `.name` field - it's `f_name`/`l_name` (see
   // delivery-address/index.js, which already builds it this way).
   const profileFullName = [profileInfo?.f_name, profileInfo?.l_name]
     .filter(Boolean)
@@ -665,7 +707,7 @@ const ItemCheckout = (props) => {
       formData.append("order_type", orderType);
 
       // Delivery-speed selection (express / standard / slightly_delay).
-      // Skipped when a free-delivery coupon is applied — surcharge is moot.
+      // Skipped when a free-delivery coupon is applied - surcharge is moot.
       if (
         selectedDeliveryOption?.id != null &&
         couponDiscount?.coupon_type !== "free_delivery"
@@ -765,7 +807,11 @@ const ItemCheckout = (props) => {
         : 0;
       formData.append("extra_packaging_amount", resolvedPackagingAmount);
       formData.append("is_insured", isInsuranceApplied ? 1 : 0);
-      formData.append("cutlery", cartPrefs?.addCutlery ? 1 : cutlery ? 1 : 0);
+      const isFoodOrder = getCurrentModuleType() === "food";
+      formData.append(
+        "cutlery",
+        isFoodOrder && (cartPrefs?.addCutlery || cutlery) ? 1 : 0,
+      );
       formData.append(
         "unavailable_item_note",
         cartPrefs?.unavailableChoice ?? unavailable_item_note ?? "",
@@ -779,7 +825,9 @@ const ItemCheckout = (props) => {
       formData.append("password", formik.values.password);
       return formData;
     } else {
-      const resolvedCutlery = cartPrefs?.addCutlery ? 1 : cutlery ? 1 : 0;
+      const isFoodOrder = getCurrentModuleType() === "food";
+      const resolvedCutlery =
+        isFoodOrder && (cartPrefs?.addCutlery || cutlery) ? 1 : 0;
       const resolvedUnavailableNote =
         cartPrefs?.unavailableChoice ?? unavailable_item_note;
       const resolvedPackagingAmount = cartPrefs?.extraPackaging
@@ -936,11 +984,14 @@ const ItemCheckout = (props) => {
             orderMutation(order, {
               onSuccess: handleSuccessSecond,
               onError: (error) => {
-                error?.response?.data?.errors?.forEach((item) =>
-                  toast.error(item.message, {
-                    position: "bottom-right",
-                  }),
-                );
+                const firstMsg =
+                  error?.response?.data?.errors?.[0]?.message ||
+                  error?.response?.data?.message ||
+                  t("Could not place order. Please check your details.");
+                toast.error(firstMsg, {
+                  id: "order-place-error",
+                  position: "bottom-right",
+                });
               },
             });
           }
@@ -1054,11 +1105,14 @@ const ItemCheckout = (props) => {
             orderMutation(order, {
               onSuccess: handleSuccess,
               onError: (error) => {
-                error?.response?.data?.errors?.forEach((item) =>
-                  toast.error(item.message, {
-                    position: "bottom-right",
-                  }),
-                );
+                const firstMsg =
+                  error?.response?.data?.errors?.[0]?.message ||
+                  error?.response?.data?.message ||
+                  t("Could not place order. Please check your details.");
+                toast.error(firstMsg, {
+                  id: "order-place-error",
+                  position: "bottom-right",
+                });
               },
             });
           }
@@ -1075,15 +1129,11 @@ const ItemCheckout = (props) => {
     }
   };
 
-  // Literal keys per module — composing the key from the (already translated)
+  // Literal keys per module - composing the key from the (already translated)
   // getStoresOrRestaurants() output produces a string that never matches a
   // translation entry, so the toast showed untranslated mixed text.
   const storeCloseToast = () =>
-    toast.error(
-      getCurrentModuleType() === "food"
-        ? t("Restaurant is closed. Try again later.")
-        : t("Store is closed. Try again later."),
-    );
+    toast.error(t("Store is closed. Try again later."));
   //totalAmount
   const handlePlaceOrderBasedOnAvailability = () => {
     //cod -> cash on delivery
@@ -1140,6 +1190,12 @@ const ItemCheckout = (props) => {
     }
   };
   const placeOrder = () => {
+    if (!paymentMethod) {
+      toast.error(t("Please select a payment method to continue."), {
+        id: "payment-method-required",
+      });
+      return;
+    }
     // International checkout is priced by the shipping-options quote, not by
     // checkout-summary. Never let an order through without a lane the server
     // can re-quote, and never carry a lane from a different destination.
@@ -1170,7 +1226,7 @@ const ItemCheckout = (props) => {
     }
     // The server refused to quote this delivery (e.g. an area/zip the zone no
     // longer covers). The fee reads 0 out of the empty payload, so placing here
-    // would bill a price the server never agreed — stop instead.
+    // would bill a price the server never agreed - stop instead.
     if (quoteUnavailable) {
       toast.error(t("Delivery charge is unavailable for this address"));
       return;
@@ -1709,27 +1765,38 @@ const ItemCheckout = (props) => {
                     setRecurringFrequency={setRecurringFrequency}
                   />
 
-                  {/* Currency Selector */}
-                  <Box sx={{ mt: 2, mb: 1, px: 1, display: "flex", alignItems: "center", gap: 1 }}>
-                    <Typography variant="body2" fontWeight="600" sx={{ color: "text.secondary", minWidth: "100px" }}>
-                      {t("Currency")}
+                  {/* Currency is determined by the delivery country. */}
+                  <Box sx={{ mt: 2, mb: 1, px: 1 }}>
+                    <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
+                      <Typography variant="body2" fontWeight="600" sx={{ color: "text.secondary" }}>
+                        {t("Currency")}
+                      </Typography>
+                      {currencies.length === 1 ? (
+                        <Typography variant="body2" fontWeight="600">
+                          {selectedCurrency.code} - {selectedCurrency.name} ({selectedCurrency.symbol})
+                        </Typography>
+                      ) : (
+                        <Select
+                          value={selectedCurrency?.code || ""}
+                          onChange={(e) => {
+                            const found = currencies.find((c) => c.code === e.target.value);
+                            if (found) setSelectedCurrency(found);
+                          }}
+                          displayEmpty
+                          MenuProps={{ PaperProps: { style: { maxHeight: 200, overflowY: "auto" } } }}
+                          sx={{ width: 220 }}
+                        >
+                          {currencies.map((c) => (
+                            <MenuItem key={c.code} value={c.code}>
+                              {c.code} - {c.name} ({c.symbol})
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      )}
+                    </Stack>
+                    <Typography variant="caption" color="text.secondary">
+                      {t("Currency matches the seller's price. Cross-border conversion and duties are itemised in the summary.")}
                     </Typography>
-                    <Select
-                      value={selectedCurrency.code}
-                      onChange={(e) => {
-                        const found = currencies.find(c => c.code === e.target.value);
-                        if (found) setSelectedCurrency(found);
-                      }}
-                      displayEmpty
-                      MenuProps={{ PaperProps: { style: { maxHeight: 200, overflowY: "auto" } } }}
-                      sx={{ width: 200 }}
-                    >
-                      {currencies.map(c => (
-                        <MenuItem key={c.code} value={c.code}>
-                          {c.code} - {c.name} ({c.symbol})
-                        </MenuItem>
-                      ))}
-                    </Select>
                   </Box>
 
                   <PlaceOrder

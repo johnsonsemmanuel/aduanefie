@@ -20,7 +20,7 @@ const useGetRunningHappyHour = (enabled = true) => {
       enabled,
       cacheTime: 5 * 60 * 1000,
       refetchOnWindowFocus: false,
-      // Decorative banner — a failed lookup must stay silent, not surface an
+      // Decorative banner - a failed lookup must stay silent, not surface an
       // error toast, so no onSingleErrorResponse here.
       retry: false,
       onError: () => {},

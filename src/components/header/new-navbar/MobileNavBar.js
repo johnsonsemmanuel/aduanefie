@@ -10,6 +10,8 @@ import {
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import SwapHorizIcon from "@mui/icons-material/SwapHoriz";
 import ModeSwitcherTrigger from "components/module-select/ModeSwitcherTrigger";
+import { WHOLESALE_MODULE_ID } from "components/trade/tradeData";
+import { getModuleId } from "helper-functions/getModuleId";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -40,7 +42,7 @@ import useAnimatedSearchPlaceholder from "hooks/useAnimatedSearchPlaceholder";
 import { getServiceSections } from "components/home/module-wise-components/service/serviceSectionsConfig";
 
 /**
- * Mobile navbar — three sections (default state):
+ * Mobile navbar - three sections (default state):
  *   1) Top row: address (location) + cart icon
  *   2) Module tabs row: horizontally scrollable list of modules
  *   3) Search bar: full-width
@@ -190,7 +192,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
   // transform on AppBarStyle (see NavBar.style.js). Zero React re-renders
   // during scroll or while animating.
   // Disabled on section/category pages: the back+title bar must never
-  // slide away — it is the primary navigation anchor for that screen.
+  // slide away - it is the primary navigation anchor for that screen.
   useScrollCollapseClass(undefined, { enabled: !isSectionPage });
 
   // Measure the grey wrapper (address row + module tabs) so the CSS knows
@@ -226,25 +228,28 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
     }[getCurrentModuleType()];
     if (!sectionsFn) return [];
     try {
-      return sectionsFn() ?? [];
+      const list = sectionsFn() ?? [];
+      const activeId = selectedModule?.id ?? getModuleId();
+      const isWholesale = String(activeId) === String(WHOLESALE_MODULE_ID);
+      return isWholesale ? list : list.filter((s) => s.id !== "live-farming");
     } catch (e) {
       return [];
     }
-    // selectedModule?.module_type triggers recompute when module changes —
+    // selectedModule?.module_type triggers recompute when module changes -
     // getCurrentModuleType() reads localStorage and isn't tracked by React
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedModule?.module_type]);
 
-  // Map a section label/id to its Figma chip background tint
+  // Map a section label/id to consistent Aduanefie earth/olive chip tints
   const isDark = theme.palette.mode === "dark";
   const chipBgFor = (s) => {
     const key =
       (s.id || "").toLowerCase() + " " + (s.label || "").toLowerCase();
     if (/offer|discount|deal/.test(key))
-      return isDark ? "rgba(239,68,68,0.15)" : "#fee9e7";
-    if (/rate|top|popular|best/.test(key))
-      return isDark ? "rgba(234,179,8,0.15)" : "#fffbeb";
-    return isDark ? "rgba(59,130,246,0.15)" : "#f1f6fd";
+      return isDark ? "rgba(191,106,2,0.18)" : "#F6EBDC";
+    if (/live|farm|rate|top|popular|best/.test(key))
+      return isDark ? "rgba(139,159,105,0.20)" : "#EDF2E4";
+    return isDark ? "rgba(103,81,58,0.22)" : "#F3EDE4";
   };
 
   const goToSection = (s) => {
@@ -261,7 +266,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
     });
   };
 
-  // ── Module switching — always redirect to /home?module=... from any page ──
+  // ── Module switching - always redirect to /home?module=... from any page ──
   const handleSelectModule = (item) => {
     const isHome = router.pathname === "/home";
     const isSameModule = item?.id === selectedModule?.id;
@@ -322,7 +327,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
     "/service/provider/[id]",
     "/service/service-details/[id]",
     // These render SimpleMobileHeader in-page and MainLayout gives them a
-    // full-bleed mobile offset — showing the module bar as well produced a
+    // full-bleed mobile offset - showing the module bar as well produced a
     // double header (and would now produce two switcher triggers).
     "/service/all-providers",
     "/service/checkout",
@@ -335,6 +340,9 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
     "/trade/blocs",
     "/trade/blocs/[slug]",
     "/market-prices",
+    "/live-farming",
+    "/regional-tours",
+    "/become-a-marketer",
     "/group-buys",
     "/group-buys/[id]",
     "/campaigns",
@@ -432,7 +440,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
         {/* ── Grey header wrapper for Section 1 + 2 ──
             Kept at natural height; the collapse slides the whole fixed bar
             up by this wrapper's measured height (--mobile-nav-collapse).
-            The rows fade while sliding (opacity is compositor-friendly) —
+            The rows fade while sliding (opacity is compositor-friendly) -
             out quickly on hide, back in with a slight delay on show so the
             bar lands before the content reappears. */}
         <Box
@@ -460,7 +468,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                 minHeight: "36px",
               }}
             >
-              {/* Address column — title row + subtitle row */}
+              {/* Address column - title row + subtitle row */}
               <Box
                 ref={addressAnchorRef}
                 onClick={() => setAddressPopoverOpen(true)}
@@ -526,10 +534,10 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                 </Stack>
               </Box>
 
-              {/* Mode Switcher — shared trigger keeps availability and theming in sync with desktop */}
+              {/* Mode Switcher - shared trigger keeps availability and theming in sync with desktop */}
               <ModeSwitcherTrigger variant="mobile" />
 
-              {/* Cart / Bookings — hidden on parcel, shows bookings on service */}
+              {/* Cart / Bookings - hidden on parcel, shows bookings on service */}
               {getCurrentModuleType() === ModuleTypes.PARCEL ? null : getCurrentModuleType() === ModuleTypes.SERVICE ? (
                 <IconButton
                   onClick={() => router.push("/profile?page=my-orders")}
@@ -613,7 +621,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
             </Stack>
           </Box>
         </Box>
-        {/* ── Section 3: Search bar — home only, hidden for rental and parcel */}
+        {/* ── Section 3: Search bar - home only, hidden for rental and parcel */}
         {isHomePage &&
           getCurrentModuleType() !== ModuleTypes.RENTAL &&
           getCurrentModuleType() !== ModuleTypes.PARCEL &&
@@ -634,7 +642,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
                 onClick={() => setSearchOpen(true)}
                 sx={{
                   // Constant height: animating it would change the fixed
-                  // bar's layout height and shift the page content — the
+                  // bar's layout height and shift the page content - the
                   // collapse must stay transform-only.
                   height: "36px",
                   px: "12px",
@@ -677,9 +685,10 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
               sx={{
                 pl: "14px",
                 pr: "0px",
-                pb: "8px",
-                pt: "2px",
+                pb: "10px",
+                pt: "4px",
                 backgroundColor: theme.palette.background.paper,
+                borderBottom: `1px solid ${theme.palette.divider}`,
               }}
             >
               <Box

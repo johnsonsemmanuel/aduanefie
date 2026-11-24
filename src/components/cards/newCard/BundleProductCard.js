@@ -18,11 +18,11 @@ import BundleViewDrawer from "./BundleViewDrawer";
 
 // Figma Drop Shadow/200: black-100 (0.05)
 const GRID_SHADOW = "0px 1px 4px 0px rgba(0,0,0,0.05)";
-// Figma Drop Shadow/All side — used behind the "+N" counter pill
+// Figma Drop Shadow/All side - used behind the "+N" counter pill
 const COUNTER_SHADOW = "0px 0px 16px -1px rgba(0,0,0,0.1)";
 
-// ─── BundleGridContainer — the "Item" node: single padded/shadowed shell
-// (matches Figma exactly — no second box layered behind it, so there's
+// ─── BundleGridContainer - the "Item" node: single padded/shadowed shell
+// (matches Figma exactly - no second box layered behind it, so there's
 // nothing for a sub-pixel gap to reveal as a ghost outline) ────
 
 const BundleGridContainer = styled(Box)(({ theme }) => ({
@@ -38,7 +38,7 @@ const BundleGridContainer = styled(Box)(({ theme }) => ({
   flexShrink: 0,
 }));
 
-// ─── BundleTile — a single bordered/rounded image tile inside the grid ───────
+// ─── BundleTile - a single bordered/rounded image tile inside the grid ───────
 
 const BundleTile = styled(Box)(({ theme }) => ({
   position: "relative",
@@ -57,11 +57,11 @@ const BundleTile = styled(Box)(({ theme }) => ({
   },
 }));
 
-// ─── BundleImageGrid — 1 / 2 / 3 / 4+ layouts with a centered "+N" overlay ───
+// ─── BundleImageGrid - 1 / 2 / 3 / 4+ layouts with a centered "+N" overlay ───
 
 const BundleImageGrid = ({ images, alt, cartControlProps }) => {
   const theme = useTheme();
-  // Not filtering out falsy entries — a sub-item with no image still gets
+  // Not filtering out falsy entries - a sub-item with no image still gets
   // its own tile (NextImage placeholders it), so the tile count keeps
   // matching the bundle's actual item count.
   const list = Array.isArray(images) ? images : [];
@@ -174,7 +174,7 @@ const BundleImageGrid = ({ images, alt, cartControlProps }) => {
   );
 };
 
-// ─── BundleTileHorizontal — borderless rounded tile used in the horizontal grid
+// ─── BundleTileHorizontal - borderless rounded tile used in the horizontal grid
 const BundleTileHorizontal = styled(Box)(() => ({
   position: "relative",
   flex: "1 1 0",
@@ -202,11 +202,11 @@ const HORIZONTAL_ROWS = {
   ],
 };
 
-// ─── BundleImageGridHorizontal — 1 / 2 / 3 / 4+ layouts for the horizontal card
+// ─── BundleImageGridHorizontal - 1 / 2 / 3 / 4+ layouts for the horizontal card
 
 const BundleImageGridHorizontal = ({ images, alt, cartControlProps }) => {
   const theme = useTheme();
-  // See BundleImageGrid above — no filtering, so the tile count still
+  // See BundleImageGrid above - no filtering, so the tile count still
   // matches the bundle's actual item count when images are missing.
   const list = Array.isArray(images) ? images : [];
   const shown = list.slice(0, 4);
@@ -338,7 +338,7 @@ const BundleProductCard = ({
 
   const { cartList: aliasCartList } = useSelector((s) => s.cart);
 
-  // A bundle's cart row is atomic — id is always 0 and item is always null
+  // A bundle's cart row is atomic - id is always 0 and item is always null
   // per the API guide, so it can't be matched the way a regular product row
   // is. Match by bundle_details.bundle_id instead; mergeBundleRow/
   // removeBundleRow (from useCartListSync) key by bundle_group_id rather
@@ -381,7 +381,7 @@ const BundleProductCard = ({
   };
 
   // Sets an already-in-cart bundle straight to `newQuantity` in one API
-  // call — used by the drawer's quantity stepper + "Update" action, and by
+  // call - used by the drawer's quantity stepper + "Update" action, and by
   // the card's own +/- controls below.
   const handleSetQuantity = (newQuantity) => {
     if (!isInCart || updateLoading || newQuantity === isInCart.quantity) return;
@@ -419,7 +419,7 @@ const BundleProductCard = ({
     }
   };
 
-  // Clicking anywhere on a bundle card — not just the plus icon — always
+  // Clicking anywhere on a bundle card - not just the plus icon - always
   // opens the bundle contents drawer, never the single-item detail modal.
   const handleClick = () => {
     if (onCardClick) {
@@ -429,7 +429,7 @@ const BundleProductCard = ({
     setBundleDrawerOpen(true);
   };
 
-  // Plus-icon click never hits the API directly — it opens the bundle
+  // Plus-icon click never hits the API directly - it opens the bundle
   // contents drawer, where the actual add/increment/decrement happens.
   const handleAddClick = (e) => {
     e.stopPropagation();
@@ -437,7 +437,7 @@ const BundleProductCard = ({
   };
 
   // Bundle API (GET /bundle/home, /store-bundles, /{id}) already computes
-  // base_price/final_price/discount_percentage server-side — bill
+  // base_price/final_price/discount_percentage server-side - bill
   // final_price, not bundle_price (see the API guide's note on happy hour
   // replacing the bundle's own discount). Falls back to the older
   // discount/discount_type shape when final_price isn't present.
@@ -550,7 +550,7 @@ const BundleProductCard = ({
             borderRadius: "12px",
             cursor: "pointer",
             gap: { xs: "6px", md: "8px" },
-            // No overflow:hidden — the image grid is full-bleed here, so
+            // No overflow:hidden - the image grid is full-bleed here, so
             // clipping the wrapper would cut off its drop shadow.
           }}
         >

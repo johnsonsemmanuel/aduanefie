@@ -65,6 +65,7 @@ import {
 import TopBanner from "./top-banner";
 import ModuleSearchBanner from "./module-wise-components/shared/ModuleSearchBanner";
 import RideShareModuleLandingPage from "./module-wise-components/rideShare";
+import PickedForYouSection from "./for-you/PickedForYouSection";
 
 export const HomeComponentsWrapper = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -369,6 +370,9 @@ const HomePageComponents = ({
               </>
             )}
             {getModuleWiseComponents()}
+            {["grocery", "ecommerce", "food", "pharmacy"].includes(moduleType) && (
+              <PickedForYouSection />
+            )}
           </Box>
         </CustomStackFullWidth>
 
@@ -437,7 +441,7 @@ const HomePageComponents = ({
                   Date.now().toString()
                 );
                 // Permanently hide this specific incomplete order once the
-                // user dismisses the modal — the check at line 83
+                // user dismisses the modal - the check at line 83
                 // (`incomplete_order_hidden_${orderId}`) then short-circuits
                 // any future renders for that order.
                 const hiddenOrderId = failedPayment?.id;

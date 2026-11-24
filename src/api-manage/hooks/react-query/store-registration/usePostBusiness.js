@@ -8,7 +8,7 @@ const postData = async (businessData) => {
     `${store_business_plan}`,
     businessData
   );
-  // `redirect_link`/`insufficient_balance`/etc. live under `content` — the
+  // `redirect_link`/`insufficient_balance`/etc. live under `content` - the
   // caller reads them off the resolved value directly.
   return getApiContent(responseData);
 };

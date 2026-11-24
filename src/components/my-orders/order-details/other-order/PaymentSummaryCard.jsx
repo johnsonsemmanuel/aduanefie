@@ -141,7 +141,7 @@ const PaymentSummaryCard = ({
       if (paymentMethod === "cash_on_delivery" || paymentMethod === "wallet") {
         const resolvedMethod =
           paymentMethod === "cash_on_delivery" ? "cash_after_service" : "wallet";
-        // Re-selecting the booking's current payment method is a no-op —
+        // Re-selecting the booking's current payment method is a no-op -
         // don't hit the API again.
         if (resolvedMethod === summaryData?.payment_method) {
           toast.error(t("This is already your selected payment method"));

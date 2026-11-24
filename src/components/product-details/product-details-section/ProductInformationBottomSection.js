@@ -61,7 +61,7 @@ const ProductInformationBottomSection = ({
 
   // Match by product id + store_id only. Variation is intentionally NOT
   // compared here: the modal usually auto-selects the first variation on
-  // open, which often doesn't match what's already in cart — that would
+  // open, which often doesn't match what's already in cart - that would
   // keep the button stuck on "Add to Cart" even when the item is in cart.
   // String-coerce both sides so number-vs-string id/store_id mismatches
   // (a common shape inconsistency between detail API and cart API) match.

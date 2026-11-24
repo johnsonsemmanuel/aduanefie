@@ -1,4 +1,4 @@
-// Placeholder — real hook shipped with the Service addon.
+// Placeholder - real hook shipped with the Service addon.
 export const useGetServiceItemDetails = (..._args) => ({
   data: undefined,
   error: null,

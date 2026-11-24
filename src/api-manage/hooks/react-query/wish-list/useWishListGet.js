@@ -6,7 +6,7 @@ import { getApiContent } from "../../../getApiContent";
 import { getToken } from "helper-functions/getToken";
 
 const getData = async (params = {}) => {
-  // Customer wish-lists are private. Never send the request without a token —
+  // Customer wish-lists are private. Never send the request without a token -
   // guests produce a console 401 on every page that mounts this hook.
   if (!getToken()) return undefined;
   const { search = "", sort_by, price_min, price_max, rating, type, quick_action } = params;

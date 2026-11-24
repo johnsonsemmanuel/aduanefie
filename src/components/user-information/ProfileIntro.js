@@ -56,7 +56,7 @@ const StatCard = ({ value, label, icon, mobile = false }) => (
           fontVariantNumeric: "tabular-nums",
         }}
       >
-        {value ?? "—"}
+        {value ?? "-"}
       </Typography>
       <Box
         component="img"
@@ -122,7 +122,7 @@ const ProfileIntro = ({
     "service-request": t("Requested Services"),
   };
   // `page` can carry a query suffix on payment redirects (e.g.
-  // "wallet?flag=success", "subscription-plan?flag=cancel") — strip it so the
+  // "wallet?flag=success", "subscription-plan?flag=cancel") - strip it so the
   // label still resolves instead of falling back to "Profile".
   const normalizedPage = typeof page === "string" ? page.split("?")[0] : page;
   const pageLabel = pageLabels[normalizedPage] || t("Profile");
@@ -269,7 +269,7 @@ const ProfileIntro = ({
             overflow: "hidden",
           }}
         >
-          {/* Edit button — absolute top-right */}
+          {/* Edit button - absolute top-right */}
           {editBtn(t("Edit"), true)}
 
           {/* Avatar + name + join */}
@@ -316,7 +316,7 @@ const ProfileIntro = ({
             </Stack>
           </Stack>
 
-          {/* Stat cards — slider showing 1.4 */}
+          {/* Stat cards - slider showing 1.4 */}
           <Box sx={{ width: "100%", overflow: "hidden" }}>
             <SliderWrapper>
               <Slider
@@ -463,6 +463,53 @@ const ProfileIntro = ({
           </Stack>
         </Stack>
       )}
+
+      {/* Glanceable Marketplace Activity Hub */}
+      <Stack
+        direction="row"
+        gap={1}
+        sx={{
+          mt: { xs: 1.5, md: 2 },
+          px: { xs: "16px", md: 0 },
+          overflowX: "auto",
+          scrollbarWidth: "none",
+          "&::-webkit-scrollbar": { display: "none" },
+        }}
+      >
+        {[
+          { label: t("Buy Again"), path: "/profile?page=my-orders" },
+          { label: t("My Group Buys"), path: "/group-buys" },
+          { label: t("Live Farms"), path: "/live-farming" },
+          { label: t("Monthly Orders"), path: "/profile?page=monthly-cart-list" },
+          { label: t("Saved Items"), path: "/home/wishlist" },
+          { label: t("Track Order"), path: "/track-order" },
+        ].map((action) => (
+          <Button
+            key={action.path}
+            size="small"
+            variant="outlined"
+            onClick={() => router.push(action.path)}
+            sx={{
+              flexShrink: 0,
+              whiteSpace: "nowrap",
+              borderRadius: "999px",
+              px: 1.75,
+              py: 0.6,
+              fontSize: "12px",
+              fontWeight: 600,
+              borderColor: theme.palette.divider,
+              color: theme.palette.primary.deep || theme.palette.text.primary,
+              bgcolor: theme.palette.background.paper,
+              "&:hover": {
+                borderColor: theme.palette.primary.main,
+                bgcolor: theme.palette.background.secondary,
+              },
+            }}
+          >
+            {action.label}
+          </Button>
+        ))}
+      </Stack>
 
       {/* Edit Profile Modal */}
       <CustomModal

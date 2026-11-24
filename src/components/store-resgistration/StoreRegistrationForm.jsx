@@ -28,6 +28,8 @@ import useGetZoneList from "api-manage/hooks/react-query/zone-list/zone-list";
 import { ActonButtonsSection } from "components/deliveryman-registration/CustomStylesDeliveryman";
 import BusinessTin from "components/store-resgistration/BusinessTin";
 import { shadows } from "@mui/system";
+import { normalizeCountry } from "utils/marketProfiles";
+import { isValidLocation } from "helper-functions/validLocation";
 
 const STORE_REG_DRAFT_KEY = "aduanefie_store_reg_draft_v1";
 
@@ -55,7 +57,7 @@ export const generateInitialValues = (languages, allData) => {
     tin_expire_date: allData?.tin_expire_date || "",
     tin_certificate_image: allData?.tin_certificate_image || "",
     farm_type: allData?.farm_type || "commercial",
-    country: allData?.country || "Ghana",
+    country: normalizeCountry(allData?.country) || "GH",
     region: allData?.region || "",
     district: allData?.district || "",
     sub_district: allData?.sub_district || "",
@@ -165,7 +167,12 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
   );
   let currentLatLng = undefined;
   if (typeof window !== "undefined") {
-    currentLatLng = JSON.parse(window.localStorage.getItem("currentLatLng"));
+    try {
+      const stored = JSON.parse(window.localStorage.getItem("currentLatLng"));
+      currentLatLng = isValidLocation(stored) ? stored : undefined;
+    } catch (e) {
+      currentLatLng = undefined;
+    }
   }
   const {
     data: zoneList,
@@ -328,12 +335,9 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
     RestaurantJoinFormik.setFieldValue("lng", value?.lng);
   };
 
-  const resolvedLatLng =
-    currentLatLng?.lat && currentLatLng?.lng
-      ? currentLatLng
-      : configData?.default_location?.lat && configData?.default_location?.lng
-      ? configData.default_location
-      : null;
+  // Only a previously chosen, validated pin can resolve a zone. The business
+  // default_location is not a store location and must never be written here.
+  const resolvedLatLng = isValidLocation(currentLatLng) ? currentLatLng : null;
 
   const { data: zoneData } = useQuery(
     ["zoneId", resolvedLatLng?.lat, resolvedLatLng?.lng],
@@ -379,7 +383,7 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
   let moduleOption = [];
   // `data` already comes back scoped to the selected zone (the API is
   // called with `?zone_id=`), so no client-side zones[] filtering is needed
-  // or possible — this endpoint's module rows don't carry a `zones` array.
+  // or possible - this endpoint's module rows don't carry a `zones` array.
   const zoneWiseModules = data;
 
   if (zoneWiseModules?.length > 0) {
@@ -421,16 +425,6 @@ const StoreRegistrationForm = ({ setActiveStep, setFormValues }) => {
       refetch();
     }
   }, [zoneData?.data?.zone_data]);
-  useEffect(() => {
-    if (!currentLatLng && zoneData?.data && configData?.default_location) {
-      localStorage.setItem(
-        "currentLatLng",
-        JSON.stringify(configData.default_location)
-      );
-      localStorage.setItem("zoneid", zoneData?.data?.zone_id);
-    }
-  }, [configData?.default_location, zoneData?.data]);
-
   const handleReset = () => {
     try {
       sessionStorage.removeItem(STORE_REG_DRAFT_KEY);

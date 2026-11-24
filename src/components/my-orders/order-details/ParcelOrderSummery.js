@@ -46,7 +46,7 @@ export const ParcelOrderSummaryBox = styled(CustomStackFullWidth)(
   })
 );
 
-// The category image can arrive without a source on some orders — this
+// The category image can arrive without a source on some orders - this
 // wraps it in a soft rounded frame instead of a bare broken-image box, and
 // gives the weight/dimension bracket a visible pill instead of the barely-
 // there caption text it used to be.
@@ -90,7 +90,7 @@ const ParcelOrderSummery = ({
   setOpenModal,
 }) => {
   const theme = useTheme();
-  // "Small, Light (2-4Kg)" — the brackets this parcel was booked under, shown
+  // "Small, Light (2-4Kg)" - the brackets this parcel was booked under, shown
   // under the category the same way the checkout billing panel shows them.
   // They ride on the track payload; `data` (order/details) carries neither.
   const orderParcelInformation =
@@ -436,7 +436,7 @@ const ParcelOrderSummery = ({
                 }
               }
 
-              // 🛑 Nothing to show — return null
+              // 🛑 Nothing to show - return null
               if (!reasons || reasons.length === 0) return null;
 
               // ✅ Render section if reason exists

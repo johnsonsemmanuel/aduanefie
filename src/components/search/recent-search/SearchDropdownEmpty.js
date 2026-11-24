@@ -1,4 +1,5 @@
-import { Box, Divider, Skeleton, Stack, Typography } from "@mui/material";
+import { Box, Chip, Divider, Skeleton, Stack, Typography } from "@mui/material";
+import { getRecentlyViewed } from "utils/recentlyViewed";
 import { styled } from "@mui/material/styles";
 import useGetSearchPageData from "api-manage/hooks/react-query/search/useGetSearchPageData";
 import { useGetRecommendStores } from "api-manage/hooks/react-query/store/useGetRecommendStores";
@@ -77,7 +78,7 @@ const sliderSettings = (searchFromNav = false, itemCount = 0) => {
   };
 };
 
-// Used by FeaturedRestaurantsSection — gap 20px (Figma spec)
+// Used by FeaturedRestaurantsSection - gap 20px (Figma spec)
 const SliderWrapper = styled(CustomBoxFullWidth)(({ theme }) => ({
   "& .slick-list": {
     overflowX: "hidden",
@@ -630,6 +631,18 @@ const SearchDropdownEmpty = ({
     )
     .filter(Boolean);
 
+  const ghanaStaples = [
+    "Yam",
+    "Plantain",
+    "Tomatoes",
+    "Local Rice",
+    "Fresh Eggs",
+    "Cassava",
+    "Tilapia",
+    "Palm Oil",
+  ];
+  const recentlyViewed = useMemo(() => getRecentlyViewed(), []);
+
   return (
     <Stack>
       {list.length ? (
@@ -643,6 +656,74 @@ const SearchDropdownEmpty = ({
           />
         </Box>
       ) : null}
+      {!isServiceModule && (
+        <Box sx={{ px: "20px", pt: list.length ? "0px" : "18px", pb: "14px" }}>
+          <Typography
+            fontSize="13px"
+            fontWeight={700}
+            color="text.secondary"
+            sx={{ mb: 1 }}
+          >
+            {t("Popular Ghana Staples")}
+          </Typography>
+          <Stack direction="row" spacing={0.75} useFlexGap flexWrap="wrap">
+            {ghanaStaples.map((staple) => (
+              <Chip
+                key={staple}
+                label={t(staple)}
+                size="small"
+                variant="outlined"
+                clickable
+                onClick={() => onItemClick?.(staple)}
+                sx={{
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  borderRadius: "8px",
+                }}
+              />
+            ))}
+          </Stack>
+        </Box>
+      )}
+      {recentlyViewed.length > 0 && (
+        <Box sx={{ px: "20px", pb: "16px" }}>
+          <Typography
+            fontSize="13px"
+            fontWeight={700}
+            color="text.secondary"
+            sx={{ mb: 1 }}
+          >
+            {t("Recently Viewed")}
+          </Typography>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{
+              overflowX: "auto",
+              pb: 0.5,
+              scrollbarWidth: "none",
+              "&::-webkit-scrollbar": { display: "none" },
+            }}
+          >
+            {recentlyViewed.map((rv) => (
+              <Chip
+                key={rv.id}
+                component={Link}
+                href={`/product/${rv.slug || rv.id}`}
+                clickable
+                label={rv.name}
+                size="small"
+                sx={{
+                  maxWidth: 180,
+                  fontSize: "12px",
+                  fontWeight: 500,
+                  borderRadius: "8px",
+                }}
+              />
+            ))}
+          </Stack>
+        </Box>
+      )}
       <TrendingSearchSection
         onItemClick={onItemClick}
         t={t}

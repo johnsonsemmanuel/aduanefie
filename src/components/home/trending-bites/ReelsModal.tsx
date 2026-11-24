@@ -59,7 +59,7 @@ const formatViewCount = (count: number): string => {
   return String(count);
 };
 
-// Module-level blob cache — mirrors Flutter's CacheManager.
+// Module-level blob cache - mirrors Flutter's CacheManager.
 // Survives component remounts; blob URLs are never revoked once cached so
 // repeated opens of the same reel are instant (no network round-trip).
 const reelVideoCache = new Map<number, string>();
@@ -67,23 +67,51 @@ const reelVideoCache = new Map<number, string>();
 // Tracks in-flight preload downloads so we never start two for the same reel.
 const reelPreloadInFlight = new Map<number, Promise<string | null>>();
 
-// Build proxy URL with auth query params (runs in browser — reads localStorage).
-const buildProxyUrl = (reelId: number): string => {
-  const token = localStorage.getItem("token");
-  const zoneid = localStorage.getItem("zoneid");
-  const moduleId = JSON.parse(localStorage.getItem("module") || "null")?.id;
-  const lang = JSON.parse(localStorage.getItem("language-setting") || "null");
-  const loc = JSON.parse(localStorage.getItem("currentLatLng") || "null");
-  const guestId = !token ? localStorage.getItem("guest_id") : null;
+// Exchange the Bearer token for a short-lived, opaque server-side handle.
+// The token is sent in an Authorization header to our own API route; only the
+// random handle is ever placed in a media URL, where it is safe to log.
+const createReelSession = async (
+  reelId: number,
+  signal?: AbortSignal
+): Promise<string | null> => {
+  try {
+    if (typeof window === "undefined") return null;
+    const token = localStorage.getItem("token");
+    const zoneid = localStorage.getItem("zoneid");
+    const moduleId = JSON.parse(localStorage.getItem("module") || "null")?.id;
+    const lang = JSON.parse(localStorage.getItem("language-setting") || "null");
+    const loc = JSON.parse(localStorage.getItem("currentLatLng") || "null");
+    const guestId = !token ? localStorage.getItem("guest_id") : null;
 
-  const params = new URLSearchParams({ reel_id: String(reelId) });
-  if (token) params.set("t", token);
-  if (moduleId) params.set("mid", String(moduleId));
-  if (zoneid) params.set("zid", zoneid);
-  if (lang) params.set("lang", lang);
-  if (loc?.lat) params.set("lat", String(loc.lat));
-  if (loc?.lng) params.set("lng", String(loc.lng));
-  if (guestId) params.set("guest_id", guestId);
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    const res = await fetch("/api/reels/session", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        reel_id: reelId,
+        moduleId,
+        zoneid,
+        lang,
+        lat: loc?.lat,
+        lng: loc?.lng,
+        guest_id: guestId,
+      }),
+      ...(signal ? { signal } : {}),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return typeof data?.sid === "string" && data.sid ? data.sid : null;
+  } catch {
+    return null;
+  }
+};
+
+const buildProxyUrl = (reelId: number, sid: string): string => {
+  const params = new URLSearchParams({ reel_id: String(reelId), sid });
   return `/api/reels/stream?${params.toString()}`;
 };
 
@@ -135,7 +163,9 @@ export const preloadReel = (reelId: number): Promise<string | null> => {
 
   const promise = (async () => {
     try {
-      const url = buildProxyUrl(reelId);
+      const sid = await createReelSession(reelId);
+      if (!sid) return null;
+      const url = buildProxyUrl(reelId, sid);
       const chunks: Uint8Array[] = [];
       let offset = 0;
       let total = Infinity; // filled in from Content-Range on the first chunk
@@ -360,7 +390,7 @@ const ReelsModal = ({
       if (prev[item.id] === serverLiked) return prev;
       return { ...prev, [item.id]: serverLiked };
     });
-  }, [item?.id, serverLiked]); // primitive dep — stable across re-renders
+  }, [item?.id, serverLiked]); // primitive dep - stable across re-renders
 
   useEffect(() => {
     // Reset state whenever the active reel changes, even before the video
@@ -383,7 +413,7 @@ const ReelsModal = ({
     const tryPlay = () => {
       video.muted = isMuted;
       video.play().catch(() => {
-        // Browser blocked unmuted autoplay — fall back to muted so playback
+        // Browser blocked unmuted autoplay - fall back to muted so playback
         // still starts; user can tap the speaker icon to unmute.
         if (!video.muted) {
           video.muted = true;
@@ -432,7 +462,7 @@ const ReelsModal = ({
       video.removeEventListener("progress", onBufferProgress);
     };
 
-    // ── Cache hit — instant play ──
+    // ── Cache hit - instant play ──
     const cached = reelVideoCache.get(item.id);
     if (cached) {
       video.muted = isMuted;
@@ -447,18 +477,20 @@ const ReelsModal = ({
       };
     }
 
-    // ── No cache — stream via proxy URL ──
-    //   Browser makes its own Range requests and plays as soon as it has
-    //   enough data (moov atom + a few frames). If the MP4 is faststart-
-    //   encoded, playback starts after the first ~2 MB chunk.
-    const proxyUrl = buildProxyUrl(item.id);
-    video.muted = isMuted;
-    video.src = proxyUrl;
-    setHasVideo(true);
+    // ── No cache - stream via a short-lived opaque session handle ──
+    //   The Bearer token is exchanged over a header and never appears in the
+    //   media URL. Browser makes its own Range requests and plays as soon as
+    //   it has enough data (moov atom + a few frames).
+    createReelSession(item.id, abort.signal).then((sid) => {
+      if (cancelled || !sid) return;
+      video.muted = isMuted;
+      video.src = buildProxyUrl(item.id, sid);
+      setHasVideo(true);
 
-    // Also kick off a background chunked download so the blob is cached for
-    // the next time the user opens this reel (instant replay).
-    preloadReel(item.id).catch(() => undefined);
+      // Also kick off a background chunked download so the blob is cached for
+      // the next time the user opens this reel (instant replay).
+      preloadReel(item.id).catch(() => undefined);
+    });
 
     return () => {
       cancelled = true;
@@ -555,7 +587,7 @@ const ReelsModal = ({
   };
 
   // Touch handlers: vertical swipe changes reels (up = next, down = prev).
-  // Only triggers when the vertical delta clearly exceeds horizontal — so a
+  // Only triggers when the vertical delta clearly exceeds horizontal - so a
   // diagonal scroll or a tap doesn't accidentally flip the reel.
   const handleSwipeStart = (e: React.TouchEvent<HTMLDivElement>) => {
     const t = e.touches[0];
@@ -663,7 +695,7 @@ const ReelsModal = ({
             touchAction: { xs: "pan-x", md: "auto" },
           }}
         >
-          {/* Thumbnail — visible until video starts */}
+          {/* Thumbnail - visible until video starts */}
           <Box
             component="img"
             src={item.foodImage}

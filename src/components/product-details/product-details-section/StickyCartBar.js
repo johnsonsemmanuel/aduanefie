@@ -62,7 +62,7 @@ const StickyCartBar = ({
   const isInModal = modalmanage === "true" || modalmanage === true;
   const [portalTarget, setPortalTarget] = useState(null);
   const { cartList } = useSelector((state) => state.cart);
-  // Signature of the CURRENTLY SELECTED variation — food picks live in
+  // Signature of the CURRENTLY SELECTED variation - food picks live in
   // food_variations[].values[].isSelected, other modules in selectedOption.
   // Products without variations yield an empty signature.
   const selectionSignature = (item) => {
@@ -92,7 +92,7 @@ const StickyCartBar = ({
   };
   // Find the cart row for this product+store AND the same selected
   // variation. Update-to-Cart only applies when the exact variation is
-  // already in the cart — a different variation should Add a new row.
+  // already in the cart - a different variation should Add a new row.
   const inCartItem =
     cartList?.length > 0
       ? cartList.find(

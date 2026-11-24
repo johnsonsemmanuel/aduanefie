@@ -9,6 +9,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useSelector } from "react-redux";
 
 import { getAmountWithSign } from "../../../helper-functions/CardHelpers";
 import { getInfoFromZoneData } from "../../../utils/CustomFunctions";
@@ -36,7 +37,7 @@ const DeliverySpeedOptions = ({
   const additionalDeliveryOptionStatus = Boolean(
     chargeInfo?.additional_delivery_option_status,
   );
-  // Straight from checkout-summary's `delivery_options` — already carries
+  // Straight from checkout-summary's `delivery_options` - already carries
   // `delivery_type_text` and a ready-formatted `time_range`.
   const deliveryOptionsRaw = Array.isArray(deliveryOptions)
     ? deliveryOptions
@@ -147,12 +148,24 @@ const DeliverySpeedOptions = ({
     return null;
   }
 
-  // The final, post-everything delivery charge — admin free delivery, store
-  // offer, Pro benefit, coupon, whatever combination applied it — doesn't
+  // The final, post-everything delivery charge - admin free delivery, store
+  // offer, Pro benefit, coupon, whatever combination applied it - doesn't
   // matter which; only whether the amount actually charged is 0. Picking a
   // paid speed option (Express) on top of a free delivery would silently
   // undo that free delivery, so the options are disabled rather than hidden.
   const isFreeDelivery = Number(deliveryFee) === 0;
+  const cartList = useSelector((state) => state.cart?.cartList || []);
+  const hasPerishableItems = useMemo(() => {
+    const items = Array.isArray(cartList) ? cartList : [];
+    return items.some((entry) => {
+      const it = entry?.item || entry;
+      return (
+        Boolean(it?.is_backyard) ||
+        ["farming", "harvest_ready"].includes(it?.farming_status || it?.effective_farming_status) ||
+        ["bunch", "crate"].includes(it?.agro_unit)
+      );
+    });
+  }, [cartList]);
 
   return (
     <Box
@@ -194,6 +207,41 @@ const DeliverySpeedOptions = ({
             )}
           </Typography>
         </Stack>
+
+        {hasPerishableItems && (
+          <Stack
+            direction="row"
+            alignItems="center"
+            gap={1}
+            sx={{
+              backgroundColor: theme.palette.background.secondary || "#EFE7D3",
+              border: `1px solid ${alpha(theme.palette.primary.main || "#8B9F69", 0.45)}`,
+              borderRadius: { xs: "8px", md: "10px" },
+              px: { xs: 1.25, md: 1.5 },
+              py: { xs: 0.75, md: 1 },
+            }}
+          >
+            <i
+              className="fi fi-rr-leaf"
+              style={{
+                fontSize: "14px",
+                lineHeight: 1,
+                display: "flex",
+                color: theme.palette.primary.deep || "#67513A",
+              }}
+            />
+            <Typography
+              sx={{
+                fontSize: { xs: "11.5px", md: "12.5px" },
+                fontWeight: 600,
+                color: theme.palette.primary.deep || "#67513A",
+                lineHeight: 1.35,
+              }}
+            >
+              {t("Your cart has fresh farm produce. Express or Same-Day delivery is recommended for peak freshness.")}
+            </Typography>
+          </Stack>
+        )}
 
         {isFreeDelivery && (
           <Stack

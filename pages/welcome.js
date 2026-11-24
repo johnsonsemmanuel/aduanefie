@@ -14,13 +14,16 @@ import { getApiContent } from "../src/api-manage/getApiContent";
 const Welcome = (props) => {
   const { configData, landingPageData } = props;
   const { data } = useGetLandingPage();
+  const effectiveLandingData = data || landingPageData;
   const dispatch = useDispatch();
   // getServerSideProps already fetched /api/v1/config and handed it to us as
   // `configData`. Refetching it client-side duplicated a 169-key payload on
   // every landing page load for data we already had, so seed redux from the
   // SSR props instead.
   useEffect(() => {
-    dispatch(setLandingPageData(data));
+    if (effectiveLandingData) {
+      dispatch(setLandingPageData(effectiveLandingData));
+    }
     if (configData) {
       if (Array.isArray(configData) && configData.length === 0) {
         Router.push("/404");
@@ -28,7 +31,7 @@ const Welcome = (props) => {
         dispatch(setConfigData(configData));
       }
     }
-  }, [configData, data, dispatch]);
+  }, [configData, effectiveLandingData, dispatch]);
   let lanDirection = undefined;
 
   if (typeof window !== "undefined") {
@@ -48,9 +51,9 @@ const Welcome = (props) => {
           landingPageData?.meta_description || configData?.meta_description
         }
       />
-      {data && (
-        <LandingLayout configData={configData} landingPageData={data}>
-          <LandingPage configData={configData} landingPageData={data} />
+      {effectiveLandingData && (
+        <LandingLayout configData={configData} landingPageData={effectiveLandingData}>
+          <LandingPage configData={configData} landingPageData={effectiveLandingData} />
         </LandingLayout>
       )}
     </>

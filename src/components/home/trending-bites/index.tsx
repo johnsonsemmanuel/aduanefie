@@ -83,7 +83,7 @@ const TrendingBiteCard = ({ item, onClick }: TrendingBiteCardProps) => {
         overflow: "hidden",
         // Responsive card width: show N.x cards so the next card peeks
         flex: {
-          xs: "0 0 calc(78% - 6px)", // ~1.3 cards — big on mobile
+          xs: "0 0 calc(78% - 6px)", // ~1.3 cards - big on mobile
           sm: "0 0 calc(45% - 6px)", // ~2.2 cards
           md: "0 0 calc(28.57% - 9px)", // 3.5 cards
           lg: "0 0 calc(18.18% - 10px)", // 4.5 cards
@@ -348,7 +348,7 @@ const TrendingBites = ({ title, subtitle }: TrendingBitesProps) => {
       }
       if (data?.total_size != null) setTotalSize(Number(data.total_size));
     } catch (_) {
-      // silent — user can retry by clicking next again
+      // silent - user can retry by clicking next again
     } finally {
       setIsLoadingMore(false);
     }

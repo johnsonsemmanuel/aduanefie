@@ -3,8 +3,8 @@ import { bogo_cart_remove_api } from "../../../ApiRoutes";
 import { getApiContent } from "../../../getApiContent";
 import { useMutation, useQueryClient } from "react-query";
 
-// DELETE /customer/cart/bogo/remove — body: { bogo_group_id, guest_id }.
-// Removes the whole group; individual members are never removable — see
+// DELETE /customer/cart/bogo/remove - body: { bogo_group_id, guest_id }.
+// Removes the whole group; individual members are never removable - see
 // the BOGO API guide §6.4.
 const removeData = async (postData) => {
   const { data } = await MainApi.delete(bogo_cart_remove_api, {

@@ -40,13 +40,13 @@ import { useRouter } from "next/router";
 import { ModuleSelection } from "../landing-page/hero-section/module-selection";
 import { useGeolocated } from "react-geolocated";
 import { module_select_success } from "src/utils/toasterMessages";
-import { FacebookCircularProgress } from "../loading-spinners/FacebookLoading";
 import { setWishList } from "src/redux/slices/wishList";
 import { useWishListGet } from "src/api-manage/hooks/react-query/wish-list/useWishListGet";
 import { getToken } from "src/helper-functions/getToken";
 import ModalExtendShrink from "./ModalExtendShrink";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { useGetWishList } from "api-manage/hooks/react-query/rental-wishlist/useGetWishlist";
+import { isValidLocation } from "helper-functions/validLocation";
 
 const MapModal = ({
   open,
@@ -64,7 +64,6 @@ const MapModal = ({
   const theme = useTheme();
 
   const isXSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  const { configData } = useSelector((state) => state.configData);
   const { t } = useTranslation();
   const [searchKey, setSearchKey] = useState("");
   const [enabled, setEnabled] = useState(false);
@@ -74,8 +73,10 @@ const MapModal = ({
   const [locationEnabled, setLocationEnabled] = useState(false);
   const [placeId, setPlaceId] = useState("");
   const [placeDescription, setPlaceDescription] = useState(undefined);
+  // The configured default_location is a business map centre, not a customer
+  // pin. Start empty unless the caller supplied a validated location.
   const [location, setLocation] = useState(
-    selectedLocation ? selectedLocation : configData?.default_location
+    isValidLocation(selectedLocation) ? selectedLocation : null
   );
   const { selectedModule } = useSelector((state) => state.utilsData);
   const [zoneId, setZoneId] = useState(undefined);
@@ -97,18 +98,26 @@ const MapModal = ({
   );
 
   const dispatch = useDispatch();
-  const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
-    useGeolocated({
-      positionOptions: {
-        enableHighAccuracy: false,
-      },
-      userDecisionTimeout: 5000,
-      isGeolocationEnabled: true,
-    });
+  const {
+    coords,
+    isGeolocationAvailable,
+    isGeolocationEnabled,
+    positionError,
+    getPosition,
+  } = useGeolocated({
+    positionOptions: {
+      enableHighAccuracy: false,
+      maximumAge: 60 * 1000,
+      timeout: 10 * 1000,
+    },
+    userDecisionTimeout: 10 * 1000,
+    suppressLocationOnMount: true,
+    isOptimisticGeolocationEnabled: false,
+  });
 
   useEffect(() => {
     if (!places) return;
-    // Support both API shapes — `suggestions` (Places Autocomplete v2)
+    // Support both API shapes - `suggestions` (Places Autocomplete v2)
     // and `predictions` (legacy). Never leave `predictions` undefined or
     // the Autocomplete crashes on `.map()`.
     const list = Array.isArray(places?.suggestions)
@@ -144,7 +153,7 @@ const MapModal = ({
     }
   }, [geoCodeResults]);
 
-  // Reflect the resolved address in the search input — fires on initial
+  // Reflect the resolved address in the search input - fires on initial
   // geocode, after picking a suggestion (which triggers a new geocode),
   // after dragging the pin, and after the "use current location" button.
   useEffect(() => {
@@ -184,11 +193,13 @@ const MapModal = ({
     // place-api-details answers 200 with `{ error: { … } }` for a place id
     // Google no longer recognises. That body is truthy but carries no
     // `location`, and writing it here parks `location` as `{lat: undefined}`
-    // — which keeps the Pick/Discover button disabled with no way to recover.
-    const lat = placeDetails?.location?.latitude;
-    const lng = placeDetails?.location?.longitude;
-    if (lat !== undefined && lng !== undefined) {
-      setLocation({ lat, lng });
+    // - which keeps the Pick/Discover button disabled with no way to recover.
+    const candidate = {
+      lat: placeDetails?.location?.latitude,
+      lng: placeDetails?.location?.longitude,
+    };
+    if (isValidLocation(candidate)) {
+      setLocation(candidate);
     }
   }, [placeDetails]);
   useEffect(() => {
@@ -225,7 +236,7 @@ const MapModal = ({
   );
   const { refetch: rentalWishlistRefetch } = useGetWishList(onSuccessHandler);
   const handlePickLocationOnClick = () => {
-    if (zoneId && geoCodeResults && location) {
+    if (zoneId && geoCodeResults && isValidLocation(location)) {
       if (getToken()) {
         if (moduleType === "rental") {
           rentalWishlistRefetch();
@@ -333,7 +344,7 @@ const MapModal = ({
                 paddingRight: isModalExpand ? "0px" : "15px",
               }}
             >
-              {/* Header hidden in fullscreen — expanded view is just the map,
+              {/* Header hidden in fullscreen - expanded view is just the map,
                   search bar, and close button. */}
               {!isModalExpand && (
                 <>
@@ -395,7 +406,7 @@ const MapModal = ({
                       }
                       setPlaceDetailsEnabled(true);
                     }}
-                    // Controlled input — without this, the input text snaps
+                    // Controlled input - without this, the input text snaps
                     // back to `currentLocationValue.description` (geocoded
                     // address) whenever it resolves, swallowing the user's
                     // typing. `searchKey` is the source of truth here.
@@ -412,7 +423,7 @@ const MapModal = ({
                     // The parent Modal pins itself at zIndex 1600. MUI's
                     // Autocomplete popper defaults to theme.zIndex.modal
                     // (1300), so the suggestion dropdown was rendering
-                    // BEHIND the modal — visible in the DOM but hidden
+                    // BEHIND the modal - visible in the DOM but hidden
                     // from view. Float it above the modal.
                     slotProps={{ popper: { sx: { zIndex: 1700 } } }}
                     componentsProps={{
@@ -458,7 +469,7 @@ const MapModal = ({
                   position: "relative",
                 }}
               >
-                {/* Address bar hidden in fullscreen — expanded view keeps only
+                {/* Address bar hidden in fullscreen - expanded view keeps only
                     the map, search bar, and close button. */}
                 {!isModalExpand && (
                   <LocationView>
@@ -470,13 +481,15 @@ const MapModal = ({
                         </Typography>
                       </>
                     ) : (
-                      <>
-                        <Skeleton variant="rounded" width={300} height={20} />
-                      </>
+                      <Typography variant="body2" color="text.secondary">
+                        {isValidLocation(location)
+                          ? t("Resolving the address for your selected pin...")
+                          : t("Search for a place or use your current location to choose a location.")}
+                      </Typography>
                     )}
                   </LocationView>
                 )}
-                {!!location ? (
+                {isValidLocation(location) ? (
                   <GoogleMapComponent
                     mapmodal
                     setDisablePickButton={setDisablePickButton}
@@ -501,9 +514,10 @@ const MapModal = ({
                       minHeight: "300px",
                     }}
                   >
-                    <FacebookCircularProgress />
                     <CustomTypographyGray nodefaultfont="true">
-                      {t("Please wait sometimes")}
+                      {t(
+                        "Choose a location by searching above or using your current location."
+                      )}
                     </CustomTypographyGray>
                   </CustomStackFullWidth>
                 )}
@@ -526,6 +540,9 @@ const MapModal = ({
                     setRerenderMap={setRerenderMap}
                     isLoadingCurrentLocation={isLoadingCurrentLocation}
                     isGeolocationEnabled={isGeolocationEnabled}
+                    isGeolocationAvailable={isGeolocationAvailable}
+                    positionError={positionError}
+                    getPosition={getPosition}
                     fromMapModal={true}
                     onZoomRequest={() =>
                       setZoomToLocationToken((prev) => prev + 1)
@@ -534,7 +551,7 @@ const MapModal = ({
                 </WrapperCurrentLocationPick>
               </CustomBoxFullWidth>
             </SimpleBar>
-            {/* Footer actions hidden in fullscreen — the shrink control on the
+            {/* Footer actions hidden in fullscreen - the shrink control on the
                 map returns to the normal view to pick the location. */}
             {!isModalExpand && (
               <CustomStackFullWidth
@@ -594,6 +611,7 @@ const MapModal = ({
                     <Button
                       disabled={
                         isLoading ||
+                        !isValidLocation(location) ||
                         !geoCodeResults?.results?.[0]?.formatted_address ||
                         !zoneId
                       }

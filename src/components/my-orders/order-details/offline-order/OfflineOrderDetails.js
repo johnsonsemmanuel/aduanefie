@@ -97,7 +97,7 @@ const FieldStack = ({ entries, withCopy, onCopy, theme }) => (
                 textTransform: "capitalize",
               }}
             >
-              {entry.value || "—"}
+              {entry.value || "-"}
             </Typography>
             {showCopy && (
               <Tooltip title={t("Copy")} arrow>
@@ -199,7 +199,7 @@ const OfflineOrderDetails = ({ trackOrderData, setOpenOfflineModal }) => {
               lineHeight: 1.1,
             }}
           >
-            {orderAmount != null ? getAmountWithSign(orderAmount) : "—"}
+            {orderAmount != null ? getAmountWithSign(orderAmount) : "-"}
           </Typography>
           {methodName && (
             <Typography

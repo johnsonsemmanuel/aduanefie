@@ -22,7 +22,7 @@ interface ChatBundleChipsProps {
 }
 
 // A minimal, read-only take on the store page's horizontal bundle card
-// (BundleProductCard) — that one expects a per-item image grid and wires up
+// (BundleProductCard) - that one expects a per-item image grid and wires up
 // its own add/remove-from-cart mutations, neither of which the chat's
 // bundle summary (one thumbnail, no cart identity) has any use for.
 const ChatBundleChips = ({ bundles, onSelect }: ChatBundleChipsProps) => {
@@ -147,7 +147,7 @@ const ChatBundleChips = ({ bundles, onSelect }: ChatBundleChipsProps) => {
                     disableHoverListener={!memberItems.length}
                     // The chat popover itself sits at zIndex 100000 (see
                     // ChatBotPopover.tsx), well above MUI's default tooltip
-                    // z-index — without this the tooltip rendered behind it.
+                    // z-index - without this the tooltip rendered behind it.
                     slotProps={{ popper: { sx: { zIndex: 100001 } } }}
                   >
                     <Typography

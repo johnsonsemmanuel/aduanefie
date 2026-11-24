@@ -12,9 +12,11 @@ import {
   IconButton,
   Modal,
   Stack,
+  Typography,
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import { isValidLocation } from "helper-functions/validLocation";
 import pickMarker from "./assets/pick_marker.png";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -57,12 +59,16 @@ const GoogleMapComponent = ({
     paddingBottom: "0px",
   };
   const mapRef = useRef(GoogleMap);
+  // Never turn an unset/invalid pin into NaN and hand it to Google Maps as a
+  // "current" centre. The config default is a business map centre, not a
+  // customer location, so callers must pass a validated pin or nothing.
+  const hasValidLocation = isValidLocation(location);
   const center = useMemo(
-    () => ({
-      lat: parseFloat(location?.lat),
-      lng: parseFloat(location?.lng),
-    }),
-    [location?.lng, location?.lng],
+    () =>
+      hasValidLocation
+        ? { lat: Number(location.lat), lng: Number(location.lng) }
+        : null,
+    [hasValidLocation, location?.lat, location?.lng],
   );
 
   const options = useMemo(
@@ -96,7 +102,7 @@ const GoogleMapComponent = ({
   useEffect(() => setIsMounted(true), []);
 
   useEffect(() => {
-    if (location && placeDetailsEnabled) {
+    if (hasValidLocation && placeDetailsEnabled) {
       setCenterPosition(location);
     }
     if (map?.center && mapSetup) {
@@ -106,7 +112,7 @@ const GoogleMapComponent = ({
       });
     }
     setIsMounted(true);
-  }, [map, mapSetup, placeDetailsEnabled, location]);
+  }, [map, mapSetup, placeDetailsEnabled, location, hasValidLocation]);
 
   const onUnmount = useCallback(function callback(map) {
     setMap(null);
@@ -167,52 +173,45 @@ const GoogleMapComponent = ({
 
       // Fit the map to the new polygon bounds. In the vendor flow, skip the fit
 
-      const lat = parseFloat(location?.lat);
-      const lng = parseFloat(location?.lng);
       const markerInsideNewZone =
-        !isNaN(lat) &&
-        !isNaN(lng) &&
-        bounds.contains(new window.google.maps.LatLng(lat, lng));
+        hasValidLocation &&
+        bounds.contains(
+          new window.google.maps.LatLng(Number(location.lat), Number(location.lng))
+        );
       if (!fromVendor || !markerInsideNewZone) {
         map.fitBounds(bounds);
       }
     }
-  }, [polygonPaths, map, fromVendor]);
+  }, [polygonPaths, map, fromVendor, location, hasValidLocation]);
 
   useEffect(() => {
-    if (map && location?.lat && location?.lng) {
-      const lat = parseFloat(location.lat);
-      const lng = parseFloat(location.lng);
-      if (!isNaN(lat) && !isNaN(lng)) {
-        const mapCenter = map.getCenter?.();
-        const isDragSync =
-          mapCenter &&
-          Math.abs(mapCenter.lat() - lat) < 0.0001 &&
-          Math.abs(mapCenter.lng() - lng) < 0.0001;
-        map.panTo({ lat, lng });
-        const targetZoom = polygonPaths ? 9 : 17;
-        const currentZoom = map.getZoom?.() ?? zoom;
-        if (!isDragSync && currentZoom < targetZoom) {
-          map.setZoom(targetZoom);
-          setZoom(targetZoom);
-        }
+    if (map && hasValidLocation) {
+      const lat = Number(location.lat);
+      const lng = Number(location.lng);
+      const mapCenter = map.getCenter?.();
+      const isDragSync =
+        mapCenter &&
+        Math.abs(mapCenter.lat() - lat) < 0.0001 &&
+        Math.abs(mapCenter.lng() - lng) < 0.0001;
+      map.panTo({ lat, lng });
+      const targetZoom = polygonPaths ? 9 : 17;
+      const currentZoom = map.getZoom?.() ?? zoom;
+      if (!isDragSync && currentZoom < targetZoom) {
+        map.setZoom(targetZoom);
+        setZoom(targetZoom);
       }
     }
-  }, [map, location]);
+  }, [map, location, hasValidLocation]);
 
   useEffect(() => {
     if (!map || !zoomToLocationToken) return;
     const targetZoom = polygonPaths ? 9 : 17;
-    if (location?.lat && location?.lng) {
-      const lat = parseFloat(location.lat);
-      const lng = parseFloat(location.lng);
-      if (!isNaN(lat) && !isNaN(lng)) {
-        map.panTo({ lat, lng });
-      }
+    if (hasValidLocation) {
+      map.panTo({ lat: Number(location.lat), lng: Number(location.lng) });
     }
     map.setZoom(targetZoom);
     setZoom(targetZoom);
-  }, [zoomToLocationToken]);
+  }, [zoomToLocationToken, map, location, hasValidLocation]);
 
   // Expanding/shrinking resizes the map container; Google Maps leaves the
   // newly exposed area blank until a "resize" event fires. Trigger it after
@@ -227,6 +226,35 @@ const GoogleMapComponent = ({
     }, 200);
     return () => clearTimeout(id);
   }, [expanded, map]);
+
+  // Fail closed: without a validated pin there is no honest centre to show.
+  // Render an explicit empty state instead of a NaN centre, a world view, or
+  // the old config default. Search / current-location controls live in the
+  // parents and remain available so the user can choose a real location.
+  if (!hasValidLocation) {
+    return (
+      <Stack
+        alignItems="center"
+        justifyContent="center"
+        spacing={1}
+        sx={{
+          width: "100%",
+          minHeight: expanded ? "100dvh" : height || "300px",
+          px: 2,
+          py: 4,
+          textAlign: "center",
+          borderRadius: "10px",
+          backgroundColor: theme.palette.background.default,
+        }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          {t(
+            "No location selected yet. Search for a place or use your current location to choose one."
+          )}
+        </Typography>
+      </Stack>
+    );
+  }
 
   const MapContent = (
     <Stack
@@ -407,7 +435,7 @@ const GoogleMapComponent = ({
   );
 
   // In MapModal (`mapmodal`) the parent wrapper itself goes fullscreen when
-  // expanded, so render the map INLINE — its search bar and close button float
+  // expanded, so render the map INLINE - its search bar and close button float
   // above the map. The old nested <Modal> here sat at MUI's default z-index
   // (1300), *below* MapModal's 1600, so the fullscreen map was hidden behind a
   // white wrapper. Inline also keeps the map instance mounted (no remount →

@@ -5,7 +5,7 @@ import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { getGuestId } from "helper-functions/getToken";
 import { getApiCollection } from "../../../getApiContent";
 
-// GET /bogo/offers/{id|slug} — the offer card plus every store's bundle for
+// GET /bogo/offers/{id|slug} - the offer card plus every store's bundle for
 // it. `content.offer` is the same shape as /bogo/home's offer card;
 // `content.data` is one row per store (`bundle_id`, `store`, `buy_items`,
 // `free_items`, `bundle_price`/`original_price`/`final_price`). Aliased to

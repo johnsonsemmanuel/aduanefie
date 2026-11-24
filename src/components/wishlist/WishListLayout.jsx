@@ -66,7 +66,7 @@ const WishlistSkeletonSection = () => (
           borderRadius: "6px",
         }}
       />
-      {/* Mobile: horizontal scroll row — Desktop: grid */}
+      {/* Mobile: horizontal scroll row - Desktop: grid */}
       <Box
         sx={{
           display: { xs: "flex", md: "none" },
@@ -107,7 +107,7 @@ const WishlistSkeletonSection = () => (
           borderRadius: "6px",
         }}
       />
-      {/* Mobile: horizontal scroll row — Desktop: grid */}
+      {/* Mobile: horizontal scroll row - Desktop: grid */}
       <Box
         sx={{
           display: { xs: "flex", md: "none" },

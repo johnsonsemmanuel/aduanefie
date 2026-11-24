@@ -50,7 +50,7 @@ const IncompleteOrderModal: React.FC<IncompleteOrderModalProps> = ({
   const theme = useTheme();
   const dispatch = useDispatch();
 
-  // Mart sends `order_id`, rental `trip_id` — same endpoint, different shape.
+  // Mart sends `order_id`, rental `trip_id` - same endpoint, different shape.
   const failed = resolveFailedPayment(failPaymentOrderData);
 
   const formData = {
@@ -78,7 +78,7 @@ const IncompleteOrderModal: React.FC<IncompleteOrderModalProps> = ({
     useCancelBooking();
 
   // The order mutations hand back an axios response (`data.message`), the
-  // rental ones the payload or the envelope itself — reading only one shape
+  // rental ones the payload or the envelope itself - reading only one shape
   // left the rental branch with no toast, and the modal open behind the
   // redirect home.
   const handleSuccess = (response: any) => {

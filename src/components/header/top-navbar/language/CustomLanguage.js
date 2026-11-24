@@ -31,6 +31,7 @@ import CustomModal from "components/modal";
 import { StyledMenu, TopBarButton } from "../../NavBar.style";
 import { languageList } from "./languageList";
 import { haveRtlLanguages } from "./rtlLanguageList";
+import { clearStoredZoneAndLocationOnCountryChange } from "helper-functions/marketZone";
 
 const getValues = (settings) => ({
   direction: settings.direction,
@@ -117,6 +118,7 @@ const CustomLanguage = ({
   };
 
   const handleChangeLanguage = (lan) => {
+    clearStoredZoneAndLocationOnCountryChange(lan?.countryCode);
     dispatch(setLanguage(lan?.languageCode));
     dispatch(setCountryCode(lan?.countryCode));
     cookie.set("languageSetting", lan?.languageCode);
@@ -134,7 +136,7 @@ const CustomLanguage = ({
     i18n.changeLanguage(lan?.languageCode);
     queryClient.invalidateQueries();
     // Re-run getServerSideProps for the current route (reads the languageSetting
-    // cookie) via a soft navigation — no full-page reload.
+    // cookie) via a soft navigation - no full-page reload.
     router.replace(router.asPath, undefined, { scroll: false });
 
     toast.success(t("Language has been changed"), {

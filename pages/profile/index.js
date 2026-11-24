@@ -38,7 +38,7 @@ const Index = () => {
     // Only the order-attribute flow encodes a base64 payload here. Other
     // gateway callbacks (e.g. Pro plan subscription) drop arbitrary opaque
     // tokens into the URL, so guard the decode to avoid InvalidCharacterError
-    // from base-64 — the dev overlay surfaces it even when try/catch handles it.
+    // from base-64 - the dev overlay surfaces it even when try/catch handles it.
     const candidate = String(token).trim();
     const looksLikeBase64 =
       candidate.length > 0 &&

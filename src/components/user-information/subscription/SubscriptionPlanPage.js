@@ -52,7 +52,7 @@ import { useDispatch, useSelector } from "react-redux";
 import useGetProfile from "../../../api-manage/hooks/react-query/profile/useGetProfile";
 import { setUser } from "../../../redux/slices/profileInfo";
 
-const DASH = "—";
+const DASH = "-";
 
 const toNumber = (v, fallback = 0) => {
   const n = Number(v);
@@ -175,7 +175,7 @@ const SubscriptionPlanPage = () => {
   useEffect(() => {
     if (flagToastShownRef.current) return;
 
-    // Gateway callbacks come back with malformed separators —
+    // Gateway callbacks come back with malformed separators -
     // `?flag=success&&token=...` is appended even when the URL already had a
     // `?`, so `flag` and `token` end up buried inside other query values
     // (e.g. `module=food?flag=success&&token=...`). Scan the raw URL with a
@@ -189,7 +189,7 @@ const SubscriptionPlanPage = () => {
       typeof pageQuery === "string" && pageQuery.includes("?flag=")
         ? pageQuery.split("?flag=")[1]?.split(/[&?]/)[0]
         : null;
-    // Gateways aren't consistent — accept all the common spellings here so
+    // Gateways aren't consistent - accept all the common spellings here so
     // failure / cancellation callbacks still surface the right dialog.
     const rawFlagMatch = rawUrl.match(
       /[?&]+(?:flag|status|payment_status)=([A-Za-z]+)/i
@@ -232,7 +232,7 @@ const SubscriptionPlanPage = () => {
     } else {
       openResultModal("fail");
     }
-    // URL stays as-is until the user closes the dialog via OK/close —
+    // URL stays as-is until the user closes the dialog via OK/close -
     // see clearCallbackParamsFromUrl() inside handleResultClose.
   }, [router.query?.page, router.query?.flag, router.asPath]);
 
@@ -275,7 +275,7 @@ const SubscriptionPlanPage = () => {
   const expiresOnRaw = sub.end_at ?? sub.end_date ?? sub.expires_on;
   const paidByRaw = String(sub.payment_method ?? sub.paid_by ?? "");
   const paidBy = (paidByRaw || DASH).replace(/_/g, " ");
-  // Free-trial subscribers see a "Change Plan" CTA instead of "Renew" — they
+  // Free-trial subscribers see a "Change Plan" CTA instead of "Renew" - they
   // haven't paid yet, so the right action is to pick a real plan.
   const isFreeTrial = paidByRaw === "free_trial";
 
@@ -379,7 +379,7 @@ const SubscriptionPlanPage = () => {
             }
             queryClient.invalidateQueries("pro-customer-active-offer");
             queryClient.invalidateQueries("user-info");
-            // Free-trial activation flips `pro_status` server-side —
+            // Free-trial activation flips `pro_status` server-side -
             // pull the fresh profile so the rest of the app sees the
             // user as Pro immediately without a navigation.
             refetchProfile();
@@ -404,7 +404,7 @@ const SubscriptionPlanPage = () => {
         setCancelOpen(false);
         queryClient.invalidateQueries("pro-customer-active-offer");
         queryClient.invalidateQueries("user-info");
-        // Cancellation flips `pro_status` server-side — refresh the
+        // Cancellation flips `pro_status` server-side - refresh the
         // profile so the rest of the app sees the user is no longer Pro.
         refetchProfile();
         toast.success(resp?.message ?? t("Subscription cancelled"));
@@ -556,7 +556,7 @@ const SubscriptionPlanPage = () => {
   );
 
   // Always render the result Dialog as the SAME child position across every
-  // branch — otherwise React unmounts/remounts it when isActive flips and
+  // branch - otherwise React unmounts/remounts it when isActive flips and
   // the dialog appears to fire twice (open animation runs in the unmounted
   // tree, then again in the remounted tree).
   const withResultDialog = (body) => (
@@ -915,7 +915,7 @@ const SubscriptionPlanPage = () => {
               </Stack>
             ) : (
               // Subscribed but `benefit: null` (e.g. backend returned
-              // `message: "no_benefit_for_module"`) — surface a friendly
+              // `message: "no_benefit_for_module"`) - surface a friendly
               // explainer instead of an empty card.
               <Stack
                 direction="row"

@@ -230,7 +230,7 @@ const StoreDetails = ({ storeDetails, configData }) => {
         return {
           ...item?.item,
           cartItemId: item?.id,
-          // Guarantee store_id is present on every row — modal in-cart
+          // Guarantee store_id is present on every row - modal in-cart
           // matchers rely on it to scope detection per store.
           store_id: item?.item?.store_id ?? thisStoreId,
           // Same for module_type so getCartListModuleWise doesn't drop rows.
@@ -282,7 +282,7 @@ const StoreDetails = ({ storeDetails, configData }) => {
   // Reset the store-scoped cart whenever the visited store changes. The
   // sidebar reads this Redux slot synchronously, so without the reset it keeps
   // showing the PREVIOUS store's items until the new store's cart fetch
-  // resolves — and when react-query serves a cached response, onSuccess
+  // resolves - and when react-query serves a cached response, onSuccess
   // doesn't fire right away, leaving the stale list on screen. Clearing here
   // lets the sidebar show its loading skeleton, then the fresh list.
   useEffect(() => {
@@ -292,7 +292,7 @@ const StoreDetails = ({ storeDetails, configData }) => {
 
   // Sync Redux from the query DATA (not just onSuccess): when returning to a
   // previously visited store, react-query delivers the cached response
-  // without a refetch — onSuccess never fires, which left the sidebar empty
+  // without a refetch - onSuccess never fires, which left the sidebar empty
   // after the reset above. `cartData` is delivered on every store change
   // (cached or fresh), so this keeps the slot populated in all cases.
   // Declared after the reset so the populate wins within the same render pass.
@@ -624,7 +624,7 @@ const StoreDetails = ({ storeDetails, configData }) => {
         />
       )}
 
-      {/* Bottom cart bar — Mobile Only. The happy-hour/discount banner is
+      {/* Bottom cart bar - Mobile Only. The happy-hour/discount banner is
       independent of cart contents (matches Stackfood), so it can render
       with an empty cart; only the "View Cart List" pill needs items. */}
       {storeDetails?.id != null && (

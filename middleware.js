@@ -1,30 +1,8 @@
 import { NextResponse } from "next/server";
+import { isModuleAgnosticRoute } from "./src/utils/moduleRoutes";
 
 // Define the protected routes
 const protectedRoutes = ["/rental/cart"];
-
-// Routes where module parameter should NOT be added automatically
-const excludeModuleRoutes = [
-  "/",
-  "/welcome",
-  "/trade",
-  "/404",
-  "/500",
-  "/app-redirect",
-  "/maintainance",
-  "/checkout",
-  "/profile",
-  "/about-us",
-  "/cancellation-policy",
-  "/privacy-policy",
-  "/refund-policy",
-  "/shipping-policy",
-  "/terms-and-conditions",
-  "/help-and-support",
-  "/forgot-password",
-  "/deliveryman-registration",
-  "/store-registration",
-];
 
 export function middleware(request) {
   const { pathname, searchParams } = request.nextUrl;
@@ -39,14 +17,19 @@ export function middleware(request) {
     return NextResponse.redirect(canonicalUrl, 308);
   }
 
-  // Get module parameter from cookie (set on client)
+  // Get module & location flags from cookies (set on client)
   const moduleFromCookie = request.cookies.get("selectedModule")?.value;
+  const hasLocation = request.cookies.get("aduanefie_location_set")?.value === "1";
 
-  // Root opens directly into the live marketplace (/home) like Alibaba:
-  // returning visitors get their saved module, first-time visitors land in
-  // module 2 (Wholesale & Cross-Border Trade) with full catalog access.
+  // First-time visitors (no location selected yet) land on /welcome to pick
+  // their location & module and explore platform programs. Returning visitors
+  // who already selected a location go straight into the live marketplace (/home).
   if (pathname === "/") {
     const url = request.nextUrl.clone();
+    if (!hasLocation) {
+      url.pathname = "/welcome";
+      return NextResponse.rewrite(url);
+    }
     url.pathname = "/home";
     if (!url.searchParams.has("module") && !url.searchParams.has("module_id")) {
       url.searchParams.set("module", moduleFromCookie || "2");
@@ -59,9 +42,7 @@ export function middleware(request) {
     searchParams.has("module") || searchParams.has("module_id");
 
   // Check if this route should skip module parameter
-  const shouldSkipModule = excludeModuleRoutes.some(
-    (route) => pathname === route || pathname.startsWith(route + "/")
-  );
+  const shouldSkipModule = isModuleAgnosticRoute(pathname);
 
   // If no module param in URL but we have one saved, and route is not excluded, add it
   if (!hasModuleParam && moduleFromCookie && !shouldSkipModule) {
@@ -92,7 +73,7 @@ export function middleware(request) {
 
     // Only redirect when the cookie explicitly says the cart is empty. On
     // the very first visit the cookie isn't set yet (the client writes it
-    // after the cart fetch resolves) — bouncing to /home in that case was
+    // after the cart fetch resolves) - bouncing to /home in that case was
     // the cause of the "redirected the first time, ok the second time" bug.
     if (cartListValue === "0") {
       const url = new URL("/home", request.url);

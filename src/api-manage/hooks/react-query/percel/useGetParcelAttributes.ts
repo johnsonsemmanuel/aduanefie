@@ -15,7 +15,7 @@ import { getStoredZoneId } from "helper-functions/getToken";
  *     data: [ … ]                         // the selectable rows
  *   }
  *
- * `unit.label` ("kg", "in") is what the UI suffixes onto each row — never
+ * `unit.label` ("kg", "in") is what the UI suffixes onto each row - never
  * hardcode it, the admin can switch a zone to lb/cm.
  */
 export interface ParcelAttributeUnit {

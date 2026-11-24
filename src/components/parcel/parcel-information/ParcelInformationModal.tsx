@@ -28,13 +28,13 @@ import {
 import useParcelZoneId from "api-manage/hooks/react-query/percel/useParcelZoneId";
 
 /**
- * Gate into the parcel flow: the customer picks what they are sending — type,
- * weight bracket and size bracket — before any address screen. Both entry
+ * Gate into the parcel flow: the customer picks what they are sending - type,
+ * weight bracket and size bracket - before any address screen. Both entry
  * points open it (a category card, and the "send to this location" search),
  * which is why it owns its own data rather than taking it from a parent.
  *
  * Weight and dimension are separate zone-scoped endpoints and each is behind
- * its own admin toggle (`status`), so either section can be absent — the modal
+ * its own admin toggle (`status`), so either section can be absent - the modal
  * then only asks for what the zone actually offers.
  */
 
@@ -250,7 +250,7 @@ const ParcelInformationModal = ({
   }, [shouldFetchCategories]);
 
   // Re-seed on every open so a cancelled edit never leaks into the next one.
-  // The location entry point passes no id, so the first category stands in —
+  // The location entry point passes no id, so the first category stands in -
   // that is the "based on the 1st category" default.
   useEffect(() => {
     if (!open) return;
@@ -302,7 +302,7 @@ const ParcelInformationModal = ({
       toast.error(t("Please select an item dimension"));
       return;
     }
-    // Carry the zone's unit with the selection — the delivery-info card and the
+    // Carry the zone's unit with the selection - the delivery-info card and the
     // checkout billing panel label the bracket without refetching either list.
     const selection = {
       category: selectedCategory,

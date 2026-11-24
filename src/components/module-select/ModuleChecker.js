@@ -11,7 +11,7 @@ import { isModuleAgnosticRoute } from "utils/moduleRoutes";
 // Whether the module currently in localStorage IS the one the URL asks for
 // (matched loosely by slug/module_type/id, same as the resolver below).
 // Used to decide whether a sync is even needed, instead of only checking
-// "is storage empty" — on a fast switch between modules, storage already
+// "is storage empty" - on a fast switch between modules, storage already
 // holds the PREVIOUS module, so an empty-only check never notices the
 // mismatch and every downstream query keeps reading the stale module.
 const storedModuleMatchesUrl = (identifier, storedModule) => {

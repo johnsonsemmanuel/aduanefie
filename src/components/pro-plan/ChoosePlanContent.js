@@ -54,7 +54,7 @@ const mapApiPlan = (raw) => {
 };
 
 // Prettified fallback label for a module key like "ride-share" → "Ride Share"
-// — only used when the module isn't found in the app's own module list
+// - only used when the module isn't found in the app's own module list
 // below, so it's an English string as a last resort, not the normal path.
 const prettifyModuleName = (key) =>
   String(key || "")
@@ -67,8 +67,8 @@ const normalizeModuleKey = (key) =>
     .replace(/[-_\s]+/g, "");
 
 // Resolves a benefits-object module key (e.g. "ride_share") to the SAME
-// module_name the rest of the app already shows (module tabs, home page —
-// see NewNavBar.js) — that name comes from the backend already localized to
+// module_name the rest of the app already shows (module tabs, home page -
+// see NewNavBar.js) - that name comes from the backend already localized to
 // the active language, so this avoids inventing new translation keys per
 // module per language. Falls back to a prettified (English) key only if the
 // module truly isn't in the account's module list.
@@ -90,7 +90,7 @@ const hasModulesMap = (group) =>
   Object.keys(group.modules).length > 0;
 
 // Every sentence below is composed via t() + interpolation (never a plain JS
-// template string handed to t() after the fact) — i18next only translates on
+// template string handed to t() after the fact) - i18next only translates on
 // an exact key match, so a pre-built string like "10% off on Grocery (up to
 // $100)" can never match a translation entry and silently renders in English
 // regardless of the active language. The {{percent}}/{{module}}/{{cap}}/
@@ -149,7 +149,7 @@ const buildDiscountLines = (discount, t, moduleLabel) => {
     return t("Get {{percent}}% off", { percent: pct });
   };
 
-  // Per-module mode — emit one bullet for each module the admin
+  // Per-module mode - emit one bullet for each module the admin
   // configured. We trigger this whenever a `modules` map is present
   // (setup_mode is optional on some backend versions).
   if (hasModulesMap(discount)) {
@@ -254,7 +254,7 @@ const mapBenefitsObject = (b, t, moduleLabel) => {
   const out = [];
   out.push(...buildDiscountLines(b.discount, t, moduleLabel));
   // The sample payload sometimes has the delivery_fee modules even when
-  // `active: 0` — we treat the top-level flag as the source of truth so
+  // `active: 0` - we treat the top-level flag as the source of truth so
   // we don't list inactive promises.
   out.push(...buildDeliveryFeeLines(b.delivery_fee, t, moduleLabel));
   if (b.coupon?.active === 1) {
@@ -268,7 +268,7 @@ const mapBenefitsObject = (b, t, moduleLabel) => {
 
 // Shared plan-selection UI used by both ProPlanSubscriptionModal (stacked
 // layout) and SubscriptionPlanPage (split layout). `onSubscribe(plan)` is
-// fired when the user clicks the CTA — parent decides whether to subscribe
+// fired when the user clicks the CTA - parent decides whether to subscribe
 // inline (free-trial) or open the payment-method modal (paid plans).
 const ChoosePlanContent = ({
   onSubscribe,
@@ -299,12 +299,12 @@ const ChoosePlanContent = ({
       .filter((p) => p.status === undefined || p.status === 1)
       .map(mapApiPlan);
     // Renew flow hides the free-trial option since the user has already used
-    // their trial — only paid plans should be selectable.
+    // their trial - only paid plans should be selectable.
     return hideFreeTrial ? mapped.filter((p) => Number(p.price) > 0) : mapped;
   }, [response, hideFreeTrial]);
 
   // Benefits are entirely backend-driven (per-module percentages/caps set by
-  // the admin) — there's no static fallback here anymore. Showing a fixed
+  // the admin) - there's no static fallback here anymore. Showing a fixed
   // "10% off on all orders" placeholder when the account actually has no
   // active Pro benefits configured would just be a promise the app can't
   // keep, so an empty/loading response renders an empty list, not fake data.
@@ -768,7 +768,7 @@ const ChoosePlanContent = ({
           >
             {durationSelector}
             {priceCard}
-            {/* ctaButton ships its own `mt: auto` — now that it's a
+            {/* ctaButton ships its own `mt: auto` - now that it's a
                 direct child of this flex column, that margin actually
                 consumes the remaining vertical space. */}
             {ctaButton}

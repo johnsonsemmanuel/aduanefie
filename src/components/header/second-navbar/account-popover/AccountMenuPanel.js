@@ -16,23 +16,23 @@ import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { saveModuleParam, getModuleIdentifier } from "utils/moduleParamManager";
 
 // Menu items that only make sense inside the service module. Hidden
-// everywhere except /profile, where — since that page has no module tab bar
-// for the user to switch with — clicking one auto-switches the active
+// everywhere except /profile, where - since that page has no module tab bar
+// for the user to switch with - clicking one auto-switches the active
 // module to the account's first "service" module before navigating.
 const SERVICE_ONLY_KEYS = ["custom-service", "service-request"];
 
 /**
- * Reusable account menu panel — shows the full menu list (Dark Mode, Language,
+ * Reusable account menu panel - shows the full menu list (Dark Mode, Language,
  * Orders & Trips, Wallet, Coupons, Offers, Loyalty, Referral, Inbox, Settings)
  * plus a bottom Login/Signup (guest) or Logout (logged in) button.
  *
  * Props:
- *  - bg: "white" (default) | "gray"  — background variant
- *  - token: string | undefined        — auth token; controls login vs logout button
- *  - onSignInClick: fn               — called when guest taps Login/Signup or an
+ *  - bg: "white" (default) | "gray"  - background variant
+ *  - token: string | undefined        - auth token; controls login vs logout button
+ *  - onSignInClick: fn               - called when guest taps Login/Signup or an
  *                                       auth-required menu item
- *  - onClose: fn                     — called after a menu action; close popover etc.
- *  - cartListRefetch: fn             — needed for logout flow
+ *  - onClose: fn                     - called after a menu action; close popover etc.
+ *  - cartListRefetch: fn             - needed for logout flow
  */
 const AccountMenuPanel = ({
   bg = "white",
@@ -56,7 +56,7 @@ const AccountMenuPanel = ({
   const currentModuleType =
     selectedModule?.module_type ?? getCurrentModuleType();
   const isServiceModule = currentModuleType === "service";
-  // A service module must actually exist (be active) in this deployment —
+  // A service module must actually exist (be active) in this deployment -
   // otherwise the service-only items would show on /profile and their click
   // handler would try to switch to a module that isn't there.
   const hasActiveServiceModule = Boolean(
@@ -418,6 +418,55 @@ const AccountMenuPanel = ({
             );
           })}
         </Stack>
+
+        {/* Partner registrations & portals for signed-in users on mobile/desktop */}
+        <Box
+          sx={{
+            pt: 1.25,
+            borderTop: `1px solid ${theme.palette.divider}`,
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: "11px",
+              fontWeight: 700,
+              color: theme.palette.text.secondary,
+              textTransform: "uppercase",
+              letterSpacing: "0.4px",
+              mb: 0.75,
+            }}
+          >
+            {t("Grow With Aduanefie")}
+          </Typography>
+          <Stack direction="row" flexWrap="wrap" gap={0.75}>
+            {[
+              { label: "Register Farm / Store", path: "/store-registration" },
+              { label: "Become a Marketer", path: "/become-a-marketer" },
+            ].map((item) => (
+              <Typography
+                key={item.path}
+                component="span"
+                onClick={() => {
+                  onClose?.();
+                  router.push(item.path);
+                }}
+                sx={{
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  px: "10px",
+                  py: "5px",
+                  borderRadius: "8px",
+                  bgcolor: theme.palette.background.secondary || "#EFE7D3",
+                  color: theme.palette.primary.deep || "#67513A",
+                  cursor: "pointer",
+                  "&:hover": { opacity: 0.85 },
+                }}
+              >
+                {t(item.label)}
+              </Typography>
+            ))}
+          </Stack>
+        </Box>
 
         {/* Bottom button: Login/Signup (guest) or Logout (auth).
             When `hideLoginButton` is true and user is logged out, hide entirely

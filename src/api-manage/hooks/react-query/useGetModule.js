@@ -91,7 +91,7 @@ export default function useGetModule() {
   });
   const { refetch } = query;
 
-  // Refresh when the user's zone actually CHANGES — not on mount. Every caller
+  // Refresh when the user's zone actually CHANGES - not on mount. Every caller
   // already decides for itself whether it needs the module list (MainLayout,
   // for instance, only wants it on /home), and firing here on mount overrode
   // those gates: `enabled: false` was meaningless because refetch() ignores it,

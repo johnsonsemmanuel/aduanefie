@@ -3,7 +3,7 @@ import {
   CustomBoxFullWidth,
   CustomStackFullWidth,
 } from "styled-components/CustomStyles.style";
-import { alpha, IconButton, Typography } from "@mui/material";
+import { alpha, Button, IconButton, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { Box } from "@mui/system";
 import CloseIcon from "@mui/icons-material/Close";
@@ -52,6 +52,14 @@ const AppliedFilters = (props) => {
     );
     dispatch(setFilterData(newFilter));
   };
+  const handleClearAll = () => {
+    const cleared = filterData?.map((item) =>
+      item?.value !== "price" && item?.value !== "test"
+        ? { ...item, checked: false }
+        : item
+    );
+    dispatch(setFilterData(cleared));
+  };
   return (
     <CustomBoxFullWidth>
       {filterData?.length > 0 && checkedSelection() && (
@@ -87,6 +95,21 @@ const AppliedFilters = (props) => {
               );
             }
           })}
+          <Button
+            size="small"
+            variant="text"
+            onClick={handleClearAll}
+            sx={{
+              fontSize: "12px",
+              fontWeight: 600,
+              textTransform: "none",
+              minWidth: "auto",
+              px: 1,
+              py: 0.25,
+            }}
+          >
+            {t("Clear all")}
+          </Button>
         </CustomStackFullWidth>
       )}
     </CustomBoxFullWidth>

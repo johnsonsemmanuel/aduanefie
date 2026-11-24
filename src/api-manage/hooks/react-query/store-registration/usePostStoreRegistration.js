@@ -95,7 +95,7 @@ const postData = async (storeData) => {
     `${store_registration}`,
     formData
   );
-  // The envelope's `content` carries `store_id`/`type`/`package_id` — callers
+  // The envelope's `content` carries `store_id`/`type`/`package_id` - callers
   // read those directly off the resolved value (`res.type`, not
   // `res.content.type`), so unwrap here rather than at every call site.
   return getApiContent(responseData);

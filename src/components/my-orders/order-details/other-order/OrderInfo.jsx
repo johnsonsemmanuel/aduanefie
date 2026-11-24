@@ -18,9 +18,9 @@ import SingleOrderAttachment from "../singleOrderAttachment";
 import BogoOrderDetailsViewModal from "./BogoOrderDetailsViewModal";
 
 // Order-detail bundle rows carry a differently-shaped `bundle_details` than
-// the cart's — sub-items are order-line rows with `item_details` as a JSON
+// the cart's - sub-items are order-line rows with `item_details` as a JSON
 // string, and the price fields are `bundle_price`/`total_price`/`discount`
-// rather than `base_price`/`final_price` — so map it into the shape
+// rather than `base_price`/`final_price` - so map it into the shape
 // `CartBundleItem` (built for the cart's bundle_details) expects.
 const mapOrderBundleDetails = (bundleDetails) => {
   const quantity = Number(bundleDetails?.quantity) || 1;
@@ -62,7 +62,7 @@ const mapOrderBundleDetails = (bundleDetails) => {
 
 // Order-detail BOGO rows carry order-line shaped `buy_items`/`free_items`
 // (each with `item_details` as a JSON string) rather than the cart's nested
-// `.item` rows — map into the `{item_id, name, image_full_url}` shape
+// `.item` rows - map into the `{item_id, name, image_full_url}` shape
 // `BogoCartItemCard` expects, mirroring `mapOrderBundleDetails` above.
 const mapOrderBogoDetails = (bogoDetails) => {
   const quantity = Number(bogoDetails?.quantity) || 1;

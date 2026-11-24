@@ -6,12 +6,12 @@ import { onSingleErrorResponse } from "api-manage/api-error-response/ErrorRespon
 import { getGuestId, getToken } from "helper-functions/getToken";
 
 /**
- * `customer/order/checkout-summary` — one call for the whole price breakdown.
+ * `customer/order/checkout-summary` - one call for the whole price breakdown.
  *
  * The server runs a fixed sequence (rate → base → parcel tiers → clamp → surge
  * → free-delivery → Pro → express) and the order is not negotiable: a client
  * that recomputes in a different order quotes a different price from the one
- * the customer is charged. So nothing here recalculates — every number is read
+ * the customer is charged. So nothing here recalculates - every number is read
  * back from the response.
  *
  * Verified against the live API: a parcel priced at 60 with no weight/dimension
@@ -23,12 +23,12 @@ import { getGuestId, getToken } from "helper-functions/getToken";
  */
 
 export interface CheckoutSummaryDelivery {
-  /** What the customer pays for delivery — after free-delivery and Pro. */
+  /** What the customer pays for delivery - after free-delivery and Pro. */
   delivery_charge: number;
   delivery_charge_before_pro_discount: number;
   /** Base + surge, before free-delivery and Pro. */
   original_delivery_charge: number;
-  /** The "before" figure — strike this through when free delivery applies. */
+  /** The "before" figure - strike this through when free delivery applies. */
   base_delivery_charge: number;
   /** Floor a saver-tier reduce_charge can't push the fee below. */
   min_delivery_charge: number | null;
@@ -99,7 +99,7 @@ export interface CheckoutSummaryParams {
   /** Required unless the order is a parcel. */
   storeId?: number | string;
   orderAmount?: number;
-  /** Kilometres, always — the server converts to the rate's unit. */
+  /** Kilometres, always - the server converts to the rate's unit. */
   distance?: number;
   latitude?: number | string;
   longitude?: number | string;
@@ -122,7 +122,7 @@ const isFilled = (value: unknown) =>
 /**
  * Only send what is actually set. `latitude`/`longitude` have no `numeric`
  * rule, so a stringified `undefined` sails past validation and blows up in the
- * server's spatial layer with a 500 — hence the coercion and the guard.
+ * server's spatial layer with a 500 - hence the coercion and the guard.
  */
 export const buildCheckoutSummaryPayload = (params: CheckoutSummaryParams) => {
   const latitude = Number(params?.latitude);
@@ -188,7 +188,7 @@ const getCheckoutSummary = async (params: CheckoutSummaryParams) => {
 };
 
 /**
- * True once the server has refused to quote — e.g. an area/zip the zone no
+ * True once the server has refused to quote - e.g. an area/zip the zone no
  * longer covers answers 403 "The selected option is not available in this
  * zone." Consumers read `0` out of the missing payload, so without this the
  * checkout would show a free delivery and happily place the order at a fee the

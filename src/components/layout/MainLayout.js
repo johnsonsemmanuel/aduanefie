@@ -21,6 +21,8 @@ import SearchProductModal from "../home/search/SearchProductModal";
 // import { MainLayoutRoot } from "./LandingLayout";
 import FloatingCartButton from "../header/new-navbar/FloatingCartButton";
 import HappyHourBanner from "../happy-hour/HappyHourBanner";
+import NetworkStatusBanner from "./NetworkStatusBanner";
+import ScrollToTopFab from "./ScrollToTopFab";
 import { DESKTOP_LAYOUT_MEDIA_QUERY, MOBILE_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 import {
   MOBILE_BOTTOM_NAV_HEIGHT,
@@ -60,6 +62,9 @@ const FULL_BLEED_MOBILE_ROUTES = new Set([
   "/trade/blocs",
   "/trade/blocs/[slug]",
   "/market-prices",
+  "/live-farming",
+  "/regional-tours",
+  "/become-a-marketer",
   "/group-buys",
   "/group-buys/[id]",
   // Section + category pages use their own MobileNavBar variant
@@ -87,7 +92,7 @@ const FULL_BLEED_MOBILE_ROUTES = new Set([
   "/service/all-providers",
 ]);
 
-// Constant per route/module — sized for the EXPANDED header. The scroll-away
+// Constant per route/module - sized for the EXPANDED header. The scroll-away
 // collapse is a pure transform on the fixed AppBar (see NavBar.style.js) and
 // never changes layout, so the content offset must not react to it either.
 //
@@ -99,7 +104,7 @@ const getMobileMarginTop = ({ pathname, currentModuleType }) => {
   if (FULL_BLEED_MOBILE_ROUTES.has(pathname)) return "0px";
   // BOGO list & details render only the compact address + cart header on
   // mobile (no module tabs, search bar or section chips), so they need a much
-  // smaller offset than the home header's default 7.6rem — otherwise a large
+  // smaller offset than the home header's default 7.6rem - otherwise a large
   // empty gap appears above the content.
   if (pathname === "/bogo-list" || pathname === "/bogo-list/[id]") {
     return "3.25rem";
@@ -109,7 +114,37 @@ const getMobileMarginTop = ({ pathname, currentModuleType }) => {
     return pathname?.startsWith("/rental") ? "3rem" : "6.3rem";
   }
   if (currentModuleType === ModuleTypes.PARCEL) return "5.4rem";
-  return "7.6rem";
+  return "8.75rem";
+};
+
+// Info/legal routes where the full footer is appropriate even on mobile.
+const MOBILE_FOOTER_ROUTES = new Set([
+  "/about-us",
+  "/privacy-policy",
+  "/terms-and-conditions",
+  "/refund-policy",
+  "/shipping-policy",
+  "/cancellation-policy",
+  "/help-and-support",
+]);
+
+// Transactional / focused routes where the footer is distracting even on desktop.
+const HIDDEN_DESKTOP_FOOTER_ROUTES = new Set([
+  "/checkout",
+  "/profile",
+  "/track-order",
+  "/track-order/[id]",
+  "/group-buys/[id]",
+  "/rental/checkout",
+  "/rental/cart",
+  "/service/checkout",
+  "/service/checkout/[slug]",
+  "/service/checkout/custom-service",
+]);
+
+const shouldShowFooter = ({ pathname, isSmall }) => {
+  if (isSmall) return MOBILE_FOOTER_ROUTES.has(pathname);
+  return !HIDDEN_DESKTOP_FOOTER_ROUTES.has(pathname);
 };
 
 const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
@@ -136,7 +171,7 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
   );
   useEffect(() => {
     // `configData.modules` is redux-persist-blacklisted, so a hard reload of
-    // any of these routes starts with an empty module list — and since it's
+    // any of these routes starts with an empty module list - and since it's
     // only ever dispatched from the query below, the navbar's module tab bar
     // stays hidden (`renderModuleBar` bails on `!modules?.length`) unless we
     // explicitly refetch here too, not just on /home.
@@ -237,8 +272,13 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
     router.pathname?.startsWith("/home/") ||
     router.pathname?.startsWith("/search");
 
+  const showFooter = shouldShowFooter({
+    pathname: router.pathname,
+    isSmall,
+  });
+
   return (
-    <MainLayoutRoot justifyContent="space-between" key={rerenderUi}>
+    <MainLayoutRoot justifyContent={showFooter ? "space-between" : "flex-start"} key={rerenderUi}>
       <header>
         <HeaderComponent />
       </header>
@@ -252,6 +292,10 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
             pathname: router.pathname,
             currentModuleType,
           }),
+          paddingBottom:
+            isSmall && showBottomNav && !showFooter
+              ? `calc(${MOBILE_BOTTOM_NAV_HEIGHT}px + env(safe-area-inset-bottom, 0px) + 16px)`
+              : 0,
           [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
             marginTop: RENTAL_COMPACT_DESKTOP_HEADER_ROUTES.has(router.pathname)
               ? "5.4rem"
@@ -280,9 +324,11 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
           {children}
         </CustomStackFullWidth>
       </CustomStackFullWidth>
-      <footer>
-        <FooterComponent configData={configData} />
-      </footer>
+      {showFooter && (
+        <footer>
+          <FooterComponent configData={configData} />
+        </footer>
+      )}
       {isHappyHourRoute && (
         <Box
           sx={{
@@ -305,6 +351,8 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
         </Box>
       )}
       {isSmall && showBottomNav && <BottomNav />}
+      <NetworkStatusBanner />
+      <ScrollToTopFab hasBottomNav={Boolean(isSmall && showBottomNav)} />
       <SearchProductModal />
       <FloatingCartButton />
     </MainLayoutRoot>

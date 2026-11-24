@@ -7,7 +7,7 @@ import axios from "axios";
 import { getApiCollection } from "../../../getApiContent";
 
 // Map UI sort tokens to the backend's expected `sort_by` values. Same
-// mapping used in useGetStoreCategoriesItems — keeps call sites consistent.
+// mapping used in useGetStoreCategoriesItems - keeps call sites consistent.
 const SORT_MAP = {
   high: "price_high_low",
   low: "price_low_high",

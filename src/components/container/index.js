@@ -24,12 +24,12 @@ const ContainerWrapper = styled(Container)(({ theme }) => ({
 }));
 
 /**
- * CustomContainer — centered layout wrapper.
+ * CustomContainer - centered layout wrapper.
  *
  * Props:
- *   noMobilePadding  — removes left/right padding on mobile (xs/sm).
+ *   noMobilePadding  - removes left/right padding on mobile (xs/sm).
  *                      Use for full-width sections like banners, carousels.
- *   mobilePx         — custom mobile horizontal padding (e.g. "0px", "16px").
+ *   mobilePx         - custom mobile horizontal padding (e.g. "0px", "16px").
  *                      Overrides default 10px. Ignored if noMobilePadding is set.
  */
 const CustomContainer = ({

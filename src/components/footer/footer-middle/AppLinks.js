@@ -51,19 +51,23 @@ const AppLinks = (props) => {
       ? appleicon
       : appleicon?.src || "/static/footer/apple.svg";
   const { t } = useTranslation();
+  const showPlayStore = Number(landingPageData?.play_status) === 1 && Boolean(landingPageData?.play_store_link);
+  const showAppStore = Number(landingPageData?.app_status) === 1 && Boolean(landingPageData?.app_store_link);
+
   const googlePlay = () => (
     <CustomButton
-      onClick={() =>
-        goToApp(landingPageData?.play_store_link)
-      }
+      onClick={() => {
+        if (showPlayStore) goToApp(landingPageData?.play_store_link);
+      }}
       variant="contained"
       graybackground={graybackground ? "true" : "false"}
+      sx={{ cursor: showPlayStore ? "pointer" : "default" }}
     >
       <Stack
         direction="row"
         alignItems="center"
         justifyContent="space-between"
-        spacing={.5}
+        spacing={0.5}
       >
         <NextImage
           src={playstoreSrc}
@@ -75,12 +79,12 @@ const AppLinks = (props) => {
         <Stack alignItems="flex-start" justifyContent="center">
           <Typography
             sx={{
-              fontSize: { xs: "8px", sm: "10px", md: "11px" },
+              fontSize: { xs: "8px", sm: "10px", md: "10px" },
               color: theme.palette.whiteContainer.main,
               lineHeight: { xs: "10px", sm: "13px", md: "10px" },
             }}
           >
-            {t("GET IT ON")}
+            {showPlayStore ? t("GET IT ON") : t("COMING SOON")}
           </Typography>
           <Typography
             sx={{
@@ -97,11 +101,12 @@ const AppLinks = (props) => {
   );
   const appleStore = () => (
     <CustomButton
-      onClick={() =>
-        goToApp(landingPageData?.app_store_link)
-      }
+      onClick={() => {
+        if (showAppStore) goToApp(landingPageData?.app_store_link);
+      }}
       variant="contained"
       graybackground={graybackground ? "true" : "false"}
+      sx={{ cursor: showAppStore ? "pointer" : "default" }}
     >
       <Stack
         direction="row"
@@ -119,12 +124,12 @@ const AppLinks = (props) => {
         <Stack alignItems="flex-start" justifyContent="center">
           <Typography
             sx={{
-              fontSize: { xs: "8px", sm: "10px", md: "11px" },
+              fontSize: { xs: "8px", sm: "10px", md: "10px" },
               color: theme.palette.whiteContainer.main,
               lineHeight: { xs: "10px", sm: "13px", md: "10px" },
             }}
           >
-            {t("Download ON")}
+            {showAppStore ? t("Download ON") : t("COMING SOON")}
           </Typography>
           <Typography
             sx={{
@@ -139,10 +144,7 @@ const AppLinks = (props) => {
       </Stack>
     </CustomButton>
   );
-  const showPlayStore = Number(landingPageData?.play_status) === 1;
-  const showAppStore = Number(landingPageData?.app_status) === 1;
 
-  // console.log({ showPlayStore, showAppStore });
   return (
     <Stack
       direction="row"
@@ -150,8 +152,8 @@ const AppLinks = (props) => {
       gap={language_direction === "rtl" && "10px"}
       justifyContent={align}
     >
-      {showPlayStore && googlePlay()}
-      {showAppStore && appleStore()}
+      {googlePlay()}
+      {appleStore()}
     </Stack>
   );
 };

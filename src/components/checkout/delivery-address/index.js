@@ -225,7 +225,7 @@ const DeliveryAddress = ({
   const isTakeAway = orderType === "take_away";
   const isGuest = !token;
   // Take Away needs no delivery address, but a guest must still provide contact
-  // info (name + phone) for the pickup — logged-in users supply it from their
+  // info (name + phone) for the pickup - logged-in users supply it from their
   // profile. So the contact section is shown for guests on Take Away too.
   const showGuestTakeAwayContact = isTakeAway && isGuest;
   const showHeader =
@@ -765,7 +765,7 @@ const DeliveryAddress = ({
         />
       </CustomModal>
 
-      {/* Address picker modal — opened by the edit (pencil) button on AddressPill */}
+      {/* Address picker modal - opened by the edit (pencil) button on AddressPill */}
       {openAddressPicker && (
         <CheckoutAddressPickerModal
           open={openAddressPicker}

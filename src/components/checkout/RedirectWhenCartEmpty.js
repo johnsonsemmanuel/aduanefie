@@ -17,7 +17,7 @@ const RedirectWhenCartEmpty = ({
   const isRehydrated = useSelector((state) => state?._persist?.rehydrated);
 
   useEffect(() => {
-    if (!isRehydrated) return; // cart data not ready yet — do nothing
+    if (!isRehydrated) return; // cart data not ready yet - do nothing
 
     const hasLocation =
       typeof window !== "undefined" && localStorage.getItem("location");

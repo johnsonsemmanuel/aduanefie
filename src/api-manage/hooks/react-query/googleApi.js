@@ -1,8 +1,8 @@
 import MainApi from "../../MainApi";
 import { getApiContent } from "../../getApiContent";
 
-// These helpers hand back the raw axios response — callers read `response.data`
-// — so unwrap the v4.2 envelope in place and leave the rest of the response
+// These helpers hand back the raw axios response - callers read `response.data`
+// - so unwrap the v4.2 envelope in place and leave the rest of the response
 // untouched.
 const unwrapResponse = (request) =>
   request.then((response) => ({

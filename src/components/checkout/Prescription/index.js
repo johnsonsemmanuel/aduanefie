@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { safeJsonParse } from "utils/safeJsonParse";
 import { Grid, Typography, useMediaQuery } from "@mui/material";
 import DeliveryDetails from "../item-checkout/DeliveryDetails";
 import { Stack } from "@mui/system";
@@ -70,7 +71,7 @@ const PrescriptionCheckout = ({ storeId, page }) => {
     refetch();
   }, [storeId]);
   useEffect(() => {
-    const currentLatLng = JSON.parse(localStorage.getItem("currentLatLng"));
+    const currentLatLng = safeJsonParse(localStorage.getItem("currentLatLng"), {});
     const location = localStorage.getItem("location");
     setAddress({
       ...currentLatLng,
@@ -200,7 +201,7 @@ const PrescriptionCheckout = ({ storeId, page }) => {
   const placeOrder = () => {
     // The server refused to quote this delivery (e.g. an area/zip the zone no
     // longer covers). The fee reads 0 out of the empty payload, so placing here
-    // would bill a price the server never agreed — stop instead.
+    // would bill a price the server never agreed - stop instead.
     if (quoteUnavailable) {
       toast.error(t("Delivery charge is unavailable for this address"));
       return;

@@ -8,9 +8,9 @@ import useGetCoverageList, {
 /**
  * Owns the Area / ZIP Code selection for one checkout.
  *
- * Every module checkout needs the same three things — the coverage list, the
+ * Every module checkout needs the same three things - the coverage list, the
  * selected id in the shape `checkout-summary` wants, and the "you must choose
- * one" gate on the confirm button — so they live here rather than being
+ * one" gate on the confirm button - so they live here rather than being
  * repeated per screen.
  *
  * The selection resets whenever the zone changes, because a zip code from the
@@ -20,7 +20,7 @@ import useGetCoverageList, {
 interface UseAreaZipSelectionArgs {
   /** Take-away and dine-in carry no delivery charge, so no selection is asked. */
   orderType?: string;
-  /** Self-delivery stores price their own fee — the admin rule does not apply. */
+  /** Self-delivery stores price their own fee - the admin rule does not apply. */
   selfDelivery?: boolean;
   /**
    * Overrides the browsing zone. Parcel prices off the pickup zone, which
@@ -35,7 +35,7 @@ export const useAreaZipSelection = ({
   zoneId: zoneIdOverride,
 }: UseAreaZipSelectionArgs) => {
   // Deliberately NOT parameterised. `coverage-list` takes `zone_id` as a query
-  // param and *ignores* the `zoneId` header — verified: header zone 1 + query
+  // param and *ignores* the `zoneId` header - verified: header zone 1 + query
   // zone 2 returns zone 2's list. So the zone passed here decides which areas
   // are offered, while `checkout-summary` prices against the header's zone.
   // Pass anything else (a store's `zone_id`, say) and the two diverge: the ids
@@ -62,7 +62,7 @@ export const useAreaZipSelection = ({
 
   /**
    * Spread into the `useGetCheckoutSummary` params. It lands in that query's
-   * key, so changing the selection changes the key and the summary re-quotes —
+   * key, so changing the selection changes the key and the summary re-quotes -
    * which is the whole point: the fee comes from the server, not from here.
    *
    * Deliberately NOT gated on `required`. That flag depends on the coverage
@@ -72,7 +72,7 @@ export const useAreaZipSelection = ({
    */
   const summaryParams = useMemo(() => {
     if (hidden || value === null || value === undefined) return {};
-    // `area_id` for an area-wise zone, `zip_code_id` for a zip-wise one — the
+    // `area_id` for an area-wise zone, `zip_code_id` for a zip-wise one - the
     // server ignores the key that does not match the rule.
     return { [coverageIdKey(coverage?.type)]: value };
   }, [hidden, value, coverage?.type]);

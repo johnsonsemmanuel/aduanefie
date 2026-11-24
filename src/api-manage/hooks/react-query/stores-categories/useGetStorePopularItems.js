@@ -5,7 +5,7 @@ import { onSingleErrorResponse } from "../../../api-error-response/ErrorResponse
 import { getApiContent } from "../../../getApiContent";
 import { buildStoreItemQueryParams } from "./buildStoreItemQueryParams";
 
-// Hits /api/v1/stores/popular-items/{id} — a flat, paginated item list for
+// Hits /api/v1/stores/popular-items/{id} - a flat, paginated item list for
 // one store, ordered by order_count DESC (most ordered first) unless
 // `sortBy` overrides it. Shares its filter/sort params with
 // /store-categories/items via buildStoreItemQueryParams, but stays a

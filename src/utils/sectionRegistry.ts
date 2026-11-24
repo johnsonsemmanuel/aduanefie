@@ -1,7 +1,7 @@
 /**
  * Source-of-truth for which section ids exist per module.
  *
- * IMPORTANT — design intent:
+ * IMPORTANT - design intent:
  * - The `id` is a stable internal identifier used by the URL (`/home/<id>?module=...`)
  *   and by the in-component lookup. It must NEVER change and is NOT a display label.
  * - The `defaultLabel` is an English fallback used ONLY for SEO when both the

@@ -21,7 +21,7 @@ const clamp = (value: number) => Math.min(100, Math.max(0, value));
  *
  * It zooms the image in-place following the cursor (transform-origin tracking),
  * preserving `object-fit: cover` and staying inside the rounded, overflow-hidden
- * container — so it can't be clipped like an external "beside" panel would be.
+ * container - so it can't be clipped like an external "beside" panel would be.
  */
 const ImageMagnifier = ({
   src,

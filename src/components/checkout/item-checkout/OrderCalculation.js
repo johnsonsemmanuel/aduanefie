@@ -106,7 +106,7 @@ const OrderCalculation = (props) => {
 
   // Express / slightly_delay surcharge from the DeliverySpeedOptions row.
   // Zero on take-away, when a free-delivery coupon is in effect, or on a
-  // cross-border lane (that row is hidden — freight is priced by the quote).
+  // cross-border lane (that row is hidden - freight is priced by the quote).
   const deliveryOptionSurcharge =
     !isCrossBorder &&
     orderType === "delivery" &&
@@ -121,7 +121,7 @@ const OrderCalculation = (props) => {
   const theme = useTheme();
 
   // Pro plan: only fetch the active offer when the feature flag is on AND the
-  // user is authenticated (the endpoint is auth-only — guests would 401).
+  // user is authenticated (the endpoint is auth-only - guests would 401).
   const proFeatureEnabled = configData?.pro_member_status === 1;
   const hasToken = !!token;
   const { data: activeOfferRaw } = useGetProActiveOffer({
@@ -177,8 +177,8 @@ const OrderCalculation = (props) => {
   // Apply the min-order gate against the post-product-discount cart subtotal,
   // since the discount is what the customer actually pays before delivery.
   const proMinOrderAmount = Number(proBenefit?.min_order_amount) || 0;
-  // `free_delivery` coupons don't reduce the cart subtotal — they only
-  // waive the delivery fee — so they're skipped from the deduction.
+  // `free_delivery` coupons don't reduce the cart subtotal - they only
+  // waive the delivery fee - so they're skipped from the deduction.
   // The coupon percentage applies against (Items Price - Discount), so the
   // authoritative eligibilityDiscountAmount (matches the visible "Discount"
   // row) is passed through rather than letting getCouponDiscount recompute
@@ -211,7 +211,7 @@ const OrderCalculation = (props) => {
   const deliveryAlreadyFreeByCoupon =
     couponDiscount?.coupon_type === "free_delivery";
 
-  // Eligibility conditions that don't depend on the raw fee — the fee-positive
+  // Eligibility conditions that don't depend on the raw fee - the fee-positive
   // check is folded in below once the server has quoted the fee.
   const proDeliveryConditionsMet =
     !isCrossBorder &&
@@ -242,7 +242,7 @@ const OrderCalculation = (props) => {
       deliveryType: selectedDeliveryOption?.deliveryType,
       scheduleAt: orderType === "schedule_order" ? scheduleAt : undefined,
       couponCode: couponDiscount?.code,
-      // area_id / zip_code_id — the zone's rule prices off these.
+      // area_id / zip_code_id - the zone's rule prices off these.
       ...(areaZipParams || {}),
     },
     // International lanes are quoted by `cross-border/shipping-options`;
@@ -264,7 +264,7 @@ const OrderCalculation = (props) => {
   useEffect(() => {
     setDeliveryOptions?.(checkoutSummary?.delivery_options);
   }, [checkoutSummary?.delivery_options]);
-  // Passed through untouched — the rows below read `price`, `price_type`,
+  // Passed through untouched - the rows below read `price`, `price_type`,
   // `customer_note` and `customer_note_status` off it.
   const surgePrice = checkoutSummary?.surge;
 
@@ -287,7 +287,7 @@ const OrderCalculation = (props) => {
   // already free-delivering for some other reason (free_delivery_over
   // threshold, zone rule, take-away, etc.), in which case the Pro benefit
   // shouldn't double-discount or surface a misleading savings message.
-  // The "before" figure — base + surge, ahead of free-delivery and Pro.
+  // The "before" figure - base + surge, ahead of free-delivery and Pro.
   const rawDeliveryFee = isCrossBorder
     ? crossBorderShippingAmount
     : Number(summaryDelivery?.base_delivery_charge) || 0;
@@ -304,7 +304,7 @@ const OrderCalculation = (props) => {
       rawDeliveryFee;
 
   // A slightly-delay discount can never push the delivery fee below the
-  // current module's minimum_shipping_charge (zone pivot) — cap the discount
+  // current module's minimum_shipping_charge (zone pivot) - cap the discount
   // at (fee − minimum) so the surcharge row and the total never credit more
   // than the fee can actually shrink.
   const zonePivot = useMemo(
@@ -328,7 +328,7 @@ const OrderCalculation = (props) => {
   // pro_customer_savings already accounts for admin/vendor free delivery.
   const proDeliveryBenefitActive =
     proDeliveryConditionsMet && quotedProDeliverySavings > 0;
-  // Full waiver — kept under the old name so the rest of the file's references
+  // Full waiver - kept under the old name so the rest of the file's references
   // (deliveryOptionSurcharge gate, strikethrough Free label) still read clearly.
   const isFullFreeDelivery =
     proDeliveryOfferType === ProOfferType.FREE ||
@@ -343,7 +343,7 @@ const OrderCalculation = (props) => {
       ? -Math.min(Math.abs(deliveryOptionSurcharge), maxDeliveryDiscount)
       : deliveryOptionSurcharge;
 
-  // Pro "discount" benefit — percentage/max_amount below are plan metadata
+  // Pro "discount" benefit - percentage/max_amount below are plan metadata
   // for display only (the "15% · up to ৳100" chip). The actual amount
   // deducted is read from checkout-summary's `pro.discount`, the single
   // source of truth already computed server-side against the real
@@ -364,7 +364,7 @@ const OrderCalculation = (props) => {
 
     if (proBenefit?.type === "delivery_fee") {
       // Only surface the delivery savings message when the benefit is actually
-      // applying — otherwise (take-away, min not met, already-free delivery
+      // applying - otherwise (take-away, min not met, already-free delivery
       // via coupon/threshold/zone) the banner would mislead the user.
       if (!proDeliveryBenefitActive) return undefined;
       if (isFullFreeDelivery) {
@@ -560,7 +560,7 @@ const OrderCalculation = (props) => {
 
   // An international lane never calls checkout-summary, so the store tax that
   // placement adds has to be reproduced here. `place_order` also rounds money
-  // at specific points while it bills, so mirror that arithmetic exactly — a
+  // at specific points while it bills, so mirror that arithmetic exactly - a
   // checkout total that differs from the charged total is a pricing bug, not a
   // display quirk.
   const roundUpToDigit = Number.isFinite(
@@ -699,7 +699,7 @@ const OrderCalculation = (props) => {
     value: 0,
   };
   // Kept only for its side effect on `diffDiscount` (the "additional
-  // discount" banner below) — the displayed amount comes from
+  // discount" banner below) - the displayed amount comes from
   // discount-eligibility's `discount_amount` alone (see above), not this
   // legacy client-side recompute.
   getProductDiscount(cartList, storeData, diffDiscount);
@@ -734,7 +734,7 @@ const OrderCalculation = (props) => {
   // Append the Pro delivery-fee benefit message to the tooltip so members
   // see exactly which discount the platform is applying to their fee.
   const proDeliveryTooltipText = (() => {
-    // Mirrors `proDeliveryBenefitActive` — if delivery is already free for a
+    // Mirrors `proDeliveryBenefitActive` - if delivery is already free for a
     // reason other than the Pro benefit (admin/vendor/coupon), there's no
     // Pro delivery discount to mention in the tooltip.
     if (!proDeliveryBenefitActive) return "";
@@ -755,7 +755,7 @@ const OrderCalculation = (props) => {
     }
     return ` ${t("Delivery fee benefit as a Pro member")}${minOrderQualifier}.`;
   })();
-  // Surge amount is shown regardless of the note — the note (when the admin
+  // Surge amount is shown regardless of the note - the note (when the admin
   // turned it on) is additional context, not a replacement for the figure.
   const surgeAmountText =
     Number(surgePrice?.price) > 0

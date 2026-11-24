@@ -18,11 +18,11 @@ export default function useGetAddressList(handleSuccess) {
     // Opening the navbar popover repeatedly won't re-hit the network;
     // add/edit/delete flows call refetch() to invalidate manually.
     enabled: !!token,
-    // Keep data fresh for 30 s — background refetch after that.
+    // Keep data fresh for 30 s - background refetch after that.
     staleTime: 30 * 1000,
     onError: onErrorResponse,
   });
-  // `enabled` only blocks react-query's own auto-triggers — a manual
+  // `enabled` only blocks react-query's own auto-triggers - a manual
   // refetch() call bypasses it and fires the request regardless. Several
   // callers refetch() unconditionally on mount, so guard here once instead
   // of adding a token check at every call site.

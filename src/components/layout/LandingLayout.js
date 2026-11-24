@@ -15,6 +15,7 @@ export const MainLayoutRoot = styled(Stack)(({ theme }) => ({
 
 export const LandingLayout = ({ children, configData, landingPageData }) => {
   const { data } = useGetLandingPage();
+  const effectiveLandingData = data || landingPageData;
 
   return (
     <MainLayoutRoot justifyContent="space-between">
@@ -23,7 +24,7 @@ export const LandingLayout = ({ children, configData, landingPageData }) => {
       </header>
       {children}
       <footer>
-        <FooterComponent configData={configData} landingPageData={data} />
+        <FooterComponent configData={configData} landingPageData={effectiveLandingData} />
       </footer>
     </MainLayoutRoot>
   );

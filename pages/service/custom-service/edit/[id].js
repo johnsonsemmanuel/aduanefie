@@ -13,7 +13,7 @@ import CreateCustomService from "components/home/module-wise-components/service/
 import useGetCustomServiceRequestDetails from "components/home/module-wise-components/service/service-api-manage/hooks/react-query/custom-service/useGetCustomServiceRequestDetails";
 
 // Convert API 24-hour ("14:30" / "14:30:00") back to the "h:mm A" the
-// Shedule picker renders — inverse of the to24Hour helper in
+// Shedule picker renders - inverse of the to24Hour helper in
 // CustomServiceForm.jsx.
 const to12Hour = (raw) => {
   if (!raw) return null;

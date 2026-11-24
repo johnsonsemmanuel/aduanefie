@@ -6,7 +6,7 @@ import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { getApiCollection } from "../../../getApiContent";
 
 /**
- * Params (all optional — only pass what's needed per context):
+ * Params (all optional - only pass what's needed per context):
  *   limit, offset, ad, sort_by, quick_action, price_min, price_max,
  *   type (comma-separated: halal,non_veg,...), category_ids (comma-separated), rating
  */

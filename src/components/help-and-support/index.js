@@ -14,12 +14,19 @@ import img1 from "./assets/image 47.png";
 import SupportImgSvg from "./assets/SupportImgSvg";
 import Link from "next/link";
 import LocationViewOnMap from "../Map/location-view/LocationViewOnMap";
+import { isValidLocation } from "helper-functions/validLocation";
 
 const HelpAndSupport = (props) => {
   const { configData, t } = props;
   const [open, setOpen] = useState(false);
+  // The backend returns null when no valid business pin exists. Keep the
+  // postal address visible, but do not open a map with a placeholder centre.
+  const hasBusinessLocation = isValidLocation({
+    lat: configData?.default_location?.lat,
+    lng: configData?.default_location?.lng,
+  });
   const handleOpenCloseMap = () => {
-    setOpen(!open);
+    if (hasBusinessLocation) setOpen(!open);
   };
   return (
     <Box>
@@ -52,7 +59,12 @@ const HelpAndSupport = (props) => {
 
       <HelpGrid container spacing={2}>
         <Grid item md={4} xs={12}>
-          <Box sx={{ cursor: "pointer" }} onClick={handleOpenCloseMap}>
+          <Box
+            sx={{
+              cursor: hasBusinessLocation ? "pointer" : "default",
+            }}
+            onClick={handleOpenCloseMap}
+          >
             <VisitBox>
               <HelpImgBox>
                 <img src={img1.src} alt={t("help")} />
@@ -112,7 +124,7 @@ const HelpAndSupport = (props) => {
           </Link>
         </Grid>
       </HelpGrid>
-      {open && (
+      {open && hasBusinessLocation && (
         <LocationViewOnMap
           open={open}
           handleClose={handleOpenCloseMap}

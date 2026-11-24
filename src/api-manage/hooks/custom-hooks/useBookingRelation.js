@@ -1,6 +1,6 @@
 import { useRouter } from "next/router";
 
-// A repeat booking's parent record has no payment/review of its own — those
+// A repeat booking's parent record has no payment/review of its own - those
 // belong to each individually-scheduled sub booking, opened with `parentBookingId`.
 const useBookingRelation = ({ isBooking, data }) => {
   const router = useRouter();

@@ -33,7 +33,7 @@ const useGetHappyHourStores = (params = {}, enabled = true) => {
       enabled,
       cacheTime: 5 * 60 * 1000,
       refetchOnWindowFocus: false,
-      // Stays silent on failure — the modal shows its own empty state.
+      // Stays silent on failure - the modal shows its own empty state.
       retry: false,
       onError: () => {},
     },

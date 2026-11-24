@@ -12,7 +12,7 @@ export const getData = async (params) => {
     : `${item_details_api}/${id}`
   const { data } = await MainApi.get(`${tempUrl}`)
   // The modals pass this straight through as `productDetailsData`, so it must
-  // be the item itself — v4.2 nests it under `content`.
+  // be the item itself - v4.2 nests it under `content`.
   return getApiContent(data)
 }
 

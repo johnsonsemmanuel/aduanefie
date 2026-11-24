@@ -37,6 +37,8 @@ import { getEcommerceSections } from "./ecommerceSectionsConfig";
 import SinglePoster from "./SinglePoster";
 import TrendingItemsSection from "./TrendingItemsSection";
 import LiveFarmingSection from "components/home/live-farming/LiveFarmingSection";
+import { WHOLESALE_MODULE_ID } from "components/trade/tradeData";
+import OngoingGroupBuysSection from "components/home/group-buys/OngoingGroupBuysSection";
 const FlashSalesSection = dynamic(() => import("./FlashSalesSection"), {
   ssr: false,
 });
@@ -125,9 +127,17 @@ const Shop = ({ configData, routeSection }) => {
         </CustomContainer>
       </S>
 
+      {String(moduleId) === String(WHOLESALE_MODULE_ID) && (
+        <S>
+          <CustomContainer>
+            <LiveFarmingSection limit={8} />
+          </CustomContainer>
+        </S>
+      )}
+
       <S>
         <CustomContainer>
-          <LiveFarmingSection limit={8} />
+          <OngoingGroupBuysSection moduleId={moduleId} />
         </CustomContainer>
       </S>
 

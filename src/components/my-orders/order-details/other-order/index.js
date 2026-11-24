@@ -466,7 +466,7 @@ const OtherOrder = (props) => {
           menuData={
             isBooking
               ? // The parent/main booking of a repeat series has no serviceman
-                // of its own — that's only assigned per sub-booking — so hide
+                // of its own - that's only assigned per sub-booking - so hide
                 // the tab there instead of showing an always-empty panel.
                 isParentRepeatBooking
                 ? orderDetailsMenuDataForBooking.filter(

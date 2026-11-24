@@ -25,7 +25,7 @@ const toBase64 = (str) =>
 
 // `next/image` rejects anything that isn't absolute (http/https) or
 // root-relative ("/foo.png"). Some backend responses come back as a bare
-// filename like "2025-12-28-...webp" — surface those as the placeholder
+// filename like "2025-12-28-...webp" - surface those as the placeholder
 // instead of letting next/image throw "Failed to parse src ..." at runtime.
 const sanitizeSrc = (raw, fallback) => {
   if (!raw) return fallback;

@@ -8,7 +8,7 @@ import { getApiList } from "../../../getApiContent";
 const getData = async (guestId, store_id) => {
   try {
     const query = new URLSearchParams();
-    // `customer_or_guest` endpoint — send guest_id whenever we hold one so a
+    // `customer_or_guest` endpoint - send guest_id whenever we hold one so a
     // guest cart stays addressable; the backend prefers the bearer token when
     // both are present.
     const effectiveGuestId = guestId ?? getGuestId();
@@ -18,7 +18,7 @@ const getData = async (guestId, store_id) => {
     const { data } = await MainApi.get(
       queryString ? `${all_cart_list}?${queryString}` : all_cart_list
     );
-    // Callers do `res?.map(...)`, so hand back the rows array — v4.2 nests
+    // Callers do `res?.map(...)`, so hand back the rows array - v4.2 nests
     // them under content.data alongside pagination.
     return getApiList(data) ?? [];
   } catch (error) {

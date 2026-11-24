@@ -4,7 +4,7 @@ import { bogo_store_offers_api } from "api-manage/ApiRoutes";
 import { getGuestId } from "helper-functions/getToken";
 import { getApiCollection } from "../../../getApiContent";
 
-// GET /bogo/store-offers — a store's live BOGO bundles; empty `data` means none running.
+// GET /bogo/store-offers - a store's live BOGO bundles; empty `data` means none running.
 const getData = async (storeId, params = {}) => {
   const { limit = 10, offset = 1 } = params;
 

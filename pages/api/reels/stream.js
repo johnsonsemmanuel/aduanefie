@@ -2,9 +2,13 @@
 // This allows the browser's <video> element to make Range requests natively,
 // enabling true progressive playback without MSE/blob complexity.
 //
-// Usage: /api/reels/stream?reel_id=123&t=TOKEN&mid=MODULE_ID&zid=ZONE_ID
+// Usage: /api/reels/stream?reel_id=123&sid=OPAQUE_HANDLE
 //
-// The browser handles all buffering, seeking, and Range requests automatically.
+// `sid` is a short-lived, single-reel handle obtained from POST
+// /api/reels/session (where the Bearer token is supplied in a header). The
+// token itself is never placed in a URL, where access logs would record it.
+
+import { getReelStreamSession } from "../../../src/helper-functions/reelStreamSessions";
 
 export const config = {
   api: {
@@ -14,28 +18,39 @@ export const config = {
 };
 
 export default async function handler(req, res) {
-  const { reel_id, t: token, mid: moduleId, zid: zoneid, lang, lat, lng, guest_id } =
-    req.query;
+  const { reel_id, sid } = req.query;
 
-  if (!reel_id) {
+  const reelId = Number(reel_id);
+  if (!Number.isInteger(reelId) || reelId <= 0) {
     return res.status(400).json({ error: "reel_id required" });
   }
 
+  const session = getReelStreamSession(sid);
+  if (!session) {
+    return res.status(401).json({ error: "stream session expired" });
+  }
+  if (session.reelId !== reelId) {
+    return res.status(403).json({ error: "session reel mismatch" });
+  }
+
   const baseUrl = ((process.env.NEXT_PUBLIC_BASE_URL || "").replace(/\/+$/, "") || "").replace(/\/$/, "");
-  const guestParam = guest_id ? `&guest_id=${guest_id}` : "";
-  const upstreamUrl = `${baseUrl}/api/v1/customer/reels/details?reel_id=${reel_id}&stream=1${guestParam}`;
+  const guestParam = session.guestId
+    ? `&guest_id=${encodeURIComponent(session.guestId)}`
+    : "";
+  const upstreamUrl = `${baseUrl}/api/v1/customer/reels/details?reel_id=${reelId}&stream=1${guestParam}`;
 
   const upstreamHeaders = {
     Accept: "video/*,*/*",
     "X-software-id": "33571750",
   };
 
-  if (token)    upstreamHeaders["Authorization"]  = `Bearer ${token}`;
-  if (moduleId) upstreamHeaders["moduleId"]       = moduleId;
-  if (zoneid)   upstreamHeaders["zoneid"]         = zoneid;
-  if (lang)     upstreamHeaders["X-localization"] = lang;
-  if (lat)      upstreamHeaders["latitude"]       = lat;
-  if (lng)      upstreamHeaders["longitude"]      = lng;
+  // Values come from the server-side session, not from client query params.
+  if (session.token) upstreamHeaders["Authorization"] = `Bearer ${session.token}`;
+  if (session.moduleId) upstreamHeaders["moduleId"] = session.moduleId;
+  if (session.zoneid) upstreamHeaders["zoneid"] = session.zoneid;
+  if (session.lang) upstreamHeaders["X-localization"] = session.lang;
+  if (session.lat !== null && session.lat !== undefined) upstreamHeaders["latitude"] = session.lat;
+  if (session.lng !== null && session.lng !== undefined) upstreamHeaders["longitude"] = session.lng;
 
   // Every upstream request carries a Range header: forward the browser's own
   // Range if present (for seeks/partial reads), otherwise default to the full

@@ -20,7 +20,7 @@ import BundleOrderDetailsViewModal from "components/my-orders/order-details/othe
 
 // The cart's bundle_details shape (`unit_price`/`variation_summary` per item)
 // differs from the order-details modal's expected shape (`price`/
-// `variationText`) — map it rather than touching the shared modal.
+// `variationText`) - map it rather than touching the shared modal.
 const toModalBundleDetails = (bundleDetails) => ({
   ...bundleDetails,
   items: (bundleDetails?.items ?? []).map((item) => ({

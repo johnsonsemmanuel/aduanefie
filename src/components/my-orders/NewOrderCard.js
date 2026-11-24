@@ -108,7 +108,7 @@ const itemNamesFrom = (details = []) =>
 // ── Main component ────────────────────────────────────────────────────────────
 
 /**
- * New order card — Figma 2348:220813 (desktop) / 2348:220990 (mobile)
+ * New order card - Figma 2348:220813 (desktop) / 2348:220990 (mobile)
  *
  * Props:
  *  - order: order object from API
@@ -125,7 +125,7 @@ const NewOrderCard = ({ order, bg = "transparent", configData }) => {
 
   const status = order?.order_status ?? "";
   // When the reorder feature is disabled in config, a delivered order should
-  // not surface a "Re-order" button — fall back to "Details" instead.
+  // not surface a "Re-order" button - fall back to "Details" instead.
   const rawActionType = getActionType(status);
   const actionType =
     rawActionType === "reorder" &&
@@ -257,23 +257,63 @@ const NewOrderCard = ({ order, bg = "transparent", configData }) => {
             details={order?.items_preview ?? []}
             size={thumbnailSize}
           />
-          {itemDescription && (
-            <Typography
-              sx={{
-                fontSize: { xs: "12px", md: "14px" },
-                fontWeight: 400,
-                color: "neutral.500",
-                lineHeight: 1.3,
-                width: "162px",
-                flexShrink: 0,
-                display: "-webkit-box",
-                WebkitLineClamp: 2,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-              }}
-            >
-              {itemDescription}
-            </Typography>
+          {(itemDescription || order?.is_pre_order || order?.is_insured) && (
+            <Stack spacing={0.5} sx={{ width: "162px", flexShrink: 0 }}>
+              {itemDescription && (
+                <Typography
+                  sx={{
+                    fontSize: { xs: "12px", md: "14px" },
+                    fontWeight: 400,
+                    color: "neutral.500",
+                    lineHeight: 1.3,
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
+                  {itemDescription}
+                </Typography>
+              )}
+              {(order?.is_pre_order || order?.is_insured) && (
+                <Stack direction="row" flexWrap="wrap" gap={0.5}>
+                  {order?.is_pre_order && (
+                    <Box
+                      component="span"
+                      sx={{
+                        fontSize: "10.5px",
+                        fontWeight: 700,
+                        px: "7px",
+                        py: "2px",
+                        borderRadius: "999px",
+                        bgcolor: "#EFE7D3",
+                        color: "#67513A",
+                      }}
+                    >
+                      {order?.expected_harvest_date
+                        ? `${t("Harvest")}: ${order.expected_harvest_date}`
+                        : t("Pre-Order")}
+                    </Box>
+                  )}
+                  {order?.is_insured && (
+                    <Box
+                      component="span"
+                      sx={{
+                        fontSize: "10.5px",
+                        fontWeight: 700,
+                        px: "7px",
+                        py: "2px",
+                        borderRadius: "999px",
+                        bgcolor: "#EDF2E4",
+                        color: "#536636",
+                      }}
+                    >
+                      {t("Insured")}
+                    </Box>
+                  )}
+                </Stack>
+              )}
+            </Stack>
           )}
         </Stack>
 

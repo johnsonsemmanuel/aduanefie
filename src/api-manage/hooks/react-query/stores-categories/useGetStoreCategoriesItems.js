@@ -29,7 +29,7 @@ const fetchPage = async (params) => {
   if (data && !Array.isArray(data?.products) && data?.category_wise_items) {
     const seen = new Set();
     const flat = [];
-    // Preserve which bucket key (categories[].id — a store_category id when
+    // Preserve which bucket key (categories[].id - a store_category id when
     // category_source is "store_category", an admin category id otherwise)
     // each item came under. Consumers need this instead of re-deriving
     // grouping from the item's own admin category_id/category_ids, since

@@ -1,6 +1,6 @@
 import { filterOutRiderShareModules } from "helper-functions/moduleFilter";
 
-// "zoneid" may be stored as a scalar or a JSON array — normalize to an array.
+// "zoneid" may be stored as a scalar or a JSON array - normalize to an array.
 export const getCurrentZoneIds = () => {
   if (typeof window === "undefined") return undefined;
   const rawZoneIds = localStorage.getItem("zoneid");

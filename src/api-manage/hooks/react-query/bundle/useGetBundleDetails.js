@@ -6,7 +6,7 @@ import { getModuleId } from "helper-functions/getModuleId";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { getApiContent } from "../../../getApiContent";
 
-// GET /bundle/{id} — public, no token/guest_id needed. The only browse
+// GET /bundle/{id} - public, no token/guest_id needed. The only browse
 // endpoint that fills `items[]`, so the drawer fetches it lazily on open
 // rather than the list/home/store-bundles calls carrying it.
 const getData = async (id) => {

@@ -10,7 +10,7 @@ import { getApiContent } from "api-manage/getApiContent";
  *
  * `rental/user/trip/payment` was the last path still pushing the raw response
  * into the router, which under v4.2 handed Next a `{ redirect_link }` object
- * with no `pathname` — the gateway hop silently did nothing. Everything that
+ * with no `pathname` - the gateway hop silently did nothing. Everything that
  * follows a payment redirect should resolve it through here instead.
  */
 
@@ -20,7 +20,7 @@ const isUrlLike = (value: string) =>
 const pickLink = (value: unknown): string | undefined => {
   if (typeof value === "string") {
     const trimmed = value.trim();
-    // A bare string is only a redirect if it actually looks like one — the same
+    // A bare string is only a redirect if it actually looks like one - the same
     // slot can carry a plain success message on the cash/wallet branches.
     return trimmed && isUrlLike(trimmed) ? trimmed : undefined;
   }
@@ -49,7 +49,7 @@ export const getRedirectLink = (response: unknown): string | undefined => {
 
 /**
  * Gateways live on the API host, so the hop out of the app is a full-page
- * navigation — the rental cart, checkout and provider banners all already do
+ * navigation - the rental cart, checkout and provider banners all already do
  * this. Only a same-app path stays on the client router.
  */
 export const followPaymentRedirect = (

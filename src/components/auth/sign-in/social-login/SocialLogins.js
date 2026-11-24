@@ -24,7 +24,10 @@ const SocialLogins = (props) => {
   } = props;
   const { t } = useTranslation();
 
-  const combineLoginData = [...socialLogin, ...configData?.apple_login];
+  const combineLoginData = [
+    ...(Array.isArray(socialLogin) ? socialLogin : []),
+    ...(Array.isArray(configData?.apple_login) ? configData.apple_login : []),
+  ];
   const dataWithCentralize = combineLoginData.map((item) => ({
     ...item,
     ...(configData?.centralize_login || {}),

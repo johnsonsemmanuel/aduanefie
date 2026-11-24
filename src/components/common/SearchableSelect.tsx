@@ -158,7 +158,7 @@ export default function SearchableSelect({
           },
         }}
       >
-        {/* Search bar — long lists only, so short option sets never raise
+        {/* Search bar - long lists only, so short option sets never raise
             the mobile keyboard just to pick a value. */}
         {showSearch && (
           <Box

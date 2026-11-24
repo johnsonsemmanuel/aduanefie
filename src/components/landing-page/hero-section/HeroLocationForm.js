@@ -1,6 +1,7 @@
 import React, { useEffect, useId, useRef, useState } from "react";
 import {
   alpha,
+  Chip,
   Grid,
   IconButton,
   Stack,
@@ -192,7 +193,7 @@ const HeroLocationForm = ({ onLocationSaved }) => {
     // place-api-details answers 200 with `{ error: { … } }` for a place id
     // Google no longer recognises. That body is truthy but carries no
     // `location`, and writing it here parks `location` as `{lat: undefined}`
-    // — which keeps the Pick/Discover button disabled with no way to recover.
+    // - which keeps the Pick/Discover button disabled with no way to recover.
     const lat = placeDetails?.location?.latitude;
     const lng = placeDetails?.location?.longitude;
     if (lat !== undefined && lng !== undefined) {
@@ -229,6 +230,7 @@ const HeroLocationForm = ({ onLocationSaved }) => {
       }
       localStorage.setItem("location", currentLocation);
       localStorage.setItem("currentLatLng", JSON.stringify(location));
+      document.cookie = `aduanefie_location_set=1; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
       //handleModalClose();
 
       toast.success(t("New location has been set."));
@@ -394,6 +396,45 @@ const HeroLocationForm = ({ onLocationSaved }) => {
             </Grid>
           </Grid>
         </CustomStackFullWidth>
+        <Stack
+          direction="row"
+          flexWrap="wrap"
+          alignItems="center"
+          justifyContent="center"
+          gap={0.75}
+          sx={{ mt: 1.5 }}
+        >
+          <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 600 }}>
+            {t("Quick select:")}
+          </Typography>
+          {[
+            { label: "Accra", lat: 5.6037, lng: -0.187 },
+            { label: "Kumasi", lat: 6.6885, lng: -1.6244 },
+            { label: "Tamale", lat: 9.4008, lng: -0.8393 },
+            { label: "Takoradi", lat: 4.8986, lng: -1.7554 },
+          ].map((hub) => (
+            <Chip
+              key={hub.label}
+              size="small"
+              clickable
+              variant="outlined"
+              label={hub.label}
+              onClick={() => {
+                const coordsObj = { lat: hub.lat, lng: hub.lng };
+                setLocation(coordsObj);
+                setCurrentLocation(`${hub.label}, Ghana`);
+                setGeoLocationEnable(true);
+                setZoneIdEnabled(true);
+                localStorage.setItem("location", `${hub.label}, Ghana`);
+                localStorage.setItem("currentLatLng", JSON.stringify(coordsObj));
+                document.cookie = `aduanefie_location_set=1; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
+                onLocationSaved?.(`${hub.label}, Ghana`);
+                setOpenModuleSelection(true);
+              }}
+              sx={{ fontWeight: 600 }}
+            />
+          ))}
+        </Stack>
         {open && (
           <MapModal
             open={open}

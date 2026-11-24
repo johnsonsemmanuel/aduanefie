@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogTitle,
   Grid,
+  MenuItem,
   TextField,
   Typography,
   alpha,
@@ -20,6 +21,7 @@ import ChatWithAdmin from "components/my-orders/order-details/other-order/ChatWi
 import { getToken } from "helper-functions/getToken";
 import { memo, useState } from "react";
 import toast from "react-hot-toast";
+import MainApi from "api-manage/MainApi";
 import "simplebar-react/dist/simplebar.min.css";
 import adminImage from "../../../../../public/static/profile/fi_4460756 (1).png";
 import CustomImageContainer from "../../../CustomImageContainer";
@@ -94,6 +96,32 @@ const OrderSummery = (props) => {
   const [cancelBookingModalOpen, setCancelBookingModalOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState("");
   const [cancelReasonError, setCancelReasonError] = useState(false);
+  const [claimModalOpen, setClaimModalOpen] = useState(false);
+  const [claimReason, setClaimReason] = useState("Spoilage in transit");
+  const [claimDescription, setClaimDescription] = useState("");
+  const [submittingClaim, setSubmittingClaim] = useState(false);
+
+  const handleClaimSubmit = async () => {
+    if (!claimDescription.trim() || claimDescription.trim().length < 10) {
+      toast.error(t("Please describe the issue (at least 10 characters)."));
+      return;
+    }
+    setSubmittingClaim(true);
+    try {
+      const { data: res } = await MainApi.post("/api/v1/customer/order/insurance-claim", {
+        order_id: summaryData?.id,
+        reason: claimReason,
+        description: claimDescription.trim(),
+      });
+      toast.success(res?.message || t("Insurance claim submitted!"));
+      setClaimModalOpen(false);
+      setClaimDescription("");
+    } catch (err) {
+      toast.error(err?.response?.data?.errors?.[0]?.message || err?.response?.data?.message || t("Could not submit insurance claim."));
+    } finally {
+      setSubmittingClaim(false);
+    }
+  };
   const { data: automateMessageData } = useGetOrderCancelReason();
   const { mutate: cancelBookingMutate, isLoading: isCancellingBooking } =
     useCancelServiceBooking();
@@ -261,7 +289,7 @@ const OrderSummery = (props) => {
               pl={{ xs: "0px", sm: "20px", md: "25px" }}
               mt="8px"
             >
-              {/* Address + Payment + Cutlery — 2-column grid on sm+ */}
+              {/* Address + Payment + Cutlery - 2-column grid on sm+ */}
               <Box
                 sx={{
                   border: (t) =>
@@ -337,10 +365,10 @@ const OrderSummery = (props) => {
                         wordBreak: "break-word",
                       }}
                     >
-                      {summaryData?.delivery_address?.address || "—"}
+                      {summaryData?.delivery_address?.address || "-"}
                     </Typography>
                   </Stack>
-                  {/* Cutlery card (inside left column) — food orders only */}
+                  {/* Cutlery card (inside left column) - food orders only */}
                   {summaryData?.module_type === "food" &&
                     summaryData?.cutlery && (
                       <Stack>
@@ -382,6 +410,95 @@ const OrderSummery = (props) => {
                         </Box>
                       </Stack>
                     )}
+                  {summaryData?.is_pre_order && (
+                    <Stack>
+                      <Typography
+                        sx={{
+                          fontSize: "16px",
+                          fontWeight: 700,
+                          letterSpacing: "0.5px",
+                          textTransform: "capitalize",
+                          color: theme.palette.text.primary,
+                          mb: 1,
+                        }}
+                      >
+                        {t("Pre-Order Reservation")}
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: "inline-flex",
+                          alignSelf: "flex-start",
+                          px: 1.25,
+                          py: 0.5,
+                          borderRadius: "999px",
+                          backgroundColor: alpha(theme.palette.primary.main, 0.12),
+                          color: theme.palette.primary.main,
+                          border: `1px solid ${alpha(theme.palette.primary.main, 0.25)}`,
+                          fontSize: "13px",
+                          fontWeight: 700,
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {summaryData?.expected_harvest_date
+                          ? `${t("Expected Harvest")}: ${summaryData.expected_harvest_date}`
+                          : t("Reserved for Harvest")}
+                      </Box>
+                    </Stack>
+                  )}
+                  {(summaryData?.is_insured || Number(summaryData?.insurance_fee) > 0) && (
+                    <Stack>
+                      <Typography
+                        sx={{
+                          fontSize: "16px",
+                          fontWeight: 700,
+                          letterSpacing: "0.5px",
+                          textTransform: "capitalize",
+                          color: theme.palette.text.primary,
+                          mb: 1,
+                        }}
+                      >
+                        {t("Trade & Crop Insurance")}
+                      </Typography>
+                      <Stack direction="row" alignItems="center" flexWrap="wrap" gap={1}>
+                        <Box
+                          sx={{
+                            display: "inline-flex",
+                            alignSelf: "flex-start",
+                            px: 1.25,
+                            py: 0.5,
+                            borderRadius: "999px",
+                            backgroundColor: alpha(theme.palette.success.main, 0.12),
+                            color: theme.palette.success.main,
+                            border: `1px solid ${alpha(theme.palette.success.main, 0.25)}`,
+                            fontSize: "13px",
+                            fontWeight: 700,
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          {Number(summaryData?.insurance_fee) > 0
+                            ? `${t("Covered")} · ${getAmountWithSign(summaryData.insurance_fee)}`
+                            : t("Covered")}
+                        </Box>
+                        {getToken() && (
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            onClick={() => setClaimModalOpen(true)}
+                            sx={{
+                              borderRadius: "999px",
+                              fontSize: "12px",
+                              fontWeight: 700,
+                              py: "2px",
+                              px: 1.5,
+                              textTransform: "none",
+                            }}
+                          >
+                            {t("File Insurance Claim")}
+                          </Button>
+                        )}
+                      </Stack>
+                    </Stack>
+                  )}
                   {!isParentRepeatBooking && (
                     <PaymentSummaryCard
                       {...{
@@ -539,6 +656,63 @@ const OrderSummery = (props) => {
           </Grid>
         </Grid>
       )}
+      <CustomModal
+        openModal={claimModalOpen}
+        handleClose={() => setClaimModalOpen(false)}
+        closeButton
+        maxWidth="460px"
+      >
+        <DialogTitle sx={{ pb: 0 }}>
+          <Typography fontWeight={700} fontSize="18px">
+            {t("File Insurance Claim")}
+          </Typography>
+        </DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ mt: 1 }}>
+            <TextField
+              select
+              fullWidth
+              size="small"
+              label={t("Reason")}
+              value={claimReason}
+              onChange={(e) => setClaimReason(e.target.value)}
+            >
+              {[
+                "Spoilage in transit",
+                "Damaged goods / equipment",
+                "Short delivery / missing items",
+                "Harvest failure / unfulfilled pre-order",
+              ].map((opt) => (
+                <MenuItem key={opt} value={opt}>
+                  {t(opt)}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              fullWidth
+              multiline
+              minRows={3}
+              size="small"
+              label={t("Description")}
+              placeholder={t("Describe what happened with your order...")}
+              value={claimDescription}
+              onChange={(e) => setClaimDescription(e.target.value)}
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2.5 }}>
+          <Button onClick={() => setClaimModalOpen(false)} color="inherit">
+            {t("Cancel")}
+          </Button>
+          <LoadingButton
+            loading={submittingClaim}
+            variant="contained"
+            onClick={handleClaimSubmit}
+          >
+            {t("Submit")}
+          </LoadingButton>
+        </DialogActions>
+      </CustomModal>
       <CustomModal
         openModal={openAdmin}
         handleClose={() => setOpenAdmin(false)}

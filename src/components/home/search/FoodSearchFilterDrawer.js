@@ -951,7 +951,7 @@ const FilterContent = ({
 };
 
 /**
- * filterValue — previously applied filter object (for persistence).
+ * filterValue - previously applied filter object (for persistence).
  *   Pass the object returned from onApply so the drawer re-opens
  *   with the same selections.
  */
@@ -975,7 +975,7 @@ const FoodSearchFilterDrawer = ({
   const currencySymbol = configData?.currency_symbol || "$";
 
   const currentModule = getCurrentModuleType();
-  // Type filter is only meaningful for the food module — Halal / Veg /
+  // Type filter is only meaningful for the food module - Halal / Veg /
   // Non-Veg don't apply to grocery/pharmacy/shop catalogs. Other modules
   // get an empty list so the section is hidden entirely (the render
   // guard `typeOptions?.length > 0` below drops the block).
@@ -1032,7 +1032,7 @@ const FoodSearchFilterDrawer = ({
           ? prev.filter((v) => v !== "halal")
           : [...prev, "halal"];
       }
-      // veg / non_veg — mutually exclusive
+      // veg / non_veg - mutually exclusive
       const withoutMeat = prev.filter((v) => v !== "veg" && v !== "non_veg");
       return prev.includes(val) ? withoutMeat : [...withoutMeat, val];
     });

@@ -117,7 +117,7 @@ const ChatDetailView = ({
         return;
       }
       // The fetched copy wins the dedup, but the send response is the one
-      // carrying metadata (cart_items/products) — keep it if the fetched
+      // carrying metadata (cart_items/products) - keep it if the fetched
       // message came back without it.
       if (pending.metadata && !duplicate.metadata) {
         byId.set(duplicate.id, { ...duplicate, metadata: pending.metadata });
@@ -297,7 +297,7 @@ const ChatDetailView = ({
               {t("Start the conversation")}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              {t("Ask anything — orders, deals, restaurants, recommendations.")}
+              {t("Ask anything - orders, deals, restaurants, recommendations.")}
             </Typography>
           </Stack>
         )}
@@ -389,7 +389,7 @@ const ChatDetailView = ({
                     spacing={0.5}
                   >
                     {/* The cart card already presents everything the text
-                        restates (items, subtotals, grand total) — skip the
+                        restates (items, subtotals, grand total) - skip the
                         text bubble for cart replies. */}
                     {!(!isUser && cartItems.length > 0) && (
                       <Box

@@ -3,6 +3,7 @@ import MainApi from "../../../MainApi";
 import { get_search_page_data } from "api-manage/ApiRoutes";
 import { onSingleErrorResponse } from "../../../api-error-response/ErrorResponses";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
+import { readCurrentLocation } from "helper-functions/validLocation";
 import { ModuleTypes } from "helper-functions/moduleTypes";
 import { getGuestId } from "helper-functions/getToken";
 import { get_service_search_page_data } from "components/home/module-wise-components/service/service-api-manage/ApiRoutes";
@@ -72,7 +73,7 @@ const getSearch = async (pageParams) => {
     const { data } = await MainApi.get(
       `${get_service_search_page_data}?${serviceQuery.toString()}`,
     );
-    // Responses are wrapped in the v4.2 envelope (`{ content: {...} }`) —
+    // Responses are wrapped in the v4.2 envelope (`{ content: {...} }`) -
     // unwrap before reading products/stores, same as the non-service path
     // below via getApiCollection.
     const content = getApiContent(data) ?? {};
@@ -105,9 +106,24 @@ export default function useGetSearchPageData(
   pageParams,
   handleSuccess,
   enabled = false,
+  locationKey = "",
 ) {
+  const currentLocation =
+    typeof window !== "undefined"
+      ? readCurrentLocation(window.localStorage.getItem("currentLatLng"))
+      : null;
+  const nearbyWithoutLocation =
+    pageParams?.quick_action === "nearby" && !currentLocation;
+
   return useInfiniteQuery(
-    ["search-products", getCurrentModuleType(), pageParams],
+    [
+      "search-products",
+      getCurrentModuleType(),
+      locationKey,
+      pageParams,
+      currentLocation?.lat,
+      currentLocation?.lng,
+    ],
     ({ pageParam = 1 }) => getSearch({ ...pageParams, pageParam }),
     {
       getNextPageParam: (lastPage, allPages) => {
@@ -120,7 +136,7 @@ export default function useGetSearchPageData(
       },
       getPreviousPageParam: (firstPage, allPages) => firstPage.prevCursor,
       retry: 1,
-      enabled,
+      enabled: enabled && !nearbyWithoutLocation,
       keepPreviousData: true,
       onError: onSingleErrorResponse,
       onSuccess: handleSuccess,

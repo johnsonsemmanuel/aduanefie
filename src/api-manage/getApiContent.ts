@@ -62,7 +62,7 @@ export const getApiMessage = (response: unknown): string | undefined => {
 };
 
 /**
- * List endpoints nest their rows one level deeper again — `content.data`
+ * List endpoints nest their rows one level deeper again - `content.data`
  * alongside `content.pagination`. Returns the rows from either the v4.2 shape
  * or a legacy bare array, and `undefined` when neither is present so callers
  * can keep distinguishing "not loaded yet" from "loaded but empty".
@@ -81,13 +81,13 @@ export const getApiList = <T>(response: unknown): T[] | undefined => {
  * v4.2 also renamed the list payload itself: the rows moved from a per-resource
  * key (`stores`, `products`, …) to `data`, and `total_size` / `limit` / `offset`
  * were replaced by a `pagination` object. Components across the app still read
- * the old names, so return a superset carrying both vocabularies — the new
+ * the old names, so return a superset carrying both vocabularies - the new
  * `data` / `pagination` plus the legacy alias and counters.
  *
  * `legacyKey` is the collection name the consuming components expect, e.g.
  * "stores" for store lists or "products" for item lists. Endpoints that serve
  * either kind depending on a tab (discounted items, top offers) can pass both
- * names — the rows are whatever that call asked for, so aliasing them under
+ * names - the rows are whatever that call asked for, so aliasing them under
  * each is safe.
  */
 export const getApiCollection = <T>(
@@ -104,11 +104,11 @@ export const getApiCollection = <T>(
       ? (record.data as T[])
       : null;
 
-  // Not a list payload after all — hand the content back untouched.
+  // Not a list payload after all - hand the content back untouched.
   if (!rows) return content as any;
 
   const pagination = (record?.pagination as ApiPaginatedContent<T>["pagination"]) ?? undefined;
-  // Some list endpoints carry siblings next to `data` — `min_price`/`max_price`
+  // Some list endpoints carry siblings next to `data` - `min_price`/`max_price`
   // on rental vehicle lists, `provider` on provider reviews, `rating_summary`
   // on reviews. Spread the original content first so none of them are lost.
   const collection: Record<string, unknown> = {

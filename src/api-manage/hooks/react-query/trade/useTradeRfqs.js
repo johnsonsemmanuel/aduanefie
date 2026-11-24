@@ -39,3 +39,18 @@ export const useSubmitRfqQuote = () => {
     }
   );
 };
+
+export const useAcceptRfqQuote = () => {
+  const queryClient = useQueryClient();
+  return useMutation(
+    async ({ rfqId, quoteId }) => {
+      const { data } = await MainApi.post(`/api/v1/trade/rfqs/${rfqId}/quotes/${quoteId}/accept`);
+      return data;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(["trade-rfqs"]);
+      },
+    }
+  );
+};

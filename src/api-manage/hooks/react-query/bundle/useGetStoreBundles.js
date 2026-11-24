@@ -6,7 +6,7 @@ import { getModuleId } from "helper-functions/getModuleId";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { getApiCollection } from "../../../getApiContent";
 
-// GET /bundle/store-bundles — public, no token/guest_id needed. `store_id` is
+// GET /bundle/store-bundles - public, no token/guest_id needed. `store_id` is
 // required by the endpoint (a missing one is a 404, not a 422).
 const getData = async (params = {}) => {
   const { store_id, limit = 50, offset = 1, search } = params;

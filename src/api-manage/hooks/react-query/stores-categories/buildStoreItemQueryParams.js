@@ -1,4 +1,4 @@
-// Shared query-string builder for the two store item listing endpoints —
+// Shared query-string builder for the two store item listing endpoints -
 // /store-categories/items and /stores/popular-items/{id}. Both accept the
 // same filter/sort surface (see StoreItemFiltersTrait on the backend), so
 // this is the single place that maps our UI state to those params. Callers
@@ -38,7 +38,7 @@ export const buildStoreItemQueryParams = (params) => {
   }
   if (sortBy && sortBy !== "Default") {
     // Backend expects `price_high_low` / `price_low_high`. Internally the UI
-    // still uses the short forms "high" / "low" — map them here so call
+    // still uses the short forms "high" / "low" - map them here so call
     // sites don't change.
     const SORT_MAP = {
       high: "price_high_low",

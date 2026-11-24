@@ -84,6 +84,28 @@ const StoreShare = (props) => {
         >
           {t('Share')}
         </Typography>
+        <Button
+          component="a"
+          href={`https://wa.me/?text=${encodeURIComponent(
+            `Shop fresh produce on Aduanefie: ${currentRoute}`
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="contained"
+          fullWidth
+          sx={{
+            mt: 1.5,
+            mb: 0.5,
+            bgcolor: "#25D366",
+            color: "#FFFFFF",
+            fontWeight: 700,
+            textTransform: "none",
+            borderRadius: "10px",
+            "&:hover": { bgcolor: "#1EBE5D" },
+          }}
+        >
+          {t("Share on WhatsApp")}
+        </Button>
         <Stack padding="10px" flexDirection="row" gap="10px">
           <TextField
             fullWidth

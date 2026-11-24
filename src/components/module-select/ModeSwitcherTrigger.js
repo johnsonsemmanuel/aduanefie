@@ -13,9 +13,9 @@ import ModeSwitcherModal from "./ModeSwitcherModal";
  * One mode-switcher trigger for every header layer.
  *
  * variants:
- *   "mobile"  — two-line Market / active-module trigger used by MobileNavBar
- *   "desktop" — inline icon + label used by the desktop top bar
- *   "compact" — pill used by SimpleMobileHeader and CheckoutMobileHeader
+ *   "mobile"  - two-line Market / active-module trigger used by MobileNavBar
+ *   "desktop" - inline icon + label used by the desktop top bar
+ *   "compact" - pill used by SimpleMobileHeader and CheckoutMobileHeader
  *
  * Availability and theming are identical everywhere: hidden on module-agnostic
  * routes and when no modules are loaded. Each instance owns its modal so no
@@ -32,7 +32,7 @@ const ModeSwitcherTrigger = ({ variant = "mobile", sx }) => {
     selectedModule: state.utilsData.selectedModule,
   }));
 
-  if (!modules?.length || isModuleAgnosticRoute(router.pathname)) return null;
+  if (!modules || modules.length <= 1 || isModuleAgnosticRoute(router.pathname)) return null;
 
   const moduleName = selectedModule?.module_name || t("Choose Mode");
   const moduleIcon = selectedModule?.icon_full_url ? (

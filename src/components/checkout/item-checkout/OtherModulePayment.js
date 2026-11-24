@@ -34,7 +34,7 @@ import PartialPayment from "components/checkout/item-checkout/PartialPayment";
 
 // ── Shared styled components ─────────────────────────────────────────────────
 
-// Card wrapper for wallet / COD rows — exported so PartialPayment can reuse it
+// Card wrapper for wallet / COD rows - exported so PartialPayment can reuse it
 export const PaymentCard = styled(Stack)(({ theme, selected }) => ({
   flexDirection: "row",
   alignItems: "center",
@@ -59,7 +59,7 @@ export const PaymentCard = styled(Stack)(({ theme, selected }) => ({
   },
 }));
 
-// Backward-compat alias — PartialPayment imports PayButton from this file
+// Backward-compat alias - PartialPayment imports PayButton from this file
 export const PayButton = PaymentCard;
 
 const IconCircle = styled(Stack)(({ bgcolor }) => ({
@@ -312,7 +312,7 @@ const OtherModulePayment = (props) => {
     if (failed) {
       failedOrderPlace?.();
     } else {
-      // onBeforeProceed is a service-module-only hook — guard with isServiceModule
+      // onBeforeProceed is a service-module-only hook - guard with isServiceModule
       // so this has zero effect on food, grocery, pharmacy, or any other module.
       if (isServiceModule && onBeforeProceed && !onBeforeProceed()) return;
       onProceed?.();

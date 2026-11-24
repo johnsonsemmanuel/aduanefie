@@ -27,9 +27,12 @@ import {
   useCreateTradeRfq,
   useGetTradeRfqs,
   useSubmitRfqQuote,
+  useAcceptRfqQuote,
 } from "api-manage/hooks/react-query/trade/useTradeRfqs";
 import CustomModal from "components/modal";
 import { TRADE_COUNTRIES, UNIT_OPTIONS } from "utils/tradeOptions";
+import { useGetAgroPrices } from "api-manage/hooks/react-query/trade/useGetAgroPrices";
+import { findMatchingAgroPrice, formatCedi } from "utils/agroPriceMatch";
 
 const INITIAL_FORM = {
   buyer_name: "",
@@ -43,11 +46,13 @@ const INITIAL_FORM = {
   target_price_ghs: "",
   incoterm: "DDP",
   origin_country: "Ghana",
-  destination_country: "Nigeria",
+  destination_country: "Ghana",
   destination_city: "",
   trade_bloc: "ECOWAS",
   requires_insurance: true,
   requires_phytosanitary: true,
+  supply_frequency: "one_time",
+  preferred_delivery_day: "Friday",
   notes: "",
 };
 
@@ -92,8 +97,11 @@ const TradeRfqSection = () => {
   });
 
   const { data: rfqData, isLoading, isError: rfqError, refetch: refetchRfqs } = useGetTradeRfqs("all");
+  const { data: agroPriceData } = useGetAgroPrices();
+  const matchedMarketPrice = findMatchingAgroPrice(form.commodity, agroPriceData?.prices || []);
   const { mutate: createRfq, isLoading: isSubmitting } = useCreateTradeRfq();
   const { mutate: submitQuote, isLoading: isSubmittingQuote } = useSubmitRfqQuote();
+  const acceptQuote = useAcceptRfqQuote();
 
   const rfqs = rfqData?.requests || [];
 
@@ -103,9 +111,21 @@ const TradeRfqSection = () => {
       toast.error(t("Please fill in your name, phone, commodity, and quantity."));
       return;
     }
+    const frequencyLabels = {
+      one_time: null,
+      weekly: "Standing Weekly Supply Contract",
+      biweekly: "Standing Bi-Weekly Supply Contract",
+      monthly: "Standing Monthly Supply Contract",
+    };
+    const scheduleTag = frequencyLabels[form.supply_frequency]
+      ? `[${frequencyLabels[form.supply_frequency]} - Preferred Dispatch: ${form.preferred_delivery_day}]`
+      : "";
+    const combinedNotes = [scheduleTag, form.notes].filter(Boolean).join(" ").trim();
+
     createRfq(
       {
         ...form,
+        notes: combinedNotes,
         quantity: Number(form.quantity),
         target_price_ghs: form.target_price_ghs ? Number(form.target_price_ghs) : null,
       },
@@ -264,9 +284,14 @@ const TradeRfqSection = () => {
                     fullWidth
                     size="small"
                     type="number"
-                    label={t("Target Price (GH₵ / unit)")}
+                    label={t("Target Price (₵ / unit)")}
                     value={form.target_price_ghs}
                     onChange={(e) => setForm({ ...form, target_price_ghs: e.target.value })}
+                    helperText={
+                      matchedMarketPrice
+                        ? `${t("Ref Wholesale")}: ${formatCedi(matchedMarketPrice.wholesale_price_ghs)}/${matchedMarketPrice.unit} (${matchedMarketPrice.source_platform})`
+                        : undefined
+                    }
                   />
                 </Grid>
                 <Grid item xs={12} sm={6}>
@@ -324,6 +349,37 @@ const TradeRfqSection = () => {
                     onChange={(e) => setForm({ ...form, destination_city: e.target.value })}
                   />
                 </Grid>
+                <Grid item xs={12} sm={form.supply_frequency !== "one_time" ? 6 : 12}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel>{t("Supply Frequency (HoReCa / Institutional)")}</InputLabel>
+                    <Select
+                      label={t("Supply Frequency (HoReCa / Institutional)")}
+                      value={form.supply_frequency}
+                      onChange={(e) => setForm({ ...form, supply_frequency: e.target.value })}
+                    >
+                      <MenuItem value="one_time">{t("One-time bulk order")}</MenuItem>
+                      <MenuItem value="weekly">{t("Weekly standing supply")}</MenuItem>
+                      <MenuItem value="biweekly">{t("Bi-weekly standing supply")}</MenuItem>
+                      <MenuItem value="monthly">{t("Monthly off-take contract")}</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
+                {form.supply_frequency !== "one_time" && (
+                  <Grid item xs={12} sm={6}>
+                    <FormControl fullWidth size="small">
+                      <InputLabel>{t("Preferred Dispatch Day")}</InputLabel>
+                      <Select
+                        label={t("Preferred Dispatch Day")}
+                        value={form.preferred_delivery_day}
+                        onChange={(e) => setForm({ ...form, preferred_delivery_day: e.target.value })}
+                      >
+                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map((day) => (
+                          <MenuItem key={day} value={day}>{t(day)}</MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                )}
                 <Grid item xs={12}>
                   <Stack direction="row" flexWrap="wrap" gap={1}>
                     <FormControlLabel
@@ -408,13 +464,13 @@ const TradeRfqSection = () => {
                       <Box>
                         <Stack direction="row" spacing={1} alignItems="center" flexWrap="wrap">
                           <Typography sx={{ fontWeight: 700, fontSize: "15px" }}>
-                            {rfq.commodity} — {Number(rfq.quantity).toLocaleString()} {rfq.unit}
+                            {rfq.commodity} - {Number(rfq.quantity).toLocaleString()} {rfq.unit}
                           </Typography>
                           <Chip size="small" label={rfq.status?.toUpperCase()} variant="outlined" />
                         </Stack>
                         <Typography sx={{ fontSize: "12.5px", color: "text.secondary", mt: 0.5 }}>
                           {rfq.origin_country} → {rfq.destination_country} {rfq.destination_city ? `(${rfq.destination_city})` : ""} · {rfq.trade_bloc} · {rfq.incoterm}
-                          {rfq.target_price_ghs ? ` · Target GH₵${Number(rfq.target_price_ghs).toLocaleString()}` : ""}
+                          {rfq.target_price_ghs ? ` · Target ₵${Number(rfq.target_price_ghs).toLocaleString()}` : ""}
                         </Typography>
                         <Stack direction="row" spacing={0.75} sx={{ mt: 1 }} flexWrap="wrap">
                           {rfq.requires_insurance && <Chip size="small" color="success" variant="outlined" label={t("Insured")} />}
@@ -423,15 +479,80 @@ const TradeRfqSection = () => {
                         </Stack>
                       </Box>
 
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        onClick={() => handleOpenQuoteModal(rfq)}
-                        sx={{ textTransform: "none", fontWeight: 600, flexShrink: 0 }}
-                      >
-                        {t("Submit Quote")}
-                      </Button>
+                      {rfq.status !== "awarded" && (
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          onClick={() => handleOpenQuoteModal(rfq)}
+                          sx={{ textTransform: "none", fontWeight: 600, flexShrink: 0 }}
+                        >
+                          {t("Submit Quote")}
+                        </Button>
+                      )}
                     </Stack>
+
+                    {Array.isArray(rfq.quotes) && rfq.quotes.length > 0 && (
+                      <Stack spacing={1} sx={{ mt: 1.5, pt: 1.5, borderTop: `1px dashed ${theme.palette.divider}` }}>
+                        {rfq.quotes.map((quote) => {
+                          const isAccepted = quote.status === "accepted";
+                          const totalEst = Number(quote.quoted_unit_price_ghs || 0) * Number(rfq.quantity || 0);
+                          return (
+                            <Stack
+                              key={quote.id}
+                              direction={{ xs: "column", sm: "row" }}
+                              justifyContent="space-between"
+                              alignItems={{ xs: "flex-start", sm: "center" }}
+                              spacing={1}
+                              sx={{
+                                p: 1.25,
+                                borderRadius: "8px",
+                                bgcolor: isAccepted
+                                  ? theme.palette.action.selected
+                                  : theme.palette.background.default,
+                              }}
+                            >
+                              <Box>
+                                <Typography sx={{ fontSize: "13px", fontWeight: 700 }}>
+                                  {quote.supplier_name} · ₵{Number(quote.quoted_unit_price_ghs).toLocaleString()}/{rfq.unit}
+                                </Typography>
+                                <Typography sx={{ fontSize: "11.5px", color: "text.secondary" }}>
+                                  {t("Est. Total")}: ₵{totalEst.toLocaleString()} · {quote.lead_time_days || 7} {t("days lead")} · {quote.incoterm || rfq.incoterm}
+                                </Typography>
+                              </Box>
+
+                              {isAccepted ? (
+                                <Chip size="small" color="success" label={t("Awarded · Trade Assurance")} />
+                              ) : rfq.status !== "awarded" ? (
+                                <Button
+                                  size="small"
+                                  variant="contained"
+                                  disabled={acceptQuote.isLoading}
+                                  onClick={() =>
+                                    acceptQuote.mutate(
+                                      { rfqId: rfq.id, quoteId: quote.id },
+                                      {
+                                        onSuccess: (res) => {
+                                          toast.success(
+                                            res?.message ||
+                                              t("Quote accepted with Trade Assurance protection.")
+                                          );
+                                        },
+                                        onError: () => {
+                                          toast.error(t("Could not accept quote."));
+                                        },
+                                      }
+                                    )
+                                  }
+                                  sx={{ textTransform: "none", fontWeight: 600 }}
+                                >
+                                  {t("Accept Quote")}
+                                </Button>
+                              ) : null}
+                            </Stack>
+                          );
+                        })}
+                      </Stack>
+                    )}
                   </Box>
                 ))}
               </Stack>
@@ -447,7 +568,7 @@ const TradeRfqSection = () => {
         maxWidth="xs"
       >
         <DialogTitle>
-          {t("Submit Supplier Quote")} — #{quoteModalRfq?.id}
+          {t("Submit Supplier Quote")} - #{quoteModalRfq?.id}
         </DialogTitle>
         <Box component="form" onSubmit={handleSubmitQuote}>
           <DialogContent>
@@ -473,7 +594,7 @@ const TradeRfqSection = () => {
                 size="small"
                 required
                 type="number"
-                label={t("Quoted Unit Price (GH₵)")}
+                label={t("Quoted Unit Price (₵)")}
                 value={quoteForm.quoted_unit_price_ghs}
                 onChange={(e) => setQuoteForm({ ...quoteForm, quoted_unit_price_ghs: e.target.value })}
               />

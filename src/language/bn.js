@@ -237,8 +237,8 @@ export const bengali = {
   "Are you sure, you want to reset?": "هل أنت متأكد أنك تريد إعادة تعيين؟",
   Ascending: "ঊর্ধ্বক্রম",
   "Ask AI Assistant": "এআই সহকারীকে জিজ্ঞাসা করুন",
-  "Ask anything — orders, deals, restaurants, recommendations.":
-    "যে কোনো কিছু জিজ্ঞাসা করুন — অর্ডার, অফার, রেস্তোরাঁ, সুপারিশ।",
+  "Ask anything - orders, deals, restaurants, recommendations.":
+    "যে কোনো কিছু জিজ্ঞাসা করুন - অর্ডার, অফার, রেস্তোরাঁ, সুপারিশ।",
   "Attach photo": "إرفاق صورة",
   "Automatically reorder these items every month.":
     "প্রতি মাসে স্বয়ংক্রিয়ভাবে এই আইটেমগুলি পুনঃঅর্ডার করুন।",
@@ -2357,8 +2357,8 @@ export const bengali = {
   "Type your opinion": "আপনার মতামত টাইপ করুন",
   "Type your tin number": "আপনার TIN নম্বর টাইপ করুন",
   "Typing…": "টাইপ করছে…",
-  "Unable to renew — plan information unavailable.":
-    "Unable to renew — plan information unavailable.",
+  "Unable to renew - plan information unavailable.":
+    "Unable to renew - plan information unavailable.",
   "Unavailable item note": "ملاحظة عنصر غير متوفر",
   Unit: "وحدة",
   "Unit Price": "একক মূল্য",
@@ -3279,5 +3279,23 @@ export const bengali = {
 	"Free": "বিনামূল্যে",
 	"Buying Item": "ক্রয়যোগ্য আইটেম",
 	"Free Item": "ফ্রি আইটেম",
-	"per bogo": "প্রতি BOGO"
+	"per bogo": "প্রতি BOGO",
+	"Use my location": "আমার অবস্থান ব্যবহার করুন",
+	"Getting your location. Please wait...": "আপনার অবস্থান পাচ্ছি। অনুগ্রহ করে অপেক্ষা করুন...",
+	"Checking if we serve this area...": "এই এলাকায় আমাদের পরিষেবা আছে কিনা যাচাই করছি...",
+	"Location saved. Showing results near you.": "অবস্থান সংরক্ষিত। আপনার কাছাকাছি ফলাফল দেখানো হচ্ছে।",
+	"Turn on location to see results near you.": "আপনার কাছাকাছি ফলাফল দেখতে অবস্থান চালু করুন।",
+	"Location permission denied. Enable location access in your browser settings, then try again.":
+		"অবস্থানের অনুমতি প্রত্যাখ্যাত। আপনার ব্রাউজার সেটিংসে অবস্থান অ্যাক্সেস চালু করে আবার চেষ্টা করুন।",
+	"We could not get your location. Please try again.": "আমরা আপনার অবস্থান পেতে পারিনি। অনুগ্রহ করে আবার চেষ্টা করুন।",
+	"Try again": "আবার চেষ্টা করুন",
+	"Not available in your country": "আপনার দেশে উপলব্ধ নয়",
+	"Coming soon": "শীঘ্রই আসছে",
+	"Location is not available on this device.": "এই ডিভাইসে অবস্থান উপলব্ধ নয়।",
+	"No location selected yet. Search for a place or use your current location to choose one.": "এখনো কোনো অবস্থান নির্বাচন করা হয়নি। একটি জায়গা খুঁজুন বা আপনার বর্তমান অবস্থান ব্যবহার করে একটি বেছে নিন।",
+	"Resolving the address for your selected pin...": "আপনার নির্বাচিত পিনের ঠিকানা নির্ধারণ করা হচ্ছে...",
+	"Search for a place or use your current location to choose a location.": "একটি জায়গা খুঁজুন বা আপনার বর্তমান অবস্থান ব্যবহার করে একটি অবস্থান বেছে নিন।",
+	"Choose a location by searching above or using your current location.": "উপরে অনুসন্ধান করে বা আপনার বর্তমান অবস্থান ব্যবহার করে একটি অবস্থান বেছে নিন।",
+	"Use your current location to choose a delivery address": "ডেলিভারি ঠিকানা বেছে নিতে আপনার বর্তমান অবস্থান ব্যবহার করুন",
+	"Search for your business address to place the marker on the map.": "মানচিত্রে চিহ্ন রাখতে আপনার ব্যবসার ঠিকানা অনুসন্ধান করুন।"
 };

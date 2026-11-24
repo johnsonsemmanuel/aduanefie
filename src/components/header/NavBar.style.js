@@ -23,7 +23,7 @@ export const AppBarStyle = styled(AppBar)(({ theme, scrolling, isSmall }) => ({
   // ── Mobile scroll-away collapse (CSS-driven) ──
   // `useScrollCollapseClass` toggles this class on <html> from a vanilla
   // scroll listener; no React state is involved. Sliding the whole fixed
-  // bar with `transform` runs on the compositor — no reflow, no jank —
+  // bar with `transform` runs on the compositor - no reflow, no jank -
   // unlike the old max-height/margin-top animations. The offset is measured
   // from the real header rows by MobileNavBar into --mobile-nav-collapse.
   [`@media ${MOBILE_LAYOUT_MEDIA_QUERY}`]: {

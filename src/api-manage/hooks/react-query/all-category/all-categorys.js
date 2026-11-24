@@ -7,7 +7,7 @@ import { onErrorResponse } from "../../../api-error-response/ErrorResponses";
 import { getApiList } from "../../../getApiContent";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 
-// Callers read `response.data` and expect the rows array — that is what this
+// Callers read `response.data` and expect the rows array - that is what this
 // endpoint used to put there. In v4.2 the rows moved to `content.data`, so
 // rebuild the axios-shaped response with the array back under `data` rather
 // than changing 20+ call sites.
@@ -23,7 +23,7 @@ const getData = async (searchKey) => {
       : await MainApi.get(`${categories_api}`);
   return withRows(response);
 };
-// `options.enabled` lets a caller opt out entirely — used by the navbar search
+// `options.enabled` lets a caller opt out entirely - used by the navbar search
 // placeholder, which only wants category names it does not already have.
 export const useGetCategories = (
   searchKey,

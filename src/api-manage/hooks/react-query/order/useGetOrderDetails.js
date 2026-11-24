@@ -11,14 +11,14 @@ const getData = async (order_id, guestId) => {
   // Consumers disagree on the shape: RateAndReview treats this as the array of
   // order rows (`data.filter(...)`, `setItems(data)`), while order-details reads
   // object fields. The doc's capture for this endpoint was a 404 so it settles
-  // neither. Return the rows when the payload is a list, otherwise the object —
+  // neither. Return the rows when the payload is a list, otherwise the object -
   // correct for both, and never undefined-when-it-was-an-object.
   return getApiList(data) ?? getApiContent(data);
 };
 
 export default function useGetOrderDetails(order_id, guestId) {
   // Key by order_id (+ guestId) so each order is its own cache entry. With a
-  // static key, switching orders reused the previous order's cached data — so
+  // static key, switching orders reused the previous order's cached data - so
   // `isLoading` stayed false (no shimmer) and stale details flashed until the
   // background refetch resolved.
   return useQuery(

@@ -149,7 +149,7 @@ const OfferCard = ({ offer, onClick }) => {
 };
 
 // `/bogo/store-offers` rows already merge the offer card and this store's
-// bundle into one object (§5.4 of the BOGO API guide) — the `store` object
+// bundle into one object (§5.4 of the BOGO API guide) - the `store` object
 // is deliberately omitted there ("you already have it"), so it's rebuilt
 // here from the page's own `storeDetails` for the modal's restaurant row.
 const BogoStoreOffersDrawer = ({ open, onClose, onReopen, storeId, storeDetails }) => {
@@ -163,7 +163,7 @@ const BogoStoreOffersDrawer = ({ open, onClose, onReopen, storeId, storeDetails 
 
   // Same flow as the /bogo-list page: picking an offer closes this list
   // drawer and opens the item-details modal; closing that modal reopens
-  // this drawer (mobile gets the same handoff — the modal is just a bottom
+  // this drawer (mobile gets the same handoff - the modal is just a bottom
   // sheet there instead of a side drawer).
   const handleSelectOffer = (offer) => {
     setActiveOffer(offer);

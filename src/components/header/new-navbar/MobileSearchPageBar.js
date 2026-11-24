@@ -66,7 +66,7 @@ const MobileSearchPageBar = ({
           gap="8px"
           sx={{ px: "12px", py: "10px" }}
         >
-          {/* Left: cancel (focused) or back (unfocused) — single button so the
+          {/* Left: cancel (focused) or back (unfocused) - single button so the
               element is never swapped mid-click (which would land the trailing
               click on the back button and trigger its navigation). Everything
               happens in onMouseDown; preventDefault stops the input blur from racing. */}
@@ -120,7 +120,7 @@ const MobileSearchPageBar = ({
               "& .MuiInputBase-input:placeholder-shown": { fontSize: "13px !important" },
               // Search page bar never needs the leading search icon
               "& .fi-bs-search": { display: "none !important" },
-              // Fix CloseIconWrapper right — hardcoded 27px was for voice search button spacing
+              // Fix CloseIconWrapper right - hardcoded 27px was for voice search button spacing
               "& .MuiStack-root:has(.fi-bs-search) > div:last-child": {
                 right: "7px !important",
               },

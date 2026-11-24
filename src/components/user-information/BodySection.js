@@ -44,7 +44,7 @@ const BodySection = ({
   };
   return (
     <CustomStackFullWidth spacing={4}>
-      {/* Personal Details card — hidden on profile-settings (only show addAddress form) */}
+      {/* Personal Details card - hidden on profile-settings (only show addAddress form) */}
       {page === "addresses" ? (
         addAddress && (
           <CustomPaperBigCard padding="10px" noboxshadow={isSmall ? "" : "true"}>
@@ -80,7 +80,7 @@ const BodySection = ({
           </CustomPaperBigCard>
         )
       ) : page === "track-order" ? (
-        /* Track order has its own card UI — no outer profile card/padding/border */
+        /* Track order has its own card UI - no outer profile card/padding/border */
         <ProfileBody
           key={`${page}-${orderId || "no-order"}`}
           page={page}

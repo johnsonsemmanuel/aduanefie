@@ -36,6 +36,7 @@ import plusIcon from "../assets/plus.png";
 import { useDispatch, useSelector } from "react-redux";
 import { setOpenAddressModal } from "redux/slices/addAddress";
 import GpsFixedIcon from "@mui/icons-material/GpsFixed";
+import { isValidLocation } from "helper-functions/validLocation";
 
 const AddNewAddress = (props) => {
   const {
@@ -59,10 +60,14 @@ const AddNewAddress = (props) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { profileInfo } = useSelector((state) => state.profileInfo);
   const { guestUserInfo } = useSelector((state) => state.guestUserInfo);
-  const [editAddressLocation, setEditAddressLocation] = useState({
-    lat: editAddress?.latitude,
-    lng: editAddress?.longitude,
-  });
+  const [editAddressLocation, setEditAddressLocation] = useState(
+    isValidLocation({ lat: editAddress?.latitude, lng: editAddress?.longitude })
+      ? {
+          lat: Number(editAddress.latitude),
+          lng: Number(editAddress.longitude),
+        }
+      : null
+  );
   const token = localStorage.getItem("token");
   const reduxDispatch = useDispatch();
   const [addressType, setAddressType] = useState(
@@ -82,15 +87,24 @@ const AddNewAddress = (props) => {
     });
 
   useEffect(() => {
-    setEditAddressLocation(state?.location);
+    setEditAddressLocation(
+      isValidLocation(state?.location) ? state.location : null
+    );
   }, [state?.location]);
 
   useEffect(() => {
-    const initialLocation =
-      editAddress?.latitude && editAddress?.longitude
-        ? { lat: editAddress.latitude, lng: editAddress.longitude }
-        : configData?.default_location;
-    dispatch({ type: ACTIONS.setLocation, payload: initialLocation });
+    const editPin = {
+      lat: editAddress?.latitude,
+      lng: editAddress?.longitude,
+    };
+    // Never seed a new address from configData.default_location: that value
+    // is the business map centre, not the customer's home or delivery pin.
+    dispatch({
+      type: ACTIONS.setLocation,
+      payload: isValidLocation(editPin)
+        ? { lat: Number(editPin.lat), lng: Number(editPin.lng) }
+        : null,
+    });
   }, []);
 
   const { data: places, isLoading } = useGetAutocompletePlace(
@@ -138,10 +152,12 @@ const AddNewAddress = (props) => {
         lat: placeDetails?.data?.location?.latitude,
         lng: placeDetails?.data?.location?.longitude,
       };
-      dispatch({
-        type: ACTIONS.setLocation,
-        payload: locObj,
-      });
+      if (isValidLocation(locObj)) {
+        dispatch({
+          type: ACTIONS.setLocation,
+          payload: locObj,
+        });
+      }
     }
   }, [placeDetails]);
 
@@ -182,6 +198,7 @@ const AddNewAddress = (props) => {
   };
   const getCurrentLocation = () => {
     const locObj = { lat: coords?.latitude, lng: coords?.longitude };
+    if (!isValidLocation(locObj)) return;
     dispatch({
       type: ACTIONS.setLocation,
       payload: locObj,
@@ -330,7 +347,12 @@ const AddNewAddress = (props) => {
                       >
                         {state.currentLocation ||
                           editAddress?.address ||
-                          t("Move the pin to select your location")}
+                          (isValidLocation(state.location) ||
+                          isValidLocation(editAddressLocation)
+                            ? t("Move the pin to select your location")
+                            : t(
+                                "Use your current location to choose a delivery address"
+                              ))}
                       </Typography>
                     </Box>
                   </Stack>
@@ -354,12 +376,9 @@ const AddNewAddress = (props) => {
                       location={
                         editAddress
                           ? editAddressLocation
-                          : state.location
+                          : isValidLocation(state.location)
                           ? state.location
-                          : {
-                              lat: configData?.default_location?.lat,
-                              lng: configData?.default_location?.lng,
-                            }
+                          : null
                       }
                       setPlaceDetailsEnabled={(value) =>
                         dispatch({

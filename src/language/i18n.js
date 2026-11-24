@@ -4,6 +4,7 @@ import { english } from "./en";
 import { bengali } from "./bn";
 import { arabic } from "./ar";
 import { spain } from "./es";
+import { french } from "./fr";
 
 // the translations
 // (tip move them in a JSON file and import them,
@@ -11,6 +12,9 @@ import { spain } from "./es";
 const resources = {
   en: {
     translation: english,
+  },
+  fr: {
+    translation: french,
   },
   es: {
     translation: spain,

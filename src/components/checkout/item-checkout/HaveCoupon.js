@@ -298,7 +298,7 @@ const TicketCard = ({
         </Typography>
       </Stack>
 
-      {/* Dashed divider with cutout circles — matches NewCouponCard's ticket look */}
+      {/* Dashed divider with cutout circles - matches NewCouponCard's ticket look */}
       <Box
         sx={{
           display: "flex",

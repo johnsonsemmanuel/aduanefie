@@ -225,7 +225,7 @@ export const ModuleSelection = ({
     localStorage.setItem("module", JSON.stringify(data));
     saveModuleParam(data?.id, data?.slug);
     setOpenModuleSelection?.(false);
-    closeModal?.(); // close parent modal (MapModal) — removes the backdrop overlay
+    closeModal?.(); // close parent modal (MapModal) - removes the backdrop overlay
     pushHomeWithModule(data);
   };
   const currentZoneIds = getCurrentZoneIds();

@@ -12,7 +12,7 @@ import EmojiEventsRoundedIcon from "@mui/icons-material/EmojiEventsRounded";
 
 // `name` is the routing/page key (kebab-case, must stay stable for `page=...`
 // query routing and the active-menu highlight check). `label` is the
-// translation key shown to the user — keep both in sync when editing.
+// translation key shown to the user - keep both in sync when editing.
 export const menuData = [
   {
     id: 1,

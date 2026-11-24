@@ -20,6 +20,7 @@ import useGetProTermsAndConditions, {
   resolveTermsTitle,
   resolveTermsEnabled,
 } from "../../api-manage/hooks/react-query/pro-plans/useGetProTermsAndConditions";
+import { useSanitizedRichText } from "utils/sanitizeRichText";
 
 // Body is shared between the desktop Dialog and mobile Drawer so only the
 // surrounding surface differs between presentations.
@@ -27,6 +28,7 @@ const TermsBody = ({ onClose }) => {
   const { t } = useTranslation();
   const { data, isLoading } = useGetProTermsAndConditions();
   const body = resolveTermsBody(data);
+  const safeBody = useSanitizedRichText(body);
   const title = resolveTermsTitle(data);
   const image = resolveTermsImage(data);
   const enabled = resolveTermsEnabled(data);
@@ -119,7 +121,7 @@ const TermsBody = ({ onClose }) => {
               "& li": { mb: 0.5 },
               "& a": { color: "primary.main" },
             }}
-            dangerouslySetInnerHTML={{ __html: body }}
+            dangerouslySetInnerHTML={{ __html: safeBody }}
           />
         ) : (
           <Typography color="text.secondary">

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Box, CssBaseline } from "@mui/material";
 import CustomContainer from "components/container";
 import MainLayout from "components/layout/MainLayout";
+import SimpleMobileHeader from "components/common/SimpleMobileHeader";
 import SEO from "components/seo";
 import LiveFarmingSection from "components/home/live-farming/LiveFarmingSection";
 import { getCommonServerSideProps } from "utils/serverSidePropsHelper";
@@ -38,8 +39,9 @@ const LiveFarmingPage = ({ configData }) => {
         configData={effectiveConfig}
       />
       <MainLayout configData={effectiveConfig}>
+        <SimpleMobileHeader title="Live Farming" backHref="/home" />
         <CustomContainer>
-          <Box sx={{ py: { xs: 3, md: 5 } }}>
+          <Box sx={{ pt: { xs: 1, md: 3 }, pb: { xs: 3, md: 5 } }}>
             <LiveFarmingSection limit={24} showViewAll={false} hideIfEmpty={false} />
           </Box>
         </CustomContainer>

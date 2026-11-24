@@ -30,7 +30,7 @@ interface StateWithPlaceholderCache {
 }
 
 interface AnimatedSearchPlaceholder {
-  /** The word currently shown after "Search for" — already length-clamped. */
+  /** The word currently shown after "Search for" - already length-clamped. */
   currentNoun: string;
   /** Drives the fade transition between words. */
   visible: boolean;
@@ -58,7 +58,7 @@ const FADE_MS = 280;
  * more than once: the names live in a persisted, module-tagged redux cache and
  * the network is only touched when that cache misses. Both navbars used to call
  * `useGetCategories()` unconditionally, which meant an `/api/v1/categories`
- * request on every page that renders the layout — checkout included — purely to
+ * request on every page that renders the layout - checkout included - purely to
  * animate a placeholder.
  */
 export const useAnimatedSearchPlaceholder = (): AnimatedSearchPlaceholder => {
@@ -70,7 +70,7 @@ export const useAnimatedSearchPlaceholder = (): AnimatedSearchPlaceholder => {
   );
 
   const moduleId = getCurrentModuleId();
-  // A cache from another module is a miss, not a fallback — otherwise the
+  // A cache from another module is a miss, not a fallback - otherwise the
   // grocery navbar would animate leftover food category names.
   const cachedNames =
     moduleId != null &&

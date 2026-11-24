@@ -77,7 +77,7 @@ const StoreButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-const DEFAULT_TITLE = "Get the Aduanefie App — Trade & Shop Faster!";
+const DEFAULT_TITLE = "Get the Aduanefie App - Trade & Shop Faster!";
 
 const MobileAppBanner = () => {
   const theme = useTheme();
@@ -96,7 +96,8 @@ const MobileAppBanner = () => {
     const isAndroid = /android/i.test(ua);
     if (isAndroid) {
       const fallback = encodeURIComponent(playstore_url);
-      window.location.href = `intent://open/#Intent;package=com.sixamtech.sixam_mart_user;S.browser_fallback_url=${fallback};end`;
+      const pkg = process.env.NEXT_PUBLIC_ANDROID_PACKAGE || "com.aduanefie.marketplace";
+      window.location.href = `intent://open/#Intent;package=${pkg};S.browser_fallback_url=${fallback};end`;
     } else {
       window.open(playstore_url, "_blank", "noopener,noreferrer");
     }
@@ -142,7 +143,7 @@ const MobileAppBanner = () => {
         <i className="fi fi-rr-cross-circle"></i>
       </IconButton>
 
-      {/* Mobile layout: column — QR top, title, buttons bottom */}
+      {/* Mobile layout: column - QR top, title, buttons bottom */}
       <Stack
         sx={{
           display: { xs: "flex", sm: "none" },
@@ -207,7 +208,7 @@ const MobileAppBanner = () => {
         </Stack>
       </Stack>
 
-      {/* Desktop layout: row — text+buttons left, QR right */}
+      {/* Desktop layout: row - text+buttons left, QR right */}
       <Stack
         direction="row"
         alignItems="center"

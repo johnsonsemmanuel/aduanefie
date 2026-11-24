@@ -20,9 +20,7 @@ const VerifiedStoreBadge = ({
 
   const moduleType = getCurrentModuleType();
   const verifiedLabel =
-    moduleType === ModuleTypes.FOOD
-      ? t("Verified Restaurant")
-      : moduleType === ModuleTypes.RENTAL
+    moduleType === ModuleTypes.RENTAL
       ? t("Verified Provider")
       : t("Verified Store");
 

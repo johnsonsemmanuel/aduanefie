@@ -226,8 +226,8 @@ const PaidAds = () => {
   const hasMore = ads.length > 1;
 
   // Cap card width at 300px, but shrink to the container's real available
-  // width on small screens (e.g. 320px) so the whole card — including the
-  // badge that overhangs to the right — stays visible. Measuring the actual
+  // width on small screens (e.g. 320px) so the whole card - including the
+  // badge that overhangs to the right - stays visible. Measuring the actual
   // container (not 100vw) keeps this correct regardless of page margins.
   useEffect(() => {
     const el = listRef.current;
@@ -257,7 +257,7 @@ const PaidAds = () => {
 
   // variableWidth lets react-slick lay slides out by their real pixel width, so
   // however many fit in the container show up (with a natural partial "peek")
-  // — and infinite + autoplay stay perfectly aligned at any screen size.
+  // - and infinite + autoplay stay perfectly aligned at any screen size.
   const sliderSettings = {
     dots: false,
     arrows: false,

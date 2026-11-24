@@ -309,7 +309,7 @@ const BestReviewedItems = (props) => {
                       },
                     }}
                   >
-                    {/* Banner — 4 col desktop only */}
+                    {/* Banner - 4 col desktop only */}
                     {url && (
                       <Grid
                         item
@@ -350,7 +350,7 @@ const BestReviewedItems = (props) => {
                       </Grid>
                     )}
 
-                    {/* Slider — 8 col desktop, 12 col mobile */}
+                    {/* Slider - 8 col desktop, 12 col mobile */}
                     <Grid item xs={12} md={url ? 8 : 12}>
                       <Box
                         onMouseEnter={() => setIsSliderHovered(true)}
@@ -386,7 +386,7 @@ const BestReviewedItems = (props) => {
                             },
                           ]}
                         >
-                          {/* Group items into pairs — each slide = col of 2 */}
+                          {/* Group items into pairs - each slide = col of 2 */}
                           {(() => {
                             const items = bestReviewedItems?.products ?? [];
                             const pairs = [];
