@@ -67,20 +67,6 @@ export const getGrocerySections = (isBogoLive) =>
     mobileContent: <TabbedSectionPage sectionType="top-rated" />,
   },
   {
-    id: "live-farming",
-    label: "Live Farming",
-    icon: (
-      <Box sx={{ color: "success.main", display: "flex" }}>
-        <i
-          className="fi fi-rr-leaf"
-          style={{ fontSize: "16px", lineHeight: 1, display: "flex" }}
-        />
-      </Box>
-    ),
-    content: <LiveFarmingSection limit={24} showViewAll={false} hideIfEmpty={false} />,
-    mobileContent: <LiveFarmingSection limit={24} showViewAll={false} hideIfEmpty={false} />,
-  },
-  {
     id: "nearby",
     label: "Nearby",
     icon: (

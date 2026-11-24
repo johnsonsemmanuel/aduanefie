@@ -351,11 +351,7 @@ const HomePageComponents = ({
                   : { xs: "4px", md: "10px" },
             }}
           >
-            {isWholesaleModule && (
-              <Box sx={{ display: { xs: "none", md: "block" } }}>
-                <AgroPriceTickerBar />
-              </Box>
-            )}
+
             {getModuleWiseComponents()}
             {["grocery", "ecommerce", "food", "pharmacy"].includes(moduleType) && (
               <PickedForYouSection />

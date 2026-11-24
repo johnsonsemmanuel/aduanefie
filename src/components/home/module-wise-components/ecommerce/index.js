@@ -127,25 +127,7 @@ const Shop = ({ configData, routeSection }) => {
         </CustomContainer>
       </S>
 
-      {String(moduleId) === String(WHOLESALE_MODULE_ID) && (
-        <S>
-          <CustomContainer>
-            <LiveFarmingSection limit={8} />
-          </CustomContainer>
-        </S>
-      )}
 
-      <S>
-        <CustomContainer>
-          <OngoingGroupBuysSection moduleId={moduleId} />
-        </CustomContainer>
-      </S>
-
-      <S>
-        <CustomContainer>
-          <FlashSalesSection key="eCommerce" />
-        </CustomContainer>
-      </S>
 
       <S>
         <CustomContainer>
