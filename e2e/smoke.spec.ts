@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 /**
  * Baseline smoke checks. Keep these free of QA-environment data (zones, stores,
- * accounts) so they pass against any deployment - suite-specific cases belong in
+ * accounts) so they pass against any deployment; suite-specific cases belong in
  * their own spec files.
  */
 test.describe("smoke", () => {

@@ -20,7 +20,7 @@ PLAYWRIGHT_BASE_URL=https://6ammart-react.6amtech.com yarn test:e2e
 ## Conventions
 
 - One spec file per feature area (`smoke.spec.ts`, `checkout.spec.ts`, ...).
-- Prefer role/label selectors (`getByRole`, `getByLabel`) over CSS classes -
+- Prefer role/label selectors (`getByRole`, `getByLabel`) over CSS classes because
   MUI class names are generated and change between builds.
 - Cases from `qa-web-test-suite.md` that depend on admin-configured zones or
   stores need the QA environment; guard them with `test.skip()` plus a comment
