@@ -26,18 +26,7 @@ const FaqTabSection = dynamic(() => import("./FaqTabSection"));
 
 const MapModal = dynamic(() => import("../Map/MapModal"));
 
-const WELCOME_PLATFORM_LINKS = [
-  { label: "B2B & Cross-Border Trade", href: "/trade" },
-  { label: "Live Farming", href: "/live-farming" },
-  { label: "Ghana Agro Index", href: "/market-prices" },
-  { label: "Group Buys", href: "/group-buys" },
-  { label: "Register Farm / Store", href: "/store-registration" },
-  { label: "Become a Marketer", href: "/become-a-marketer" },
-  { label: "Become a Rider", href: "/deliveryman-registration" },
-];
-
 const LandingPage = ({ configData, landingPageData }) => {
-  const { t } = useTranslation();
   const Testimonials = dynamic(() => import("./Testimonials"), {
     ssr: false,
   });
@@ -88,36 +77,6 @@ const LandingPage = ({ configData, landingPageData }) => {
     <>
       <PushNotificationLayout>
         <HeroSection landingPageDataheroSection={landingPageData?.hero_section} />
-        <CustomContainer>
-          <Stack
-            direction="row"
-            flexWrap="wrap"
-            alignItems="center"
-            justifyContent="center"
-            gap={1.25}
-            sx={{ py: 2.5 }}
-          >
-            <Typography variant="body2" fontWeight={600} color="text.secondary" sx={{ mr: 0.5 }}>
-              {t("Explore Aduanefie:")}
-            </Typography>
-            {WELCOME_PLATFORM_LINKS.map((item) => (
-              <Button
-                key={item.href}
-                component={Link}
-                href={item.href}
-                variant="outlined"
-                size="small"
-                sx={{
-                  textTransform: "none",
-                  fontWeight: 600,
-                  borderRadius: "8px",
-                }}
-              >
-                {t(item.label)}
-              </Button>
-            ))}
-          </Stack>
-        </CustomContainer>
         {landingPageData?.trust_section?.trust_section_status === 1 ? (
           <StatsSection trustSectionData={landingPageData?.trust_section} />
         ) : null}

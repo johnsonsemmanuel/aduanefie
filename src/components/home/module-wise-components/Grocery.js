@@ -129,49 +129,10 @@ const Grocery = (props) => {
           <Banners />
         </CustomContainer>
       </S>
-      {String(moduleId) === String(WHOLESALE_MODULE_ID) && (
-        <S>
-          <CustomContainer>
-            <LiveFarmingSection limit={8} />
-          </CustomContainer>
-        </S>
-      )}
-
-      <S>
-        <CustomContainer>
-          <OngoingGroupBuysSection moduleId={moduleId} />
-        </CustomContainer>
-      </S>
-
-      <S>
-        <CustomContainer>
-          <FlashSalesSection key="grocery" />
-        </CustomContainer>
-      </S>
-
       <S>
         <CustomContainer>
           {/* new feature */}
           <TodaysDeals />
-        </CustomContainer>
-      </S>
-
-      <S>
-        <CustomContainer
-          sx={{
-            paddingLeft: "16px !important",
-            paddingRight: "0 !important",
-          }}
-        >
-          <TrendingBites
-            title={t("Fresh Finds")}
-            subtitle={t("Discover fresh groceries through reels")}
-          />
-        </CustomContainer>
-      </S>
-      <S>
-        <CustomContainer>
-          <BogoBanner />
         </CustomContainer>
       </S>
 

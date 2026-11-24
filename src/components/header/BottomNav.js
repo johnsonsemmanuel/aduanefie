@@ -30,18 +30,6 @@ const NAV_ITEMS = [
     keepModuleQuery: true,
   },
   {
-    key: "groups",
-    label: "Groups",
-    icon: "fi fi-rr-users-alt",
-    path: "/group-buys",
-  },
-  {
-    key: "live-farm",
-    label: "Live Farm",
-    icon: "fi fi-rr-leaf",
-    path: "/live-farming",
-  },
-  {
     key: "orders",
     label: "Orders",
     icon: "fi fi-rr-receipt",

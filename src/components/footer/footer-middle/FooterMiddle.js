@@ -52,9 +52,7 @@ const FooterMiddle = ({ configData, landingPageData }) => {
   };
 
   const marketLinks = configData?.footer_links?.markets || [
-    { label: "B2B Cross-Border Trade", href: "/trade", active: true },
-    { label: "Live Farming", href: "/live-farming", active: true },
-    { label: "Ghana Agro Index", href: "/market-prices", active: true },
+    { label: "Browse Farms", href: "/store/popular", active: true },
     { label: "Track Order", href: "/track-order", active: true },
   ];
 
