@@ -15,16 +15,10 @@ import { CustomButtonPrimary } from "styled-components/CustomButtons.style";
 
 const MARKETPLACE_LINKS = [
   { label: "Home", path: "/home", icon: "fi fi-rr-home" },
-  { label: "Group Buys", path: "/group-buys", icon: "fi fi-rr-users-alt" },
-  { label: "Live Farming", path: "/live-farming", icon: "fi fi-rr-leaf" },
-  { label: "Market Prices", path: "/market-prices", icon: "fi fi-rr-chart-line-up" },
-  { label: "B2B Trade", path: "/trade", icon: "fi fi-rr-globe" },
   { label: "Track Order", path: "/track-order", icon: "fi fi-rr-truck-side" },
 ];
 
 const PARTNER_SUPPORT_LINKS = [
-  { label: "Register Farm / Store", path: "/store-registration", icon: "fi fi-rr-shop" },
-  { label: "Become a Marketer", path: "/become-a-marketer", icon: "fi fi-rr-briefcase" },
   { label: "Help & Support", path: "/help-and-support", icon: "fi fi-rr-headset" },
 ];
 

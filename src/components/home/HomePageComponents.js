@@ -352,22 +352,9 @@ const HomePageComponents = ({
             }}
           >
             {isWholesaleModule && (
-              <>
-                <Box sx={{ display: { xs: "none", md: "block" } }}>
-                  <AgroPriceTickerBar />
-                </Box>
-                <Box
-                  sx={{
-                    maxWidth: "1320px",
-                    width: "100%",
-                    mx: "auto",
-                    px: { xs: "16px", md: 0 },
-                    mb: { xs: "12px", md: "20px" },
-                  }}
-                >
-                  <TradeCtaBanner />
-                </Box>
-              </>
+              <Box sx={{ display: { xs: "none", md: "block" } }}>
+                <AgroPriceTickerBar />
+              </Box>
             )}
             {getModuleWiseComponents()}
             {["grocery", "ecommerce", "food", "pharmacy"].includes(moduleType) && (
