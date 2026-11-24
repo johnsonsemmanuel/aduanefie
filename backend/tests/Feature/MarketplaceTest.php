@@ -107,6 +107,28 @@ class MarketplaceTest extends TestCase
             ->assertJsonStructure(['terms']);
     }
 
+    public function test_shared_login_pages_render_recaptcha_when_enabled(): void
+    {
+        // Admin/store controllers call passesHumanCheck() but used to have no
+        // token field on the page, so reCAPTCHA-enabled deployments could not
+        // sign in. Every renderer of auth.login must now supply the fields.
+        \Illuminate\Support\Facades\DB::table('business_settings')->updateOrInsert(
+            ['key' => 'recaptcha'],
+            ['value' => json_encode([
+                'status' => 1,
+                'site_key' => 'test-site-key',
+                'secret_key' => 'test-secret-key',
+            ])]
+        );
+        \Illuminate\Support\Facades\Cache::forget('business_settings_all_data');
+
+        foreach (['/admin-login', '/store-login', '/marketer-login'] as $url) {
+            $this->get($url)->assertStatus(200)
+                ->assertSee('name="g-recaptcha-response"', false)
+                ->assertSee('test-site-key', false);
+        }
+    }
+
     public function test_portal_login_pages_render(): void
     {
         $this->get('/admin-login')->assertStatus(200)

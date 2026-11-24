@@ -53,7 +53,7 @@
 
             <div class="field">
                 <label for="account_number">Account number</label>
-                <input type="tel" name="account_number" id="account_number" value="{{ old('account_number') }}"
+                <input type="tel" name="account_number" id="account_number" value="{{ old('account_number', $marketer->phone) }}"
                        required maxlength="50">
             </div>
 

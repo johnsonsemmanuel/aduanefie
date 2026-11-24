@@ -9,12 +9,21 @@
         $isVendor = in_array($role ?? '', ['vendor', 'vendor_employee']);
         $isMarketer = ($role ?? '') === 'marketer';
         $forgotRoute = $forgotRoute ?? route('reset-password');
-        // Captcha is opt-in so the existing admin/store entry points keep their
-        // current behaviour. Portals whose controllers enforce a human check
-        // pass a captcha instance here.
-        $showCaptcha = !empty($captcha);
-        $recaptcha = $recaptcha ?? null;
-        $recaptchaOn = $showCaptcha && isset($recaptcha['status']) && $recaptcha['status'] == 1;
+
+        // Every controller that renders this shared view calls
+        // VerifiesHuman::passesHumanCheck() on POST. The view must therefore
+        // always render the matching field and keep the phrase in the session,
+        // otherwise admin/store login cannot pass when reCAPTCHA is enabled.
+        $captcha = $captcha ?? null;
+        if (! $captcha) {
+            $captcha = new \Gregwar\Captcha\CaptchaBuilder();
+            $captcha->build();
+            session()->put('six_captcha', $captcha->getPhrase());
+        }
+        $showCaptcha = true;
+        $recaptcha = $recaptcha ?? \App\CentralLogics\Helpers::get_business_settings('recaptcha');
+        $recaptchaOn = !empty($recaptcha['status']) && (int) $recaptcha['status'] === 1
+            && !empty($recaptcha['site_key']);
     ?>
 
 <html dir="{{ $site_direction }}" lang="{{ $locale }}" class="{{ $site_direction === 'rtl'?'active':'' }}">

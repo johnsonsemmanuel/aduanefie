@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MarketerApplication;
 use App\Models\MarketerCommission;
 use App\Models\MarketerPayout;
 use App\Services\MarketerAccessService;
@@ -349,6 +350,18 @@ class MarketerPortalController extends Controller
                 ->withErrors(['current_password' => 'Your password confirmation did not match.']);
         }
 
+        // An account created from an application proved ownership of one payout
+        // number at application time. Do not let a different number be swapped
+        // in at withdrawal time. Legacy marketers without an application are
+        // unaffected.
+        $application = MarketerApplication::where('created_admin_id', $marketer->id)
+            ->where('status', MarketerApplication::STATUS_APPROVED)
+            ->first();
+        if ($application && $this->normalizePayoutNumber($data['account_number']) !== $this->normalizePayoutNumber($application->phone)) {
+            return back()->withInput($request->except('current_password'))
+                ->withErrors(['account_number' => 'Use the mobile money number you verified when you applied.']);
+        }
+
         $details = $this->validatePayoutRail($data);
 
         try {
@@ -372,6 +385,15 @@ class MarketerPortalController extends Controller
     private function validatePayoutRail(array $data): array
     {
         return PayoutRails::validate($data);
+    }
+
+    private function normalizePayoutNumber(string $number): string
+    {
+        $digits = preg_replace('/\D+/', '', $number) ?? '';
+
+        return str_starts_with($digits, '233') && strlen($digits) === 12
+            ? '0' . substr($digits, 3)
+            : $digits;
     }
 
     public function showRegisterFarmer()
