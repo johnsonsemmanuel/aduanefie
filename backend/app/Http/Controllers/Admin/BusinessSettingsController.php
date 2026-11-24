@@ -2679,7 +2679,29 @@ class BusinessSettingsController extends Controller
             'intekhost_sender_id' => Helpers::get_business_settings('intekhost_sender_id') ?? '',
         ];
 
-        return view('admin-views.business-settings.farming-settings', compact('settings'));
+        $smsBalance = \App\Traits\SmsGateway::intekhostBalance();
+
+        return view('admin-views.business-settings.farming-settings', compact('settings', 'smsBalance'));
+    }
+
+    public function test_intekhost_sms(Request $request)
+    {
+        $request->validate([
+            'test_phone' => 'required|string|min:9|max:20',
+        ]);
+
+        $status = \App\Traits\SmsGateway::intekhost(
+            $request->input('test_phone'),
+            'Aduanefie test SMS: your IntekHost SMS integration is active.'
+        );
+
+        if ($status === 'success') {
+            Toastr::success(translate('Test SMS sent successfully.'));
+        } else {
+            Toastr::error(translate('Test SMS failed. Check laravel.log or IntekHost sender ID status.'));
+        }
+
+        return back();
     }
 
     public function update_farming_settings(Request $request)

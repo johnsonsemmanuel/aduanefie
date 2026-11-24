@@ -683,12 +683,121 @@ class FarmerController extends Controller
             $request->severity ?? 'medium'
         );
 
+        $recommendedInputs = $this->getRecommendedFarmInputs($request->pest_type);
+
         return response()->json([
             'pest_type' => $request->pest_type,
             'crop_type' => $request->crop_type,
             'severity' => $request->severity,
             'recommendation' => $recommendation,
+            'recommended_inputs' => $recommendedInputs,
         ], 200);
+    }
+
+    /**
+     * Low-bandwidth SMS keyword trigger: farmers reply "READY <item_id>"
+     * (or "HARVEST <item_id>") to mark their crop harvest_ready without data.
+     */
+    public function sms_harvest_ready(Request $request)
+    {
+        $from = preg_replace('/\D/', '', (string) ($request->input('from') ?? $request->input('phone') ?? ''));
+        $text = trim((string) ($request->input('message') ?? $request->input('text') ?? ''));
+
+        if ($from === '' || ! preg_match('/^(?:READY|HARVEST)\s+#?(\d+)/i', $text, $matches)) {
+            return response()->json([
+                'status' => 'ignored',
+                'message' => 'Send "READY <product_id>" from your registered farm phone.',
+            ], 422);
+        }
+
+        $itemId = (int) $matches[1];
+        $item = Item::with('store')->find($itemId);
+        if (! $item || ! $item->store) {
+            return response()->json(['status' => 'not_found', 'message' => 'Product not found.'], 404);
+        }
+
+        $storePhone = preg_replace('/\D/', '', (string) ($item->store->phone ?? ''));
+        $vendorPhone = preg_replace('/\D/', '', (string) ($item->store->vendor?->phone ?? ''));
+        $fromTail = substr($from, -9);
+
+        $authorized = ($storePhone !== '' && substr($storePhone, -9) === $fromTail)
+            || ($vendorPhone !== '' && substr($vendorPhone, -9) === $fromTail);
+
+        if (! $authorized) {
+            return response()->json(['status' => 'forbidden', 'message' => 'Sender phone does not match store owner.'], 403);
+        }
+
+        $item->farming_status = 'harvest_ready';
+        $item->save();
+
+        try {
+            \App\Traits\SmsGateway::send(
+                $request->input('from') ?? $request->input('phone'),
+                "Aduanefie: {$item->name} (#{$item->id}) is now marked HARVEST READY on the marketplace."
+            );
+        } catch (\Throwable $e) {
+            // best effort
+        }
+
+        return response()->json([
+            'status' => 'updated',
+            'item_id' => $item->id,
+            'farming_status' => 'harvest_ready',
+        ], 200);
+    }
+
+    /**
+     * Map a pest/disease type to matching approved Farm Inputs & Fertiliser
+     * products so farmers can purchase treatments in 1 tap.
+     */
+    private function getRecommendedFarmInputs(string $pestType): array
+    {
+        $keywordsByPest = [
+            'aphids' => ['neem', 'insecticid', 'aphid', 'soap'],
+            'armyworm' => ['spinosad', 'bt', 'bacillus', 'armyworm', 'insecticid'],
+            'whitefly' => ['neem', 'sticky', 'whitefly', 'insecticid'],
+            'mealybug' => ['neem', 'mealybug', 'insecticid'],
+            'spider mite' => ['miticid', 'neem', 'acaricid', 'mite'],
+            'fruit fly' => ['pheromone', 'bait', 'trap', 'insecticid'],
+            'blight' => ['copper', 'fungicid', 'mancozeb', 'blight'],
+            'powdery mildew' => ['sulfur', 'sulphur', 'fungicid', 'mildew'],
+            'root rot' => ['trichoderma', 'fungicid', 'bio'],
+            'bacterial wilt' => ['bactericid', 'copper', 'disinfect'],
+            'locust' => ['metarhizium', 'biopesticid', 'insecticid'],
+        ];
+
+        $pestLower = strtolower(trim($pestType));
+        $keywords = $keywordsByPest[$pestLower] ?? ['pesticid', 'fungicid', 'insecticid', 'neem'];
+
+        $inputModuleIds = \App\Models\Module::where('module_type', 'pharmacy')
+            ->orWhere('module_name', 'like', '%Input%')
+            ->orWhere('module_name', 'like', '%Fertilis%')
+            ->pluck('id')
+            ->all();
+
+        $query = Item::active()
+            ->when(! empty($inputModuleIds), fn ($q) => $q->whereIn('module_id', $inputModuleIds))
+            ->where(function ($q) use ($keywords) {
+                foreach ($keywords as $kw) {
+                    $q->orWhere('name', 'like', "%{$kw}%")
+                      ->orWhere('description', 'like', "%{$kw}%");
+                }
+            })
+            ->with('store:id,name')
+            ->limit(4)
+            ->get();
+
+        return $query->map(function (Item $item) {
+            return [
+                'id' => $item->id,
+                'slug' => $item->slug,
+                'name' => $item->name,
+                'price' => (float) $item->price,
+                'store_name' => $item->store?->name,
+                'image_full_url' => $item->image_full_url,
+                'product_url' => 'https://aduanefie.com/product/' . ($item->slug ?: $item->id),
+            ];
+        })->values()->all();
     }
 
     /**
@@ -697,7 +806,6 @@ class FarmerController extends Controller
     private function getAiPestRecommendation(string $pestType, string $cropType, string $severity): string
     {
         $pestLower = strtolower($pestType);
-        $cropLower = strtolower($cropType);
 
         // Common pest recommendations
         $recommendations = [
@@ -720,9 +828,6 @@ class FarmerController extends Controller
             'high' => "Treat urgently. Consider removing severely affected plants.",
             'critical' => "Emergency treatment required. Consider crop loss mitigation. Contact extension officer.",
         ];
-
-        $rec = $recommendations[$pestLower] ?? "Apply appropriate pesticide for $pestType. Follow label instructions carefully. Rotate active ingredients to prevent resistance.";
-        $sevAdvice = $severityAdvice[$severity] ?? $severityAdvice['medium'];
 
         $rec = $recommendations[$pestLower] ?? "Apply appropriate pesticide for $pestType. Follow label instructions carefully. Rotate active ingredients to prevent resistance.";
         $sevAdvice = $severityAdvice[$severity] ?? $severityAdvice['medium'];

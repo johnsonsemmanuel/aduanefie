@@ -373,9 +373,9 @@ class AiChatController extends Controller
             $lines[] = 'Here are matching produce and farm listings on Aduanefie:';
             foreach ($formattedProducts as $p) {
                 $tag = $p['farming_status'] === 'farming'
-                    ? ($p['pre_order_available'] ? ' (Currently Farming — Pre-Order Available)' : ' (Currently Farming)')
+                    ? ($p['pre_order_available'] ? ' (Currently Farming - Pre-Order Available)' : ' (Currently Farming)')
                     : ($p['farming_status'] === 'harvest_ready' ? ' (Harvest Ready)' : '');
-                $lines[] = sprintf('• %s — %s%s%s', $p['name'], Helpers::format_currency($p['price']), $p['store_name'] ? " from {$p['store_name']}" : '', $tag);
+                $lines[] = sprintf('• %s - %s%s%s', $p['name'], Helpers::format_currency($p['price']), $p['store_name'] ? " from {$p['store_name']}" : '', $tag);
             }
         } elseif (! empty($formattedStores)) {
             $lines[] = 'Here are matching verified farms & suppliers on Aduanefie:';

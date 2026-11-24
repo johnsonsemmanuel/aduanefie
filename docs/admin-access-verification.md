@@ -7,10 +7,10 @@ Method: live HTTP checks against `admin.aduanefie.com`, `store.aduanefie.com`, `
 
 | Surface | URL | Status |
 |---|---|---|
-| Admin login | `https://admin.aduanefie.com/login/admin` | 200 — "Admin Login", `role=admin` |
-| Admin employee login | `https://admin.aduanefie.com/login/admin-employee` | 200 — "Admin employee Login", `role=admin_employee` |
-| Vendor (store) login | `https://admin.aduanefie.com/login/store` | 200 — "Vendor Login", `role=vendor` |
-| Vendor employee login | `https://admin.aduanefie.com/login/store-employee` | 200 — "Vendor employee Login", `role=vendor_employee` |
+| Admin login | `https://admin.aduanefie.com/login/admin` | 200 - "Admin Login", `role=admin` |
+| Admin employee login | `https://admin.aduanefie.com/login/admin-employee` | 200 - "Admin employee Login", `role=admin_employee` |
+| Vendor (store) login | `https://admin.aduanefie.com/login/store` | 200 - "Vendor Login", `role=vendor` |
+| Vendor employee login | `https://admin.aduanefie.com/login/store-employee` | 200 - "Vendor employee Login", `role=vendor_employee` |
 | Admin dashboard | `https://admin.aduanefie.com/admin` | 302 → `/` (guest gate) |
 | Vendor dashboard | `https://admin.aduanefie.com/vendor-panel` | 302 → `/` (guest gate) |
 | Vendor registration | `https://admin.aduanefie.com/vendor/apply` | 200 |

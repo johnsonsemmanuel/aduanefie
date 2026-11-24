@@ -9,13 +9,13 @@ Aduanefie is a modular Laravel-based agricultural marketplace platform. The arch
 | Layer | Technology | Version |
 |-------|-----------|---------|
 | Backend Framework | Laravel | PHP 8.1+ |
-| Database | SQLite (dev), MySQL/PostgreSQL (prod) | — |
-| Cache | Redis / File | — |
-| Session | Database / File | — |
-| Queue | Database / Redis | — |
-| Frontend | Blade Templates + Vanilla JS | — |
-| Assets | Laravel Mix / Vite | — |
-| Real-time | Laravel Echo + Pusher (optional) | — |
+| Database | SQLite (dev), MySQL/PostgreSQL (prod) | - |
+| Cache | Redis / File | - |
+| Session | Database / File | - |
+| Queue | Database / Redis | - |
+| Frontend | Blade Templates + Vanilla JS | - |
+| Assets | Laravel Mix / Vite | - |
+| Real-time | Laravel Echo + Pusher (optional) | - |
 
 ## Directory Structure
 
@@ -100,41 +100,41 @@ modules/<ModuleName>/
 Represents any product or service listed on the marketplace.
 
 **Key agricultural fields:**
-- `farming_status` — `farming`, `harvest_ready`, or `in_stock`
-- `is_backyard` — Boolean, indicates backyard-grown produce
-- `planting_date` — Date when crop was planted
-- `expected_harvest_date` — Expected harvest date
-- `crop_cycle_days` — Typical crop cycle length
-- `pre_order_enabled` — Whether pre-orders are allowed
-- `cold_chain_required` — Whether cold-chain transport is needed
-- `seasonality` — Seasonal availability information
+- `farming_status` - `farming`, `harvest_ready`, or `in_stock`
+- `is_backyard` - Boolean, indicates backyard-grown produce
+- `planting_date` - Date when crop was planted
+- `expected_harvest_date` - Expected harvest date
+- `crop_cycle_days` - Typical crop cycle length
+- `pre_order_enabled` - Whether pre-orders are allowed
+- `cold_chain_required` - Whether cold-chain transport is needed
+- `seasonality` - Seasonal availability information
 
 ### Store (Vendor)
 Represents a farm, agro-service provider, or vendor.
 
 **Key agricultural fields:**
-- `farm_type` — `commercial` or `backyard`
-- `is_backyard` — Boolean, backyard farm flag
-- `farm_size_acres` — Farm size in acres
-- `primary_crops` — Primary crops grown
-- `cultivation_status` — `active` or `inactive`
-- `next_harvest_date` — Next expected harvest
-- `marketer_verified` — Whether marketer has verified the farm
+- `farm_type` - `commercial` or `backyard`
+- `is_backyard` - Boolean, backyard farm flag
+- `farm_size_acres` - Farm size in acres
+- `primary_crops` - Primary crops grown
+- `cultivation_status` - `active` or `inactive`
+- `next_harvest_date` - Next expected harvest
+- `marketer_verified` - Whether marketer has verified the farm
 
 ### CropCycleAnalyticsService
 Computes derived agricultural data:
-- `effective_farming_status` — Auto-promotes `farming` → `harvest_ready` when harvest date passes
-- `days_to_harvest` — Remaining days until harvest
-- `cultivation_progress_pct` — Cultivation progress percentage
-- `pre_order_available` — Whether pre-orders can be placed
-- `status_label` — Human-readable status label
+- `effective_farming_status` - Auto-promotes `farming` → `harvest_ready` when harvest date passes
+- `days_to_harvest` - Remaining days until harvest
+- `cultivation_progress_pct` - Cultivation progress percentage
+- `pre_order_available` - Whether pre-orders can be placed
+- `status_label` - Human-readable status label
 
 ## Authentication & Authorization
 
-- **Admin Login** — `/admin-login` with sliding 2FA panel (no page redirect)
-- **Store/Vendor Login** — Dynamic URL based on `store_login_url` setting
-- **Customer Auth** — API-based authentication with guest support
-- **Role-Based Access** — Admin, Vendor, Vendor Employee, Customer roles
+- **Admin Login** - `/admin-login` with sliding 2FA panel (no page redirect)
+- **Store/Vendor Login** - Dynamic URL based on `store_login_url` setting
+- **Customer Auth** - API-based authentication with guest support
+- **Role-Based Access** - Admin, Vendor, Vendor Employee, Customer roles
 
 ## API Design
 

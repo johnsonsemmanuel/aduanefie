@@ -1,4 +1,4 @@
-# Portal scoping + dedicated admin login — implemented and verified
+# Portal scoping + dedicated admin login - implemented and verified
 
 Date: 2026-11-11
 Scope: host-based portal scoping, canonical `/admin-login`, login throttling.
@@ -60,8 +60,8 @@ Two bugs were found and fixed during this work:
 | Attempt | Result | `X-RateLimit-Remaining` |
 |---|---|---|
 | 1–5 | 302 | 4, 3, 2, 1, 0 |
-| 6 | **429** | — |
-| 7 | **429** | — |
+| 6 | **429** | - |
+| 7 | **429** | - |
 
 The first test run appeared not to throttle. That was a measurement error, not a bug: each DB-backed request takes ~19 s locally, while the limiter window is 60 s, so the counter kept expiring. Re-run against the fast instance, the limit fires exactly as configured.
 
@@ -87,7 +87,7 @@ Temporary test admins were deleted afterwards; the replica contains none.
 ## 3. Deliberately not done
 
 - **MFA / TOTP for admin.** Still absent. `/admin-login` is a cleaner URL, not a stronger control. This is the next security item, not a completed one.
-- **Rider portal.** `/login/logistics` does not exist yet, so `logistics.` has no entry redirect — only deny rules. This avoids redirecting to a 404.
+- **Rider portal.** `/login/logistics` does not exist yet, so `logistics.` has no entry redirect - only deny rules. This avoids redirecting to a 404.
 - **Partner portal.** `partners.aduanefie.com` is configured but has no routes or DNS.
 - **`api.` host root.** `/` on `api.` still serves the Laravel root page (no entry redirect). Only HTML auth/admin paths are denied.
 - **Host scoping for API routes.** `/api/*` is token-authenticated; the portal middleware does not apply to it.
@@ -97,7 +97,7 @@ Temporary test admins were deleted afterwards; the replica contains none.
 
 ## 4. Deploy checklist
 
-1. `php artisan config:cache` — the new `config/portals.php` will not load under a cached config until this runs. Use `config:clear` if unsure.
+1. `php artisan config:cache` - the new `config/portals.php` will not load under a cached config until this runs. Use `config:clear` if unsure.
 2. **Expect a one-time forced re-login** on `admin.` and `store.`: the session cookie name changes from `aduanefie_session` to `adf_admin_session` / `adf_store_session`.
 3. Confirm the production `.env` does **not** set `SESSION_DOMAIN=.aduanefie.com`. `PortalScope` forces `session.domain = null` for mapped hosts, but do not rely on that alone.
 4. Confirm `APP_URL` is the canonical host. Anything generating URLs outside a request (queued mail, cron) will use it.

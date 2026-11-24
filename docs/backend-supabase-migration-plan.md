@@ -29,7 +29,7 @@ the live app has been pointed at Supabase yet, and media/cutover remain (§5, Ph
 
 The site is not live and has no users yet, so the usual cutover risk (data loss, maintenance window, rollback under load) does not apply. Recommended path:
 
-1. Create a **Free** Supabase project in **West EU (London) `eu-west-2`** or **West EU (Ireland) `eu-west-1`** — no African region exists; London/Ireland are the closest.
+1. Create a **Free** Supabase project in **West EU (London) `eu-west-2`** or **West EU (Ireland) `eu-west-1`** - no African region exists; London/Ireland are the closest.
 2. Keep the existing data (3.8 MB): the 156 tables include settings/config rows (business settings, modules, zones, roles, translations) that a fresh `migrate` would not recreate. Load the dump rather than starting empty.
 3. Co-locate the Laravel app host in the **same region** as the DB (Fly.io / Railway London), so DB round-trips stay intra-region while Ghana→app latency is one ~100 ms hop.
 4. Stay on Free until the first real order/payment or any quota reaches 80%; then upgrade to Pro. No maintenance window is needed at any point before launch.
@@ -57,7 +57,7 @@ A full "everything on Supabase" rewrite (Edge Functions + Supabase Auth for all 
 | Panel auth | Session guards: `admin`, `vendor`, `vendor_employee`, `customer`, `delivery_men` |
 | Storage | Local disk, **689 MB / 2,005 files** under `storage/app` |
 | Cache / session / queue | `database` / `file` / `sync` |
-| Realtime | `BROADCAST_DRIVER=log` — nothing is actually broadcasting |
+| Realtime | `BROADCAST_DRIVER=log` - nothing is actually broadcasting |
 | API surface | 1,463 route definitions; trade API exists in `soft/` but is not deployed live |
 | Raw-SQL footprint | 57 `DB::raw`, 13 `whereRaw`, 23 `orderByRaw`, 4 `FIELD()`, 690 `LIKE` usages |
 | MySQL-only calls | `SET sql_mode=...` in `Admin/DashboardController` and `Admin/CustomerController`; MySQL dump loaded by the installer |
@@ -87,7 +87,7 @@ Blade admin/vendor  ──┼──►  Laravel 10 API + panel  ──►  Supab
 
 Estimates assume one senior Laravel/DevOps engineer and a staging environment. They are planning estimates, not commitments.
 
-### Phase 0 — Baseline and guardrails (2–3 days)
+### Phase 0 - Baseline and guardrails (2–3 days)
 
 - [ ] Full logical backup of live DB and a file snapshot of `storage/app`; store off-host, encrypted.
 - [ ] Capture the live schema (`SHOW CREATE TABLE` for all 156 tables) and `SHOW VARIABLES` (`sql_mode`, charset, collation, time zone).
@@ -98,7 +98,7 @@ Estimates assume one senior Laravel/DevOps engineer and a staging environment. T
 
 **Exit:** backups restore cleanly into a local MariaDB 10.11; outbound Postgres connectivity confirmed or hosting plan chosen.
 
-### Phase 1 — Supabase project and Postgres schema (1–2 weeks)
+### Phase 1 - Supabase project and Postgres schema (1–2 weeks)
 
 - [ ] Create `aduanefie-production` and `aduanefie-staging` Supabase projects in the EU region (Ghana latency).
 - [ ] Generate Postgres DDL from the **live** schema, not from `soft/database/migrations`.
@@ -110,7 +110,7 @@ Estimates assume one senior Laravel/DevOps engineer and a staging environment. T
 
 **Exit:** `php artisan migrate:status` reports a clean baseline; Eloquent smoke tests (read/write on a scratch branch) pass; `EXPLAIN` on the top 20 queries shows no sequential scans over large tables.
 
-### Phase 2 — Data migration and dress rehearsal (1 week)
+### Phase 2 - Data migration and dress rehearsal (1 week)
 
 - [ ] Restore the dump into a local MariaDB 10.11 matching live `sql_mode`, charset, and time zone.
 - [ ] Load into Supabase with `pgloader` (cast rules for enums, unsigned ints, zero dates, booleans) or a scripted ETL.
@@ -122,7 +122,7 @@ Estimates assume one senior Laravel/DevOps engineer and a staging environment. T
 
 **Exit:** staging runs the complete app against Supabase Postgres with no functional regressions; rollback to MariaDB rehearsed once.
 
-### Phase 3 — Hosting move (1 week, can run parallel with Phase 2)
+### Phase 3 - Hosting move (1 week, can run parallel with Phase 2)
 
 Required because shared hosting generally can't hold durable queue workers and may block outbound 5432.
 
@@ -135,7 +135,7 @@ Required because shared hosting generally can't hold durable queue workers and m
 
 **Exit:** staging app on the new host serves the four login pages, CSRF, and the API with the same responses as today.
 
-### Phase 4 — Auth strategy (optional, 2–3 weeks)
+### Phase 4 - Auth strategy (optional, 2–3 weeks)
 
 Pick one:
 
@@ -147,7 +147,7 @@ Pick one:
 
 If B is chosen later: migrate `users` with a password-rehash-on-next-login strategy (bcrypt is importable into Supabase Auth, but verify), keep the `users.id` mapping table, and dual-run both token types during cutover.
 
-### Phase 5 — Storage migration (3–5 days)
+### Phase 5 - Storage migration (3–5 days)
 
 - [ ] Create buckets matching current folders (`business`, `product`, `store`, `profile`, etc.) and access policies.
 - [ ] Copy the 2,005 files (689 MB) with a checksummed sync; preserve paths exactly.
@@ -158,7 +158,7 @@ If B is chosen later: migrate `users` with a password-rehash-on-next-login strat
 
 **Exit:** every stored image/file path in the DB resolves through Supabase; upload, replace, delete, and export all work.
 
-### Phase 6 — Realtime (1 week, greenfield)
+### Phase 6 - Realtime (1 week, greenfield)
 
 Nothing is broadcasting today, so this is additive.
 
@@ -166,7 +166,7 @@ Nothing is broadcasting today, so this is additive.
 - [ ] Publish changes via Postgres triggers or Laravel broadcast; keep `BROADCAST_DRIVER=log` as the fallback until the client is verified.
 - [ ] Add RLS policies for Realtime channels; authorize by user/store id, not by client-supplied ids.
 
-### Phase 7 — Decommission MariaDB (after 30 days of stability)
+### Phase 7 - Decommission MariaDB (after 30 days of stability)
 
 - [ ] Keep StackCP MySQL read-only for 30 days as the rollback target.
 - [ ] Remove MySQL-specific code: `SET sql_mode` statements, the MySQL installer dump, any `replace into`/`on duplicate key` remnants.
@@ -179,7 +179,7 @@ Nothing is broadcasting today, so this is additive.
 | # | MariaDB behavior | Postgres impact | Fix |
 |---|---|---|---|
 | 1 | `utf8mb4_unicode_ci` unique indexes (case-insensitive) | PG is case-sensitive → duplicate emails/phones can be inserted | **Done:** all 606 string columns are `citext` |
-| 2 | 690 `LIKE` queries rely on case-insensitive collation | PG `LIKE` is case-sensitive → empty search results | **Done:** `citext` + `App\Database\PostgresGrammar` (`::text::citext`). `ILIKE` was rejected — ~1,772 call sites, and Laravel 10.48 compiles LIKE as `::text`, which defeats `citext` on its own |
+| 2 | 690 `LIKE` queries rely on case-insensitive collation | PG `LIKE` is case-sensitive → empty search results | **Done:** `citext` + `App\Database\PostgresGrammar` (`::text::citext`). `ILIKE` was rejected - ~1,772 call sites, and Laravel 10.48 compiles LIKE as `::text`, which defeats `citext` on its own |
 | 3 | `SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''))` in 2 admin controllers | Statement errors on PG | **Done:** guarded by `driverName() === 'mysql'` |
 | 4 | `polygon` column `zones.coordinates` + `ST_Area/AsText/Centroid` (11 uses) | No native polygon type | **Done:** PostGIS `geometry(Polygon,4326)`; spatial package upgraded 3.2.2 → 4.8.0 (native EWKB) |
 | 5 | 30 `enum(...)` columns | PG has no inline enum in `CREATE TABLE` | Handled by the `pgloader` load (enum → `citext`, e.g. `orders.order_status`) |
@@ -190,7 +190,7 @@ Nothing is broadcasting today, so this is additive.
 | 10 | `tinyint(1)` booleans compared as `= 1` in raw SQL | PG `boolean` rejects int comparison | Loaded as `smallint`, so comparisons work; no code change needed |
 | 11 | Zero dates `0000-00-00` possible | PG rejects them | Converted to `NULL` during load |
 | 12 | `AUTO_INCREMENT`, unsigned ints, `ON UPDATE CURRENT_TIMESTAMP` | Different semantics | Handled by `pgloader`; sequences reset to `max(id)` |
-| 13 | Installer loads a MySQL dump (`installation/database.sql`) | Installer breaks on PG | Not touched — the installer stays dev/MySQL-only for now |
+| 13 | Installer loads a MySQL dump (`installation/database.sql`) | Installer breaks on PG | Not touched - the installer stays dev/MySQL-only for now |
 | 14 | 12 `upsert`/`insertOrIgnore` calls | Fine in Laravel, but raw `ON DUPLICATE KEY` would break | None found in code; keep it that way |
 | 15 | 57 `DB::raw` / 13 `whereRaw` / 23 `orderByRaw` | Each is a manual review | **Done:** every MySQL-only construct now has a driver-aware branch; a repeat scan of `app/` + `Modules/` finds no unguarded `IF(`, `DATE_FORMAT`, `IFNULL`, `FIELD(`, `JSON_EXTRACT`, `AS UNSIGNED`, `SUBSTRING_INDEX`, `GROUP_CONCAT`, `FIND_IN_SET` or backticked raw SQL |
 
@@ -264,7 +264,7 @@ Nothing is broadcasting today, so this is additive.
 
 | Limit | Free | Pro ($25/mo) | Fit for Aduanefie |
 |---|---|---|---|
-| Database | 500 MB | 8 GB | 3.8 MB dump today — fine for staging; production fits for a long time |
+| Database | 500 MB | 8 GB | 3.8 MB dump today - fine for staging; production fits for a long time |
 | File storage | **1 GB** | 100 GB | **689 MB already used** → only ~311 MB headroom. Free does not fit production media |
 | Egress | **5 GB/mo** (+5 GB cached) | 250 GB (+250 GB cached) | A marketplace serving product images will exceed 5 GB quickly |
 | Backups | **None** | Daily, 7-day retention | No backups on Free is disqualifying for orders/wallets |
@@ -297,6 +297,6 @@ Notes:
 
 1. **Auth:** keep Laravel auth (A), or plan the Supabase Auth hybrid (B)?
 2. **Hosting:** move Laravel to a container host now, or first test whether StackCP can reach Supabase?
-3. **Region:** EU (closest to Ghana) vs another region — confirm latency target.
+3. **Region:** EU (closest to Ghana) vs another region - confirm latency target.
 4. **Maintenance window:** how many hours of write-freeze are acceptable for the cutover?
 5. **Money flows:** who signs off before trade/escrow endpoints are enabled on the new stack?

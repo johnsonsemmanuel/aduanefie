@@ -148,6 +148,22 @@ class Store extends Model
         'marketer_id',
         'marketer_assigned_at',
         'delivery_radius_km',
+
+        // Farm/onboarding fields. These are real columns and are written by the
+        // marketplace onboarding paths; leaving them out of $fillable made
+        // Store::create() silently discard them.
+        'store_business_model',
+        'farm_type',
+        'is_backyard',
+        'farm_size_acres',
+        'primary_crops',
+        'cultivation_status',
+        'next_harvest_date',
+        'marketer_verified',
+        'marketer_verified_at',
+        'marketer_verification_notes',
+        'region',
+        'district',
     ];
 
     /**

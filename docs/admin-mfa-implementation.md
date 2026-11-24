@@ -1,4 +1,4 @@
-# Admin MFA/TOTP — implementation and verification
+# Admin MFA/TOTP - implementation and verification
 
 Commit: `bb4beb2` (`Require TOTP two-factor for every admin session`), on top of
 `61ef006`.
@@ -9,8 +9,8 @@ commit.
 
 ## What this enforces
 
-Every account on the `admin` guard — super admin, the five staff roles, and the
-14 Remote Marketer admins — must present a TOTP code (or a one-time recovery
+Every account on the `admin` guard - super admin, the five staff roles, and the
+14 Remote Marketer admins - must present a TOTP code (or a one-time recovery
 code) before any admin route is reachable. There is no config switch to weaken
 this and no role exemption.
 
@@ -36,7 +36,7 @@ them would be the exact bug this work exists to prevent.
 Two route files register admin routes: `routes/admin.php` and
 `routes/admin/routes.php` (229 routes in the second file). Rather than add the
 `admin-mfa` alias to each group and hope a third file never appears,
-`AdminMiddleware` — the single middleware both files already use — now delegates
+`AdminMiddleware` - the single middleware both files already use - now delegates
 to `AdminMfa` for authenticated admins. The explicit `admin-mfa` alias on the
 main panel group remains as a second layer. A test in the harness proves a real
 route from the second file is gated.
@@ -49,18 +49,18 @@ from a recaller-only cookie jar and confirms it lands on `/admin-login`.
 
 Added:
 
-- `soft/app/CentralLogics/Totp.php` — RFC 6238 TOTP and RFC 4648 base32,
+- `soft/app/CentralLogics/Totp.php` - RFC 6238 TOTP and RFC 4648 base32,
   implemented locally. No composer dependency was added; the admin panel is the
   only consumer. SHA-1 / 6 digits / 30 seconds, ±1 step window.
-- `soft/app/Services/AdminMfaService.php` — all MFA rules: `begin()`, `pending()`,
+- `soft/app/Services/AdminMfaService.php` - all MFA rules: `begin()`, `pending()`,
   `isVerifiedFor()`, `verifyCode()`, `confirmSetup()`, `complete()`, recovery-code
   generation and consumption.
-- `soft/app/Http/Middleware/AdminMfa.php` — per-request backstop. Logs out and
+- `soft/app/Http/Middleware/AdminMfa.php` - per-request backstop. Logs out and
   redirects to the password step when a session has not passed the factor.
-- `soft/app/Http/Controllers/AdminMfaController.php` — challenge, forced setup,
+- `soft/app/Http/Controllers/AdminMfaController.php` - challenge, forced setup,
   and the one-time recovery-code page.
-- `soft/app/Console/Commands/ResetAdminMfa.php` — CLI-only lockout recovery.
-- `soft/config/admin_mfa.php` — issuer, window, pending TTL 300 s, session TTL
+- `soft/app/Console/Commands/ResetAdminMfa.php` - CLI-only lockout recovery.
+- `soft/config/admin_mfa.php` - issuer, window, pending TTL 300 s, session TTL
   43200 s (12 h), 8 recovery codes.
 - `soft/database/migrations/2026_11_11_000001_add_two_factor_to_admins_table.php`
 - Four views: `resources/views/auth/mfa-layout.blade.php` plus
@@ -68,15 +68,15 @@ Added:
 
 Modified:
 
-- `AdminAuthController` — `/admin-login` starts the MFA flow instead of creating
+- `AdminAuthController` - `/admin-login` starts the MFA flow instead of creating
   a session; `showLogin` only treats a verified session as logged in.
-- `LoginController` — `login_attemp` intercepts both admin tabs and returns
+- `LoginController` - `login_attemp` intercepts both admin tabs and returns
   `admin_mfa` / `admin_mfa_setup`; DriveMond bridge refused; logout clears the
   MFA session keys. The now-unreachable `$data == 'admin'` branch was removed.
-- `AdminMiddleware` — delegates to `AdminMfa` (described above).
-- `RedirectIfAuthenticated` — a half-authenticated admin is logged out rather
+- `AdminMiddleware` - delegates to `AdminMfa` (described above).
+- `RedirectIfAuthenticated` - a half-authenticated admin is logged out rather
   than redirected into the panel.
-- `Admin` model — encrypted casts, hidden attributes, and
+- `Admin` model - encrypted casts, hidden attributes, and
   `hasConfirmedTwoFactor()` which catches `DecryptException` so an `APP_KEY`
   rotation degrades to re-enrolment instead of a 500.
 - `Kernel`, `RouteServiceProvider` (6/min challenge limiter keyed on pending

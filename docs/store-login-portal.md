@@ -1,4 +1,4 @@
-# Store login portal — canonical `/store-login`
+# Store login portal - canonical `/store-login`
 
 Date: 2026-11-12
 Branch: `fix/store-login-portal`
@@ -111,7 +111,7 @@ HTTPS against `admin.aduanefie.com`, which resolves to Railway (`t8ki8ru4.up.rai
 | `GET https://admin.aduanefie.com/vendor-panel` (guest) | 302 → `https://admin.aduanefie.com/` | 302 → `https://admin.aduanefie.com/store-login` |
 | `GET https://admin.aduanefie.com/admin-login` | 200 | 200 (MFA markup retained) |
 | `GET https://admin.aduanefie.com/login/store` | 200 | 200 (legacy alias still served) |
-| `GET https://admin.aduanefie.com/login/store-employee` | — | 200 |
+| `GET https://admin.aduanefie.com/login/store-employee` | - | 200 |
 
 Markup checks on the production store-login page: no `#mfaForm`, no `two_factor_verification`, no
 `.step-indicator`; contains "Sign in to your store panel" and the employee cross-link; form action
@@ -236,8 +236,8 @@ the one serving traffic.
    unreachable. `profile/edit` is unreachable today because no route targets
    `ProfileController@edit`; if one is ever added it will 500 on `seller.profile.update`, which was
    already undefined before this change. The `trade-bloc.*` references in
-   `layouts/landing/app.blade.php` were a live version of the same problem — they 500'd every view
-   extending that layout, including the subscription gate — and are removed in `22d6969`.
+   `layouts/landing/app.blade.php` were a live version of the same problem - they 500'd every view
+   extending that layout, including the subscription gate - and are removed in `22d6969`.
 10. **`translate()` mutates the language file at request time.** When a key is missing from
     `resources/lang/{locale}/messages.php`, `app/helpers.php::translate()` appends the readable
     fallback to that PHP file and writes it back. This explains the recurring uncommitted churn in

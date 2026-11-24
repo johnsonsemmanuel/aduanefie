@@ -1,4 +1,4 @@
-# Rider portal on `logistics.aduanefie.com` — implemented and verified
+# Rider portal on `logistics.aduanefie.com` - implemented and verified
 
 Date: 2026-11-11
 Commit: `90689f9` (on top of baseline `99be9ef`)
@@ -172,8 +172,8 @@ Fix: the controller never logs out as part of a failed login (gates run before
 `login()`), and both sign-out paths use `SessionGuard::logoutCurrentDevice()`, which
 clears the session and in-memory user without cycling a remember token.
 
-The alternative — switching the `delivery_men` guard to the `eloquent` provider with the
-`DeliveryMan` model — was not taken here because that guard is shared with the mobile
+The alternative - switching the `delivery_men` guard to the `eloquent` provider with the
+`DeliveryMan` model - was not taken here because that guard is shared with the mobile
 API. It is the cleaner long-term configuration and is worth doing as its own reviewed
 change.
 

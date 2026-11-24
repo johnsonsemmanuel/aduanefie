@@ -124,6 +124,13 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by('marketer|' . $this->loginThrottleKey($request));
         });
 
+        // The forgot form posts `identifier` (email OR phone), not `email`.
+        // Sharing the login limiter meant every request keyed on an empty
+        // string, so one attacker locked out every marketer on the host.
+        RateLimiter::for('marketer-forgot', function (Request $request) {
+            return Limit::perMinute(5)->by('marketer-forgot|' . $this->loginThrottleKey($request, 'identifier'));
+        });
+
         // Riders sign in by phone, so the key has to read the phone field or
         // every rider would share the empty-string bucket and lock each other
         // out after five attempts from the same IP.
@@ -139,6 +146,22 @@ class RouteServiceProvider extends ServiceProvider
             $id = is_array($pending) ? (string) ($pending['id'] ?? 'guest') : 'guest';
 
             return Limit::perMinute(6)->by('admin-mfa|' . $id . '|' . $request->ip());
+        });
+
+        // Public API auth, OTP, and write throttles to prevent credential
+        // stuffing, SMS OTP bombing, and spam submissions.
+        RateLimiter::for('api-auth', function (Request $request) {
+            $key = $request->input('phone') ?: $request->input('email') ?: 'anon';
+            return Limit::perMinute(15)->by('api-auth|' . Str::lower((string) $key) . '|' . $request->ip());
+        });
+
+        RateLimiter::for('api-otp', function (Request $request) {
+            $key = $request->input('phone') ?: $request->input('email') ?: 'anon';
+            return Limit::perMinute(6)->by('api-otp|' . Str::lower((string) $key) . '|' . $request->ip());
+        });
+
+        RateLimiter::for('api-public-write', function (Request $request) {
+            return Limit::perMinute(20)->by('api-write|' . (optional($request->user())->id ?: $request->ip()));
         });
     }
 

@@ -1,4 +1,4 @@
-# Aduanefie — current flow, and gaps for store / rider / marketer portals
+# Aduanefie - current flow, and gaps for store / rider / marketer portals
 
 **Status:** investigation only. No code changed.
 **Date:** 2026-11-11
@@ -10,7 +10,7 @@
 
 1. `aduanefie.com` is **not** served by the React app. It 301-redirects to `web.aduanefie.com`, which is Vercel.
 2. `api.`, `admin.`, `store.`, `logistics.` all point at **one Apache/Laravel app** on `185.151.30.164`. There is **no host-based routing**. Every subdomain returns the same HTML (`<title>Aduanefie Marketplace</title>`) and serves the same routes.
-3. So `store.aduanefie.com` and `logistics.aduanefie.com` are **cosmetic aliases today**. Store owners really log in at `/login/store` and land in `/vendor-panel` — reachable from any of those hosts.
+3. So `store.aduanefie.com` and `logistics.aduanefie.com` are **cosmetic aliases today**. Store owners really log in at `/login/store` and land in `/vendor-panel` - reachable from any of those hosts.
 4. Store self-registration **already works end to end** (React form → `/api/v1/auth/vendor/register` → pending vendor + store → admin approval → `/vendor-panel`).
 5. Riders have **no web portal at all**. Rider registration and login exist only as mobile API endpoints. `/login/delivery-man` is a 404.
 6. ~~There is **no marketer / affiliate / registration-commission system** anywhere.~~ **Superseded:** a store-owned marketer commission ledger, a partners portal and admin payout screens now exist. See `docs/marketer-implementation.md`.
@@ -59,7 +59,7 @@ aduanefie.com
 - `pages/welcome.js` renders `src/components/landing-page`.
 - Server-side fetches `/api/v1/config` (business config, modules, landing content) and `/api/v1/landing-page`.
 - The landing page contains, among other sections, a **hero with a location form** (`src/components/landing-page/hero-section/HeroLocationForm.js`) and a **module selection modal** (`hero-section/module-selection/index.js`). There is also an `AvailableZoneSection`.
-- If the backend config call fails, `welcome.js` pushes `/404` — so a backend outage currently looks like a missing page rather than a maintenance page.
+- If the backend config call fails, `welcome.js` pushes `/404` - so a backend outage currently looks like a missing page rather than a maintenance page.
 
 ### 2.2 Location → zone
 
@@ -72,8 +72,8 @@ aduanefie.com
 ### 2.3 Module selection
 
 - `useGetModule()` pulls the available modules. From the live snapshot there are two:
-  - **id 1 — "Nearby Market"** (`module_type: grocery`)
-  - **id 2 — "Wholesale Market"** (`module_type: grocery`)
+  - **id 1 - "Nearby Market"** (`module_type: grocery`)
+  - **id 2 - "Wholesale Market"** (`module_type: grocery`)
 - The modal filters modules to those configured for the user's zone: `zoneWiseModule(data)` using `getCurrentZoneIds()`.
 - On pick, `handleSingleModule` / `handleItemOnClick` does all of:
   1. `dispatch(setSelectedModule(item))` (redux `utilsData`)
@@ -86,11 +86,11 @@ aduanefie.com
 
 `middleware.js` then does three jobs on every non-asset request:
 
-1. **Root smart entry** — `/` becomes `/welcome` or `/home?module=<cookie>`.
-2. **Module injection** — for any route not in `excludeModuleRoutes`, if the URL lacks `module`/`module_id`, redirect to the same URL with `?module=<cookie>`. Excluded routes: `/`, `/welcome`, `/trade`, `/404`, `/500`, `/app-redirect`, `/maintainance`, `/checkout`, `/profile`, `/about-us`, the policy pages, `/help-and-support`, `/forgot-password`, `/deliveryman-registration`, `/store-registration`.
-3. **Legacy param cleanup** — `module_id` is converted to `module`, and both together collapse to `module`.
+1. **Root smart entry** - `/` becomes `/welcome` or `/home?module=<cookie>`.
+2. **Module injection** - for any route not in `excludeModuleRoutes`, if the URL lacks `module`/`module_id`, redirect to the same URL with `?module=<cookie>`. Excluded routes: `/`, `/welcome`, `/trade`, `/404`, `/500`, `/app-redirect`, `/maintainance`, `/checkout`, `/profile`, `/about-us`, the policy pages, `/help-and-support`, `/forgot-password`, `/deliveryman-registration`, `/store-registration`.
+3. **Legacy param cleanup** - `module_id` is converted to `module`, and both together collapse to `module`.
 
-`ZoneGuard` (`src/components/route-guard/ZoneGuard.js`) wraps `/home`. It requires a module from (in order) URL query → `localStorage.selectedModuleIdentifier` → `localStorage.selectedModuleId` → `selectedModule` cookie → `localStorage.module.slug|id`. If none exist it redirects to `/welcome`. **This is the real gate on "show me products" — not the zone, the module.** Zone only decides which modules and which stores are visible.
+`ZoneGuard` (`src/components/route-guard/ZoneGuard.js`) wraps `/home`. It requires a module from (in order) URL query → `localStorage.selectedModuleIdentifier` → `localStorage.selectedModuleId` → `selectedModule` cookie → `localStorage.module.slug|id`. If none exist it redirects to `/welcome`. **This is the real gate on "show me products" - not the zone, the module.** Zone only decides which modules and which stores are visible.
 
 ### 2.5 Marketplace
 
@@ -106,7 +106,7 @@ All product, store and search queries are filtered by `module_id` and by the zon
 
 Today `/trade` is a **static marketing surface**, not a working trade flow.
 
-- `pages/trade/index.js` — hero ("African agricultural trade, in one place"), "Shop Wholesale Market", "Explore Trade Blocs", and an "Available now" section.
+- `pages/trade/index.js` - hero ("African agricultural trade, in one place"), "Shop Wholesale Market", "Explore Trade Blocs", and an "Available now" section.
 - `pages/trade/blocs/index.js` and `pages/trade/blocs/[slug].js` list the four regional blocs.
 - Data comes from `src/components/trade/tradeData.js`, which is a **hard-coded snapshot of `soft/database/seeders/TradeBlocSeeder.php`** (ECOWAS, SADC, and two others) used as `FALLBACK_TRADE_BLOCS`.
 - `TRADE_API_ENABLED` is gated by `NEXT_PUBLIC_TRADE_API_ENABLED === "true"` and is **off**. The comment in that file says the read-only trade API "is not deployed on the live host yet, so its calls 404".
@@ -114,13 +114,13 @@ Today `/trade` is a **static marketing surface**, not a working trade flow.
 
 What exists in Laravel but is not live:
 
-- API: `routes/api/v1/api.php` prefix `trade` — `corridors`, `corridors/{origin}/{destination}`, `blocs`, `blocs/{slug}`, `blocs/{slug}/corridors`, `sourcing/{id}/match-sellers`, `seller/dashboard`, `seller/rfq/{id}/respond`, `seller/upgrade-gold`, `reports/corridors`.
+- API: `routes/api/v1/api.php` prefix `trade` - `corridors`, `corridors/{origin}/{destination}`, `blocs`, `blocs/{slug}`, `blocs/{slug}/corridors`, `sourcing/{id}/match-sellers`, `seller/dashboard`, `seller/rfq/{id}/respond`, `seller/upgrade-gold`, `reports/corridors`.
 - Web: `trade-requests/*`, `trade-contracts/*` (create, deposit, confirm-delivery, verify-documents, release, refund, summary, view), `trade-bloc/*`, `trade-assurance/*`, `bulk-trade/*`, `seller/*`, and `vendor/trade-requests/*`.
 - Controllers: `TradeBlocController`, `TradeRequestController`, `TradeFinanceController`, `TradeDocumentController`, `TradeCorridorController`, `SellerDashboardController`, `TradeAssuranceController`, `BuyerSourcingController` (web + API copies).
 - Migrations: `trade_requests`, `trade_request_quotes`, `trade_corridors`, `trade_documents`, `trade_contracts`, `trade_blocs`, `trade_assurances`.
 - Seeders: `TradeBlocSeeder`, `TradeCorridorSeeder`, `AgriTradePositioningSeeder`.
 
-But: **none of the `trade_*` tables exist in the live MySQL snapshot.** That is why `/vendor-panel/trade-requests/received` failed with `relation "trade_requests" does not exist` — one of the 6 known pre-existing failing routes. The vendor-side routes were removed in `82edbae`; the customer-side routes remain (see §8.2). So the trade surface is code without a database and copy without a backend.
+But: **none of the `trade_*` tables exist in the live MySQL snapshot.** That is why `/vendor-panel/trade-requests/received` failed with `relation "trade_requests" does not exist` - one of the 6 known pre-existing failing routes. The vendor-side routes were removed in `82edbae`; the customer-side routes remain (see §8.2). So the trade surface is code without a database and copy without a backend.
 
 ---
 
@@ -133,22 +133,22 @@ But: **none of the `trade_*` tables exist in the live MySQL snapshot.** That is 
 | Store employee | created by store owner | `/login/store-employee` | `/vendor-panel` (restricted) |
 | Admin | admin panel | `/login/admin` | `/admin` |
 | Admin employee | admin panel | `/login/admin-employee` | `/admin` (restricted) |
-| **Rider** | React `/deliveryman-registration` → `/api/v1/auth/delivery-man/store`; also web `/deliveryman/apply` | **API only:** `/api/v1/auth/delivery-man/login` — **no web login** | **none** (admin panel CRUD only) |
+| **Rider** | React `/deliveryman-registration` → `/api/v1/auth/delivery-man/store`; also web `/deliveryman/apply` | **API only:** `/api/v1/auth/delivery-man/login` - **no web login** | **none** (admin panel CRUD only) |
 
 ### 4.1 How `/login/{tab}` resolves
 
-- `routes/web.php:46` — single route `Route::get('login/{tab}', 'LoginController@login')`.
+- `routes/web.php:46` - single route `Route::get('login/{tab}', 'LoginController@login')`.
 - `LoginController::login()` maps the tab to a guard using `DataSetting` keys:
   - `admin_login_url` → `admin`
   - `admin_employee_login_url` → `admin-employee`
   - `store_login_url` → `store`
   - `store_employee_login_url` → `store-employee`
 - Defaults are seeded in `InstallController` as `login_admin`, `login_store`, etc.
-- If the tab does not match a known type: `abort_if(!$user_type, 404)` — which is exactly why `/login/vendor` and `/login/delivery-man` return 404.
+- If the tab does not match a known type: `abort_if(!$user_type, 404)` - which is exactly why `/login/vendor` and `/login/delivery-man` return 404.
 - One shared Blade view: `resources/views/auth/login.blade.php`, with `$role` controlling which "forgot password" block shows.
 - Guards in `config/auth.php`: `admin`, `vendor`, `vendor_employee`, `customer`, `delivery_men`, `api` (Passport).
 
-### 4.2 Store self-registration — what it actually does
+### 4.2 Store self-registration - what it actually does
 
 `VendorLoginController@register` (API):
 
@@ -160,11 +160,11 @@ But: **none of the `trade_*` tables exist in the live MySQL snapshot.** That is 
 6. Writes translations (name + address per locale).
 7. Emails the vendor ("pending") and the super admin ("new store registration") subject to mail/notification settings.
 
-The React form also collects optional **TIN, TIN expiry, TIN certificate image** — evidence that KYC-ish fields were already anticipated for this market.
+The React form also collects optional **TIN, TIN expiry, TIN certificate image** - evidence that KYC-ish fields were already anticipated for this market.
 
 Then the vendor picks a subscription package (`/api/v1/vendor/package-view`, `business_plan`, `subscription/payment/api`) and the admin approves. Only after approval does `/vendor-panel` become useful.
 
-### 4.3 Rider registration — what it actually does
+### 4.3 Rider registration - what it actually does
 
 - React `/deliveryman-registration` → `usePostDeliveryManRegisterInfo` → `POST /api/v1/auth/delivery-man/store`.
 - Login exists only as `POST /api/v1/auth/delivery-man/login` (token for the mobile app).
@@ -202,7 +202,7 @@ Then the vendor picks a subscription package (`/api/v1/vendor/package-view`, `bu
 
 **What exists:** rider records, admin CRUD, order assignment, DM earnings, DM wallet, DM reviews, last-location endpoint, mobile API auth.
 
-**What is missing — essentially everything web:**
+**What is missing - essentially everything web:**
 
 | Gap | Notes |
 |---|---|
@@ -212,7 +212,7 @@ Then the vendor picks a subscription package (`/api/v1/vendor/package-view`, `bu
 | No earnings/payout UI | DM earnings tables exist; no rider-facing view, no withdrawal request |
 | No web session for mobile riders | Mobile uses Passport tokens; web needs a guard + login tab |
 | No zone/corridor assignment model | Cross-border last-mile is undefined; a rider is bound to a store's zone, not a corridor |
-| Drivemond bridge logs rider in as *customer* | Wrong principal — it cannot be reused as the rider portal's auth |
+| Drivemond bridge logs rider in as *customer* | Wrong principal - it cannot be reused as the rider portal's auth |
 
 **Recommendation:** decide mobile-first vs web portal before building. If a web portal is wanted, the minimum viable version is: `login/logistics` tab + `delivery_men` guard + three screens (available/assigned orders, status update, earnings). Anything more (live map, route optimisation, COD reconciliation) should wait.
 
@@ -237,15 +237,15 @@ That is wallet credit for bringing a *customer*, not cash for registering a *sto
 
 **What a marketer programme needs:**
 
-1. **Identity** — marketer account with own login (separate guard/table recommended; reusing `admins` or `customers` will leak permissions).
-2. **Attribution** — a code/link per marketer, captured at store/rider registration, stored on the created vendor/store so the link survives approval.
-3. **KYC** — legal name, ID/passport, phone, country, region/locality, mobile-money or bank payout details. Per-country payout rails (MTN MoMo, Airtel Money, M-Pesa, Paystack/Flutterwave) differ; this cannot be a single global field.
-4. **Commission rules** — must be explicit, e.g. flat fee per *approved and live* store, not per form submit. Otherwise the fraud surface is enormous.
-5. **Approval chain** — registration → admin verifies store → store goes live → commission accrues → holding period → payable → paid.
-6. **Fraud controls** — duplicate phone/TIN/email detection, same-device/same-IP clustering, one-marketer-per-store rule, clawback if the store is delisted within N days, cap per locality.
-7. **Payout ledger** — `marketer_commissions` + `marketer_payouts` with status, FX rate, currency, reference, and an immutable audit trail. First version can be admin-approved batches exported as CSV for manual MoMo transfer.
-8. **Dashboards** — marketer portal (my registrations, status, accrued, paid) and admin queue (verify, approve, reject, pay, reverse).
-9. **Country/locality coverage** — country + region + zone on the marketer record, and commission currency derived from the store's country. This must line up with the existing `zones` polygons, or you get "registered but not in any zone" orphans.
+1. **Identity** - marketer account with own login (separate guard/table recommended; reusing `admins` or `customers` will leak permissions).
+2. **Attribution** - a code/link per marketer, captured at store/rider registration, stored on the created vendor/store so the link survives approval.
+3. **KYC** - legal name, ID/passport, phone, country, region/locality, mobile-money or bank payout details. Per-country payout rails (MTN MoMo, Airtel Money, M-Pesa, Paystack/Flutterwave) differ; this cannot be a single global field.
+4. **Commission rules** - must be explicit, e.g. flat fee per *approved and live* store, not per form submit. Otherwise the fraud surface is enormous.
+5. **Approval chain** - registration → admin verifies store → store goes live → commission accrues → holding period → payable → paid.
+6. **Fraud controls** - duplicate phone/TIN/email detection, same-device/same-IP clustering, one-marketer-per-store rule, clawback if the store is delisted within N days, cap per locality.
+7. **Payout ledger** - `marketer_commissions` + `marketer_payouts` with status, FX rate, currency, reference, and an immutable audit trail. First version can be admin-approved batches exported as CSV for manual MoMo transfer.
+8. **Dashboards** - marketer portal (my registrations, status, accrued, paid) and admin queue (verify, approve, reject, pay, reverse).
+9. **Country/locality coverage** - country + region + zone on the marketer record, and commission currency derived from the store's country. This must line up with the existing `zones` polygons, or you get "registered but not in any zone" orphans.
 
 **Options:**
 
@@ -259,23 +259,23 @@ That is wallet credit for bringing a *customer*, not cash for registering a *sto
 
 ## 6. Decisions needed before any implementation
 
-1. **Host strategy** — one app with host-aware middleware (recommended), separate deployments, or keep aliases?
-2. **Rider portal** — build a web portal at `logistics.` now, or stay mobile-only and make `logistics.` just a download/landing page?
-3. **Marketer model** — go with option 2 (dedicated module)? And what is the **commission trigger**: store approved, store live, first order, or first subscription payment?
-4. **Marketer payout** — which rails per country for v1 (manual MoMo batch vs Paystack/Flutterwave), and what holding period before commission is payable?
-5. **Cross-border scope** — is `/trade` launching as a real RFQ/escrow flow now, or staying a catalogue entry point into module 2 until the security review closes? (The escrow code is frozen by your own rule.)
-6. **Sequencing** — launch store/rider/marketer portals on the current MySQL host now (fast, but double work), or wait for the Supabase + R2 cutover (slower, one migration)?
-7. **The 6 pre-existing failing routes** — fix before cutover or after? Two of them are in the launch-critical admin report area.
+1. **Host strategy** - one app with host-aware middleware (recommended), separate deployments, or keep aliases?
+2. **Rider portal** - build a web portal at `logistics.` now, or stay mobile-only and make `logistics.` just a download/landing page?
+3. **Marketer model** - go with option 2 (dedicated module)? And what is the **commission trigger**: store approved, store live, first order, or first subscription payment?
+4. **Marketer payout** - which rails per country for v1 (manual MoMo batch vs Paystack/Flutterwave), and what holding period before commission is payable?
+5. **Cross-border scope** - is `/trade` launching as a real RFQ/escrow flow now, or staying a catalogue entry point into module 2 until the security review closes? (The escrow code is frozen by your own rule.)
+6. **Sequencing** - launch store/rider/marketer portals on the current MySQL host now (fast, but double work), or wait for the Supabase + R2 cutover (slower, one migration)?
+7. **The 6 pre-existing failing routes** - fix before cutover or after? Two of them are in the launch-critical admin report area.
 
 ---
 
 ## 7. Risks worth flagging now
 
-- **Shared session is not currently a hole — but only because of a default.** `SESSION_DOMAIN` is unset in `.env`, `.env.staging`, `.env.localpg` and `.env.localmysql`, so `config/session.php` leaves `domain => null` and the cookie is **host-only**. Subdomains do *not* share a session today. Do not set `SESSION_DOMAIN=.aduanefie.com`: that single line would merge the admin, vendor and rider sessions. Verify the live host has no such override before launch; the repo cannot prove it.
+- **Shared session is not currently a hole - but only because of a default.** `SESSION_DOMAIN` is unset in `.env`, `.env.staging`, `.env.localpg` and `.env.localmysql`, so `config/session.php` leaves `domain => null` and the cookie is **host-only**. Subdomains do *not* share a session today. Do not set `SESSION_DOMAIN=.aduanefie.com`: that single line would merge the admin, vendor and rider sessions. Verify the live host has no such override before launch; the repo cannot prove it.
 - **Adding a rider login is not a one-line tab.** `LoginController@login` resolves roles from a hard-coded `$loginTypes` map of exactly four entries, and `login_attemp()` returns **only `'admin'` or `'vendor'`**, with `submit()` branching on those two return values. A `delivery_men` web login therefore touches `login()`, `submit()`, `login_attemp()`, the role/locale maps, the login Blade (which only has forgot-password blocks for admin and vendor), and needs a new `DataSetting` key. Budget it as a real change, not a config toggle.
 - **`APP_URL` is `localhost` in every repo env file.** Multi-host installs can only have one `APP_URL`; anything generating URLs outside a request (queued mail, scheduled jobs, CLI) will point at that one host. Password-reset and subscription mails already read `store_login_url` from `DataSetting`, which helps, but signed URLs do not.
 - **Pending vendors have no status page.** Registration "succeeds" and then the user hits a login wall with no explanation. Expect support load at launch.
-- **`toggle_store_registration` can silently disable the entire store signup path** — worth checking its live value before a marketing push.
+- **`toggle_store_registration` can silently disable the entire store signup path** - worth checking its live value before a marketing push.
 - **Wholesale ≠ cross-border.** "Shop Wholesale Market" is module 2. If the site implies export/import, users will land in a domestic catalogue. Either build the corridor flow or word the page as "coming".
 - **Zone containment is enforced at registration but only filtered at browse time.** A store can be approved in zone A and then have its zone changed by an admin, orphaning it.
 - **Latency on the current backend** (45–180 s for some admin pages against Supabase) will be the biggest complaint from store owners on `store.` if the cutover ships before the N+1 work.
@@ -285,9 +285,9 @@ That is wallet credit for bringing a *customer*, not cash for registering a *sto
 
 ## 8. Decisions taken (2026-11-11)
 
-1. **Host strategy — one app + host-aware middleware.** Keep the single Laravel codebase. A middleware reads the `Host` header, redirects each portal's root to its own login, and 404s routes that do not belong to that host. Existing login URLs keep working; nothing is redeployed per role.
-2. **Rider portal — minimal web portal now.** New rider login tab plus three screens: assigned/available orders, status updates, earnings. The mobile app stays the primary rider tool.
-3. **Marketer commission trigger — store approved *and* live.** Commission accrues only after admin approval and the store going live, with a holding period before it becomes payable.
+1. **Host strategy - one app + host-aware middleware.** Keep the single Laravel codebase. A middleware reads the `Host` header, redirects each portal's root to its own login, and 404s routes that do not belong to that host. Existing login URLs keep working; nothing is redeployed per role.
+2. **Rider portal - minimal web portal now.** New rider login tab plus three screens: assigned/available orders, status updates, earnings. The mobile app stays the primary rider tool.
+3. **Marketer commission trigger - store approved *and* live.** Commission accrues only after admin approval and the store going live, with a holding period before it becomes payable.
 
 ### 8.1 Implementation shape implied by those decisions
 
@@ -302,7 +302,7 @@ That is wallet credit for bringing a *customer*, not cash for registering a *sto
 
 **B. Rider portal (Laravel)**
 
-Touches the shared login controller — plan accordingly:
+Touches the shared login controller - plan accordingly:
 
 - `LoginController@login`: add `delivery_man` → `delivery_man_login_url` to `$loginTypes`, `$siteDirections`, `$locals`, and the `DataSetting` key list.
 - `LoginController@submit`: add a rider branch with the equivalent status/approval check.
@@ -334,11 +334,11 @@ Touches the shared login controller — plan accordingly:
    catalogue-only for now; no RFQ or escrow money path until that security review closes.
 3. Build on the current MySQL host now, or after the Supabase/R2 cutover. **Decided:** build
    on MySQL first, then port.
-4. ~~The 6 pre-existing failing routes~~ — fixed in `82edbae` on MySQL, before the marketer
+4. ~~The 6 pre-existing failing routes~~ - fixed in `82edbae` on MySQL, before the marketer
    module. See `docs/six-failing-routes-fix.md`. The customer-side trade routes in
    `routes/web.php` still reference the absent `trade_*` tables and are still open (item 2).
-5. `git init` in the workspace root before any of this — there is no rollback today.
-   **Done** — the repo exists and tracks `soft/` and `docs/`.
+5. `git init` in the workspace root before any of this - there is no rollback today.
+   **Done** - the repo exists and tracks `soft/` and `docs/`.
 
 ---
 
@@ -348,7 +348,7 @@ Touches the shared login controller — plan accordingly:
 
 | Constraint | Evidence | Consequence |
 |---|---|---|
-| Login URLs are a single path segment under `/login/` | `routes/web.php:46` — `Route::get('login/{tab}')`; `LoginController@login` does `array_search($login_url, $data)` against `DataSetting` values | Setting the value to `admin-login` produces `/login/admin-login`, **not** `/admin-login` |
+| Login URLs are a single path segment under `/login/` | `routes/web.php:46` - `Route::get('login/{tab}')`; `LoginController@login` does `array_search($login_url, $data)` against `DataSetting` values | Setting the value to `admin-login` produces `/login/admin-login`, **not** `/admin-login` |
 | Values cannot contain `/` | `BusinessSettingsController@login_url_page_update` validates `regex:/^[a-zA-Z0-9\-\_]+$/u` | A full path cannot be stored |
 | Values must be unique across all four roles | same rule adds `unique:data_settings,value` | Cannot reuse an existing value |
 | Mail links are built from the value | `Helpers::get_login_url('admin_login_url')`, used at `LoginController.php:438` and `:472` | Hard-coding `/admin-login` means updating those two call sites too |
@@ -368,7 +368,7 @@ Verified in the current code:
 
 ## 10. Recommended target architecture
 
-**One codebase, one database, host-scoped portals — a modular monolith.** This is the standard shape for a marketplace with staff, seller and courier surfaces (the same pattern as a storefront plus a separate admin app on its own host). It is the right call at this size; the alternative — separate deployments — costs three pipelines for one product.
+**One codebase, one database, host-scoped portals - a modular monolith.** This is the standard shape for a marketplace with staff, seller and courier surfaces (the same pattern as a storefront plus a separate admin app on its own host). It is the right call at this size; the alternative - separate deployments - costs three pipelines for one product.
 
 ### 10.1 The rule that makes "one" safe
 
@@ -376,14 +376,14 @@ Hosts are **privilege rings**, not just branding:
 
 | Host | Allowed | Denied |
 |---|---|---|
-| `admin.` | everything (highest privilege; may preview store/rider surfaces for support) | — |
+| `admin.` | everything (highest privilege; may preview store/rider surfaces for support) | - |
 | `store.` | `/vendor-panel`, `/login/store*`, `/api/*`, shared public | `admin/*`, `login/admin*` → **404** |
 | `logistics.` | rider routes, `/login/logistics`, `/api/*`, shared public | `admin/*`, `vendor-panel/*` → **404** |
 | `partners.` | marketer routes, its login, `/api/*` | admin, vendor-panel → **404** |
 | `api.` | `/api/*`, webhooks | all HTML routes → **404** |
 | `web.` / apex | React app only | everything Laravel-side except `/api/*` |
 
-Denial is a **404, not a redirect** — a redirect confirms the route exists.
+Denial is a **404, not a redirect** - a redirect confirms the route exists.
 
 ### 10.2 Structural rules
 

@@ -4,7 +4,7 @@ Commit: `2a043e7` (`Add marketer commission ledger and partner portal`), on top 
 `c1a3bed`.
 
 Written from the committed diff (`git show --stat`), not from the plan. The
-admin-side approval screens are **not** in this commit — see "Not built yet".
+admin-side approval screens are **not** in this commit - see "Not built yet".
 
 ## The rules this encodes
 
@@ -24,19 +24,19 @@ marketer via `admins.marketer_commission_rate`.
 
 `2026_11_11_000002_add_marketer_attribution`
 
-- `stores.marketer_id` — nullable, indexed. Nullable because almost every store
+- `stores.marketer_id` - nullable, indexed. Nullable because almost every store
   has no marketer and attribution is assigned after the store exists.
-- `admins.marketer_commission_rate` — `decimal(6,3)`, nullable. Null means "use
+- `admins.marketer_commission_rate` - `decimal(6,3)`, nullable. Null means "use
   the configured default", so no backfill is needed.
 
 `2026_11_11_000003_create_marketer_tables`
 
-- `marketer_commissions` — one row per delivered order, **unique index on
+- `marketer_commissions` - one row per delivered order, **unique index on
   `order_id`**. That uniqueness is what makes accrual safe to re-run.
   Stores `base_amount` and `rate` next to `amount` so a payout can be audited
   without re-deriving it from settings that may since have changed. Statuses:
   `pending`, `eligible`, `in_payout`, `paid`, `void`.
-- `marketer_payouts` — one row per request. Stores the mobile-money
+- `marketer_payouts` - one row per request. Stores the mobile-money
   destination, `requested_at` / `approved_at` / `paid_at`, `reference`,
   `approved_by`, `rejection_reason`. Statuses: `requested`, `approved`,
   `paid`, `rejected`.
@@ -46,21 +46,21 @@ marketer via `admins.marketer_commission_rate`.
 `app/Services/MarketerCommissionService.php` holds every money rule. No
 controller computes an amount.
 
-- `accrue()` — scans delivered orders that qualify and have no commission row
+- `accrue()` - scans delivered orders that qualify and have no commission row
   yet, inserting via `DB::table(...)->insertOrIgnore(...)`. Returns how many
   rows were created.
-- `refresh()` — voids commissions for canceled/refunded/failed orders and
+- `refresh()` - voids commissions for canceled/refunded/failed orders and
   refunded transactions, parks commissions for refunds in flight, restores the
   holding date when a refund was refused, and releases matured commissions to
   `eligible`.
-- `requestPayout()` — reserves the marketer's `eligible` commissions into a new
+- `requestPayout()` - reserves the marketer's `eligible` commissions into a new
   `requested` payout, inside a transaction with `lockForUpdate()`. This
   reservation is what stops the same commission being requested twice.
-- `approve()` / `reject()` / `markPaid()` — state-guarded. `markPaid()` refuses
+- `approve()` / `reject()` / `markPaid()` - state-guarded. `markPaid()` refuses
   an empty reference. `approve()` and `markPaid()` both re-check that the
   underlying orders are still delivered and unrefunded, because an order can be
   refunded between the request and the transfer.
-- `summaryFor()` — the balances the portal shows.
+- `summaryFor()` - the balances the portal shows.
 
 Three details worth keeping:
 
@@ -70,7 +70,7 @@ Three details worth keeping:
   to run the accrual. This is asserted by a test that logs in a zone-bound
   admin and accrues anyway.
 - **Commissions already paid are never voided.** A refund after payout is a
-  collections matter, not a ledger rewrite — otherwise a paid payout would
+  collections matter, not a ledger rewrite - otherwise a paid payout would
   silently stop reconciling with the mobile-money statement.
 - **A payout whose commissions all void is auto-rejected** rather than left
   waiting with a stale amount, and a partial void recalculates the payout
@@ -95,7 +95,7 @@ silent downgrade the admin MFA work exists to prevent. Consequences:
 - Forced enrolment applies to marketers exactly as it does to admins.
 - `MarketerAuthenticated` re-checks role 5, `is_logged_in`, and the MFA marker
   on **every** request, and logs out on failure. A role change away from 5, or
-  an MFA reset by an operator, ends an open session immediately — both are
+  an MFA reset by an operator, ends an open session immediately - both are
   tested over HTTP.
 - `/marketer-login` is throttled at 5/min keyed on email + IP, separately from
   the admin limiter. It is a door into admin accounts and must not be easier to
@@ -126,18 +126,18 @@ mark an order delivered, so a sixth path added later cannot silently skip it.
 Local MySQL replica (`adf-maria`), via `artisan serve`, all runs after the
 final code:
 
-- `/tmp/opencode/marketer_test.php` — **37 passed / 0 failed**. Accrual maths,
+- `/tmp/opencode/marketer_test.php` - **37 passed / 0 failed**. Accrual maths,
   14-day boundary, idempotency, zone-scope bypass, refund void / hold / restore,
   payout state guards, empty reference refusal, payment refusal after a refund,
   subscription / no-marketer / refunded-transaction exclusions, the model hook,
   and the per-marketer rate override. Leftovers after cleanup: 0.
-- `/tmp/opencode/marketer_portal_test.sh` — **51 passed / 0 failed**. Host
+- `/tmp/opencode/marketer_portal_test.sh` - **51 passed / 0 failed**. Host
   matrix 404s, role-2 refusal, wrong password, password-only session refused,
   wrong code then correct code, forced enrolment with 8 recovery codes shown
   once, payout request reserving only eligible commissions, role change and
   MFA reset ending an open session, logout, and 5-then-429 throttle. Leftover
   admins / stores / commissions after cleanup: 0.
-- `/tmp/opencode/admin_mfa_test.sh` — **67 passed / 0 failed**, re-run
+- `/tmp/opencode/admin_mfa_test.sh` - **67 passed / 0 failed**, re-run
   specifically because this commit edits the shared `auth/mfa-*` views.
 
 Fixture admins were deleted; admin counts are back to the documented baseline
@@ -214,7 +214,7 @@ into a toast instead of a 500. Concretely:
   service and the reason is shown.
 - Reject requires a reason, sets `rejected`, and releases every `in_payout`
   commission back to `eligible` with `payout_id = null`. An approved-but-not-
-  sent payout can also be rejected — the test covers that path explicitly.
+  sent payout can also be rejected - the test covers that path explicitly.
 - Rate update accepts 0–100 or blank. Blank stores `NULL`, which means "use
   `config('marketer.default_rate')`". Existing commission rows keep the rate
   they were accrued at, so a change is not retroactive.
@@ -246,7 +246,7 @@ into a toast instead of a 500. Concretely:
 
 All runs after the final code, on the local MySQL replica:
 
-- `/tmp/opencode/admin_marketer_test.sh` — **98 passed / 0 failed**. Role-1
+- `/tmp/opencode/admin_marketer_test.sh` - **98 passed / 0 failed**. Role-1
   403 matrix on every GET and POST, unauthenticated redirect, store-host 404,
   accrual from the button (and idempotent second run), marketer payout request,
   approve, empty reference refused with the payout still approved, paid with
@@ -256,9 +256,9 @@ All runs after the final code, on the local MySQL replica:
   re-assign / remove, forward-only date preservation, and the combined store
   filter. Fixture admins, stores, payouts and commissions are all 0 after
   cleanup.
-- `/tmp/opencode/admin_mfa_test.sh` — **67 passed / 0 failed**, re-run because
+- `/tmp/opencode/admin_mfa_test.sh` - **67 passed / 0 failed**, re-run because
   this commit edits every module sidebar the admin panel renders.
-- `php artisan view:cache` — compiles every Blade template, including all
+- `php artisan view:cache` - compiles every Blade template, including all
   module sidebars, so the new partial and its includes are syntactically valid
   in the files this session cannot click through.
 

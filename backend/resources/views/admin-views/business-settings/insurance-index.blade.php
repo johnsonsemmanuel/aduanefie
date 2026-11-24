@@ -11,7 +11,7 @@
                     <img src="{{ asset('public/assets/admin/img/trade-insurance-badge.svg') }}" class="w--26" alt="Insurance">
                 </span>
                 <span>
-                    {{ translate('messages.business_setup') }} — {{ translate('Crop & Cross-Border Insurance') }}
+                    {{ translate('messages.business_setup') }} - {{ translate('Crop & Cross-Border Insurance') }}
                 </span>
             </h1>
             @include('admin-views.business-settings.partials.nav-menu')
@@ -108,7 +108,7 @@
                                 </div>
 
                                 <div class="col-12">
-                                    <label class="form-label">{{ translate('EsperWorks API Key (tryesperworks.com — Invoices & Contracts e-Sign)') }}</label>
+                                    <label class="form-label">{{ translate('EsperWorks API Key (tryesperworks.com - Invoices & Contracts e-Sign)') }}</label>
                                     <input type="password" name="esperworks_api_key" class="form-control" value="{{ $esperworks_api_key }}" placeholder="ew_live_...">
                                 </div>
                             </div>

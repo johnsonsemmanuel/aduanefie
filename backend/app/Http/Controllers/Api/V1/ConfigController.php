@@ -36,9 +36,9 @@ class ConfigController extends Controller
 
     function __construct()
     {
-        $map_api_key_server = BusinessSetting::where(['key' => 'map_api_key_server'])->first();
-        $map_api_key_server = $map_api_key_server ? $map_api_key_server->value : null;
-        $this->map_api_key = $map_api_key_server;
+        // Constructed for every config/meta/landing request: use the cached
+        // lookup so a single setting never costs a DB query per request.
+        $this->map_api_key = Helpers::cached_business_setting('map_api_key_server');
     }
 
     public function configuration()
@@ -273,6 +273,7 @@ class ConfigController extends Controller
             'loyalty_point_status' => (int)(isset($settings['loyalty_point_status']) ? $settings['loyalty_point_status'] : 0),
             'customer_wallet_status' => (int)(isset($settings['wallet_status']) ? $settings['wallet_status'] : 0),
             'ref_earning_status' => (int)(isset($settings['ref_earning_status']) ? $settings['ref_earning_status'] : 0),
+            'pro_member_status' => 1,
             'ref_earning_exchange_rate' => (double)(isset($settings['ref_earning_exchange_rate']) ? $settings['ref_earning_exchange_rate'] : 0),
             'refund_policy' => (int)(self::get_settings_status('refund_policy_status')),
             'cancelation_policy' => (int)(self::get_settings_status('cancellation_policy_status')),
@@ -890,7 +891,7 @@ class ConfigController extends Controller
     /**
      * Analytics script ids consumed by the React `_document.js` server render.
      * Values live in business_settings so they can be changed without a deploy.
-     * These ids are public by design — they are injected into page HTML.
+     * These ids are public by design - they are injected into page HTML.
      */
     public function getAnalyticScripts()
     {

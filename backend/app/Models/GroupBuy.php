@@ -59,6 +59,11 @@ class GroupBuy extends Model
         return $this->hasMany(GroupBuyEvent::class)->orderBy('id');
     }
 
+    public function messages(): HasMany
+    {
+        return $this->hasMany(GroupBuyMessage::class)->orderBy('id');
+    }
+
     public function isOpen(): bool
     {
         return $this->status === self::STATUS_OPEN

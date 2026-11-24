@@ -92,7 +92,7 @@ class GroupBuyNotificationService
             if ($email) {
                 $this->sendEmail(
                     $email,
-                    'Group complete — checkout your share',
+                    'Group complete - checkout your share',
                     $this->groupLockedBody($group, $recipient),
                 );
             }
@@ -274,7 +274,7 @@ class GroupBuyNotificationService
             . "Closes: " . ($group->closes_at ? $group->closes_at->format('Y-m-d H:i') : '-') . "\n"
             . ($consent ? $consent . "\n" : '')
             . "Share the group link with friends to fill it. No one is charged until the group is complete.\n\n"
-            . "—Aduanefie Team";
+            . "-Aduanefie Team";
     }
 
     private function memberJoinedBody(GroupBuy $group, GroupBuyParticipant $newMember, bool $isNew, bool $isViewer): string
@@ -290,7 +290,7 @@ class GroupBuyNotificationService
             . "Your share: GH₵ " . number_format($newMember->item_share_ghs, 2) . " (" . $newMember->share_units . " units)\n"
             . ($consent ? $consent . "\n" : '')
             . ($isNew ? "No payment has been taken yet. You will be asked to pay when the group is full.\n" : '')
-            . "\n—Aduanefie Team";
+            . "\n-Aduanefie Team";
     }
 
     private function groupLockedBody(GroupBuy $group, array $recipient): string
@@ -306,7 +306,7 @@ class GroupBuyNotificationService
             . "All " . $group->member_limit . " members have joined. Checkout your share before " . ($group->closes_at ? $group->closes_at->format('Y-m-d H:i') : '-') . ".\n"
             . "Your share: <strong>" . $share . "</strong>\n\n"
             . "No money moves until you checkout. Once everyone pays, the store ships to each member's address.\n\n"
-            . "—Aduanefie Team";
+            . "-Aduanefie Team";
     }
 
     private function paymentReminderBody(GroupBuy $group, GroupBuyParticipant $participant): string
@@ -316,7 +316,7 @@ class GroupBuyNotificationService
             . "Your share: GH₵ " . number_format($participant->item_share_ghs, 2) . " (" . $participant->share_units . " units)\n"
             . "Group closes: " . ($group->closes_at ? $group->closes_at->format('Y-m-d H:i') : '-') . "\n\n"
             . "Pay now to secure your share. If the group expires before you pay, you will not be charged.\n\n"
-            . "—Aduanefie Team";
+            . "-Aduanefie Team";
     }
 
     private function shippedBody(GroupBuyParticipant $participant): string
@@ -327,7 +327,7 @@ class GroupBuyNotificationService
         return "Hello,\n\n"
             . "Your group buy order for \"<strong>" . e($participant->groupBuy->item?->name) . "</strong>\" has been shipped."
             . $tracking . "\n\n"
-            . "—Aduanefie Team";
+            . "-Aduanefie Team";
     }
 
     private function deliveredBody(GroupBuyParticipant $participant): string
@@ -335,7 +335,7 @@ class GroupBuyNotificationService
         return "Hello,\n\n"
             . "Your group buy order for \"<strong>" . e($participant->groupBuy->item?->name) . "</strong>\" has been delivered.\n\n"
             . "Thank you for buying together!\n\n"
-            . "—Aduanefie Team";
+            . "-Aduanefie Team";
     }
 
     private function groupReleasedBody(GroupBuy $group, string $label, array $recipient): string
@@ -343,6 +343,6 @@ class GroupBuyNotificationService
         return "Hello,\n\n"
             . "The group buy for \"<strong>" . e($group->item?->name) . "</strong>\" from <strong>" . e($group->store?->name) . "</strong> has been " . $label . ".\n\n"
             . "No payment was taken from any member. You are free to join or start another group.\n\n"
-            . "—Aduanefie Team";
+            . "-Aduanefie Team";
     }
 }

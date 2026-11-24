@@ -96,12 +96,12 @@
                                 </div>
                             @endif
                         </td>
-                        <td>{{ $c->store?->name ?? '—' }}</td>
+                        <td>{{ $c->store?->name ?? '-' }}</td>
                         <td>
                             {{ $c->marketer?->f_name }} {{ $c->marketer?->l_name }}
                             <div class="text-muted small">{{ $c->marketer?->email }}</div>
                         </td>
-                        <td>{{ $c->order?->delivered ?? '—' }}</td>
+                        <td>{{ $c->order?->delivered ?? '-' }}</td>
                         <td>{{ number_format($c->base_amount, 2) }} {{ $c->currency }}</td>
                         <td>{{ rtrim(rtrim(number_format($c->rate, 3), '0'), '.') }}%</td>
                         <td class="font-weight-600">{{ number_format($c->amount, 2) }} {{ $c->currency }}</td>
@@ -129,7 +129,7 @@
             </table>
         </div>
         <div class="page-area">
-            {!! $items->links() !!}
+            {!! $items->links('pagination::bootstrap-4') !!}
         </div>
     </div>
 </div>

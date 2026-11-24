@@ -8,7 +8,7 @@
         <div>
             <h1 class="page-header-title">
                 <span class="page-header-icon">
-                    <i class="tio-chart-bar-4"></i>
+                    <img src="{{ asset('public/assets/admin/img/addon_setting.png') }}" class="w--26" alt="">
                 </span>
                 <span>Ghana Agro Market Prices &amp; SMS Alerts</span>
             </h1>
@@ -16,9 +16,15 @@
                 Manage live Ghana wholesale &amp; retail commodity prices shown on the marketplace ticker and broadcast Hubtel SMS price alerts to farmers.
             </p>
         </div>
-        <div>
-            <a href="https://aduanefie.com/market-prices" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary btn-sm">
-                <i class="tio-open-in-new"></i> View Live Index
+        <div class="btn--container">
+            <form action="{{ route('admin.agro-prices.sync-live') }}" method="POST" class="mb-0">
+                @csrf
+                <button type="submit" class="btn btn--primary">
+                    <i class="tio-refresh mr-1"></i> Sync Live Prices (World Bank &amp; FAO/MoFA)
+                </button>
+            </form>
+            <a href="https://aduanefie.com/market-prices" target="_blank" rel="noopener noreferrer" class="btn btn--secondary">
+                <i class="tio-open-in-new mr-1"></i> View Live Index
             </a>
         </div>
     </div>
@@ -98,7 +104,7 @@
                     <form action="{{ route('admin.agro-prices.send-sms') }}" method="POST">
                         @csrf
                         <div class="mb-2">
-                            <label class="input-label">Test Phone (optional — leave blank to broadcast to all active stores)</label>
+                            <label class="input-label">Test Phone (optional - leave blank to broadcast to all active stores)</label>
                             <input type="text" name="test_phone" class="form-control" placeholder="e.g. +233240000000">
                         </div>
                         <div class="mb-3">

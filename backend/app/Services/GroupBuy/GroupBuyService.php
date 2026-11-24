@@ -4,12 +4,15 @@ namespace App\Services\GroupBuy;
 
 use App\Models\GroupBuy;
 use App\Models\GroupBuyEvent;
+use App\Models\GroupBuyMessage;
 use App\Models\GroupBuyParticipant;
 use App\Models\Item;
+use App\Models\Module;
 use App\Models\Order;
 use App\Models\Store;
 use App\Services\CrossBorder\ShippingQuoteService;
 use App\Services\GroupBuy\GroupBuyNotificationService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -26,10 +29,60 @@ use Illuminate\Support\Facades\DB;
  */
 class GroupBuyService
 {
+    public const INCOMPATIBLE_MODULE_TYPES = ['parcel', 'rental', 'service', 'food', 'pharmacy'];
+
     public function __construct(
         private ShippingQuoteService $quotes,
         private GroupBuyNotificationService $notifications,
     ) {
+    }
+
+    /**
+     * A module supports group buying only when its type supports physical goods
+     * and at least one active supplier item offers bulk/larger quantities.
+     */
+    public function isModuleCompatible(?int $moduleId): bool
+    {
+        if (! $moduleId) {
+            return false;
+        }
+
+        return Cache::remember("group_buy_module_compatible_{$moduleId}", now()->addMinutes(2), function () use ($moduleId) {
+            $module = Module::find($moduleId);
+            if (! $module || in_array($module->module_type, self::INCOMPATIBLE_MODULE_TYPES, true)) {
+                return false;
+            }
+
+            return Item::withoutGlobalScopes()
+                ->where('module_id', $moduleId)
+                ->where('status', 1)
+                ->where(function ($q) {
+                    $q->where('moq', '>', 1)
+                        ->orWhere(function ($q2) {
+                            $q2->whereNotNull('bulk_pricing_tiers')
+                                ->where('bulk_pricing_tiers', '!=', '[]')
+                                ->where('bulk_pricing_tiers', '!=', 'null');
+                        })
+                        ->orWhereHas('bulkPricingTiers');
+                })
+                ->exists();
+        });
+    }
+
+    /**
+     * Whether a specific item offers bulk/group-buy quantities.
+     */
+    public function isItemBulkEligible(Item $item): bool
+    {
+        if ((int) ($item->moq ?? 1) > 1) {
+            return true;
+        }
+
+        if (is_array($item->bulk_pricing_tiers) && count($item->bulk_pricing_tiers) > 0) {
+            return true;
+        }
+
+        return $item->bulkPricingTiers()->exists();
     }
 
     /**
@@ -43,6 +96,19 @@ class GroupBuyService
             throw new \InvalidArgumentException('This item is not available for group buying.');
         }
 
+        if (! empty($data['module_id']) && (int) $data['module_id'] !== (int) $item->module_id) {
+            throw new \InvalidArgumentException('This item does not belong to the selected module.');
+        }
+
+        $module = Module::find($item->module_id);
+        if (! $module || in_array($module->module_type, self::INCOMPATIBLE_MODULE_TYPES, true)) {
+            throw new \InvalidArgumentException('Group buying is not supported in this module.');
+        }
+
+        if (! $this->isItemBulkEligible($item)) {
+            throw new \InvalidArgumentException('This item does not offer bulk quantities for group buying.');
+        }
+
         $farmerPrice = round((float) $item->price, 2);
         $targetValue = round((float) ($data['target_value_ghs'] ?? 2000), 2);
         if ($targetValue <= 0) {
@@ -52,9 +118,10 @@ class GroupBuyService
         $memberLimit = max(2, min(20, (int) ($data['member_limit'] ?? 5)));
 
         // Round the pooled unit count up to a whole multiple of the member
-        // limit so every member receives the exact same integer number of units.
+        // limit so every member receives the exact same integer number of units,
+        // and never below the supplier's minimum order quantity (MOQ).
         $rawUnits = (int) ceil($targetValue / $farmerPrice);
-        $rawUnits = max($rawUnits, $memberLimit);
+        $rawUnits = max($rawUnits, $memberLimit, (int) ($item->moq ?? 1));
         $shareUnits = (int) ceil($rawUnits / $memberLimit);
         $targetUnits = $shareUnits * $memberLimit;
 
@@ -181,7 +248,7 @@ class GroupBuyService
                 'payment_status' => GroupBuyParticipant::PAYMENT_NOT_CHARGED,
                 'fulfillment_status' => GroupBuyParticipant::FULFILLMENT_PENDING,
                 'joined_at' => now(),
-                'consent_accepted_at' => $data['consent_accepted'] ? now() : null,
+                'consent_accepted_at' => ! empty($data['consent_accepted']) ? now() : null,
                 'consent_version' => $data['consent_version'] ?? $group->consent_version,
             ]);
 
@@ -210,18 +277,40 @@ class GroupBuyService
         });
     }
 
-    public function leave(GroupBuy $group, GroupBuyParticipant $participant): void
+    public function leave(GroupBuy $group, GroupBuyParticipant $participant, ?string $reason = null, ?string $note = null): void
     {
         if ($group->status !== GroupBuy::STATUS_OPEN) {
             throw new \InvalidArgumentException('You can only leave a group that is still open.');
         }
 
-        DB::transaction(function () use ($group, $participant) {
+        $cleanReason = $reason ? mb_substr(trim($reason), 0, 255) : null;
+        $cleanNote = $note ? mb_substr(trim($note), 0, 500) : null;
+
+        DB::transaction(function () use ($group, $participant, $cleanReason, $cleanNote) {
             $participant->delete();
-            $group->decrement('committed_count');
-            $this->log($group, 'left', $participant->id, 'customer', $participant->user_id, [
-                'message' => 'Member left before the group filled; no payment was taken.',
-            ]);
+            if ($group->committed_count > 0) {
+                $group->decrement('committed_count');
+            }
+            $this->log($group, 'left', $participant->id, 'customer', $participant->user_id, array_filter([
+                'reason' => $cleanReason,
+                'note' => $cleanNote,
+                'message' => 'Member left before the group filled; spot reopened for new buyers.',
+            ]));
+
+            // Let the group team see why a member left and that a spot reopened.
+            if ($cleanReason || $cleanNote) {
+                $summary = $cleanReason ?: 'Member left';
+                if ($cleanNote) {
+                    $summary .= " - {$cleanNote}";
+                }
+                GroupBuyMessage::create([
+                    'group_buy_id' => $group->id,
+                    'sender_user_id' => null,
+                    'sender_guest_id' => null,
+                    'sender_name' => 'Group Update',
+                    'body' => "A member left the group ({$summary}). A spot is now open for another buyer to join.",
+                ]);
+            }
         });
     }
 
@@ -261,9 +350,14 @@ class GroupBuyService
         });
     }
 
-    public function cancel(GroupBuy $group): void
+    public function cancel(GroupBuy $group, ?string $reason = null): void
     {
         $this->release($group, GroupBuy::STATUS_CANCELLED, 'cancelled');
+        if ($reason) {
+            $this->log($group, 'closed_reason', null, 'customer', $group->organizer_id, [
+                'reason' => mb_substr(trim($reason), 0, 255),
+            ]);
+        }
     }
 
     public function expire(GroupBuy $group): void
@@ -358,7 +452,7 @@ class GroupBuyService
 
     /**
      * Checkout guard. Called by OrderController whenever group_buy_id is sent.
-     * Any failure is a hard 403 — there is no retail-price fallback.
+     * Any failure is a hard 403 - there is no retail-price fallback.
      *
      * @return array{group:GroupBuy,participant:GroupBuyParticipant,unit_price:float}
      */
@@ -396,6 +490,146 @@ class GroupBuyService
             'participant' => $participant,
             'unit_price' => $this->resolvedUnitPrice($group),
         ];
+    }
+
+    /**
+     * Edit an open group. Structural fields (target, member limit, destination)
+     * are frozen once members have joined: changing them would silently rewrite
+     * the equal share every member agreed to. Non-structural fields stay
+     * editable for the life of the open group.
+     */
+    public function update(GroupBuy $group, array $data): GroupBuy
+    {
+        if ($group->status !== GroupBuy::STATUS_OPEN) {
+            throw new \InvalidArgumentException('Only an open group can be edited.');
+        }
+
+        $structural = ['target_value_ghs', 'member_limit', 'destination_country'];
+        $hasStructuralChange = array_intersect($structural, array_keys($data)) !== [];
+        if ($hasStructuralChange && $group->committed_count > 0) {
+            throw new \InvalidArgumentException(
+                'The target, member limit and destination cannot change after members join.'
+            );
+        }
+
+        $changes = [];
+
+        if (array_key_exists('target_value_ghs', $data)) {
+            $changes['target_value_ghs'] = round((float) $data['target_value_ghs'], 2);
+            if ($changes['target_value_ghs'] <= 0) {
+                throw new \InvalidArgumentException('The group target value must be greater than zero.');
+            }
+        }
+
+        $memberLimit = $group->member_limit;
+        if (array_key_exists('member_limit', $data)) {
+            $memberLimit = max(2, min(20, (int) $data['member_limit']));
+            $changes['member_limit'] = $memberLimit;
+        }
+
+        // Reuse the snapshotted farmer price so editing the target never
+        // silently picks up a later catalogue price change.
+        if (array_key_exists('target_value_ghs', $data) || array_key_exists('member_limit', $data)) {
+            $target = $changes['target_value_ghs'] ?? (float) $group->target_value_ghs;
+            $price = max(0.01, (float) $group->farmer_price_ghs);
+            $shareUnits = (int) ceil(max((int) ceil($target / $price), $memberLimit) / $memberLimit);
+            $changes['share_units'] = $shareUnits;
+            $changes['target_units'] = $shareUnits * $memberLimit;
+        }
+
+        if (array_key_exists('destination_country', $data)) {
+            $destination = strtoupper((string) $data['destination_country']);
+            $store = $group->store ?: Store::find($group->store_id);
+            $changes['destination_country'] = $destination;
+            $changes['is_cross_border'] = $destination
+                ? strtoupper($this->quotes->originCountry($store)) !== $destination
+                : false;
+            $changes['incoterm'] = $changes['is_cross_border']
+                ? strtoupper($data['incoterm'] ?? $group->incoterm ?? 'DDP')
+                : null;
+        }
+
+        if (array_key_exists('closes_at', $data)) {
+            $closesAt = \Carbon\Carbon::parse($data['closes_at']);
+            if ($closesAt->isPast()) {
+                throw new \InvalidArgumentException('The group closing time must be in the future.');
+            }
+            $changes['closes_at'] = $closesAt;
+        }
+
+        if (array_key_exists('notes', $data)) {
+            $changes['notes'] = $data['notes'] ?: null;
+        }
+
+        if (! $changes) {
+            return $group;
+        }
+
+        $before = [];
+        foreach (array_keys($changes) as $field) {
+            $before[$field] = $group->{$field};
+        }
+
+        DB::transaction(function () use ($group, $changes, $before, $hasStructuralChange) {
+            /** @var GroupBuy $fresh */
+            $fresh = GroupBuy::whereKey($group->id)->lockForUpdate()->firstOrFail();
+            if ($fresh->status !== GroupBuy::STATUS_OPEN
+                || ($hasStructuralChange && $fresh->committed_count > 0)) {
+                throw new \InvalidArgumentException('This group can no longer be edited.');
+            }
+            $fresh->update($changes);
+            $this->log($fresh, 'updated', null, 'customer', $fresh->organizer_id, [
+                'before' => $before,
+                'after' => $changes,
+            ]);
+        });
+
+        return $group->fresh();
+    }
+
+    /**
+     * Chat history for a group. The caller must already have passed the
+     * membership guard in the controller - this method only paginates.
+     *
+     * @return GroupBuyMessage[]
+     */
+    public function messages(GroupBuy $group, int $afterId = 0, int $limit = 50): array
+    {
+        $limit = max(1, min(100, $limit));
+
+        return GroupBuyMessage::where('group_buy_id', $group->id)
+            ->when($afterId > 0, fn ($q) => $q->where('id', '>', $afterId))
+            ->orderBy('id')
+            ->limit($limit)
+            ->get()
+            ->all();
+    }
+
+    public function postMessage(
+        GroupBuy $group,
+        ?int $userId,
+        ?string $guestId,
+        string $senderName,
+        string $body
+    ): GroupBuyMessage {
+        $body = trim($body);
+        if ($body === '') {
+            throw new \InvalidArgumentException('Write a message before sending.');
+        }
+        if (mb_strlen($body) > 1000) {
+            throw new \InvalidArgumentException('Messages must be 1000 characters or fewer.');
+        }
+        if (! $userId && ! $guestId) {
+            throw new \InvalidArgumentException('You must be a member of this group to chat.');
+        }
+
+        return GroupBuyMessage::create([
+            'group_buy_id' => $group->id,
+            'sender_user_id' => $userId,
+            'sender_guest_id' => $userId ? null : $guestId,
+            'sender_name' => mb_substr($senderName, 0, 120) ?: 'Guest',
+            'body' => $body,
+        ]);
     }
 
     /**

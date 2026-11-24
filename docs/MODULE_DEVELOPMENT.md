@@ -57,9 +57,9 @@ Create `soft/modules/<ModuleName>/module.json`:
 ```
 
 Key fields:
-- `name` — Human-readable name (e.g., "Equipment Rental")
-- `alias` — URL-friendly lowercase alias (e.g., "equipment")
-- `providers` — Must reference your ServiceProvider class
+- `name` - Human-readable name (e.g., "Equipment Rental")
+- `alias` - URL-friendly lowercase alias (e.g., "equipment")
+- `providers` - Must reference your ServiceProvider class
 
 ## Step 3: Create ServiceProvider
 
@@ -404,13 +404,13 @@ php artisan migrate
 
 ## Best Practices
 
-1. **Naming Convention** — Use PascalCase for class names, lowercase for aliases and database tables
-2. **Middleware** — Always wrap provider routes with `vendor.api` middleware and public routes with `module-check` middleware
-3. **Localization** — Wrap route groups with `['middleware' => ['localization']]`
-4. **Validation** — Use Laravel's request validation for all API inputs
-5. **Responses** — Return consistent JSON format: `{ success, data, errors, message }`
-6. **Assets** — Use `webpack.mix.js` to compile module-specific JS and CSS
-7. **Testing** — Add tests under `soft/tests/` for module functionality
+1. **Naming Convention** - Use PascalCase for class names, lowercase for aliases and database tables
+2. **Middleware** - Always wrap provider routes with `vendor.api` middleware and public routes with `module-check` middleware
+3. **Localization** - Wrap route groups with `['middleware' => ['localization']]`
+4. **Validation** - Use Laravel's request validation for all API inputs
+5. **Responses** - Return consistent JSON format: `{ success, data, errors, message }`
+6. **Assets** - Use `webpack.mix.js` to compile module-specific JS and CSS
+7. **Testing** - Add tests under `soft/tests/` for module functionality
 
 ## Example: Creating a "Equipment Rental" Module
 

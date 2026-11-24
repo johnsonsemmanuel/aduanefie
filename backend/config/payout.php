@@ -14,10 +14,10 @@ return [
     | landline-looking string as a mobile-money account.
     |
     | Each network entry:
-    |   label       — human-readable name shown in validation hints
-    |   pattern     — preg regex the account number must match (digits only,
+    |   label       - human-readable name shown in validation hints
+    |   pattern     - preg regex the account number must match (digits only,
     |                 optional leading + or 00 country prefix stripped first)
-    |   example     — placeholder text for the form
+    |   example     - placeholder text for the form
     */
 
     'countries' => [

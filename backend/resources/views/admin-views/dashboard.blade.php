@@ -37,6 +37,8 @@
         </div>
         <!-- End Page Header -->
 
+        @include('admin-views.partials._agro-ops-strip')
+
         <!-- Stats -->
         <div class="card mb-3">
             <div class="card-body pt-0">
@@ -373,6 +375,8 @@
             </div>
         </div>
         <!-- End Page Header -->
+
+        @include('admin-views.partials._agro-ops-strip')
         @endif
     </div>
 @endsection

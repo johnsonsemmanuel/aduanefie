@@ -35,11 +35,13 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
     Route::get('zone/check', 'ZoneController@zonesCheck');
 
     Route::get('offline_payment_method_list', 'ConfigController@offline_payment_method_list');
+    Route::post('waitlist', 'WaitlistController@store')->middleware('throttle:api-auth');
+    Route::post('waitlist/verify-access', 'WaitlistController@verifyAccess')->middleware('throttle:api-auth');
     Route::group(['prefix' => 'auth', 'namespace' => 'Auth'], function () {
-        Route::post('sign-up', 'CustomerAuthController@register');
-        Route::post('login', 'CustomerAuthController@login');
-        Route::post('external-login', 'CustomerAuthController@customerLoginFromDrivemond');
-        Route::post('verify-phone', 'CustomerAuthController@verify_phone_or_email');
+        Route::post('sign-up', 'CustomerAuthController@register')->middleware('throttle:api-auth');
+        Route::post('login', 'CustomerAuthController@login')->middleware('throttle:api-auth');
+        Route::post('external-login', 'CustomerAuthController@customerLoginFromDrivemond')->middleware('throttle:api-auth');
+        Route::post('verify-phone', 'CustomerAuthController@verify_phone_or_email')->middleware('throttle:api-otp');
         Route::post('update-info', 'CustomerAuthController@update_info');
         Route::post('firebase-verify-token', 'CustomerAuthController@firebase_auth_verify');
 
@@ -133,9 +135,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
             });
 
 
-            Route::post('make-collected-cash-payment', 'DeliverymanController@make_payment')->name('make_payment');
-            Route::post('make-wallet-adjustment', 'DeliverymanController@make_wallet_adjustment')->name('make_wallet_adjustment');
-            Route::get('wallet-payment-list', 'DeliverymanController@wallet_payment_list')->name('wallet_payment_list');
+            Route::post('make-collected-cash-payment', 'DeliverymanController@make_payment')->name('dm.make_payment');
+            Route::post('make-wallet-adjustment', 'DeliverymanController@make_wallet_adjustment')->name('dm.make_wallet_adjustment');
+            Route::get('wallet-payment-list', 'DeliverymanController@wallet_payment_list')->name('dm.wallet_payment_list');
             Route::get('wallet-provided-earning-list', 'DeliverymanController@wallet_provided_earning_list')->name('wallet_provided_earning_list');
 
 
@@ -175,9 +177,9 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
 
         Route::put('send-order-otp', 'VendorController@send_order_otp');
 
-        Route::post('make-collected-cash-payment', 'VendorController@make_payment')->name('make_payment');
-        Route::post('make-wallet-adjustment', 'VendorController@make_wallet_adjustment')->name('make_wallet_adjustment');
-        Route::get('wallet-payment-list', 'VendorController@wallet_payment_list')->name('wallet_payment_list');
+        Route::post('make-collected-cash-payment', 'VendorController@make_payment')->name('vendor.make_payment');
+        Route::post('make-wallet-adjustment', 'VendorController@make_wallet_adjustment')->name('vendor.make_wallet_adjustment');
+        Route::get('wallet-payment-list', 'VendorController@wallet_payment_list')->name('vendor.wallet_payment_list');
 
 
         Route::get('get-withdraw-method-list', 'WithdrawMethodController@withdraw_method_list');
@@ -198,6 +200,8 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
             Route::get('dashboard', 'FarmerController@dashboard');
             Route::get('products', 'FarmerController@products');
             Route::patch('products/{id}/farming-status', 'FarmerController@update_farming_status');
+            Route::patch('products/{id}/dates', 'FarmerController@update_dates');
+            Route::post('products/{id}/growth-update', 'FarmerController@update_growth');
             Route::post('products/{id}/sms-broadcast', 'FarmerController@broadcast_sms');
             Route::get('products/{id}/subscribers', 'FarmerController@get_subscribers');
 
@@ -223,7 +227,6 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
                 Route::patch('{id}', 'FarmerController@update_aggregation_hub');
                 Route::delete('{id}', 'FarmerController@delete_aggregation_hub');
             });
-        });
 
             // Agro-service booking
             Route::group(['prefix' => 'services'], function () {
@@ -267,13 +270,13 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
         });
        // advertisement
         Route::group([ 'prefix' => 'advertisement', 'as' => 'advertisement.'], function () {
-            Route::get('/', 'AdvertisementController@index');
-            Route::get('details/{id}', 'AdvertisementController@show');
-            Route::delete('delete/{id}', 'AdvertisementController@destroy');
-            Route::post('store', 'AdvertisementController@store');
-            Route::post('update/{id}', 'AdvertisementController@update');
+            Route::get('/', 'AdvertisementController@index')->name('index');
+            Route::get('details/{id}', 'AdvertisementController@show')->name('show');
+            Route::delete('delete/{id}', 'AdvertisementController@destroy')->name('destroy');
+            Route::post('store', 'AdvertisementController@store')->name('store');
+            Route::post('update/{id}', 'AdvertisementController@update')->name('update');
             Route::put('/status', 'AdvertisementController@status')->name('status');
-            Route::post('copy-add-post', 'AdvertisementController@copyAddPost');
+            Route::post('copy-add-post', 'AdvertisementController@copyAddPost')->name('copy-add-post');
 
         });
 
@@ -369,13 +372,42 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
     Route::group(['prefix' => 'group-buys'], function () {
         Route::get('/', 'GroupBuyController@index');
         Route::get('my', 'GroupBuyController@my');
-        Route::post('/', 'GroupBuyController@store');
+        Route::get('organizer/verification', 'GroupBuyController@organizerVerification');
+        Route::post('organizer/verification', 'GroupBuyController@submitOrganizerVerification')->middleware('throttle:api-public-write');
+        Route::post('/', 'GroupBuyController@store')->middleware('throttle:api-public-write');
         Route::get('{id}', 'GroupBuyController@show');
-        Route::post('{id}/join', 'GroupBuyController@join');
-        Route::post('{id}/leave', 'GroupBuyController@leave');
-        Route::post('{id}/cancel', 'GroupBuyController@cancel');
+        // Organiser edit + member list + member-only chat. Membership and
+        // ownership are checked in the controller, not by a route param.
+        Route::put('{id}', 'GroupBuyController@update')->middleware('throttle:api-public-write');
+        Route::get('{id}/members', 'GroupBuyController@members');
+        Route::get('{id}/messages', 'GroupBuyController@messages');
+        Route::post('{id}/messages', 'GroupBuyController@sendMessage')->middleware('throttle:api-public-write');
+        Route::post('{id}/join', 'GroupBuyController@join')->middleware('throttle:api-public-write');
+        Route::post('{id}/leave', 'GroupBuyController@leave')->middleware('throttle:api-public-write');
+        Route::post('{id}/cancel', 'GroupBuyController@cancel')->middleware('throttle:api-public-write');
         Route::post('{id}/quote', 'GroupBuyController@quote');
     });
+
+    // Regional Tours: account-only. A signed-in customer must own every
+    // application; the registration controller rejects requests without a
+    // resolved user even if this middleware is changed later.
+    Route::group(['prefix' => 'regional-tours', 'middleware' => 'auth:api'], function () {
+        Route::get('/', 'RegionalTourController@index');
+        Route::post('register', 'RegionalTourController@register')->middleware('throttle:api-public-write');
+    });
+
+    // Public health check for uptime & storage/DB/SMS verification
+    Route::get('health', 'HealthController@check');
+
+    // Inbound SMS keyword webhook (e.g. farmer replies "READY 123" via IntekHost)
+    Route::post('sms/inbound/harvest', 'Vendor\FarmerController@sms_harvest_ready')
+        ->middleware('throttle:api-public-write');
+
+    // Public Remote Marketer self-application + Paystack account resolution
+    Route::post('marketer-applications', 'MarketerApplicationController@store')
+        ->middleware('throttle:api-public-write');
+    Route::post('marketer-applications/verify-payout', 'MarketerApplicationController@verifyPayout')
+        ->middleware('throttle:api-public-write');
 
     Route::group(['prefix' => 'testimonial'], function () {
         Route::get('/', 'TestimonialController@get_tetimonial_lists');
@@ -475,10 +507,14 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
                 Route::post('get-Tax', 'OrderController@get_tax');
                 Route::post('checkout-summary', 'OrderController@checkout_summary');
                 Route::post('get-surge-price', 'OrderController@get_surge_price');
+                Route::post('insurance-claim', 'OrderController@submitInsuranceClaim');
+                Route::get('insurance-claims', 'OrderController@listInsuranceClaims');
 
             });
             Route::post('order-again/reorder', 'OrderController@reorder');
             Route::get('pro-customer/active-offer', 'PromotionController@pro_customer_active_offer');
+            Route::post('pro-customer/subscribe', 'PromotionController@pro_customer_subscribe');
+            Route::post('pro-customer/cancel', 'PromotionController@pro_customer_cancel');
             Route::get('reels/list', 'CustomerController@reels_list');
 
             Route::group(['prefix'=>'cart'], function() {
@@ -515,6 +551,7 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
             Route::get('reviews/{item_id}', 'ItemController@get_product_reviews');
             Route::get('rating/{item_id}', 'ItemController@get_product_rating');
             Route::get('recommended', 'ItemController@get_recommended');
+            Route::get('for-you', 'ItemController@for_you_items');
             Route::get('basic', 'ItemController@get_popular_basic_products');
             Route::get('suggested', 'ItemController@get_cart_suggest_products');
             Route::get('item-or-store-search', 'ItemController@item_or_store_search');
@@ -572,6 +609,11 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
         Route::get('bogo/home', 'PromotionController@bogo_home');
         Route::get('bogo/offers', 'PromotionController@bogo_home');
         Route::get('bogo/store-offers', 'PromotionController@bogo_home');
+        Route::get('offers/items', 'ItemController@get_discounted_products');
+        Route::get('offers/stores', 'StoreController@get_discounted_stores');
+        Route::get('pro-customer/plans', 'PromotionController@pro_customer_plans');
+        Route::get('pro-customer/faqs', 'PromotionController@pro_customer_faqs');
+        Route::get('pro-customer/terms-and-conditions', 'PromotionController@pro_customer_terms');
         Route::get('happy-hour/running', 'PromotionController@happy_hour_running');
         Route::get('happy-hour/stores', 'PromotionController@happy_hour_stores');
         Route::get('item/farming-list', 'ItemController@farming_list');
@@ -583,12 +625,15 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
 
         Route::group(['prefix' => 'trade'], function () {
             Route::get('blocs', 'TradeController@blocs');
+            Route::get('blocs/{slug}/corridors', 'TradeController@blocCorridors');
+            Route::get('blocs/{slug}', 'TradeController@bloc');
             Route::get('corridors', 'TradeController@corridors');
             Route::post('customs-duties/calculate', 'TradeController@customs_duties_calculate');
             Route::get('sourcing', 'TradeController@sourcing');
             Route::get('requests', 'TradeController@requests');
             Route::post('rfqs', 'TradeController@store_rfq');
             Route::post('rfqs/{id}/quotes', 'TradeController@store_quote');
+            Route::post('rfqs/{id}/quotes/{quoteId}/accept', 'TradeController@accept_quote');
             Route::get('agro-prices', 'TradeController@agro_prices');
             Route::get('fx-rates', 'TradeController@fx_rates');
             Route::post('orders/{id}/esperworks-invoice', 'TradeController@esperworks_invoice');
@@ -630,6 +675,10 @@ Route::group(['namespace' => 'Api\V1', 'middleware'=>'localization'], function (
         Route::get('parcel-category','ParcelCategoryController@index');
         Route::get('advertisement/list', 'AdvertisementController@get_adds');
 
-    });    // Close outer Route::group
+    });
+Route::get('vehicle/extra_charge', 'ConfigController@extra_charge');
+Route::get('get-vehicles', 'ConfigController@get_vehicles');
+
+});    // Close outer Route::group
 
 WebSocketsRouter::webSocket('/delivery-man/live-location', DMLocationSocketHandler::class);

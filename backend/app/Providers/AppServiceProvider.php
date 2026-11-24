@@ -42,13 +42,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        Paginator::useBootstrap();
+
         if (config('app.env') === 'production' || env('FORCE_HTTPS', true)) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
 
         try
         {
-            $bootData = Cache::remember('boot_app_provider_v1', now()->addMinutes(3), function () {
+            $bootData = Cache::remember('boot_app_provider_v1', now()->addMinutes(30), function () {
                 return [
                     'addon_admin_routes' => $this->get_addon_admin_routes(),
                     'get_payment_publish_status' => $this->get_payment_publish_status(),

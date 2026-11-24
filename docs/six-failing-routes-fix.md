@@ -1,4 +1,4 @@
-# Six failing admin/vendor routes — fix and verification
+# Six failing admin/vendor routes - fix and verification
 
 Commit: `82edbae` (`Fix the six known failing admin and vendor routes`), on top of
 `786879b`.
@@ -33,11 +33,11 @@ Two details worth keeping:
 
 ## Files changed
 
-- `soft/app/Http/Controllers/Admin/ReportController.php` — `order_index` now
+- `soft/app/Http/Controllers/Admin/ReportController.php` - `order_index` now
   redirects; new `earning_index`, `stock_report`, `stock_search`.
-- `soft/app/Http/Controllers/Admin/Item/CategoryController.php` — null-safe
+- `soft/app/Http/Controllers/Admin/Item/CategoryController.php` - null-safe
   `position` in `getCategoryView`.
-- `soft/routes/vendor.php` — removed `subscriber-list` and the vendor
+- `soft/routes/vendor.php` - removed `subscriber-list` and the vendor
   `trade-requests` group, each replaced by a comment explaining the absence.
 
 No views, migrations or models were added. No table was touched.
@@ -80,7 +80,7 @@ customer trade surface, and touching money paths before the RFQ/escrow security
 review closes is exactly what the review is for. They are tracked in
 `docs/current-flow-and-gaps.md`.
 
-The underlying cause — routes added ahead of their controllers and views — is not
+The underlying cause - routes added ahead of their controllers and views - is not
 mechanically prevented. `php artisan route:list` resolves names but not controller
 methods or views, so a static route/controller audit is the only way to catch this
 class before a user does.

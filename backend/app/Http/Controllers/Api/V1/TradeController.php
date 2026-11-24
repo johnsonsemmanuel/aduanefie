@@ -11,47 +11,91 @@ use Illuminate\Support\Facades\Schema;
 
 class TradeController extends Controller
 {
-    public function blocs()
+    /**
+     * Active blocs from the database. The small static list is the same
+     * reference data the blocs index has always used when the table is empty;
+     * it is not user-generated market data.
+     */
+    private function blocRows()
     {
         if (Schema::hasTable('trade_blocs')) {
             $rows = DB::table('trade_blocs')->where('status', 'active')->get();
             if ($rows->isNotEmpty()) {
-                return response()->json(['blocs' => $rows], 200);
+                return $rows;
             }
         }
 
-        return response()->json([
-            'blocs' => [
-                [
-                    'id' => 'ecowas',
-                    'slug' => 'ecowas',
-                    'name' => 'Economic Community of West African States (ECOWAS)',
-                    'shortName' => 'ECOWAS',
-                    'status' => 'active',
-                ],
-                [
-                    'id' => 'afcfta',
-                    'slug' => 'afcfta',
-                    'name' => 'African Continental Free Trade Area (AfCFTA)',
-                    'shortName' => 'AfCFTA',
-                    'status' => 'active',
-                ],
-                [
-                    'id' => 'eac',
-                    'slug' => 'eac',
-                    'name' => 'East African Community (EAC)',
-                    'shortName' => 'EAC',
-                    'status' => 'active',
-                ],
-                [
-                    'id' => 'sadc',
-                    'slug' => 'sadc',
-                    'name' => 'Southern African Development Community (SADC)',
-                    'shortName' => 'SADC',
-                    'status' => 'active',
-                ],
+        return collect([
+            [
+                'id' => 'ecowas',
+                'slug' => 'ecowas',
+                'name' => 'Economic Community of West African States (ECOWAS)',
+                'shortName' => 'ECOWAS',
+                'status' => 'active',
             ],
-        ], 200);
+            [
+                'id' => 'afcfta',
+                'slug' => 'afcfta',
+                'name' => 'African Continental Free Trade Area (AfCFTA)',
+                'shortName' => 'AfCFTA',
+                'status' => 'active',
+            ],
+            [
+                'id' => 'eac',
+                'slug' => 'eac',
+                'name' => 'East African Community (EAC)',
+                'shortName' => 'EAC',
+                'status' => 'active',
+            ],
+            [
+                'id' => 'sadc',
+                'slug' => 'sadc',
+                'name' => 'Southern African Development Community (SADC)',
+                'shortName' => 'SADC',
+                'status' => 'active',
+            ],
+        ]);
+    }
+
+    public function blocs()
+    {
+        return response()->json(['blocs' => $this->blocRows()->values()], 200);
+    }
+
+    public function bloc($slug)
+    {
+        $bloc = $this->blocRows()->first(
+            fn ($row) => data_get($row, 'slug') === $slug
+        );
+
+        if (! $bloc) {
+            return response()->json(['message' => 'Trade bloc not found'], 404);
+        }
+
+        return response()->json(['bloc' => $bloc], 200);
+    }
+
+    public function blocCorridors($slug)
+    {
+        $bloc = $this->blocRows()->first(
+            fn ($row) => data_get($row, 'slug') === $slug
+        );
+
+        if (! $bloc) {
+            return response()->json(['message' => 'Trade bloc not found'], 404);
+        }
+
+        $members = json_decode(data_get($bloc, 'member_countries') ?: '[]', true) ?: [];
+        $corridors = Schema::hasTable('trade_corridors')
+            ? DB::table('trade_corridors')
+                ->where('status', 'active')
+                ->get()
+                ->filter(fn ($corridor) => in_array($corridor->origin_country, $members, true)
+                    || in_array($corridor->destination_country, $members, true))
+                ->values()
+            : collect();
+
+        return response()->json(['corridors' => $corridors], 200);
     }
 
     public function corridors(Request $request)
@@ -227,6 +271,70 @@ class TradeController extends Controller
         ], 201);
     }
 
+    public function accept_quote(Request $request, $id, $quoteId)
+    {
+        if (! Schema::hasTable('trade_rfqs') || ! Schema::hasTable('trade_rfq_quotes')) {
+            return response()->json(['message' => 'RFQ tables not initialized yet.'], 503);
+        }
+
+        $rfq = DB::table('trade_rfqs')->where('id', (int) $id)->first();
+        if (! $rfq) {
+            return response()->json(['message' => 'RFQ not found.'], 404);
+        }
+
+        if (($rfq->status ?? 'open') === 'awarded') {
+            return response()->json(['message' => 'This RFQ has already been awarded.'], 422);
+        }
+
+        $quote = DB::table('trade_rfq_quotes')
+            ->where('id', (int) $quoteId)
+            ->where('trade_rfq_id', $rfq->id)
+            ->first();
+
+        if (! $quote) {
+            return response()->json(['message' => 'Quote not found for this RFQ.'], 404);
+        }
+
+        DB::transaction(function () use ($rfq, $quote) {
+            $rfqUpdate = [
+                'status' => 'awarded',
+                'updated_at' => now(),
+            ];
+            if (Schema::hasColumn('trade_rfqs', 'accepted_quote_id')) {
+                $rfqUpdate['accepted_quote_id'] = $quote->id;
+            }
+            if (Schema::hasColumn('trade_rfqs', 'awarded_at')) {
+                $rfqUpdate['awarded_at'] = now();
+            }
+
+            DB::table('trade_rfqs')->where('id', $rfq->id)->update($rfqUpdate);
+
+            if (Schema::hasColumn('trade_rfq_quotes', 'status')) {
+                DB::table('trade_rfq_quotes')
+                    ->where('trade_rfq_id', $rfq->id)
+                    ->where('id', '!=', $quote->id)
+                    ->update(['status' => 'declined', 'updated_at' => now()]);
+
+                DB::table('trade_rfq_quotes')
+                    ->where('id', $quote->id)
+                    ->update(['status' => 'accepted', 'updated_at' => now()]);
+            }
+        });
+
+        $totalContract = round((float) $quote->quoted_unit_price_ghs * (float) $rfq->quantity, 2);
+        $depositDue = round($totalContract * 0.30, 2);
+
+        return response()->json([
+            'message' => 'Quote accepted! Contract awarded with Trade Assurance protection.',
+            'rfq_id' => $rfq->id,
+            'quote_id' => $quote->id,
+            'supplier_name' => $quote->supplier_name,
+            'total_contract_ghs' => $totalContract,
+            'deposit_due_ghs' => $depositDue,
+            'trade_assurance' => (bool) ($rfq->requires_insurance ?? true),
+        ], 200);
+    }
+
     public function fx_rates()
     {
         $rates = Cache::remember('trade_fx_rates_ghs_v1', now()->addHours(6), function () {
@@ -265,7 +373,7 @@ class TradeController extends Controller
             'base' => 'GHS',
             'rates' => $rates,
             'symbols' => [
-                'GHS' => 'GH₵',
+                'GHS' => '₵',
                 'USD' => '$',
                 'NGN' => '₦',
                 'XOF' => 'CFA ',
@@ -281,36 +389,45 @@ class TradeController extends Controller
         $hub = $request->query('market_hub');
         $search = trim((string) $request->query('search', ''));
 
-        $prices = collect();
-        if (Schema::hasTable('agro_market_prices')) {
-            $query = DB::table('agro_market_prices')->where('is_active', true);
-            if ($category && $category !== 'all') {
-                $query->where('category', $category);
+        $allForFilters = \Illuminate\Support\Facades\Cache::remember(
+            'agro_market_prices_active_v1',
+            now()->addMinutes(2),
+            function () {
+                if (! Schema::hasTable('agro_market_prices')) {
+                    return collect();
+                }
+                return DB::table('agro_market_prices')
+                    ->where('is_active', true)
+                    ->orderBy('id')
+                    ->get();
             }
-            if ($hub && $hub !== 'all') {
-                $query->where('market_hub', $hub);
+        );
+
+        $prices = $allForFilters->filter(function ($row) use ($category, $hub, $search) {
+            if ($category && $category !== 'all' && ($row->category ?? '') !== $category) {
+                return false;
+            }
+            if ($hub && $hub !== 'all' && ($row->market_hub ?? '') !== $hub) {
+                return false;
             }
             if ($search !== '') {
-                $query->where(function ($q) use ($search) {
-                    $q->where('commodity', 'like', "%{$search}%")
-                      ->orWhere('market_hub', 'like', "%{$search}%")
-                      ->orWhere('source_platform', 'like', "%{$search}%");
-                });
+                $needle = mb_strtolower($search);
+                $hay = mb_strtolower(($row->commodity ?? '') . ' ' . ($row->market_hub ?? '') . ' ' . ($row->source_platform ?? ''));
+                if (! str_contains($hay, $needle)) {
+                    return false;
+                }
             }
-            $prices = $query->orderBy('id')->get();
-        }
-
-        $allForFilters = Schema::hasTable('agro_market_prices')
-            ? DB::table('agro_market_prices')->where('is_active', true)->get()
-            : collect();
+            return true;
+        });
 
         return response()->json([
             'prices' => $prices->values(),
             'categories' => $allForFilters->pluck('category')->unique()->values(),
             'hubs' => $allForFilters->pluck('market_hub')->unique()->values(),
+            'sources' => $allForFilters->pluck('source_platform')->filter()->unique()->values(),
             'currency' => 'GHS',
-            'currency_symbol' => 'GH₵',
-            'updated_at' => now()->toIso8601String(),
+            'currency_symbol' => '₵',
+            'updated_at' => $allForFilters->max('recorded_at') ?? now()->toIso8601String(),
         ], 200);
     }
 

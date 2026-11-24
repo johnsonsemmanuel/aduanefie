@@ -8,7 +8,7 @@ Aduanefie uses a modular architecture where each agricultural vertical is a self
 
 | Module | Alias | Status | Description |
 |--------|-------|--------|-------------|
-| Service | `service` | Active | Agro Services & Mechanization — verified providers offer mechanization, spraying, harvesting, irrigation, and skilled farm labor |
+| Service | `service` | Active | Agro Services & Mechanization - verified providers offer mechanization, spraying, harvesting, irrigation, and skilled farm labor |
 | Grocery | `grocery` | Active | Fresh farm produce and grocery staples |
 | Food | `food` | Active | Processed foods and value-added agricultural products |
 | Pharmacy | `pharmacy` | Active | Veterinary medicines, animal feed, fertilizers, agro-chemicals |

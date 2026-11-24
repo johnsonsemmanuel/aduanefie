@@ -136,9 +136,9 @@
                             ][$payout->status] ?? 'secondary')
                             <span class="badge badge-soft-{{ $badge }}">{{ $payout->status }}</span>
                         </td>
-                        <td>{{ $payout->requested_at?->format('Y-m-d H:i') ?? '—' }}</td>
-                        <td>{{ $payout->paid_at?->format('Y-m-d H:i') ?? '—' }}</td>
-                        <td>{{ $payout->reference ?? '—' }}</td>
+                        <td>{{ $payout->requested_at?->format('Y-m-d H:i') ?? '-' }}</td>
+                        <td>{{ $payout->paid_at?->format('Y-m-d H:i') ?? '-' }}</td>
+                        <td>{{ $payout->reference ?? '-' }}</td>
                         <td class="text-right">
                             <a href="{{ route('admin.marketer.payouts.show', $payout->id) }}" class="btn btn-sm btn--secondary">Open</a>
                         </td>
@@ -152,7 +152,7 @@
             </table>
         </div>
         <div class="page-area">
-            {!! $items->links() !!}
+            {!! $items->links('pagination::bootstrap-4') !!}
         </div>
     </div>
 </div>

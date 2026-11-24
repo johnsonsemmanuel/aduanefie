@@ -233,6 +233,13 @@ class CustomerController extends Controller
         $data['discount_amount'] = (float)data_get($discount_data, 'discount_amount');
         $data['discount_amount_type'] = data_get($discount_data, 'discount_amount_type');
         $data['validity'] = (string)data_get($discount_data, 'validity');
+        $data['pro_status'] = \Illuminate\Support\Facades\Schema::hasTable('pro_customer_subscriptions')
+            ? \Illuminate\Support\Facades\DB::table('pro_customer_subscriptions')
+                ->where('user_id', $request->user()->id)
+                ->where('status', 'active')
+                ->where('end_at', '>', now())
+                ->exists()
+            : false;
 
         unset($data['orders']);
         return response()->json($data, 200);

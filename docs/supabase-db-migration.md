@@ -1,4 +1,4 @@
-# Supabase data migration — executed and verified
+# Supabase data migration - executed and verified
 
 Date: 2026-11-11
 Status: **database + data loaded on Supabase and verified row-for-row. Laravel runs against it on staging;
@@ -19,9 +19,9 @@ Related: `docs/backend-supabase-migration-plan.md`, `docs/admin-access-verificat
 | Indexes | 215 |
 | Foreign keys | 11 (all `module_id → modules.id`) |
 | Sequences | 147, all reset to `max(id)` |
-| Extensions | `postgis` 3.3, `citext`, `pg_trgm` — all in the `extensions` schema |
+| Extensions | `postgis` 3.3, `citext`, `pg_trgm` - all in the `extensions` schema |
 | Database size | 35 MB (of the 500 MB Free-tier limit) |
-| `public` schema | **untouched** — the pre-existing 72 test tables and 83 RLS policies are still there |
+| `public` schema | **untouched** - the pre-existing 72 test tables and 83 RLS policies are still there |
 
 The live MySQL data was taken from `aduanefiemarketplace-353032377464.sql` (2026-10-30 snapshot), because
 `sdb-61.hosting.stackcp.net` does not resolve from this workstation.
@@ -62,7 +62,7 @@ host      aws-0-eu-west-1.pooler.supabase.com
 port      5432                (session pooler; 6543 is the transaction pooler)
 database  postgres
 username  aduanefie_app.rqmcqmdfmnwhjjuyfmam
-password  in soft/.env.supabase (chmod 600) — not written into this doc
+password  in soft/.env.supabase (chmod 600) - not written into this doc
 ```
 
 Role settings:
@@ -89,12 +89,12 @@ Verified as this role: read, insert, update, delete, `nextval()`, and PostGIS fu
 
 Laravel's `PostgresConnector` runs `SET search_path TO ...` as a statement after connecting (it does not
 use startup options), so it works through the pooler. `soft/config/database.php` must therefore get
-`'schema' => 'legacy,public,extensions'` — **not** `'public'` and not `'legacy'` alone, or unqualified
+`'schema' => 'legacy,public,extensions'` - **not** `'public'` and not `'legacy'` alone, or unqualified
 PostGIS function calls will fail.
 
 ## 4. Behaviour changes that affect the app
 
-### 4.1 Email lookups — fixed
+### 4.1 Email lookups - fixed
 
 MySQL compared strings case-insensitively; Postgres does not. 11 users, 3 admins and 3 stores had
 mixed-case emails, so `where('email', ...)` would have locked them (and any future user typing
@@ -110,7 +110,7 @@ same query with a bound parameter (PDO::PARAM_STR)                    → 1
 No duplicate addresses exist under `lower(email)` in any table that has a unique index, so the existing
 unique constraints remain valid.
 
-### 4.2 `LIKE` searches — fixed (option A: `citext` **plus** a grammar override)
+### 4.2 `LIKE` searches - fixed (option A: `citext` **plus** a grammar override)
 
 MySQL `LIKE` was case-insensitive; Postgres `LIKE` is case-sensitive. Measured on real data with
 `name LIKE '%A%'`:
@@ -121,7 +121,7 @@ MySQL `LIKE` was case-insensitive; Postgres `LIKE` is case-sensitive. Measured o
 | `stores` | 16 | **77** | 61 (79%) |
 | `zones` | 118 | **131** | 13 |
 
-Chosen fix: **A — convert every string column to `citext`** (no code changes). This matches the source
+Chosen fix: **A - convert every string column to `citext`** (no code changes). This matches the source
 DB, which used a case-insensitive collation for every string column. Editing ~1,772 `LIKE` call sites was
 rejected: high review cost and easy to miss one silently.
 
@@ -132,7 +132,7 @@ Result on `legacy`: all 12 `email` columns plus all 595 remaining string columns
 **`citext` alone was not enough.** Laravel 10.48's `PostgresGrammar::whereBasic()` compiles every
 `LIKE`/`ILIKE` as `"column"::text like ?` so that LIKE also works on non-text columns. That `::text`
 cast throws `citext` away, so `where('name','like',...)` stayed case-sensitive even after the column
-conversion — the exact silent-fewer-rows failure 4.2 was meant to remove. Verified directly:
+conversion - the exact silent-fewer-rows failure 4.2 was meant to remove. Verified directly:
 
 ```
 DB::table('zones')->where('name','like','%A%')->toSql()
@@ -140,7 +140,7 @@ DB::table('zones')->where('name','like','%A%')->toSql()
 ```
 
 Fix: `app/Database/PostgresGrammar.php` compiles the same clauses as
-`"column"::text::citext like ?` — `text` keeps the any-column-type behaviour, `citext` restores the
+`"column"::text::citext like ?` - `text` keeps the any-column-type behaviour, `citext` restores the
 case-insensitive match. It is installed by `app/Database/PostgresConnection.php` via
 `Connection::resolverFor('pgsql', ...)` in `AppServiceProvider::register()`, so every pgsql connection
 picks it up lazily. **MySQL is untouched**: it keeps `Illuminate\Database\Query\Grammars\MySqlGrammar`
@@ -160,9 +160,9 @@ Same on Supabase staging (131/131, 315/315, 77). API payload parity for `?name=a
 `/api/v1/stores/search?name=a` returns 15 stores on both drivers.
 
 These columns are now text-affinity, so raw SQL that did numeric/spatial work on
-`stores.latitude/longitude` needs explicit casts (done — see 4.3).
+`stores.latitude/longitude` needs explicit casts (done - see 4.3).
 
-### 4.3 MySQL-only SQL — fixed (driver-aware branches)
+### 4.3 MySQL-only SQL - fixed (driver-aware branches)
 
 Production stays on MySQL until the port is proven, so nothing was rewritten into Postgres-only SQL.
 Each site keeps the original MySQL expression byte-identical and adds a `pgsql` branch, selected by
@@ -213,7 +213,7 @@ join the update (lock was stale at v6.4.0 while root required `^7.0`) and was th
 ### 4.4 Known failures that were **not** caused by the port
 
 These 6 routes failed identically on MySQL and Postgres, so they were pre-existing code/view drift, not
-Postgres regressions. **Fixed on MySQL in `82edbae`** — see `docs/six-failing-routes-fix.md` for the
+Postgres regressions. **Fixed on MySQL in `82edbae`** - see `docs/six-failing-routes-fix.md` for the
 cause, the change and the 18-check HTTP verification. The table is kept as the original finding.
 
 | Route | Failure (before the fix) |
@@ -231,7 +231,7 @@ cause, the change and the 18-check HTTP verification. The table is kept as the o
   PostGIS now raises a notice and may error on `ST_Contains`/`ST_Intersects` against this zone.
   Candidate fix: `ST_MakeValid(coordinates)` for that row, or leave it if Ahafo is not used for
   delivery-boundary checks.
-- `contacts` contains 91 duplicate email addresses (case-insensitive). Harmless — no unique index there.
+- `contacts` contains 91 duplicate email addresses (case-insensitive). Harmless - no unique index there.
 - `users.email` has **no unique index** on MySQL either, so duplicate signups were already possible.
   Not introduced by the migration; worth fixing separately.
 
@@ -244,7 +244,7 @@ cause, the change and the 18-check HTTP verification. The table is kept as the o
   order or wallet transaction.
 - **Code is only verified, not deployed.** `soft/.env` is still `sqlite`; the live server still uses
   MySQL. Staging is selected per-run with `ENVFILE=.env.staging`.
-- **The 6 failing routes in 4.4 are still broken** — identically on MySQL, so they are code/view drift in
+- **The 6 failing routes in 4.4 are still broken** - identically on MySQL, so they are code/view drift in
   the current snapshot, not a migration defect. They need their own fix pass.
 - **All changes are uncommitted working-tree edits.** The workspace root is not a git repository, so
   there is no diff to review or roll back with git.
@@ -252,8 +252,8 @@ cause, the change and the 18-check HTTP verification. The table is kept as the o
 ## 7. Next steps (in order)
 
 1. ~~Point a staging copy of the Laravel app at Supabase and run the admin/vendor/API suites.~~
-   Done — see 4.3/4.4.
-2. ~~Decide and apply the `LIKE`/`citext` option (4.2).~~ Done — `citext` + `PostgresGrammar` override.
+   Done - see 4.3/4.4.
+2. ~~Decide and apply the `LIKE`/`citext` option (4.2).~~ Done - `citext` + `PostgresGrammar` override.
 3. ~~Replace MySQL-only SQL (4.3).~~ Done.
 4. Move media to Cloudflare R2 (needs the R2 credentials), then re-test image upload/display on staging.
 5. Deploy Laravel to a container host in eu-west-1 (same region as the DB) and switch DNS.
