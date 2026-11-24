@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { setConfigData, setLandingPageData } from "redux/slices/configData";
 import Router from "next/router";
 import SEO from "../src/components/seo";
+import DynamicFavicon from "../src/components/favicon/DynamicFavicon";
 import useGetLandingPage from "../src/api-manage/hooks/react-query/useGetLandingPage";
 import { RTL } from "components/rtl";
 import { checkMaintenanceMode } from "../src/utils/serverSidePropsHelper";
@@ -41,7 +42,7 @@ const Welcome = (props) => {
   return (
     <>
       <CssBaseline />
-      {/* <DynamicFavicon configData={configData} /> */}
+      <DynamicFavicon configData={configData} />
       <SEO
         image={landingPageData?.meta_image || configData?.fav_icon_full_url}
         businessName={configData?.business_name}
