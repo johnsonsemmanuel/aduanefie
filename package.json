@@ -17,21 +17,6 @@
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:report": "playwright show-report"
   },
-    "test": "echo \"No frontend tests - placeholder\""
-
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start -p 3006",
-    "lint": "next lint",
-    "i18n:scan": "node i18n-scan.js",
-    "i18n:watch": "node i18n-watch.js",
-    "type-check": "tsc --noEmit",
-    "type-check:watch": "tsc --noEmit --watch",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:headed": "playwright test --headed",
-    "test:e2e:report": "playwright show-report"
-  },
   "dependencies": {
     "@emotion/cache": "^11.10.5",
     "@emotion/react": "^11.10.5",
@@ -107,7 +92,7 @@
     "@types/react-transition-group": "^4.4.12",
     "chokidar": "^5.0.0",
     "prettier": "2.8.0",
-    "typescript": "5.8.2"
+    "typescript": "^5.8.2"
   },
   "resolutions": {
     "@swc/helpers": "^0.5.0",

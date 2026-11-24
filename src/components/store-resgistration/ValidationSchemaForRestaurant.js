@@ -45,7 +45,7 @@ const ValidationSchemaForRestaurant = () => {
 		lat: Yup.string().required(t("Latitude is required")),
 		lng: Yup.string().required(t("Longitude is required")),
 		logo: Yup.mixed()
-			.required()
+			.nullable()
 			.test(
 				"fileSize",
 				"file too large",
@@ -57,7 +57,7 @@ const ValidationSchemaForRestaurant = () => {
 				(value) => value && IMAGE_SUPPORTED_FORMATS.includes(value.type)
 			),
 		cover_photo: Yup.mixed()
-			.required()
+			.nullable()
 			.test(
 				"fileSize",
 				"file too large",
