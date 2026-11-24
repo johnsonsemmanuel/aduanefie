@@ -3,7 +3,6 @@ import {
   Alert,
   Box,
   Button,
-  Chip,
   CssBaseline,
   Grid,
   MenuItem,
@@ -27,6 +26,9 @@ import {
   getMarketProfile,
   normalizeCountry,
 } from "utils/marketProfiles";
+
+// The server enforces the same limit before it issues a manual-entry token.
+const MAX_VERIFICATION_ATTEMPTS = 3;
 
 const GHANA_REGIONS = [
   "Greater Accra",
@@ -65,7 +67,12 @@ const BecomeAMarketerPage = ({ configData }) => {
 
   const [submitting, setSubmitting] = useState(false);
   const [verifyingPayout, setVerifyingPayout] = useState(false);
-  const [verifiedAccountName, setVerifiedAccountName] = useState("");
+  const [verification, setVerification] = useState({
+    token: "",
+    name: "",
+    attempts: 0,
+    manualAllowed: false,
+  });
   const [submittedMsg, setSubmittedMsg] = useState("");
   const [form, setForm] = useState({
     country: normalizeCountry(effectiveConfig?.country) || "GH",
@@ -88,6 +95,7 @@ const BecomeAMarketerPage = ({ configData }) => {
 
   const handleCountryChange = (country) => {
     const profile = getMarketProfile(country);
+    setVerification({ token: "", name: "", attempts: 0, manualAllowed: false });
     setForm((current) => ({
       ...current,
       country,
@@ -104,24 +112,40 @@ const BecomeAMarketerPage = ({ configData }) => {
       return;
     }
     setVerifyingPayout(true);
-    setVerifiedAccountName("");
     try {
       const { data } = await MainApi.post("/api/v1/marketer-applications/verify-payout", {
         account_number: cleanPhone,
         momo_network: form.momo_network || "MTN",
       });
-      if (data?.verified && data?.account_name) {
-        setVerifiedAccountName(data.account_name);
-        setForm((prev) => ({
-          ...prev,
-          full_name: data.account_name,
-        }));
-        toast.success(`Verified via Paystack: ${data.account_name}`);
+      const name = data?.account_name;
+      if (data?.verified && name && data?.token) {
+        setVerification({
+          token: data.token,
+          name,
+          attempts: Number(data.attempts || 0),
+          manualAllowed: false,
+        });
+        setForm((prev) => ({ ...prev, full_name: name }));
+        toast.success(`Account verified: ${name}`);
       } else {
         toast.error(data?.message || "Could not verify this number.");
       }
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Could not verify number via Paystack.");
+      const response = err?.response?.data || {};
+      const attempts = Number(response.attempts || 0);
+      const manualAllowed = Boolean(response.manual_allowed);
+      const token = response.token || "";
+      setVerification((prev) => ({
+        ...prev,
+        attempts,
+        manualAllowed,
+        token: token || prev.token,
+      }));
+      if (manualAllowed && token) {
+        toast.error("Verification was not successful after 3 attempts. You can now enter your name manually.");
+      } else {
+        toast.error(response.message || "Could not verify this number.");
+      }
     } finally {
       setVerifyingPayout(false);
     }
@@ -129,21 +153,41 @@ const BecomeAMarketerPage = ({ configData }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.full_name.trim() || !form.email.trim() || !form.phone.trim()) {
-      toast.error("Please fill in your name, email, and phone number.");
+    if (!verification.token) {
+      toast.error("Verify your mobile money number before applying.");
       return;
     }
+    if (verification.manualAllowed && !form.full_name.trim()) {
+      toast.error("Enter your name to continue.");
+      return;
+    }
+    if (!form.email.trim()) {
+      toast.error("Enter your email address.");
+      return;
+    }
+
     setSubmitting(true);
     setSubmittedMsg("");
     try {
-      const { data } = await MainApi.post("/api/v1/marketer-applications", {
-        ...form,
+      // The name and payout number are server-owned from the verification
+      // proof. Only a manually unlocked name is sent by the browser.
+      const payload = {
         country: form.country,
         country_code: form.country,
-      });
+        email: form.email.trim(),
+        region: form.region,
+        district: form.district,
+        momo_network: form.momo_network,
+        experience_notes: form.experience_notes,
+        verification_token: verification.token,
+      };
+      if (verification.manualAllowed) payload.full_name = form.full_name.trim();
+
+      const { data } = await MainApi.post("/api/v1/marketer-applications", payload);
       const msg = data?.message || "Application submitted!";
       setSubmittedMsg(msg);
       toast.success(msg);
+      setVerification({ token: "", name: "", attempts: 0, manualAllowed: false });
       setForm({
         country: form.country,
         full_name: "",
@@ -201,11 +245,11 @@ const BecomeAMarketerPage = ({ configData }) => {
                     Partner Application
                   </Typography>
                   <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 2 }}>
-                    Verify your MoMo number via Paystack to confirm your name, then submit your details.
+                    Verify your MoMo number to confirm your name, then submit your details.
                   </Typography>
 
                   {submittedMsg && (
-                    <Alert severity="success" sx={{ mb: 2 }}>
+                    <Alert severity="info" sx={{ mb: 2 }}>
                       {submittedMsg}
                     </Alert>
                   )}
@@ -228,13 +272,24 @@ const BecomeAMarketerPage = ({ configData }) => {
                         ))}
                       </TextField>
                       <TextField
-                        required
+                        required={verification.manualAllowed}
                         fullWidth
                         size="small"
-                        label="Full Name"
+                        label={verification.manualAllowed ? "Full Name (entered manually)" : "Full Name (from verification)"}
+                        disabled={!verification.manualAllowed}
+                        helperText={
+                          verification.manualAllowed
+                            ? "Enter your name; the number you verified is still used for payout."
+                            : "Verify your number above to confirm this automatically."
+                        }
                         value={form.full_name}
                         onChange={(e) => setForm({ ...form, full_name: e.target.value })}
                       />
+                      {verification.manualAllowed && (
+                        <Alert severity="info" sx={{ mb: 1 }}>
+                          Verification was not successful after {MAX_VERIFICATION_ATTEMPTS} attempts. You can now enter your name manually.
+                        </Alert>
+                      )}
                       <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
                         <TextField
                           required
@@ -253,25 +308,25 @@ const BecomeAMarketerPage = ({ configData }) => {
                             label="Phone Number (MoMo / SMS)"
                             placeholder={phoneExample}
                             helperText={
-                              verifiedAccountName
-                                ? `Paystack verified: ${verifiedAccountName}`
-                                : `${phoneDialCode} mobile number`
+                              verification.name
+                                ? `Account verified: ${verification.name}`
+                                : verification.attempts > 0 && !verification.manualAllowed
+                                  ? `${MAX_VERIFICATION_ATTEMPTS - verification.attempts} verification attempt(s) remaining.`
+                                  : `${phoneDialCode} mobile number`
                             }
+                            disabled={Boolean(verification.token)}
                             value={form.phone}
-                            onChange={(e) => {
-                              setVerifiedAccountName("");
-                              setForm({ ...form, phone: e.target.value });
-                            }}
+                            onChange={(e) => setForm({ ...form, phone: e.target.value })}
                           />
                           <Button
                             type="button"
                             variant="outlined"
                             size="small"
-                            disabled={verifyingPayout || form.phone.trim().length < 9}
+                            disabled={verifyingPayout || Boolean(verification.token) || form.phone.trim().length < 9}
                             onClick={handleVerifyPhoneName}
                             sx={{ whiteSpace: "nowrap", height: "40px", flexShrink: 0 }}
                           >
-                            {verifyingPayout ? "Verifying..." : "Verify Name"}
+                            {verifyingPayout ? "Verifying..." : verification.token ? "Verified" : "Verify Account"}
                           </Button>
                         </Stack>
                       </Stack>
@@ -315,6 +370,7 @@ const BecomeAMarketerPage = ({ configData }) => {
                         fullWidth
                         size="small"
                         label="Preferred Payout Network"
+                        disabled={Boolean(verification.token)}
                         value={form.momo_network}
                         onChange={(e) => setForm({ ...form, momo_network: e.target.value })}
                       >
@@ -338,7 +394,7 @@ const BecomeAMarketerPage = ({ configData }) => {
                         type="submit"
                         fullWidth
                         variant="contained"
-                        disabled={submitting}
+                        disabled={submitting || !verification.token}
                         sx={{ py: 1.1, fontWeight: 700, borderRadius: "10px" }}
                       >
                         {submitting ? "Submitting..." : "Submit Application"}
