@@ -1,12 +1,12 @@
 # Aduanefie — Phase 3 Commercial Readiness Tracker
 
-Last updated: 2026-11-25T11:02Z
+Last updated: 2026-11-25T15:05Z
 Repositories:
 - **Frontend**: `https://github.com/johnsonsemmanuel/aduanefie.git`
-  - **Deployed `origin/main`**: `1d4a83e0c0d12851deaf606023050b957f6b2e01` (Vercel `aduanefie-production` `dpl_w1LvZykh6ULGbsVoiEprLVC69CeQ`, **Ready**)
+  - **Deployed `origin/main`**: `7495c0e51116ede7d9b29293d4af1273d5d183cd` (Vercel `aduanefie-production` `dpl_w1LvZykh6ULGbsVoiEprLVC69CeQ`, **Ready**)
   - **Next staged local commits** (awaiting push approval): Edge `/coming-soon` preview-access gate + `FloatingCartButton` persisted-cart `#418` fix + tracker update
 - **Backend**: `https://github.com/johnsonsemmanuel/aduanefie-backend.git`
-  - **Deployed `backend/main`**: `d80a57c53bd438db7ff04463bc9c50b1727715fa` (GitHub Actions Backend CI `✓` 1m 10s; Railway `https://api.aduanefie.com` **Live**)
+  - **Deployed `backend/main`**: `74ebd7de099ebbf4905cfc4a63fa0646c1f76dae` (GitHub Actions Backend CI `✓` 1m 10s; Railway `https://api.aduanefie.com` **Live**)
   - **Next staged local commit** (awaiting push approval): `07394c3f` (`EnsurePreviewAccess` + `PreviewAccessService` HMAC API gate preserving payment callbacks & webhooks; **51/51 tests, 3,034 assertions**)
 
 ---
@@ -35,7 +35,7 @@ Repositories:
 
 | ID | Priority | Batch | Requirement | Implementation Status | Test Status | Deployment Status | Verification Status | Key Files & Commits | Remaining Limitations / Blockers |
 |---|---|---|---|---|---|---|---|---|---|
-| **P3-01** | P0 | Batch A | Payment idempotency & post-commit notification safety | `Implemented` | `Verified` (13/13 tests) | `d80a57c5` **Deployed** | `Verified` | `PaystackController`, `FlutterwaveV3Controller`, `StripePaymentController`, `Processor`, `app/helpers.php` | At-most-once in-process mail/push after commit |
+| **P3-01** | P0 | Batch A | Payment idempotency & post-commit notification safety | `Implemented` | `Verified` (13/13 tests) | `74ebd7de` **Deployed** | `In progress` | `PaystackController`, `FlutterwaveV3Controller`, `StripePaymentController`, `Processor`, `app/helpers.php` | **Open Defect**: Paystack callback GET returns HTTP 500 without transaction reference; Flutterwave callback GET correctly redirects to failure. |
 | **P3-02** | P0 | Batch A | Marketer bounty abuse prevention & store reinstatement | `Implemented` | `Verified` (5/5 tests) | `d80a57c5` **Deployed** | `Verified` | `MarketerCommissionService`, `config/marketer.php` | Optional read-only `auditPrematureBounties()` check on prod DB |
 | **P3-03** | P0 | Batch A | **Retail delivery serviceability restrictions** | `Implemented` (`OrderController` excludes Module 2 domestic wholesale) | `Verified` (5 config states + wholesale separation) | Code deployed (`d80a57c5`); **INACTIVE in production** (`BusinessSetting` untouched) | **`Awaiting business approval` (NOT Ready)** | `OrderController.php`, [RETAIL_DELIVERY_ZONE_SHORTLIST.md](file:///home/emmanuel-johnson-excellent/Documents/Esper%20Partner%20Works/Aduanefie%20Live/docs/RETAIL_DELIVERY_ZONE_SHORTLIST.md) | **Operational Blocker**: Approve `retail_delivery_zone_ids` and `max_retail_delivery_distance_km` from the 132-zone shortlist |
 | **P3-04** | P0 | Batch A/B | Farmer registration optional cover photo & nullable tax fallback | `Implemented` | `Verified` (3/3 tests + live `/store-registration` CSP/Maps check) | `1d4a83e0` + `d80a57c5` **Deployed** | `Verified` | `ValidationSchemaForRestaurant.js`, `VendorLoginController`, `MarketerPortalController` | Complete (non-destructive) |
@@ -43,9 +43,25 @@ Repositories:
 | **P3-06** | P1 | Batch B | Marketer data isolation | `Implemented` | `Verified` | `9b50494c` **Deployed** | `Verified` | `resources/views/marketer/_nav.blade.php`, `MarketerPortalController` | Complete |
 | **P3-07** | P1 | Batch B | Missing logo & `/` navbar consistency + Redux deduplication | `Implemented` | `Verified` (live browser across `/`, `/trade`, `/store-registration`, client nav) | `1d4a83e0` **Deployed** | `Verified` | `pages/_app.js`, `MainLayout.js`, `HeaderComponent`, `FooterComponent`, `LogoSide` | Complete |
 | **P3-08 (C1)** | P1 | Batch C | Personalised products API HTTP 500 (`/api/v1/items/for-you`) | `Implemented` (`7f130406`) | `Verified` (`ForYouItemsTest` 3/3) | `d80a57c5` **Deployed** | **`Verified` (live `HTTP 200` on `zoneId=[3]` & browser)** | `ItemController.php`, `app/CentralLogics/helpers.php` | Complete |
-| **P3-09 (C2)** | P1 | Batch C | React hydration errors (`#418` on mobile & desktop) | `Implemented` (`93d0b7bf`, `9d744bb3` + `FloatingCartButton.jsx` fix) | `Verified` (0 errors on `/trade`, `/store-registration`, empty-cart `/`; persisted-cart `FloatingCartButton` fix built & type-checked) | `1d4a83e0` deployed; `FloatingCartButton` fix staged locally | `In progress` (awaiting push of `FloatingCartButton` fix) | `HomePageComponents.js`, `MainLayout.js`, `src/theme/*`, `FloatingCartButton.jsx` | Deploy `FloatingCartButton.jsx` `hasMounted` fix |
+| **P3-09 (C2)** | P1 | Batch C | React hydration errors (`#418` on mobile & desktop) | `Implemented` (`93d0b7bf`, `9d744bb3`, `f6d95aa4`, `7495c0e5`) | `Verified` (0 errors on `/trade`, `/store-registration`, empty-cart `/`; persisted cart `FloatingCartButton` and `ItemCheckout` hook ordering verified) | `7495c0e5` **Deployed** | `Verified` | `HomePageComponents.js`, `MainLayout.js`, `FloatingCartButton.jsx`, `item-checkout/index.js` | Complete |
 | **P3-10 (C3)** | P1 | Batch C | Centralised `BusinessSetting` feature management & footer | `Implemented` (`1139d603`, `ef33f2ed`, `54814574`, `9d744bb3`) | `Verified` | `d80a57c5` + `1d4a83e0` **Deployed** | **`Verified` (live API & `/trade` browser)** | `FeatureFlagService.php`, `ConfigController.php`, `src/utils/featureFlags.js`, `FooterMiddle.js`, `TradeRfqSection.js` | Complete |
 | **P3-11 (C4)** | P1 | Batch C | **RFQ lifecycle, privacy & fulfilment gap protection** | `Implemented` (`993d2e3c`, `ef33f2ed`) | `Verified` (`FeatureManagementAndRfqLifecycleTest` 3/3) | `d80a57c5` + `1d4a83e0` **Deployed** (`allow_new_transactions = false`) | **`Blocked` (NOT Ready — fulfilment workflow gap; restrictions `Verified` live `403`)** | `TradeController.php`, `Admin/TradeRfqController.php`, `TradeRfqSection.js` | **Operational Blocker**: Awarded quotes do not yet create `orders` or `payment_requests`/escrow; new commitments remain safely disabled |
 | **P3-12** | P1 | Batch D | Auth defects, rider branding & shared dashboard consistency | `Implemented` | `Verified` | `8506c717` **Deployed** | `Verified` | Backend `bd55799e..8506c717` | Complete |
 | **P3-13** | P0 | Batch A/D | End-to-end commercial workflow automated tests | `Implemented` (`d80a57c5`) | `Verified` (`51/51` backend tests, `3,034` assertions) | `d80a57c5` **Deployed** | `Verified` | `CommercialWorkflowLifecycleTest.php` | Complete |
-| **P3-14** | P0 | Security | **Server & Edge Private Preview Access Gate** (keep site & API closed to public while preserving payment/SMS callbacks) | `Implemented` (backend `07394c3f` + frontend `/coming-soon` Edge gate) | `Verified` (`PreviewAccessGateTest` passed; `tsc` + `next build` passed) | Staged locally (awaiting push approval) | `Implemented` | `PreviewAccessService.php`, `EnsurePreviewAccess.php`, `WaitlistController.php`, `config/portals.php`, `pages/coming-soon.js`, `middleware.js`, `ComingSoonGate.js`, `MainApi.js` | Deploy **Frontend first, then Backend `07394c3f`** upon approval (existing preview testers will re-enter Owner Access code once to mint 30-day HMAC token) |
+| **P3-14** | P0 | Security | **Server & Edge Private Preview Access Gate** (keep site & API closed to public while preserving payment/SMS callbacks) | `Implemented` (`07394c3f`, `068a1ae6`, `a8684631`, `dbb65713`) | `Verified` (Live Edge 307 redirect, 403 on forged/expired passes, backend HMAC verified live, cookie security flags verified) | `74ebd7de` + `7495c0e5` **Deployed** | `Verified` | `PreviewAccessService.php`, `EnsurePreviewAccess.php`, `WaitlistController.php`, `pages/coming-soon.js`, `middleware.js`, `previewEdgePass.js`, `pages/api/preview-session.js` | Complete |
+
+
+---
+
+## Unresolved Items & Operational Tracker Notes (2026-11-25)
+
+1. **Paystack Callback GET Handler (HTTP 500)**:
+   - When hitting `GET /payment/paystack/callback` without gateway query params (e.g. `reference`), the handler throws an unhandled server error instead of gracefully redirecting to `/payment-fail` (unlike Flutterwave which returns HTTP 302). Tracked as an open defect for the next backend maintenance batch.
+2. **Token Expiry & Revocation Evidence**:
+   - `DELETE /api/preview-session` sets `Max-Age=0` on the `aduanefie_edge_pass` cookie, ensuring the browser discards its signed Edge pass. Note: client-side cookie deletion alone does not constitute cryptographic server revocation of HMAC preview tokens before expiry. Full token revocation requires rotating `PREVIEW_ACCESS_SECRET` on the backend (which invalidates all minted HMAC tokens) or rotating `PREVIEW_EDGE_SECRET` on Vercel.
+3. **Dependency Vulnerability Triage (Carried Forward)**:
+   - 28 vulnerabilities reported by `npm audit` (1 critical in `next`, 10 high, 17 moderate).
+   - Critical Next.js advisory relates to Server Actions / Image Optimizer edge caching. Aduanefie does not use Next.js Server Actions or unwhitelisted remote image patterns.
+   - Pinned dependencies are retained; blanket `npm audit fix --force` is strictly avoided to prevent breaking React 19 / Next 15 component bindings.
+4. **Unused Homepage Imports Cleaned**:
+   - Removed dead imports (`TradeCtaBanner`, `AgroPriceTickerBar`, `TopBanner`, `ModuleSearchBanner`) in `HomePageComponents.js` to ensure clean bundle tree-shaking. No unsubstantiated bundle-size reduction claims made.
