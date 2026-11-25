@@ -51,17 +51,25 @@ const FooterMiddle = ({ configData, landingPageData }) => {
       landingPageData?.user_app_download_section?.download_user_app_links?.playstore_url_status,
   };
 
-  const marketLinks = configData?.footer_links?.markets || [
+  const rawMarketLinks = configData?.footer_links?.markets || [
     { label: "Browse Farms", href: "/store/popular", active: true },
     { label: "Track Order", href: "/track-order", active: true },
   ];
+  const marketLinks = rawMarketLinks.filter((link) => {
+    if (link?.active === false) return false;
+    if (link?.feature && configData?.feature_flags?.[link.feature]?.public_visible === false) {
+      return false;
+    }
+    return true;
+  });
 
-  const partnerLinks = configData?.footer_links?.partners || [
+  const rawPartnerLinks = configData?.footer_links?.partners || [
     { label: "Register Your Farm", href: "/store-registration", active: true, key: "restaurant_owner" },
     { label: "Logistics Partner", href: "/deliveryman-registration", active: true, key: "delivery_man" },
     { label: "About Us", href: "/about-us", active: true },
     { label: "Help & Support", href: "/help-and-support", active: true },
   ];
+  const partnerLinks = rawPartnerLinks.filter((link) => link?.active !== false);
 
   return (
     <Box sx={{ width: "100%", maxWidth: "1312px", mx: "auto", px: 0 }}>

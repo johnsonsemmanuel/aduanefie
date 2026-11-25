@@ -1,5 +1,7 @@
 import { useQuery } from "react-query";
+import { useSelector } from "react-redux";
 import MainApi from "api-manage/MainApi";
+import { isBackgroundQueryEnabled } from "utils/featureFlags";
 
 const fetchAgroPrices = async ({ category = "all", marketHub = "all", search = "" } = {}) => {
   const params = new URLSearchParams();
@@ -11,12 +13,21 @@ const fetchAgroPrices = async ({ category = "all", marketHub = "all", search = "
   return data;
 };
 
-export const useGetAgroPrices = ({ category = "all", marketHub = "all", search = "", enabled = (process.env.NEXT_PUBLIC_ENABLE_AGRO === 'true') } = {}) => {
+export const useGetAgroPrices = ({ category = "all", marketHub = "all", search = "", enabled } = {}) => {
+  const configData = useSelector((state) => state.configData?.configData);
+  const effectiveEnabled =
+    typeof enabled === "boolean"
+      ? enabled
+      : isBackgroundQueryEnabled(
+          configData,
+          "agro_prices",
+          process.env.NEXT_PUBLIC_ENABLE_AGRO === "true"
+        );
   return useQuery(
     ["ghana-agro-prices", category, marketHub, search],
     () => fetchAgroPrices({ category, marketHub, search }),
     {
-      enabled,
+      enabled: effectiveEnabled,
       staleTime: 5 * 60 * 1000,
     }
   );
