@@ -9,8 +9,6 @@ import CashBackPopup from "components/cash-back-popup/CashBackPopup";
 import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { getModuleId } from "helper-functions/getModuleId";
 import { WHOLESALE_MODULE_ID } from "components/trade/tradeData";
-import TradeCtaBanner from "./TradeCtaBanner";
-import AgroPriceTickerBar from "./AgroPriceTickerBar";
 import { getGuestId, getToken } from "helper-functions/getToken";
 import { ModuleTypes } from "helper-functions/moduleTypes";
 import { t } from "i18next";
@@ -62,8 +60,6 @@ import {
   getDigitalMethodFromZone,
   handleFailedOrderPlace,
 } from "utils/CustomFunctions";
-import TopBanner from "./top-banner";
-import ModuleSearchBanner from "./module-wise-components/shared/ModuleSearchBanner";
 import RideShareModuleLandingPage from "./module-wise-components/rideShare";
 import PickedForYouSection from "./for-you/PickedForYouSection";
 

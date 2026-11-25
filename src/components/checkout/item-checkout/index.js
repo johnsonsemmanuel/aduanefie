@@ -193,6 +193,16 @@ const ItemCheckout = (props) => {
   };
   const [dDistance, setDDistance] = useState(null);
   const token = getToken();
+  const userOnSuccessHandler = (res) => {};
+  const { isLoading: customerLoading, data: customerData } = useQuery(
+    ["profile-info", token],
+    ProfileApi.profileInfo,
+    {
+      enabled: !!token,
+      onSuccess: userOnSuccessHandler,
+      onError: onSingleErrorResponse,
+    },
+  );
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const guest_id = getGuestId();
@@ -524,16 +534,7 @@ const ItemCheckout = (props) => {
     "order-place",
     OrderApi.placeOrder,
   );
-  const userOnSuccessHandler = (res) => {};
-  const { isLoading: customerLoading, data: customerData } = useQuery(
-    ["profile-info", token],
-    ProfileApi.profileInfo,
-    {
-      enabled: !!token,
-      onSuccess: userOnSuccessHandler,
-      onError: onSingleErrorResponse,
-    },
-  );
+
 
   useEffect(() => {
     const currentLatLng = JSON.parse(localStorage.getItem("currentLatLng"));
