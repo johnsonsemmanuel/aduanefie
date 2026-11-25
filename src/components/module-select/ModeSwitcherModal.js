@@ -25,10 +25,10 @@ const getShortHint = (mod) => {
   const type = mod?.module_type;
 
   if (String(mod?.id) === String(WHOLESALE_MODULE_ID) || name.includes("wholesale")) {
-    return { tag: "B2B", hint: "Bulk produce & cross-border lots" };
+    return { tag: "Buy in bulk", hint: "Bulk produce & wholesale lots" };
   }
   if (name.includes("nearby") || name.includes("food market") || type === "grocery") {
-    return { tag: "Local", hint: "Fresh food from nearby vendors" };
+    return { tag: "Shop nearby", hint: "Fresh food from nearby vendors" };
   }
   return { tag: null, hint: null };
 };

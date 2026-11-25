@@ -1,4 +1,4 @@
-import { Button, IconButton, Skeleton, Tooltip, Typography, useTheme } from "@mui/material";
+import { Button, Chip, IconButton, Skeleton, Tooltip, Typography, useTheme } from "@mui/material";
 import ShareRoundedIcon from "@mui/icons-material/ShareRounded";
 import { recordRecentlyViewed } from "utils/recentlyViewed";
 import { computePricePerKg, getPostHarvestTip } from "utils/agroGuidance";

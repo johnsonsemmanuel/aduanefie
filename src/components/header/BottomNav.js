@@ -23,11 +23,10 @@ const NAV_ITEMS = [
     path: "/",
   },
   {
-    key: "nearby",
-    label: "Nearby",
-    icon: "fi fi-rr-marker",
-    path: "/home/nearby",
-    keepModuleQuery: true,
+    key: "shop",
+    label: "Shop",
+    icon: "fi fi-rr-shop",
+    openShop: true,
   },
   {
     key: "orders",
@@ -44,6 +43,27 @@ const NAV_ITEMS = [
   },
 ];
 
+const VALID_SHOP_MODULES = new Set(["1", "2"]);
+const VALID_SHOP_SECTIONS = new Set([
+  "nearby",
+  "offers",
+  "top-rated",
+  "free-delivery",
+  "discounted",
+  "verified-seller",
+]);
+
+const normalizeShopModuleId = (val) => {
+  if (val == null) return null;
+  const raw = Array.isArray(val) ? val[0] : val;
+  if (typeof raw === "object" && raw !== null) {
+    if (raw.id != null) return normalizeShopModuleId(raw.id);
+    return null;
+  }
+  const s = String(raw).trim();
+  return VALID_SHOP_MODULES.has(s) ? s : null;
+};
+
 const BottomNav = () => {
   const router = useRouter();
   const theme = useTheme();
@@ -56,30 +76,79 @@ const BottomNav = () => {
   const [authOpen, setAuthOpen] = useState(false);
   const [modalFor, setModalFor] = useState("sign-in");
 
-  const isNearbyRoute = () => {
-    const asPath = router.asPath.split(/[?#]/)[0];
-    if (router.pathname === "/home/nearby" || asPath === "/home/nearby") {
+  const isShopRoute = () => {
+    const asPath = (router.asPath || "").split(/[?#]/)[0];
+    const pathname = router.pathname || "";
+
+    // Explicit non-catalogue destinations must never highlight Shop
+    if (
+      pathname === "/" ||
+      asPath === "/" ||
+      pathname === "/home/wishlist" ||
+      asPath === "/home/wishlist" ||
+      pathname.startsWith("/profile") ||
+      pathname.startsWith("/order") ||
+      pathname.startsWith("/checkout") ||
+      pathname.startsWith("/chat") ||
+      pathname.startsWith("/help-and-support") ||
+      pathname.startsWith("/about-us") ||
+      pathname.startsWith("/privacy-policy") ||
+      pathname.startsWith("/terms-and-conditions")
+    ) {
+      return false;
+    }
+
+    // Main catalog storefront
+    if (pathname === "/home" || asPath === "/home") {
       return true;
     }
-    const slug = router.query?.slug;
-    const firstSegment = Array.isArray(slug) ? slug[0] : slug;
-    return (
-      router.pathname === "/home/[...slug]" && firstSegment === "nearby"
-    );
+
+    // Legacy direct nearby route
+    if (pathname === "/home/nearby" || asPath === "/home/nearby") {
+      return true;
+    }
+
+    // Category catalogue browse
+    if (
+      pathname.startsWith("/home/category") ||
+      asPath.startsWith("/home/category")
+    ) {
+      return true;
+    }
+
+    // Catalogue search
+    if (pathname === "/search" || asPath === "/search") {
+      return true;
+    }
+
+    // Stores catalogue listing
+    if (
+      pathname.startsWith("/store") ||
+      asPath.startsWith("/store") ||
+      pathname.startsWith("/all-stores") ||
+      asPath.startsWith("/all-stores")
+    ) {
+      return true;
+    }
+
+    // Narrow catch-all /home/[...slug] strictly to verified catalogue sections
+    if (pathname === "/home/[...slug]") {
+      const slug = router.query?.slug;
+      const firstSegment = Array.isArray(slug) ? slug[0] : slug;
+      return (
+        typeof firstSegment === "string" && VALID_SHOP_SECTIONS.has(firstSegment)
+      );
+    }
+
+    return false;
   };
 
   const isActive = (item) => {
     if (item.key === "home") {
-      return (
-        router.pathname === "/" ||
-        router.pathname === "/home" ||
-        (router.pathname.startsWith("/home/") &&
-          router.pathname !== "/home/wishlist" &&
-          !isNearbyRoute())
-      );
+      return router.pathname === "/";
     }
-    if (item.key === "nearby") {
-      return isNearbyRoute();
+    if (item.key === "shop") {
+      return isShopRoute();
     }
     if (item.openWishlist) {
       return router.pathname === "/home/wishlist";
@@ -104,6 +173,27 @@ const BottomNav = () => {
   };
 
   const handleClick = (item) => {
+    if (item.openShop) {
+      const queryShopModule = normalizeShopModuleId(router.query?.module);
+      const selectedShopModule =
+        normalizeShopModuleId(selectedModule?.id) ||
+        normalizeShopModuleId(getCurrentModuleId());
+      // An unrelated query (e.g. module=4, 6, invalid) must not override a valid shopping context.
+      const targetModule = queryShopModule || selectedShopModule;
+
+      if (targetModule) {
+        router.push({
+          pathname: "/home",
+          query: { module: targetModule },
+        });
+      } else {
+        router.push({
+          pathname: "/home",
+          query: {},
+        });
+      }
+      return;
+    }
     if (item.openProfile) {
       if (getToken()) {
         router.push("/profile");

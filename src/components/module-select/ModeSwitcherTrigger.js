@@ -34,7 +34,24 @@ const ModeSwitcherTrigger = ({ variant = "mobile", sx }) => {
 
   if (!modules || modules.length <= 1 || isModuleAgnosticRoute(router.pathname)) return null;
 
-  const moduleName = selectedModule?.module_name || t("Choose Mode");
+  const getDisplayLabel = () => {
+    if (!selectedModule) return t("Choose Mode");
+    const name = (selectedModule.module_name || "").toLowerCase();
+    if (String(selectedModule.id) === "2" || name.includes("wholesale")) {
+      return t("Buy in bulk");
+    }
+    if (
+      String(selectedModule.id) === "1" ||
+      name.includes("nearby") ||
+      name.includes("food market") ||
+      selectedModule.module_type === "grocery"
+    ) {
+      return t("Shop nearby");
+    }
+    return selectedModule.module_name;
+  };
+
+  const moduleName = getDisplayLabel();
   const moduleIcon = selectedModule?.icon_full_url ? (
     <Box
       component="img"
