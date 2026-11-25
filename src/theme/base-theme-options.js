@@ -12,10 +12,10 @@ export const baseThemeOptions = {
   },
 
   components: {
-    // ✅ GLOBAL FIX FOR useMediaQuery HYDRATION
+    // ✅ Two-pass SSR hydration for useMediaQuery (noSsr: false prevents React #418 on mobile viewports)
     MuiUseMediaQuery: {
       defaultProps: {
-        noSsr: true,
+        noSsr: false,
       },
     },
 

@@ -178,7 +178,7 @@ const bogoBanner = {
 };
 export const darkThemeOptions = {
   components: {
-    MuiUseMediaQuery: { defaultProps: { noSsr: true } }, // ⚡ Fix hydration
+    MuiUseMediaQuery: { defaultProps: { noSsr: false } }, // Two-pass SSR hydration prevents #418
     MuiAvatar: {
       styleOverrides: {
         root: {

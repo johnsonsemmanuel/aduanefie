@@ -31,8 +31,10 @@ import {
 } from "api-manage/hooks/react-query/trade/useTradeRfqs";
 import CustomModal from "components/modal";
 import { TRADE_COUNTRIES, UNIT_OPTIONS } from "utils/tradeOptions";
+import { useSelector } from "react-redux";
 import { useGetAgroPrices } from "api-manage/hooks/react-query/trade/useGetAgroPrices";
 import { findMatchingAgroPrice, formatCedi } from "utils/agroPriceMatch";
+import { isFeatureTransactionEnabled } from "utils/featureFlags";
 
 const INITIAL_FORM = {
   buyer_name: "",
@@ -60,6 +62,12 @@ const TradeRfqSection = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const router = useRouter();
+  const configData = useSelector((state) => state.configData?.configData);
+  const rfqCommitmentsEnabled = isFeatureTransactionEnabled(
+    configData,
+    "rfq_new_commitments",
+    false
+  );
   const [form, setForm] = useState(INITIAL_FORM);
 
   useEffect(() => {
@@ -186,6 +194,13 @@ const TradeRfqSection = () => {
       <Typography sx={{ color: "text.secondary", fontSize: "14px", mb: 3 }}>
         {t("Post bulk agro sourcing requirements across ECOWAS & AfCFTA corridors and receive competitive quotes from verified farms with phytosanitary and Trade Assurance options.")}
       </Typography>
+      {!rfqCommitmentsEnabled && (
+        <Alert severity="info" sx={{ mb: 3, borderRadius: "12px" }}>
+          {t(
+            "New RFQ submissions and quote awards are currently paused pending automated order & fulfilment integration. Historical requests remain viewable below, and Domestic Wholesale catalogue purchasing remains available."
+          )}
+        </Alert>
+      )}
 
       <Grid container spacing={3}>
         <Grid item xs={12} md={5}>
@@ -409,7 +424,7 @@ const TradeRfqSection = () => {
                     type="submit"
                     variant="contained"
                     fullWidth
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || !rfqCommitmentsEnabled}
                     sx={{ fontWeight: 700, textTransform: "none", borderRadius: "10px", py: 1 }}
                   >
                     {isSubmitting ? t("Submitting...") : t("Submit Sourcing RFQ")}
@@ -479,7 +494,7 @@ const TradeRfqSection = () => {
                         </Stack>
                       </Box>
 
-                      {rfq.status !== "awarded" && (
+                      {rfq.status !== "awarded" && rfqCommitmentsEnabled && (
                         <Button
                           size="small"
                           variant="outlined"
@@ -522,7 +537,7 @@ const TradeRfqSection = () => {
 
                               {isAccepted ? (
                                 <Chip size="small" color="success" label={t("Awarded · Trade Assurance")} />
-                              ) : rfq.status !== "awarded" ? (
+                              ) : rfq.status !== "awarded" && rfqCommitmentsEnabled ? (
                                 <Button
                                   size="small"
                                   variant="contained"
