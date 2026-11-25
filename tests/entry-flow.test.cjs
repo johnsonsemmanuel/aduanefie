@@ -17,17 +17,19 @@ function load(path, dependencies = {}, globals = {}) {
 }
 
 const navigation = load('src/utils/marketplaceNavigation.js');
-const entry = load('pages/index.js', { 'utils/marketplaceNavigation': navigation });
+const welcomeProps = { props: { landingPageData: { header_title: 'Market' } } };
+const entry = load('pages/index.js', { 'utils/marketplaceNavigation': navigation, './welcome': { default: () => null, getServerSideProps: async () => welcomeProps } });
 const context = (query = {}, cookies = {}) => ({ query, req: { cookies } });
 
-test('fresh Home enters a real shopping catalogue', async () => {
-  assert.equal((await entry.getServerSideProps(context())).redirect.destination, '/home?module=2');
+test('Home remains the overview, even with a saved shopping market', async () => {
+  assert.equal(await entry.getServerSideProps(context()), welcomeProps);
+  assert.equal(await entry.getServerSideProps(context({}, { selectedModule: '4' })), welcomeProps);
 });
 test('explicit market choice overrides a stale cookie', async () => {
   assert.equal((await entry.getServerSideProps(context({ module: '1' }, { selectedModule: '2' }))).redirect.destination, '/home?module=1');
 });
 test('returning shoppers and legacy links retain their selected catalogue', async () => {
-  for (const input of [context({}, { selectedModule: '4' }), context({ module_id: '4' })]) {
+  for (const input of [context({ module: '4' }), context({ module_id: '4' })]) {
     assert.equal((await entry.getServerSideProps(input)).redirect.destination, '/home?module=4');
   }
 });
@@ -39,10 +41,10 @@ test('malformed module choices fall back safely without external redirects', asy
 test('shopping and farming destinations have distinct active navigation', () => {
   for (const path of ['/home', '/home/nearby', '/search', '/store/12']) {
     assert.equal(navigation.isMarketplaceRoute(path), true);
-    assert.equal(navigation.isFarmsRoute(path), false);
+    assert.equal(navigation.isLiveRoute(path), false);
   }
-  for (const path of ['/farms', '/live-farming']) {
-    assert.equal(navigation.isFarmsRoute(path), true);
+  for (const path of ['/live', '/farms', '/live-farming']) {
+    assert.equal(navigation.isLiveRoute(path), true);
     assert.equal(navigation.isMarketplaceRoute(path), false);
   }
   assert.equal(navigation.isMarketplaceRoute('/store-registration'), false);
@@ -82,4 +84,12 @@ test('farm discovery retains produce markets and avoids unrelated equipment/serv
   for (const module of ['4', '5', '6', undefined, 'grocery']) {
     assert.equal(navigation.getFarmingModule(module), '2');
   }
+});
+
+
+test('primary navigation follows the exact four short labels', () => {
+  assert.equal(navigation.PRIMARY_NAV_ITEMS.map(item => item.label).join(' | '), 'Home | Shop | Live | Profile');
+  assert.equal(navigation.PRIMARY_NAV_ITEMS.find(item => item.key === 'live').path, '/live');
+  assert.equal(navigation.isMarketplaceRoute('/'), false);
+  assert.equal(navigation.isMarketplaceRoute('/welcome'), false);
 });

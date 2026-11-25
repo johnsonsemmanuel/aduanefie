@@ -45,7 +45,7 @@ const LiveFarmingPage = ({ configData }) => {
         configData={effectiveConfig}
       />
       <MainLayout configData={effectiveConfig}>
-        <SimpleMobileHeader title={title} backHref="/farms" />
+        <SimpleMobileHeader title={title} backHref="/live" />
         <CustomContainer>
           <Box sx={{ pt: { xs: 1, md: 3 }, pb: { xs: 3, md: 5 } }}>
             {isFeatureVisible(effectiveConfig, "live_farming", false) && effectiveConfig?.feature_flags?.live_farming?.route_enabled !== false ? (

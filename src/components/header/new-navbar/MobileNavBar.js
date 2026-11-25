@@ -343,6 +343,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
     "/trade/blocs",
     "/trade/blocs/[slug]",
     "/market-prices",
+    "/live",
     "/farms",
     "/live-farming",
     "/regional-tours",

@@ -1,15 +1,16 @@
-# Home and Farms navigation — 25 November 2026
+# Home · Shop · Live · Profile — 25 November 2026
 
-The previous Home/welcome and Shop/catalogue tabs were too similar. Home now opens the actual shopping feed. The growing side has a distinct Farms entry, with Live Farming and Backyard Farms choices. Bottom navigation is Home · Farms · Orders · Account; desktop also exposes Farms.
+The four primary tabs use the user's exact short labels. Their functions are distinct:
 
-- `/` redirects to `/home?module=<saved or requested id>`, defaulting to wholesale module 2. Equipment, inputs and service shopping contexts remain available on Home.
-- `/welcome` remains a separate introduction, reachable through Getting started in the account drawer.
-- `/farms` is a module-independent discovery hub with two real links: `/live-farming` and `/live-farming?backyard=1`.
-- The Backyard destination starts with the existing backend backyard filter enabled, and keeps that scope when clearing other filters.
-- Farm feed requests retain retail/wholesale produce context, defaulting to wholesale when the user last browsed an unrelated module. Query cache keys include market/location context.
-- Feature visibility/route flags govern farming entry availability. Loading failures show Retry instead of masquerading as an empty feed. No counts, crops or availability are invented.
-- Registration uses the existing farm/store application form; the current form supports Backyard Grower selection. No investment, funding or new financial workflow is introduced.
+- **Home**: the overview/market introduction at `/`; `/welcome` remains an equivalent explicit introduction.
+- **Shop**: the actual catalogue at `/home?module=<selected id>`, preserving a saved shopping market and defaulting to wholesale module 2. Equipment, inputs and service shopping contexts remain supported.
+- **Live**: `/live`, grouping Live Farming and Backyard Farms. The initial `/farms` link redirects here for compatibility.
+- **Profile**: account information, orders and tracking. Orders remain available through the existing Orders & Trips account entry.
 
-Read-only production checks before rollout: both the regular live-farming feed and `backyard=1` returned HTTP 200, with zero listings in the checked wholesale context. Empty listings are therefore an expected state to test, not an invitation to seed fake stock.
+The Live hub links to the real `/live-farming` and `/live-farming?backyard=1` feeds. Backyard starts with the backend filter enabled and keeps that scope while clearing other filters. Farming query caches include market/location context and use produce modules when the shopper previously browsed equipment or services. Failed requests show Retry rather than a fake empty success state.
 
-Regression checks cover Home defaults and saved context, legacy entry links, malformed IDs, distinct shopping/farming active states, produce scope, safe preview return paths, stored module parsing and primary contrast. Private preview and paused RFQ commitments remain unchanged.
+Feature visibility/route flags govern availability. Registration uses the existing farm/store application form, which supports Backyard Grower selection. No investment, funding or new financial workflow is introduced. A hard-coded Ghana season badge was removed because it is not reliable across African markets.
+
+Read-only production checks: both regular and backyard-filtered farming APIs return HTTP 200, with no listings in the checked wholesale context. Empty availability is displayed honestly.
+
+Regression checks cover overview versus catalogue entry, exact labels, module preservation, malformed IDs, distinct active states, produce scoping, stored module parsing, safe preview return paths and primary contrast. Private preview and paused RFQ commitments remain unchanged.

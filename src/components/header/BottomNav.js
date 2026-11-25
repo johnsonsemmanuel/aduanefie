@@ -12,37 +12,11 @@ import ProfileDrawer from "./ProfileDrawer";
 import NextImage from "components/NextImage";
 import { DESKTOP_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 import { MOBILE_BOTTOM_NAV_HEIGHT } from "utils/mobileBottomNav";
-import { getMarketplaceHref, isFarmsRoute, isMarketplaceRoute } from "utils/marketplaceNavigation";
+import { getMarketplaceHref, isLiveRoute, isMarketplaceRoute, PRIMARY_NAV_ITEMS } from "utils/marketplaceNavigation";
 
 const AuthModal = dynamic(() => import("components/auth/AuthModal"));
 
-const NAV_ITEMS = [
-  {
-    key: "home",
-    label: "Home",
-    icon: "fi fi-rr-home",
-    openMarketplace: true,
-  },
-  {
-    key: "farms",
-    label: "Farms",
-    icon: "fi fi-rr-leaf",
-    path: "/farms",
-  },
-  {
-    key: "orders",
-    label: "Orders",
-    icon: "fi fi-rr-receipt",
-    path: "/profile?page=my-orders",
-    requireAuth: true,
-  },
-  {
-    key: "profile",
-    label: "Account",
-    icon: "fi fi-rr-user",
-    openProfile: true,
-  },
-];
+const NAV_ITEMS = PRIMARY_NAV_ITEMS;
 
 const BottomNav = () => {
   const router = useRouter();
@@ -58,10 +32,13 @@ const BottomNav = () => {
 
   const isActive = (item) => {
     if (item.key === "home") {
-      return isMarketplaceRoute(router.pathname) && router.pathname !== "/home/wishlist";
+      return router.pathname === "/" || router.pathname === "/welcome";
     }
-    if (item.key === "farms") {
-      return isFarmsRoute(router.pathname);
+    if (item.key === "shop") {
+      return router.pathname !== "/" && isMarketplaceRoute(router.pathname) && router.pathname !== "/home/wishlist";
+    }
+    if (item.key === "live") {
+      return isLiveRoute(router.pathname);
     }
     if (item.openWishlist) {
       return router.pathname === "/home/wishlist";

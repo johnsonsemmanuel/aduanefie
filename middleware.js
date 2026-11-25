@@ -53,8 +53,8 @@ export async function middleware(request) {
   // Read the saved module for catalogue routes.
   const moduleFromCookie = request.cookies.get("selectedModule")?.value;
 
-  // pages/index selects the saved/default shopping market. /welcome remains
-  // a separate introduction; preview access is still checked above.
+  // pages/index serves the overview; explicit legacy market links enter Shop.
+  // Preview access is still checked above.
   if (pathname === "/") return NextResponse.next();
 
   // Check if request already has module/module_id param

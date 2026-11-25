@@ -1,14 +1,13 @@
+import Welcome, { getServerSideProps as getWelcomeProps } from "./welcome";
 import { getMarketplaceHref } from "utils/marketplaceNavigation";
 
-// Canonical Home is shopping. Keep /welcome as a separate introduction.
-export const getServerSideProps = async ({ query, req, res }) => {
-  res?.setHeader("Cache-Control", "private, no-store");
-  return {
-    redirect: {
-      destination: getMarketplaceHref(query.module || query.module_id, req.cookies.selectedModule),
-      permanent: false,
-    },
-  };
+// Home is the overview; explicit legacy market links still enter Shop.
+export default Welcome;
+export const getServerSideProps = async (context) => {
+  if (context.query.module || context.query.module_id) {
+    return { redirect: { destination: getMarketplaceHref(context.query.module || context.query.module_id, context.req.cookies.selectedModule), permanent: false } };
+  }
+  const result = await getWelcomeProps(context);
+  context.res?.setHeader("Cache-Control", "private, no-store");
+  return result;
 };
-
-export default function MarketplaceEntry() { return null; }

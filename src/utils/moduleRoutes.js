@@ -15,6 +15,7 @@ export const isModuleAgnosticRoute = (pathname) =>
   pathname === "/market-prices" ||
   pathname === "/group-buys" ||
   pathname?.startsWith("/group-buys/") ||
+  pathname === "/live" ||
   pathname === "/farms" ||
   pathname === "/live-farming" ||
   pathname === "/regional-tours" ||
