@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Box, Typography, useTheme } from "@mui/material";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
@@ -52,20 +52,27 @@ const FloatingCartButton = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   const selectedModule = useSelector(
     (state) => state.utilsData?.selectedModule
   );
   const { cartList, cartGroups } = useSelector((state) => state.cart);
 
-  // Module + page visibility guards
-  const moduleType = selectedModule?.module_type ?? getCurrentModuleType();
-  const isAllowedModule = ALLOWED_MODULES.has(moduleType);
+  // Module + page visibility guards (defer localStorage/redux-persist reads until mount to prevent #418)
+  const moduleType = hasMounted
+    ? selectedModule?.module_type ?? getCurrentModuleType()
+    : null;
+  const isAllowedModule = Boolean(moduleType && ALLOWED_MODULES.has(moduleType));
   const isAllowedPage = ALLOWED_PATHNAMES.has(router.pathname);
   const { refetch } = useGetGroupedCart();
 
   // Badge count - current module items only
-  const cartItems = getCartListModuleWise(cartList) ?? [];
+  const cartItems = hasMounted ? getCartListModuleWise(cartList) ?? [] : [];
   const itemCount = cartItems.length;
 
   // Grand total = sum of every cart line's (price × quantity).
@@ -100,7 +107,7 @@ const FloatingCartButton = () => {
     [cartItems]
   );
 
-  if (!itemCount || !isAllowedModule || !isAllowedPage) return null;
+  if (!hasMounted || !itemCount || !isAllowedModule || !isAllowedPage) return null;
 
   return (
     <>
