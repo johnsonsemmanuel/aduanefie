@@ -28,6 +28,26 @@ const ACCESS_STORAGE_KEY = "aduanefie_early_access_unlocked";
 const ACCESS_COOKIE_NAME = "aduanefie_preview_access";
 export const PREVIEW_TOKEN_KEY = "aduanefie_preview_token";
 
+export async function exchangePreviewToken(previewToken) {
+  if (!isTokenStructurallyValid(previewToken)) return false;
+  try {
+    const res = await fetch("/api/preview-session", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token: previewToken }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+function safeNextTarget(nextParam) {
+  const value = typeof nextParam === "string" ? nextParam : "/";
+  return value.startsWith("/") && !value.startsWith("//") ? value : "/";
+}
+
 function isTokenStructurallyValid(rawToken) {
   if (!rawToken || typeof rawToken !== "string") return false;
   const dotIdx = rawToken.indexOf(".");
@@ -77,7 +97,26 @@ const ComingSoonGate = ({ forceVisible = false, standalone = false }) => {
           return;
         }
         const token = window.localStorage.getItem(PREVIEW_TOKEN_KEY);
-        setUnlocked(isTokenStructurallyValid(token));
+        const structurallyValid = isTokenStructurallyValid(token);
+        if (forceVisible && structurallyValid) {
+          // Stored backend token but no valid Edge pass (e.g. first visit
+          // after this release): try to re-issue it, otherwise forget it.
+          exchangePreviewToken(token).then((ok) => {
+            if (ok) {
+              window.location.replace(
+                safeNextTarget(
+                  new URLSearchParams(window.location.search).get("next")
+                )
+              );
+            } else {
+              window.localStorage.removeItem(PREVIEW_TOKEN_KEY);
+              window.localStorage.removeItem(ACCESS_STORAGE_KEY);
+            }
+          });
+          setUnlocked(false);
+          return;
+        }
+        setUnlocked(structurallyValid);
       } catch {
         setUnlocked(false);
       }
@@ -97,27 +136,26 @@ const ComingSoonGate = ({ forceVisible = false, standalone = false }) => {
     return null;
   }
 
-  const markUnlocked = (previewToken, ttlSeconds = 60 * 60 * 24 * 30) => {
+  const markUnlocked = async (previewToken, ttlSeconds = 60 * 60 * 24 * 30) => {
+    // The website issues its own signed HttpOnly Edge pass only after the
+    // backend re-validates this token; without it pages stay gated.
+    const ok = await exchangePreviewToken(previewToken);
+    if (!ok) {
+      setAccessError(t("Could not verify access code right now. Please try again."));
+      return;
+    }
     try {
-      if (previewToken) {
-        window.localStorage.setItem(PREVIEW_TOKEN_KEY, previewToken);
-        document.cookie = `${PREVIEW_TOKEN_KEY}=${previewToken}; path=/; max-age=${ttlSeconds}; SameSite=Lax`;
-      }
+      window.localStorage.setItem(PREVIEW_TOKEN_KEY, previewToken);
       window.localStorage.setItem(ACCESS_STORAGE_KEY, "true");
       document.cookie = `${ACCESS_COOKIE_NAME}=1; path=/; max-age=${ttlSeconds}; SameSite=Lax`;
     } catch {
-      // Ignore storage errors; state still unlocks this session
+      // Ignore storage errors; the Edge pass still unlocks this browser
     }
     setUnlocked(true);
     toast.success(t("Platform preview unlocked"));
     if (router?.pathname === "/coming-soon") {
-      const nextParam =
-        typeof router.query?.next === "string" ? router.query.next : "/";
-      const safeTarget =
-        nextParam.startsWith("/") && !nextParam.startsWith("//")
-          ? nextParam
-          : "/";
-      router.replace(safeTarget);
+      // Full navigation so the Edge middleware sees the new cookie.
+      window.location.replace(safeNextTarget(router.query?.next));
     }
   };
 
@@ -169,7 +207,7 @@ const ComingSoonGate = ({ forceVisible = false, standalone = false }) => {
         code: trimmed,
       });
       if (data?.unlocked && data?.preview_token) {
-        markUnlocked(data.preview_token, data.expires_in);
+        await markUnlocked(data.preview_token, data.expires_in);
         return;
       }
       setAccessError(t("Invalid access code."));

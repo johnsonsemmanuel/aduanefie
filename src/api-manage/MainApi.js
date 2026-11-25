@@ -115,6 +115,11 @@ MainApi.interceptors.response.use(
       localStorage.removeItem("aduanefie_early_access_unlocked");
       document.cookie =
         "aduanefie_preview_token=; path=/; max-age=0; SameSite=Lax";
+      // Clear the HttpOnly Edge pass so the next navigation is gated again.
+      fetch("/api/preview-session", {
+        method: "DELETE",
+        credentials: "same-origin",
+      }).catch(() => {});
       window.dispatchEvent(new Event("aduanefie:preview-locked"));
     }
     const isAuthEndpoint = /\/auth\/(login|sign-up|register|verify|forgot-password|reset-password)/i.test(

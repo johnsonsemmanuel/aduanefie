@@ -11,7 +11,7 @@ export const showAddedToCartToast = (t, router) => {
             type="button"
             onClick={() => {
               toast.dismiss(toastObj.id);
-              router.push("/checkout");
+              router.push("/checkout?page=cart");
             }}
             style={{
               background: "#67513A",

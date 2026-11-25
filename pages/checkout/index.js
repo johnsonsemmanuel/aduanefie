@@ -82,7 +82,8 @@ const CheckOutPage = () => {
     (state) => state.configData
   );
   const router = useRouter();
-  const { page, store_id, id, incomplete_payment } = router.query;
+  const { page: rawPage, store_id, id, incomplete_payment } = router.query;
+  const page = rawPage || 'cart';
   const {
     cartList: aliasCartList,
     campaignItemList,

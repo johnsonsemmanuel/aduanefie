@@ -1,22 +1,11 @@
 import { NextResponse } from "next/server";
 import { isModuleAgnosticRoute } from "./src/utils/moduleRoutes";
+import { EDGE_PASS_COOKIE, verifyEdgePass } from "./src/utils/previewEdgePass";
 
 // Define the protected routes
 const protectedRoutes = ["/rental/cart"];
-const PREVIEW_TOKEN_COOKIE = "aduanefie_preview_token";
 
-function hasUnexpiredPreviewToken(rawToken) {
-  if (!rawToken || typeof rawToken !== "string") return false;
-  const dotIdx = rawToken.indexOf(".");
-  if (dotIdx <= 0) return false;
-  const expStr = rawToken.slice(0, dotIdx);
-  const sigStr = rawToken.slice(dotIdx + 1);
-  if (!/^\d+$/.test(expStr) || !/^[a-f0-9]{64}$/i.test(sigStr)) return false;
-  const expSec = Number(expStr);
-  return Number.isFinite(expSec) && expSec > Math.floor(Date.now() / 1000);
-}
-
-export function middleware(request) {
+export async function middleware(request) {
   const { pathname, searchParams } = request.nextUrl;
   const host = (request.headers.get("host") || "").split(":")[0].toLowerCase();
 
@@ -34,8 +23,13 @@ export function middleware(request) {
   const publicAccessOpen =
     process.env.NEXT_PUBLIC_PUBLIC_ACCESS_OPEN === "true";
   if (!publicAccessOpen && !pathname.startsWith("/api/")) {
-    const previewToken = request.cookies.get(PREVIEW_TOKEN_COOKIE)?.value;
-    const isUnlocked = hasUnexpiredPreviewToken(previewToken);
+    // The Edge pass is HMAC-signed with a server-only secret; without the
+    // secret every request stays locked (fail closed).
+    const edgePass = request.cookies.get(EDGE_PASS_COOKIE)?.value;
+    const isUnlocked = await verifyEdgePass(
+      edgePass,
+      process.env.PREVIEW_EDGE_SECRET
+    );
 
     if (!isUnlocked && pathname !== "/coming-soon") {
       const gateUrl = request.nextUrl.clone();
