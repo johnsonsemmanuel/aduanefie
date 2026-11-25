@@ -17,7 +17,7 @@ const ModuleWiseLayout = ({ configData, landingPageData, routeSection, routeCate
 	const router = useRouter();
 
 	useEffect(() => {
-		if (router.pathname === "/home") {
+		if (router.pathname === "/" || router.pathname === "/home") {
 			refetch();
 		}
 	}, [router.pathname, refetch]);

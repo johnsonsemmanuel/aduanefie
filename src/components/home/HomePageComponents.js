@@ -86,28 +86,34 @@ const HomePageComponents = ({
   const [openPaymentModal, setOpenPaymentModal] = useState(false);
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const [openModeGreeting, setOpenModeGreeting] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   const { profileInfo } = useSelector((state) => state.profileInfo);
   const { modules } = useSelector((state) => state.configData);
   const router = useRouter();
   const dispatch = useDispatch();
-  const token = getToken();
+  const token = hasMounted ? getToken() : null;
   const { welcomeModal, selectedModule } = useSelector(
     (state) => state.utilsData
   );
   // B2B banner visibility must not depend on localStorage alone: on a first
   // visit `?module=2` is the only signal until ModuleChecker finishes syncing.
-  // Prefer the explicit URL id, then redux, then storage.
+  // Guard localStorage reads behind `hasMounted` so SSR and initial hydration
+  // produce identical markup (prevents React hydration error #418).
   const moduleIdFromUrl = router.query.module ?? router.query.module_id;
   const parsedUrlModuleId =
     moduleIdFromUrl && !Number.isNaN(Number(moduleIdFromUrl))
       ? Number(moduleIdFromUrl)
       : undefined;
   const activeModuleId =
-    parsedUrlModuleId ?? selectedModule?.id ?? getModuleId();
+    parsedUrlModuleId ?? (hasMounted ? selectedModule?.id ?? getModuleId() : undefined);
   const isWholesaleModule =
     String(activeModuleId) === String(WHOLESALE_MODULE_ID);
-  const moduleType = getCurrentModuleType();
+  const moduleType = hasMounted ? getCurrentModuleType() : null;
   const { refetch: refetchFailedPayment, data: failPayment } =
     useGetFailedPayment("", (res) => {
       if (res) {

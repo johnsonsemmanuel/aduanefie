@@ -44,17 +44,8 @@ const Home = ({ metaData, configData }) => {
   });
 
   useEffect(() => {
-    if (configData) {
-      if (configData.length === 0) {
-        Router.push("/404");
-      } else {
-        dispatch(setConfigData(configData));
-      }
-    }
-  }, [configData]);
-  useEffect(() => {
-    if (configData) {
-      dispatch(setConfigData(configData));
+    if (configData && configData.length === 0) {
+      Router.push("/404");
     }
   }, [configData]);
 

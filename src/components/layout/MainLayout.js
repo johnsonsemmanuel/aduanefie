@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useGetModule from "../../api-manage/hooks/react-query/useGetModule";
-import { setConfigData, setModules } from "../../redux/slices/configData";
+import { setModules } from "../../redux/slices/configData";
 import { setSelectedModule } from "../../redux/slices/utils";
 import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
 import FooterComponent from "../footer";
@@ -160,17 +160,15 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
     page,
   });
   const dispatch = useDispatch();
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
   const reduxConfigData = useSelector((state) => state.configData?.configData);
   const effectiveConfigData =
     configData && Object.keys(configData).length > 0
       ? configData
       : reduxConfigData;
-
-  useEffect(() => {
-    if (configData && Object.keys(configData).length > 0) {
-      dispatch(setConfigData(configData));
-    }
-  }, [configData, dispatch]);
 
   const [happyHourActive, setHappyHourActive] = useState(false);
   const isHappyHourRoute = HAPPY_HOUR_FLOATING_ROUTES.has(router.pathname);
@@ -239,8 +237,7 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
   const queryModuleType =
     typeof router.query.module === "string" ? router.query.module : null;
   const currentModuleType =
-    selectedModule?.module_type ??
-    getCurrentModuleType() ??
+    (hasMounted ? selectedModule?.module_type ?? getCurrentModuleType() : null) ??
     queryModuleType ??
     null;
   // ── Cross-tab module sync ──

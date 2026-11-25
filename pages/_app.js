@@ -88,15 +88,19 @@ function MyApp(props) {
     }
   }, []);
 
-  // Sync SSR configData into Redux so Header/Logo/Footer never lose branding on any route
+  // Single authoritative SSR -> Redux sync for configData (avoids redundant dispatches)
   useEffect(() => {
+    const incoming = pageProps?.configData;
     if (
-      pageProps?.configData &&
-      typeof pageProps.configData === "object" &&
-      !Array.isArray(pageProps.configData) &&
-      Object.keys(pageProps.configData).length > 0
+      incoming &&
+      typeof incoming === "object" &&
+      !Array.isArray(incoming) &&
+      Object.keys(incoming).length > 0
     ) {
-      store.dispatch(setConfigData(pageProps.configData));
+      const current = store.getState()?.configData?.configData;
+      if (current !== incoming) {
+        store.dispatch(setConfigData(incoming));
+      }
     }
   }, [pageProps?.configData]);
 
