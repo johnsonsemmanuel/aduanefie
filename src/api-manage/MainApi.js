@@ -24,10 +24,12 @@ MainApi.interceptors.request.use(function (config) {
   let software_id = 33571750;
   let hostname = process.env.NEXT_CLIENT_HOST_URL;
   let moduleid = undefined;
+  let previewToken = undefined;
 
   if (typeof window !== "undefined") {
     zoneid = localStorage.getItem("zoneid");
     token = localStorage.getItem("token");
+    previewToken = localStorage.getItem("aduanefie_preview_token");
     language = safeJsonParse(localStorage.getItem("language-setting"), null);
     currentLocation = readCurrentLocation(
       localStorage.getItem("currentLatLng"),
@@ -80,6 +82,7 @@ MainApi.interceptors.request.use(function (config) {
   }
   if (moduleid && !config.headers.moduleId) config.headers.moduleId = moduleid;
   if (token) config.headers.authorization = `Bearer ${token}`;
+  if (previewToken) config.headers["X-Preview-Access"] = previewToken;
   if (language) config.headers["X-localization"] = language;
   if (hostname) config.headers["origin"] = hostname;
   config.headers["X-software-id"] = software_id;
@@ -102,6 +105,17 @@ MainApi.interceptors.response.use(
       // stale location state, then let the app refetch under the new market.
       clearStoredZoneAndLocation();
       window.dispatchEvent(new Event("aduanefie:zone-mismatch"));
+    }
+    if (
+      typeof window !== "undefined" &&
+      status === 403 &&
+      error?.response?.data?.code === "preview_access_required"
+    ) {
+      localStorage.removeItem("aduanefie_preview_token");
+      localStorage.removeItem("aduanefie_early_access_unlocked");
+      document.cookie =
+        "aduanefie_preview_token=; path=/; max-age=0; SameSite=Lax";
+      window.dispatchEvent(new Event("aduanefie:preview-locked"));
     }
     const isAuthEndpoint = /\/auth\/(login|sign-up|register|verify|forgot-password|reset-password)/i.test(
       reqUrl,

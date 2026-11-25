@@ -21,10 +21,22 @@ import CustomModal from "components/modal";
 import CustomDivider from "components/CustomDivider";
 import LogoSide from "components/logo/LogoSide";
 import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
+import { useRouter } from "next/router";
 import MainApi from "api-manage/MainApi";
 
 const ACCESS_STORAGE_KEY = "aduanefie_early_access_unlocked";
 const ACCESS_COOKIE_NAME = "aduanefie_preview_access";
+export const PREVIEW_TOKEN_KEY = "aduanefie_preview_token";
+
+function isTokenStructurallyValid(rawToken) {
+  if (!rawToken || typeof rawToken !== "string") return false;
+  const dotIdx = rawToken.indexOf(".");
+  if (dotIdx <= 0) return false;
+  const expStr = rawToken.slice(0, dotIdx);
+  const sigStr = rawToken.slice(dotIdx + 1);
+  if (!/^\d+$/.test(expStr) || !/^[a-f0-9]{64}$/i.test(sigStr)) return false;
+  return Number(expStr) > Math.floor(Date.now() / 1000);
+}
 
 const INTEREST_OPTIONS = [
   { value: "buyer", label: "Buyer / Bulk Shopper" },
@@ -33,8 +45,9 @@ const INTEREST_OPTIONS = [
   { value: "logistics_partner", label: "Rider / Logistics Partner" },
 ];
 
-const ComingSoonGate = () => {
+const ComingSoonGate = ({ forceVisible = false, standalone = false }) => {
   const theme = useTheme();
+  const router = useRouter();
   const { t } = useTranslation();
   const { configData } = useSelector((state) => state.configData);
 
@@ -57,27 +70,55 @@ const ComingSoonGate = () => {
 
   useEffect(() => {
     setMounted(true);
-    try {
-      const saved = window.localStorage.getItem(ACCESS_STORAGE_KEY) === "true";
-      setUnlocked(saved);
-    } catch {
-      setUnlocked(false);
-    }
-  }, []);
+    const syncState = () => {
+      try {
+        if (configData?.public_access_enabled === true && !forceVisible) {
+          setUnlocked(true);
+          return;
+        }
+        const token = window.localStorage.getItem(PREVIEW_TOKEN_KEY);
+        setUnlocked(isTokenStructurallyValid(token));
+      } catch {
+        setUnlocked(false);
+      }
+    };
+    syncState();
+    window.addEventListener("aduanefie:preview-locked", syncState);
+    return () => window.removeEventListener("aduanefie:preview-locked", syncState);
+  }, [configData?.public_access_enabled, forceVisible]);
 
-  if (!mounted || unlocked) {
+  if (!mounted) {
+    return null;
+  }
+  if (!standalone && router?.pathname === "/coming-soon") {
+    return null;
+  }
+  if (unlocked && !forceVisible) {
     return null;
   }
 
-  const markUnlocked = () => {
+  const markUnlocked = (previewToken, ttlSeconds = 60 * 60 * 24 * 30) => {
     try {
+      if (previewToken) {
+        window.localStorage.setItem(PREVIEW_TOKEN_KEY, previewToken);
+        document.cookie = `${PREVIEW_TOKEN_KEY}=${previewToken}; path=/; max-age=${ttlSeconds}; SameSite=Lax`;
+      }
       window.localStorage.setItem(ACCESS_STORAGE_KEY, "true");
-      document.cookie = `${ACCESS_COOKIE_NAME}=1; path=/; max-age=${60 * 60 * 24 * 30}; SameSite=Lax`;
+      document.cookie = `${ACCESS_COOKIE_NAME}=1; path=/; max-age=${ttlSeconds}; SameSite=Lax`;
     } catch {
       // Ignore storage errors; state still unlocks this session
     }
     setUnlocked(true);
     toast.success(t("Platform preview unlocked"));
+    if (router?.pathname === "/coming-soon") {
+      const nextParam =
+        typeof router.query?.next === "string" ? router.query.next : "/";
+      const safeTarget =
+        nextParam.startsWith("/") && !nextParam.startsWith("//")
+          ? nextParam
+          : "/";
+      router.replace(safeTarget);
+    }
   };
 
   const handleWaitlistSubmit = async (e) => {
@@ -127,18 +168,16 @@ const ComingSoonGate = () => {
       const { data } = await MainApi.post("/api/v1/waitlist/verify-access", {
         code: trimmed,
       });
-      if (data?.unlocked) {
-        markUnlocked();
+      if (data?.unlocked && data?.preview_token) {
+        markUnlocked(data.preview_token, data.expires_in);
         return;
       }
       setAccessError(t("Invalid access code."));
     } catch (err) {
       if (err?.response?.status === 403 || err?.response?.status === 422) {
         setAccessError(err?.response?.data?.message || t("Invalid access code."));
-      } else if (trimmed === "0242") {
-        markUnlocked();
       } else {
-        setAccessError(t("Invalid access code."));
+        setAccessError(t("Could not verify access code right now. Please try again."));
       }
     } finally {
       setAccessChecking(false);
