@@ -58,7 +58,7 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
   const dispatch = useDispatch();
 
   const isSearchPage = router.pathname === "/search";
-  const isHomePage = router.pathname === "/home";
+  const isHomePage = router.pathname === "/" || router.pathname === "/home";
 
   const SECTION_TITLES = {
     offers: "Offers",
@@ -266,11 +266,11 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
     });
   };
 
-  // ── Module switching - always redirect to /home?module=... from any page ──
+  // ── Module switching - always redirect to /?module=... from any page ──
   const handleSelectModule = (item) => {
-    const isHome = router.pathname === "/home";
+    const isHome = router.pathname === "/" || router.pathname === "/home";
     const isSameModule = item?.id === selectedModule?.id;
-    // Already on /home with the same module → no-op
+    // Already on / or /home with the same module → no-op
     if (isHome && isSameModule) return;
 
     dispatch(setSelectedModule(item));
@@ -280,7 +280,10 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
     const moduleIdentifier = getModuleIdentifier(item);
     saveModuleParam?.(item?.id, item?.slug);
     router.push(
-      { pathname: "/home", query: { module: moduleIdentifier } },
+      {
+        pathname: isHome ? router.pathname : "/",
+        query: { module: moduleIdentifier },
+      },
       undefined,
       { shallow: isHome },
     );
@@ -679,7 +682,8 @@ const MobileNavBar = ({ configData, location, setOpenSignIn }) => {
           )}
         {/* ── Module-wise section chips (scrollable filter row) ── */}
         {sectionChips.length > 0 &&
-          (router.pathname === "/home" ||
+          (router.pathname === "/" ||
+            router.pathname === "/home" ||
             router.pathname === "/home/[...slug]") && (
             <Box
               sx={{

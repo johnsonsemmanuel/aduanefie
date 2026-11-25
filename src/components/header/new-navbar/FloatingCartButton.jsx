@@ -14,6 +14,7 @@ const ALLOWED_MODULES = new Set(["food", "grocery", "pharmacy", "shop", "service
 
 // Next.js route patterns where the button is visible
 const ALLOWED_PATHNAMES = new Set([
+  "/",
   "/home",
   "/search",
   "/home/wishlist",

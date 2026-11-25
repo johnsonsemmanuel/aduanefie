@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import useGetModule from "../../api-manage/hooks/react-query/useGetModule";
-import { setModules } from "../../redux/slices/configData";
+import { setConfigData, setModules } from "../../redux/slices/configData";
 import { setSelectedModule } from "../../redux/slices/utils";
 import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
 import FooterComponent from "../footer";
@@ -29,7 +29,7 @@ import {
   shouldShowMobileBottomNav,
 } from "utils/mobileBottomNav";
 
-const HAPPY_HOUR_FLOATING_ROUTES = new Set(["/home"]);
+const HAPPY_HOUR_FLOATING_ROUTES = new Set(["/", "/home"]);
 
 const RENTAL_COMPACT_DESKTOP_HEADER_ROUTES = new Set([
   "/rental/checkout",
@@ -160,6 +160,18 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
     page,
   });
   const dispatch = useDispatch();
+  const reduxConfigData = useSelector((state) => state.configData?.configData);
+  const effectiveConfigData =
+    configData && Object.keys(configData).length > 0
+      ? configData
+      : reduxConfigData;
+
+  useEffect(() => {
+    if (configData && Object.keys(configData).length > 0) {
+      dispatch(setConfigData(configData));
+    }
+  }, [configData, dispatch]);
+
   const [happyHourActive, setHappyHourActive] = useState(false);
   const isHappyHourRoute = HAPPY_HOUR_FLOATING_ROUTES.has(router.pathname);
   const handleHappyHourActiveChange = useCallback(
@@ -176,6 +188,7 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
     // stays hidden (`renderModuleBar` bails on `!modules?.length`) unless we
     // explicitly refetch here too, not just on /home.
     if (
+      router.pathname === "/" ||
       router.pathname === "/home" ||
       router.pathname === "/bogo-list" ||
       router.pathname === "/bogo-list/[id]" ||
@@ -268,6 +281,7 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
 
   // Mirrors NewNavBar's renderModuleBar condition.
   const hasDesktopModuleBar =
+    router.pathname === "/" ||
     router.pathname === "/home" ||
     router.pathname?.startsWith("/home/") ||
     router.pathname?.startsWith("/search");
@@ -280,7 +294,7 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
   return (
     <MainLayoutRoot justifyContent={showFooter ? "space-between" : "flex-start"} key={rerenderUi}>
       <header>
-        <HeaderComponent />
+        <HeaderComponent configData={effectiveConfigData} />
       </header>
       <CustomStackFullWidth
         sx={{
@@ -326,7 +340,7 @@ const MainLayout = ({ children, configData, onHappyHourActiveChange }) => {
       </CustomStackFullWidth>
       {showFooter && (
         <footer>
-          <FooterComponent configData={configData} />
+          <FooterComponent configData={effectiveConfigData} />
         </footer>
       )}
       {isHappyHourRoute && (

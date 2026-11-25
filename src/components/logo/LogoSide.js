@@ -1,7 +1,12 @@
 import CustomLogo from "./CustomLogo";
 import { Stack } from "@mui/system";
+import { useSelector } from "react-redux";
 
 const LogoSide = ({ configData, width, height, objectFit }) => {
+  const reduxConfigData = useSelector((state) => state.configData?.configData);
+  const logoImg =
+    configData?.logo_full_url || reduxConfigData?.logo_full_url || "";
+
   return (
     <Stack
       direction="row"
@@ -11,7 +16,7 @@ const LogoSide = ({ configData, width, height, objectFit }) => {
     >
       <CustomLogo
         atlText="logo"
-        logoImg={configData?.logo_full_url}
+        logoImg={logoImg}
         width={width}
         height={height}
         objectFit={objectFit}

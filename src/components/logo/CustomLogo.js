@@ -28,8 +28,8 @@ const CustomLogo = ({ logoImg, atlText, height, width, objectFit }) => {
       ? queryModule[0]
       : queryModule || getModuleId();
     const homeHref = moduleValue
-      ? { pathname: "/home", query: { module: String(moduleValue) } }
-      : "/home";
+      ? { pathname: "/", query: { module: String(moduleValue) } }
+      : "/";
     if (router.pathname === "/welcome") {
       if (location) {
         router.replace(homeHref, undefined, { shallow: true });

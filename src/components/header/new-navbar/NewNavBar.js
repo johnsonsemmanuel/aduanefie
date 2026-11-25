@@ -245,6 +245,7 @@ const NewNavBar = ({ configData }) => {
   // On the home & search pages the navbar search must stay hidden while the
   // ModuleSearchBanner is still visible; elsewhere it follows scroll only.
   const isSearchAwarePage =
+    router.pathname === "/" ||
     router.pathname === "/home" ||
     router.pathname.startsWith("/home/") ||
     router.pathname === "/search";
@@ -658,7 +659,7 @@ const NewNavBar = ({ configData }) => {
   );
 
   const handleModuleChange = (mod) => {
-    const isOnHome = router.pathname === "/home";
+    const isOnHome = router.pathname === "/" || router.pathname === "/home";
     if (isOnHome && mod.id === selectedModule?.id) return;
     localStorage.setItem("module", JSON.stringify(mod));
     dispatch(setSelectedModule(mod));
@@ -671,12 +672,12 @@ const NewNavBar = ({ configData }) => {
     // switch refetched the whole app and switching back was never cached.
     //
     // /home's getServerSideProps only loads config and page metadata, neither
-    // of which depends on the module, so stay shallow when already on /home
+    // of which depends on the module, so stay shallow when already on / or /home
     // and skip the server round trip.
     if (isOnHome) {
       router.push(
         {
-          pathname: "/home",
+          pathname: router.pathname,
           query: { ...router.query, module: moduleIdentifier },
         },
         undefined,
@@ -684,13 +685,14 @@ const NewNavBar = ({ configData }) => {
       );
       return;
     }
-    router.push({ pathname: "/home", query: { module: moduleIdentifier } });
+    router.push({ pathname: "/", query: { module: moduleIdentifier } });
   };
 
   // ── Module bar ──
   const renderModuleBar = () => {
     if (!modules?.length) return null;
     const isHomeOrNested =
+      router.pathname === "/" ||
       router.pathname === "/home" ||
       router.pathname.startsWith("/home/") ||
       router.pathname.startsWith("/search");

@@ -20,7 +20,7 @@ const NAV_ITEMS = [
     key: "home",
     label: "Home",
     icon: "fi fi-rr-home",
-    path: "/home",
+    path: "/",
   },
   {
     key: "nearby",
@@ -71,6 +71,7 @@ const BottomNav = () => {
   const isActive = (item) => {
     if (item.key === "home") {
       return (
+        router.pathname === "/" ||
         router.pathname === "/home" ||
         (router.pathname.startsWith("/home/") &&
           router.pathname !== "/home/wishlist" &&

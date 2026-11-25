@@ -9,14 +9,20 @@ import {
   MOBILE_BOTTOM_NAV_HEIGHT,
   shouldShowMobileBottomNav,
 } from "utils/mobileBottomNav";
+import { useSelector } from "react-redux";
 import { useEffect } from "react";
 
-const FooterComponent = ({ configData }) => {
+const FooterComponent = ({ configData: propConfigData }) => {
   const router = useRouter();
+  const { configData: reduxConfigData } = useSelector((state) => state.configData);
+  const configData =
+    propConfigData && Object.keys(propConfigData).length > 0
+      ? propConfigData
+      : reduxConfigData;
   const { data: landingPageData } = useGetLandingPage();
 
   const isLandingPage = router.pathname === "/welcome";
-  const isHomePage = router.pathname === "/home";
+  const isHomePage = router.pathname === "/" || router.pathname === "/home";
   // MainLayout uses the same helper to decide whether to render the nav, so
   // the footer can't reserve clearance for a nav that isn't there.
   const showBottomNav = shouldShowMobileBottomNav({

@@ -36,6 +36,7 @@ const ProSubscriptionExpiredModal = dynamic(
 );
 import { setLogoutUser } from "redux/slices/profileInfo";
 import { clearAllCartData } from "redux/slices/cart";
+import { setConfigData } from "redux/slices/configData";
 
 Router.events.on("routeChangeStart", nProgress.start);
 Router.events.on("routeChangeError", nProgress.done);
@@ -86,6 +87,18 @@ function MyApp(props) {
       localStorage.setItem("appVersion", currentVersion);
     }
   }, []);
+
+  // Sync SSR configData into Redux so Header/Logo/Footer never lose branding on any route
+  useEffect(() => {
+    if (
+      pageProps?.configData &&
+      typeof pageProps.configData === "object" &&
+      !Array.isArray(pageProps.configData) &&
+      Object.keys(pageProps.configData).length > 0
+    ) {
+      store.dispatch(setConfigData(pageProps.configData));
+    }
+  }, [pageProps?.configData]);
 
   // Sync Redux + React Query when MainApi clears an expired/revoked 401 token
   useEffect(() => {
