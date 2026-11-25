@@ -31,9 +31,9 @@ const FooterComponent = ({ configData: propConfigData }) => {
   });
 
   // Only reserve space when fixed bottom chrome is actually rendered.
-  // LandingLayout has no BottomNav; /home also has ScrollUpButton above it.
+  // LandingLayout and MainLayout share BottomNav; /home also has ScrollUpButton above it.
   const mobileBottomMargin =
-    isLandingPage || !showBottomNav
+    !showBottomNav
       ? 0
       : isHomePage
       ? "120px"
@@ -46,7 +46,7 @@ const FooterComponent = ({ configData: propConfigData }) => {
       sx={{
         backgroundColor: (theme) => theme.palette.background.default,
         mt: { xs: "1.5rem", sm: "3rem", md: isLandingPage ? "2rem" : "4rem" },
-        mb: mobileBottomMargin,
+        mb: showBottomNav ? `calc(${mobileBottomMargin} + env(safe-area-inset-bottom, 0px))` : 0,
         // BottomNav hides at the shared 1180px cutoff, not the theme's md=1000px.
         [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: {
           mb: 0,

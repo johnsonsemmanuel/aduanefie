@@ -4,63 +4,63 @@ const neutral = {
   90: "#FFFFFF1A",
   100: "#FFFFFF",
   200: "#E6DCC4",
-  300: "#FAF8F5",
+  300: "#F7F9F7",
   400: "#B3A48D",
   450: "#A89880", // Figma: --sds-color-text-default-tertiary (placeholder)
-  500: "#8A7A63",
+  500: "#58665D",
   600: "#75644E",
   700: "#5E4E3B",
   800: "#4A3D2E",
   900: "#3A2F23",
-  1000: "#67513A",
+  1000: "#253D30",
   1050: "#3A2F23", // Figma: --sds-color-text-default-default
   1100: "#D6D6D6",
 };
 
 const background = {
-  default: "#FAF8F5", // subtle off-white cream page background
+  default: "#F7F9F7", // subtle off-white cream page background
   paper: "#FFFFFF",
-  secondary: "#EFE7D3", // Figma: --sds-color-background-default-secondary
-  custom: "#F3ECDC",
+  secondary: "#EFF4EF", // Figma: --sds-color-background-default-secondary
+  custom: "#EFF4EF",
   custom2: "#FFFFFF",
-  custom3: "#FAF8F5",
+  custom3: "#F7F9F7",
   custom4: "#ffffff",
   footer1: "#9f9f9f1a",
   footer2: "#9f9f9f0d",
   custom5: "#F1E9D7",
   custom6: "#FAF7EF",
-  custom7: "#F3ECDC",
+  custom7: "#EFF4EF",
 };
 
-const divider = "#E0D6BD";
+const divider = "#DCE4DD";
 
 const primary = {
-  main: "#8B9F69",
-  deep: "#67513A",
-  light: "#E8E0C6",
+  main: "#2E6545",
+  deep: "#253D30",
+  light: "#E9F1EA",
   dark: "#4F3E2C",
-  semiLight: "#E8E0C6",
+  semiLight: "#E9F1EA",
   contrastText: "#FFFFFF",
-  customType1: "#8B9F69",
+  customType1: "#2E6545",
   customType2: "#A3B585",
   customType3: "#C9D1B6",
   overLay: "#000000",
-  lite: "rgba(139, 159, 105, 0.12)",
-  icon: "#8B9F69",
+  lite: "rgba(46, 101, 69, 0.08)",
+  icon: "#2E6545",
 };
 const moduleTheme = {
-  pharmacy: "#8B9F69",
-  ecommerce: "#8B9F69",
-  food: "#8B9F69",
-  parcel: "#8B9F69",
-  service: "#67513A",
-  grocery: "#8B9F69",
+  pharmacy: "#2E6545",
+  ecommerce: "#2E6545",
+  food: "#2E6545",
+  parcel: "#2E6545",
+  service: "#253D30",
+  grocery: "#2E6545",
 };
-const horizontalCardBG = "#E8E0C6";
+const horizontalCardBG = "#E9F1EA";
 
 const secondary = {
-  main: "#67513A",
-  light: "#8A7A63",
+  main: "#253D30",
+  light: "#58665D",
   dark: "#4F3E2C",
   contrastText: "#FFFFFF",
 };
@@ -86,10 +86,10 @@ const info = {
 
 const warning = {
   main: "#FFB020",
-  light: "#EFE7D3",
+  light: "#EFF4EF",
   lite: "#E6DCC4",
-  liter: "#FAF8F5",
-  lighter: "#EFE7D3",
+  liter: "#F7F9F7",
+  lighter: "#EFF4EF",
   dark: "#bf6a02",
   secondary: "#bf6a02",
   contrastText: "#2B1F16",
@@ -110,8 +110,8 @@ const error = {
 };
 
 const text = {
-  primary: "#67513A",
-  secondary: "#8A7A63",
+  primary: "#253D30",
+  secondary: "#58665D",
   disabled: "rgba(103, 81, 58, 0.48)",
   custom: "#4A3D2E",
   customText1: "#6B5B47",
@@ -120,12 +120,12 @@ const text = {
 };
 
 const footer = {
-  inputButton: "#E8E0C6",
-  inputButtonHover: "#8B9F69",
+  inputButton: "#E9F1EA",
+  inputButtonHover: "#2E6545",
   bottom: "rgba(103, 81, 58, 0.3)",
   foodBottom: "#686B78",
   appDownloadButtonBg: "#1A1A1A",
-  appDownloadButtonBgGray: "#67513A",
+  appDownloadButtonBgGray: "#253D30",
   appDownloadButtonBgHover: "#4f4f4f",
   foodFooterBg: "#414141",
 };

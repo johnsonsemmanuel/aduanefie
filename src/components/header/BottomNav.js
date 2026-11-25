@@ -4,7 +4,7 @@ import { Box, NoSsr, Stack, Typography, useTheme } from "@mui/material";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { t } from "i18next";
-import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
+import { getCurrentModuleType, getCurrentModuleId } from "helper-functions/getCurrentModuleType";
 import { toast } from "react-hot-toast";
 import { getToken } from "helper-functions/getToken";
 import WishListCardView from "../wishlist";
@@ -123,8 +123,8 @@ const BottomNav = () => {
 
     // Stores catalogue listing
     if (
-      pathname.startsWith("/store") ||
-      asPath.startsWith("/store") ||
+      pathname === "/store" || pathname.startsWith("/store/") ||
+      asPath === "/store" || asPath.startsWith("/store/") ||
       pathname.startsWith("/all-stores") ||
       asPath.startsWith("/all-stores")
     ) {
@@ -179,19 +179,9 @@ const BottomNav = () => {
         normalizeShopModuleId(selectedModule?.id) ||
         normalizeShopModuleId(getCurrentModuleId());
       // An unrelated query (e.g. module=4, 6, invalid) must not override a valid shopping context.
-      const targetModule = queryShopModule || selectedShopModule;
+      const targetModule = queryShopModule || selectedShopModule || "2";
 
-      if (targetModule) {
-        router.push({
-          pathname: "/home",
-          query: { module: targetModule },
-        });
-      } else {
-        router.push({
-          pathname: "/home",
-          query: {},
-        });
-      }
+      router.push({ pathname: "/home", query: { module: targetModule } });
       return;
     }
     if (item.openProfile) {
@@ -227,6 +217,8 @@ const BottomNav = () => {
   return (
     <NoSsr>
       <Box
+        component="nav"
+        aria-label={t("Main navigation")}
         sx={{
           position: "fixed",
           bottom: 0,
@@ -258,12 +250,21 @@ const BottomNav = () => {
 
             return (
               <Stack
+                component="button"
+                type="button"
+                aria-label={t(item.label)}
+                aria-current={active ? "page" : undefined}
                 key={item.key}
                 onClick={() => handleClick(item)}
                 alignItems="center"
                 justifyContent="center"
                 gap={"4px"}
                 sx={{
+                  border: 0,
+                  background: "transparent",
+                  font: "inherit",
+                  color: "inherit",
+                  "&:focus-visible": { outline: "2px solid", outlineColor: "primary.main", outlineOffset: "-4px" },
                   flex: 1,
                   minWidth: 0,
                   height: `${MOBILE_BOTTOM_NAV_HEIGHT}px`,

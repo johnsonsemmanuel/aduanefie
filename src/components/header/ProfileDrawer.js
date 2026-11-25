@@ -14,7 +14,7 @@ import AccountMenuPanel from "./second-navbar/account-popover/AccountMenuPanel";
 import { CustomButtonPrimary } from "styled-components/CustomButtons.style";
 
 const MARKETPLACE_LINKS = [
-  { label: "Home", path: "/home", icon: "fi fi-rr-home" },
+  { label: "Home", path: "/", icon: "fi fi-rr-home" },
   { label: "Track Order", path: "/track-order", icon: "fi fi-rr-truck-side" },
 ];
 

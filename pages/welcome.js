@@ -33,12 +33,6 @@ const Welcome = (props) => {
       }
     }
   }, [configData, effectiveLandingData, dispatch]);
-  let lanDirection = undefined;
-
-  if (typeof window !== "undefined") {
-    lanDirection = JSON.parse(localStorage.getItem("settings"));
-  }
-
   return (
     <>
       <CssBaseline />

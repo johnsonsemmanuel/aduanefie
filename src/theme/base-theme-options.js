@@ -36,6 +36,7 @@ export const baseThemeOptions = {
       styleOverrides: {
         root: {
           textTransform: "none",
+          minHeight: 44,
         },
         sizeSmall: {
           padding: "6px 16px",
@@ -61,6 +62,9 @@ export const baseThemeOptions = {
     MuiButtonBase: {
       defaultProps: {
         disableRipple: true,
+      },
+      styleOverrides: {
+        root: { "&.Mui-focusVisible": { outline: "2px solid currentColor", outlineOffset: 3 } },
       },
     },
 
@@ -144,7 +148,7 @@ export const baseThemeOptions = {
           pointerEvents: "none",
         },
         "#nprogress .bar": {
-          backgroundColor: "#8B9F69",
+          backgroundColor: "#2E6545",
           height: 3,
           left: 0,
           position: "fixed",
@@ -293,12 +297,12 @@ export const baseThemeOptions = {
     body2: {
       fontSize: "0.75rem",
       fontWeight: 400,
-      lineHeight: "11.85px",
+      lineHeight: 1.5,
     },
     body3: {
       fontSize: "0.625rem",
       fontWeight: 400,
-      lineHeight: "11.85px",
+      lineHeight: 1.5,
     },
     body4: {
       fontSize: "0.5rem",

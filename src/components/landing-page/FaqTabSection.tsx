@@ -14,7 +14,6 @@ import StorefrontIcon from '@mui/icons-material/Storefront';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
-import Link from 'next/link';
 import { t } from 'i18next';
 import faqImage from "../../../public/landingpage/Question mark.svg"
 
@@ -34,9 +33,10 @@ interface FaqSectionData {
 
 interface FaqTabSectionProps {
     faq_section?: FaqSectionData;
+    phone?: string;
 }
 
-const FaqTabSection: React.FC<FaqTabSectionProps> = ({ faq_section }) => {
+const FaqTabSection: React.FC<FaqTabSectionProps> = ({ faq_section, phone }) => {
     const theme = useTheme();
     const [activeTab, setActiveTab] = useState(0);
     const [expandedAccordion, setExpandedAccordion] = useState<number | false>(false);
@@ -120,7 +120,7 @@ const FaqTabSection: React.FC<FaqTabSectionProps> = ({ faq_section }) => {
                             color: theme.palette.text.primary,
                         }}
                     >
-                        {faq_section?.faq_title}
+                        {faq_section?.faq_title || t('How can we help?')}
                     </Typography>
                 </Box>
 
@@ -267,10 +267,8 @@ const FaqTabSection: React.FC<FaqTabSectionProps> = ({ faq_section }) => {
                         </Box>
                     </Stack>
 
-                    <Button variant="contained" color="primary" sx={{ textTransform: 'none' }}>
-                        <Link href={`tel:${global?.phone}`} style={{ color: "white", textDecoration: 'none' }}>
-                            {t('Contact Us')}
-                        </Link>
+                    <Button component="a" href={phone ? `tel:${phone}` : "/help-and-support"} variant="contained" color="primary" sx={{ textTransform: 'none' }}>
+                        {t('Contact Us')}
                     </Button>
                 </Stack>
             </Box>

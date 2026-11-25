@@ -76,7 +76,7 @@ const LandingPage = ({ configData, landingPageData }) => {
   return (
     <>
       <PushNotificationLayout>
-        <HeroSection landingPageDataheroSection={landingPageData?.hero_section} />
+        <HeroSection landingPageDataheroSection={landingPageData?.hero_section || landingPageData} />
         {landingPageData?.trust_section?.trust_section_status === 1 ? (
           <StatsSection trustSectionData={landingPageData?.trust_section} />
         ) : null}
@@ -151,7 +151,7 @@ const LandingPage = ({ configData, landingPageData }) => {
           </CustomContainer>
         ) : null}
         <CustomContainer>
-          <FaqTabSection faq_section={landingPageData?.faq_section} />
+          <FaqTabSection faq_section={landingPageData?.faq_section} phone={configData?.phone} />
         </CustomContainer>
 
         <Box sx={{

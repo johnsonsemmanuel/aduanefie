@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { setModules } from "redux/slices/configData";
 import { getSavedModuleIdentifier, saveModuleParam } from "../../utils/moduleParamManager";
 import { isModuleAgnosticRoute } from "utils/moduleRoutes";
+import { safeJsonParse } from "utils/safeJsonParse";
 
 // Whether the module currently in localStorage IS the one the URL asks for
 // (matched loosely by slug/module_type/id, same as the resolver below).
@@ -44,8 +45,8 @@ const ModuleChecker = () => {
 
     const storedIdentifier =
       getSavedModuleIdentifier() ||
-      JSON.parse(localStorage.getItem("module") || "null")?.slug ||
-      JSON.parse(localStorage.getItem("module") || "null")?.id;
+      safeJsonParse(localStorage.getItem("module"))?.slug ||
+      safeJsonParse(localStorage.getItem("module"))?.id;
 
     const identifierToUse = moduleFromUrl || legacyModuleId || storedIdentifier;
 
@@ -70,7 +71,7 @@ const ModuleChecker = () => {
     const moduleIdFromUrl = router.query.module || router.query.module_id;
     if (!moduleIdFromUrl) return;
 
-    const storedModule = JSON.parse(localStorage.getItem("module") || "null");
+    const storedModule = safeJsonParse(localStorage.getItem("module"));
     if (!storedModuleMatchesUrl(moduleIdFromUrl, storedModule)) {
       refetch();
     }
@@ -78,7 +79,7 @@ const ModuleChecker = () => {
 
   useEffect(() => {
     const moduleIdFromUrl = router.query.module || router.query.module_id;
-    const storedModule = JSON.parse(localStorage.getItem("module") || "null");
+    const storedModule = safeJsonParse(localStorage.getItem("module"));
     const alreadyMatches = storedModuleMatchesUrl(moduleIdFromUrl, storedModule);
 
     if (data && moduleIdFromUrl && !alreadyMatches) {

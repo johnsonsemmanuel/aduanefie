@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { safeNextTarget } from "./src/utils/safeNextTarget";
 import { isModuleAgnosticRoute } from "./src/utils/moduleRoutes";
 import { EDGE_PASS_COOKIE, verifyEdgePass } from "./src/utils/previewEdgePass";
 
@@ -44,10 +45,7 @@ export async function middleware(request) {
 
     if (isUnlocked && pathname === "/coming-soon") {
       const nextParam = searchParams.get("next") || "/";
-      const safeTarget =
-        nextParam.startsWith("/") && !nextParam.startsWith("//")
-          ? nextParam
-          : "/";
+      const safeTarget = safeNextTarget(nextParam);
       return NextResponse.redirect(new URL(safeTarget, request.url), 307);
     }
   }

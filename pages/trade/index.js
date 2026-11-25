@@ -12,12 +12,14 @@ import { getCommonServerSideProps } from "utils/serverSidePropsHelper";
 import { getWholesaleMarketHref } from "components/trade/tradeData";
 import TradeRfqSection from "components/trade/TradeRfqSection";
 import { useTradeBlocs } from "api-manage/hooks/react-query/trade/useTradeData";
+import { isFeatureTransactionEnabled } from "utils/featureFlags";
 
 const TradeHub = ({ configData, metaData }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const { data: blocsData } = useTradeBlocs();
   const liveBlocs = blocsData || [];
+  const rfqsEnabled = isFeatureTransactionEnabled(configData, "rfq_new_commitments");
   const metadata = processMetadata(metaData, {
     title: `Trade - ${configData?.business_name}`,
     description:
@@ -86,7 +88,7 @@ const TradeHub = ({ configData, metaData }) => {
                 }}
               >
                 {t(
-                  "Buy farm produce in bulk from verified sellers and prepare cross-border shipments across Africa's regional trade blocs."
+                  "Browse domestic wholesale produce and explore agricultural trade information across Africa's regional trade blocs. Cross-border transactions depend on corridor availability and approval."
                 )}
               </Typography>
               <Stack
@@ -136,13 +138,15 @@ const TradeHub = ({ configData, metaData }) => {
                   letterSpacing: "-0.6px",
                 }}
               >
-                {t("Available now")}
+                {t("Markets & trade services")}
               </Typography>
               <Typography
                 sx={{ mt: "6px", fontSize: "14px", color: "text.secondary" }}
               >
                 {t(
-                  "Post a bulk RFQ and receive quotes from verified farms and cooperatives, with Trade Assurance-backed shipments."
+                  rfqsEnabled
+                    ? "Submit a sourcing enquiry for review. Confirm supplier verification, delivery terms and available protections before committing."
+                    : "Domestic wholesale shopping is available. New cross-border RFQs and quote awards are paused while order and fulfilment integration is completed."
                 )}
               </Typography>
 

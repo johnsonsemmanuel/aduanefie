@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Stack, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { MOBILE_BOTTOM_NAV_HEIGHT } from "utils/mobileBottomNav";
+import { DESKTOP_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 
 const CookiesConsent = ({ text }) => {
-  const [showConsent, setShowConsent] = useState(true);
+  const [showConsent, setShowConsent] = useState(false);
+  useEffect(() => {
+    const saved = window.localStorage.getItem("cookiesConsent");
+    setShowConsent(saved !== "true" && saved !== "false");
+  }, []);
   const { t } = useTranslation();
 
   const handleAccept = () => {
@@ -15,12 +21,7 @@ const CookiesConsent = ({ text }) => {
     setShowConsent(false);
   };
 
-  let cookiesConsent;
-  if (typeof window !== "undefined") {
-    cookiesConsent = window.localStorage.getItem("cookiesConsent");
-  }
-
-  if (!showConsent || cookiesConsent === "true") {
+  if (!showConsent) {
     return null;
   }
 
@@ -28,7 +29,8 @@ const CookiesConsent = ({ text }) => {
     <Box
       sx={{
         position: "fixed",
-        bottom: { xs: 0, md: "24px" },
+        bottom: `calc(${MOBILE_BOTTOM_NAV_HEIGHT}px + env(safe-area-inset-bottom, 0px))`,
+        [`@media ${DESKTOP_LAYOUT_MEDIA_QUERY}`]: { bottom: "24px" },
         right: { xs: 0, md: "24px" },
         left: { xs: 0, md: "auto" },
         zIndex: 9999,
@@ -68,6 +70,8 @@ const CookiesConsent = ({ text }) => {
         {/* Buttons */}
         <Stack direction="row" spacing="20px">
           <Box
+            component="button"
+            type="button"
             id="cookies-deny-btn"
             onClick={handleDeny}
             sx={{
@@ -97,6 +101,8 @@ const CookiesConsent = ({ text }) => {
           </Box>
 
           <Box
+            component="button"
+            type="button"
             id="cookies-accept-btn"
             onClick={handleAccept}
             sx={{

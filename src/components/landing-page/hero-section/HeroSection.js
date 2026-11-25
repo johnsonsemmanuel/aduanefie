@@ -14,6 +14,7 @@ import CustomContainer from "../../container";
 import HeroLocationForm from "./HeroLocationForm";
 import HeroTitleSection from "./HeroTitleSection";
 import DollarSignHighlighter from "components/DollarSignHighlighter";
+import MarketEntryActions from "../MarketEntryActions";
 
 const DynamicModuleSelection = dynamic(() =>
   import("./module-selection/ModuleSelectionRaw")
@@ -74,7 +75,7 @@ const HeroSection = ({ landingPageDataheroSection }) => {
                 lineHeight: 1.2,
               }}
             >
-              <DollarSignHighlighter theme={theme} text={landingPageDataheroSection?.header_title} />
+              <DollarSignHighlighter theme={theme} text={landingPageDataheroSection?.header_title && landingPageDataheroSection.header_title !== "$Your e-Commerce!$" ? landingPageDataheroSection.header_title : "Fresh produce. Stronger connections."} />
 
             </Typography>
             <Typography
@@ -87,7 +88,7 @@ const HeroSection = ({ landingPageDataheroSection }) => {
                 lineHeight: 1.2,
               }}
             >
-              {landingPageDataheroSection?.header_sub_title}
+              {landingPageDataheroSection?.header_sub_title && landingPageDataheroSection.header_sub_title !== "Venture Starts Here" ? landingPageDataheroSection.header_sub_title : "Shop nearby farms, buy wholesale, and explore agricultural trade across Africa."}
             </Typography>
           </CustomStackFullWidth>
           <Box sx={{ marginTop: { xs: "1rem", md: "1.5rem" }, width: "100%", marginInline: "auto" }}>
@@ -103,7 +104,7 @@ const HeroSection = ({ landingPageDataheroSection }) => {
 
               }}
             >
-              {landingPageDataheroSection?.header_tag_line}
+              {landingPageDataheroSection?.header_tag_line?.replace(/\$/g, "") || "Choose your location to see available markets"}
             </Typography>
             <HeroTitleSection
               landingPageData={landingPageDataheroSection}
@@ -111,6 +112,7 @@ const HeroSection = ({ landingPageDataheroSection }) => {
           </Box>
         </Box>
       </CustomBoxFullWidth>
+      <MarketEntryActions />
 
     </CustomContainer>
   );

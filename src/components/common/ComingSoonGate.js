@@ -23,6 +23,7 @@ import LogoSide from "components/logo/LogoSide";
 import { CustomStackFullWidth } from "styled-components/CustomStyles.style";
 import { useRouter } from "next/router";
 import MainApi from "api-manage/MainApi";
+import { safeNextTarget } from "utils/safeNextTarget";
 
 const ACCESS_STORAGE_KEY = "aduanefie_early_access_unlocked";
 const ACCESS_COOKIE_NAME = "aduanefie_preview_access";
@@ -41,11 +42,6 @@ export async function exchangePreviewToken(previewToken) {
   } catch {
     return false;
   }
-}
-
-function safeNextTarget(nextParam) {
-  const value = typeof nextParam === "string" ? nextParam : "/";
-  return value.startsWith("/") && !value.startsWith("//") ? value : "/";
 }
 
 function isTokenStructurallyValid(rawToken) {

@@ -4,6 +4,7 @@ import FooterComponent from "../footer";
 import PropTypes from "prop-types";
 import useGetLandingPage from "api-manage/hooks/react-query/useGetLandingPage";
 import { useEffect } from "react";
+import BottomNav from "components/header/BottomNav";
 
 export const MainLayoutRoot = styled(Stack)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
@@ -26,6 +27,7 @@ export const LandingLayout = ({ children, configData, landingPageData }) => {
       <footer>
         <FooterComponent configData={configData} landingPageData={effectiveLandingData} />
       </footer>
+      <BottomNav />
     </MainLayoutRoot>
   );
 };
