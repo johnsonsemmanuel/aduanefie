@@ -1,27 +1,9 @@
-// The marketing landing page now lives at /welcome. `/` is served by the
-// middleware rewrite, which sends module-aware visitors straight to the
-// marketplace (/home) and first-time visitors to the landing page (/welcome).
-// This server-side redirect is a fallback for environments where middleware
-// does not run (e.g. static export or an older deployment).
-export default function Root() {
-  return null;
-}
+import Home from "./home";
+import { getCommonServerSideProps } from "../src/utils/serverSidePropsHelper";
 
-export const getServerSideProps = async ({ req }) => {
-  const hasLocation = req.cookies?.aduanefie_location_set === "1";
-  if (!hasLocation) {
-    return {
-      redirect: {
-        destination: "/welcome",
-        permanent: false,
-      },
-    };
-  }
-  const selectedModule = req.cookies?.selectedModule || "2";
-  return {
-    redirect: {
-      destination: `/home?module=${encodeURIComponent(selectedModule)}`,
-      permanent: false,
-    },
-  };
+export default Home;
+
+export const getServerSideProps = async (context) => {
+  // Reuse the same data fetching as the Home page.
+  return await getCommonServerSideProps(context, "home_page");
 };

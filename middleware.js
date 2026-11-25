@@ -25,16 +25,8 @@ export function middleware(request) {
   // their location & module and explore platform programs. Returning visitors
   // who already selected a location go straight into the live marketplace (/home).
   if (pathname === "/") {
-    const url = request.nextUrl.clone();
-    if (!hasLocation) {
-      url.pathname = "/welcome";
-      return NextResponse.rewrite(url);
-    }
-    url.pathname = "/home";
-    if (!url.searchParams.has("module") && !url.searchParams.has("module_id")) {
-      url.searchParams.set("module", moduleFromCookie || "2");
-    }
-    return NextResponse.rewrite(url);
+    // Serve root page directly without redirect
+    return NextResponse.next();
   }
 
   // Check if request already has module/module_id param
