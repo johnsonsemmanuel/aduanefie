@@ -62,6 +62,7 @@ const FULL_BLEED_MOBILE_ROUTES = new Set([
   "/trade/blocs",
   "/trade/blocs/[slug]",
   "/market-prices",
+  "/farms",
   "/live-farming",
   "/regional-tours",
   "/become-a-marketer",

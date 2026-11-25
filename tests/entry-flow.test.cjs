@@ -16,27 +16,37 @@ function load(path, dependencies = {}, globals = {}) {
   return exports;
 }
 
-const welcomeProps = { props: { landingPageData: { header_title: 'Market' } } };
-const entry = load('pages/index.js', { './welcome': {
-  default: () => null, getServerSideProps: async () => welcomeProps,
-} });
+const navigation = load('src/utils/marketplaceNavigation.js');
+const entry = load('pages/index.js', { 'utils/marketplaceNavigation': navigation });
 const context = (query = {}, cookies = {}) => ({ query, req: { cookies } });
 
-test('fresh visitors receive onboarding content instead of an empty catalogue', async () => {
-  assert.equal(await entry.getServerSideProps(context()), welcomeProps);
+test('fresh Home enters a real shopping catalogue', async () => {
+  assert.equal((await entry.getServerSideProps(context())).redirect.destination, '/home?module=2');
 });
 test('explicit market choice overrides a stale cookie', async () => {
-  const result = await entry.getServerSideProps(context({ module: '1' }, { selectedModule: '2' }));
-  assert.equal(result.redirect.destination, '/home?module=1');
+  assert.equal((await entry.getServerSideProps(context({ module: '1' }, { selectedModule: '2' }))).redirect.destination, '/home?module=1');
 });
-test('Home stays distinct from Shop for returning visitors; legacy links retain their market', async () => {
-  assert.equal(await entry.getServerSideProps(context({}, { selectedModule: '2' })), welcomeProps);
-  assert.equal((await entry.getServerSideProps(context({ module_id: '2' }))).redirect.destination, '/home?module=2');
-});
-test('malformed or unrelated module selections do not bypass onboarding', async () => {
-  for (const module of ['garbage', '4', '//example.com', {}, 'undefined']) {
-    assert.equal(await entry.getServerSideProps(context({ module })), welcomeProps);
+test('returning shoppers and legacy links retain their selected catalogue', async () => {
+  for (const input of [context({}, { selectedModule: '4' }), context({ module_id: '4' })]) {
+    assert.equal((await entry.getServerSideProps(input)).redirect.destination, '/home?module=4');
   }
+});
+test('malformed module choices fall back safely without external redirects', async () => {
+  for (const module of ['garbage', '//example.com', {}, 'undefined', '0', '-1']) {
+    assert.equal((await entry.getServerSideProps(context({ module }))).redirect.destination, '/home?module=2');
+  }
+});
+test('shopping and farming destinations have distinct active navigation', () => {
+  for (const path of ['/home', '/home/nearby', '/search', '/store/12']) {
+    assert.equal(navigation.isMarketplaceRoute(path), true);
+    assert.equal(navigation.isFarmsRoute(path), false);
+  }
+  for (const path of ['/farms', '/live-farming']) {
+    assert.equal(navigation.isFarmsRoute(path), true);
+    assert.equal(navigation.isMarketplaceRoute(path), false);
+  }
+  assert.equal(navigation.isMarketplaceRoute('/store-registration'), false);
+  assert.equal(navigation.getMarketplaceHref(undefined, '6'), '/home?module=6');
 });
 test('corrupted persisted module state cannot crash navigation', () => {
   const helpers = load('src/helper-functions/getCurrentModuleType.js', {}, {
@@ -62,5 +72,14 @@ test('preview returns stay on-site and cannot loop through the gate', () => {
   assert.equal(safeNextTarget('/home?module=2'), '/home?module=2');
   for (const path of ['//example.com', '/\\example.com', '/coming-soon?next=/coming-soon', 'https://example.com', '/ /example.com']) {
     assert.equal(safeNextTarget(path), '/');
+  }
+});
+
+
+test('farm discovery retains produce markets and avoids unrelated equipment/service scopes', () => {
+  assert.equal(navigation.getFarmingModule('1'), '1');
+  assert.equal(navigation.getFarmingModule('2'), '2');
+  for (const module of ['4', '5', '6', undefined, 'grocery']) {
+    assert.equal(navigation.getFarmingModule(module), '2');
   }
 });

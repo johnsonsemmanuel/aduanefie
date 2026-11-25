@@ -19,6 +19,7 @@ const MARKETPLACE_LINKS = [
 ];
 
 const PARTNER_SUPPORT_LINKS = [
+  { label: "Getting started", path: "/welcome", icon: "fi fi-rr-info" },
   { label: "Help & Support", path: "/help-and-support", icon: "fi fi-rr-headset" },
 ];
 

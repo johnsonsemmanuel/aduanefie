@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import {
   Box,
+  Alert,
   Button,
   Card,
   CardContent,
@@ -24,18 +25,12 @@ import { findMatchingAgroPrice, formatCedi } from "utils/agroPriceMatch";
 import { getAmountWithSign } from "helper-functions/CardHelpers";
 import InsuranceBadge from "components/badges/InsuranceBadge";
 
-const getGhanaSeasonLabel = () => {
-  const month = new Date().getMonth() + 1;
-  if (month >= 3 && month <= 7) return "Major Season";
-  if (month >= 9 && month <= 11) return "Minor Season";
-  return "Irrigated Season";
-};
-
 const LiveFarmingSection = ({
   limit = 8,
   showViewAll = true,
   hideIfEmpty = true,
   initialBackyardOnly = false,
+  lockBackyard = false,
   titleOverride = null,
   subtitleOverride = null,
 }) => {
@@ -44,9 +39,8 @@ const LiveFarmingSection = ({
   const [statusFilter, setStatusFilter] = useState("all");
   const [backyardOnly, setBackyardOnly] = useState(initialBackyardOnly);
   const [searchTerm, setSearchTerm] = useState("");
-  const seasonLabel = getGhanaSeasonLabel();
 
-  const { data, isLoading } = useGetLiveFarmingItems({
+  const { data, isLoading, isError, refetch } = useGetLiveFarmingItems({
     status: statusFilter,
     backyard: backyardOnly,
     limit,
@@ -64,7 +58,7 @@ const LiveFarmingSection = ({
       })
     : rawProducts;
 
-  if (!isLoading && hideIfEmpty && rawProducts.length === 0 && statusFilter === "all" && !backyardOnly) {
+  if (!isError && !isLoading && hideIfEmpty && rawProducts.length === 0 && statusFilter === "all" && !backyardOnly) {
     return null;
   }
 
@@ -128,18 +122,7 @@ const LiveFarmingSection = ({
                   color: theme.palette.primary.deep,
                 }}
               />
-              <Chip
-                size="small"
-                label={t(seasonLabel)}
-                sx={{
-                  display: { xs: "none", sm: "inline-flex" },
-                  height: 18,
-                  fontSize: "10px",
-                  fontWeight: 600,
-                  bgcolor: theme.palette.background.secondary,
-                  color: theme.palette.primary.deep,
-                }}
-              />
+
             </Stack>
             <Typography
               sx={{
@@ -207,10 +190,10 @@ const LiveFarmingSection = ({
         </Tabs>
 
         <Chip
-          clickable
+          clickable={!lockBackyard}
           size="small"
           label={t("Backyard")}
-          onClick={() => setBackyardOnly((prev) => !prev)}
+          onClick={lockBackyard ? undefined : () => setBackyardOnly((prev) => !prev)}
           color={backyardOnly ? "success" : "default"}
           variant={backyardOnly ? "filled" : "outlined"}
           sx={{ fontWeight: 600, fontSize: "11px", flexShrink: 0 }}
@@ -236,7 +219,11 @@ const LiveFarmingSection = ({
         </Box>
       )}
 
-      {isLoading ? (
+      {isError ? (
+        <Alert severity="error" action={<Button color="inherit" onClick={() => refetch()}>{t("Retry")}</Button>}>
+          {t("Farming listings could not be loaded. Please try again.")}
+        </Alert>
+      ) : isLoading ? (
         <Grid container spacing={2}>
           {[1, 2, 3, 4].map((idx) => (
             <Grid item xs={12} sm={6} md={3} key={idx}>
@@ -249,17 +236,17 @@ const LiveFarmingSection = ({
           <Typography sx={{ color: "text.secondary", fontSize: "13.5px", mb: 1.25 }}>
             {t("No crops match this live farming filter right now.")}
           </Typography>
-          {(statusFilter !== "all" || backyardOnly) && (
+          {(statusFilter !== "all" || (backyardOnly && !lockBackyard)) && (
             <Button
               size="small"
               variant="outlined"
               onClick={() => {
                 setStatusFilter("all");
-                setBackyardOnly(false);
+                setBackyardOnly(lockBackyard ? initialBackyardOnly : false);
               }}
               sx={{ textTransform: "none", fontWeight: 600 }}
             >
-              {t("Show all active crops")}
+              {t(lockBackyard ? "Clear filters" : "Show all active crops")}
             </Button>
           )}
         </Box>

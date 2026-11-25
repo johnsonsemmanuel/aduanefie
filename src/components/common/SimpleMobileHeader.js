@@ -42,6 +42,7 @@ const SimpleMobileHeader = ({ title, action, sx, backHref }) => {
         sx={{ px: "12px", py: "12px" }}
       >
         <IconButton
+          aria-label={t("Back")}
           onClick={() => router.push(targetHref)}
           sx={{ p: "4px", color: "neutral.1050", flexShrink: 0 }}
         >

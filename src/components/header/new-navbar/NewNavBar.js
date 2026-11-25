@@ -52,6 +52,7 @@ import { getCurrentModuleType } from "helper-functions/getCurrentModuleType";
 import { ModuleTypes } from "helper-functions/moduleTypes";
 import { getModuleIdentifier, saveModuleParam } from "utils/moduleParamManager";
 import { MOBILE_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
+import { isFarmsRoute } from "utils/marketplaceNavigation";
 
 const AuthModal = dynamic(() => import("components/auth/AuthModal"));
 
@@ -606,6 +607,7 @@ const NewNavBar = ({ configData }) => {
 
       {/* Active Mode Switcher - shared with the mobile and compact headers */}
       <ModeSwitcherTrigger variant="desktop" />
+      <Button component="a" href="/farms" aria-current={isFarmsRoute(router.pathname) ? "page" : undefined} variant={isFarmsRoute(router.pathname) ? "outlined" : "text"} sx={{ flexShrink: 0, mx: 1 }}>{t("Farms")}</Button>
 
       {/* Search: grows to fill space, 24px from icons */}
       <Box

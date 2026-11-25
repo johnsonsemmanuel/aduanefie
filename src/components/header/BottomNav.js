@@ -12,6 +12,7 @@ import ProfileDrawer from "./ProfileDrawer";
 import NextImage from "components/NextImage";
 import { DESKTOP_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 import { MOBILE_BOTTOM_NAV_HEIGHT } from "utils/mobileBottomNav";
+import { getMarketplaceHref, isFarmsRoute, isMarketplaceRoute } from "utils/marketplaceNavigation";
 
 const AuthModal = dynamic(() => import("components/auth/AuthModal"));
 
@@ -20,13 +21,13 @@ const NAV_ITEMS = [
     key: "home",
     label: "Home",
     icon: "fi fi-rr-home",
-    path: "/",
+    openMarketplace: true,
   },
   {
-    key: "shop",
-    label: "Shop",
-    icon: "fi fi-rr-shop",
-    openShop: true,
+    key: "farms",
+    label: "Farms",
+    icon: "fi fi-rr-leaf",
+    path: "/farms",
   },
   {
     key: "orders",
@@ -43,27 +44,6 @@ const NAV_ITEMS = [
   },
 ];
 
-const VALID_SHOP_MODULES = new Set(["1", "2"]);
-const VALID_SHOP_SECTIONS = new Set([
-  "nearby",
-  "offers",
-  "top-rated",
-  "free-delivery",
-  "discounted",
-  "verified-seller",
-]);
-
-const normalizeShopModuleId = (val) => {
-  if (val == null) return null;
-  const raw = Array.isArray(val) ? val[0] : val;
-  if (typeof raw === "object" && raw !== null) {
-    if (raw.id != null) return normalizeShopModuleId(raw.id);
-    return null;
-  }
-  const s = String(raw).trim();
-  return VALID_SHOP_MODULES.has(s) ? s : null;
-};
-
 const BottomNav = () => {
   const router = useRouter();
   const theme = useTheme();
@@ -76,79 +56,12 @@ const BottomNav = () => {
   const [authOpen, setAuthOpen] = useState(false);
   const [modalFor, setModalFor] = useState("sign-in");
 
-  const isShopRoute = () => {
-    const asPath = (router.asPath || "").split(/[?#]/)[0];
-    const pathname = router.pathname || "";
-
-    // Explicit non-catalogue destinations must never highlight Shop
-    if (
-      pathname === "/" ||
-      asPath === "/" ||
-      pathname === "/home/wishlist" ||
-      asPath === "/home/wishlist" ||
-      pathname.startsWith("/profile") ||
-      pathname.startsWith("/order") ||
-      pathname.startsWith("/checkout") ||
-      pathname.startsWith("/chat") ||
-      pathname.startsWith("/help-and-support") ||
-      pathname.startsWith("/about-us") ||
-      pathname.startsWith("/privacy-policy") ||
-      pathname.startsWith("/terms-and-conditions")
-    ) {
-      return false;
-    }
-
-    // Main catalog storefront
-    if (pathname === "/home" || asPath === "/home") {
-      return true;
-    }
-
-    // Legacy direct nearby route
-    if (pathname === "/home/nearby" || asPath === "/home/nearby") {
-      return true;
-    }
-
-    // Category catalogue browse
-    if (
-      pathname.startsWith("/home/category") ||
-      asPath.startsWith("/home/category")
-    ) {
-      return true;
-    }
-
-    // Catalogue search
-    if (pathname === "/search" || asPath === "/search") {
-      return true;
-    }
-
-    // Stores catalogue listing
-    if (
-      pathname === "/store" || pathname.startsWith("/store/") ||
-      asPath === "/store" || asPath.startsWith("/store/") ||
-      pathname.startsWith("/all-stores") ||
-      asPath.startsWith("/all-stores")
-    ) {
-      return true;
-    }
-
-    // Narrow catch-all /home/[...slug] strictly to verified catalogue sections
-    if (pathname === "/home/[...slug]") {
-      const slug = router.query?.slug;
-      const firstSegment = Array.isArray(slug) ? slug[0] : slug;
-      return (
-        typeof firstSegment === "string" && VALID_SHOP_SECTIONS.has(firstSegment)
-      );
-    }
-
-    return false;
-  };
-
   const isActive = (item) => {
     if (item.key === "home") {
-      return router.pathname === "/";
+      return isMarketplaceRoute(router.pathname) && router.pathname !== "/home/wishlist";
     }
-    if (item.key === "shop") {
-      return isShopRoute();
+    if (item.key === "farms") {
+      return isFarmsRoute(router.pathname);
     }
     if (item.openWishlist) {
       return router.pathname === "/home/wishlist";
@@ -173,15 +86,8 @@ const BottomNav = () => {
   };
 
   const handleClick = (item) => {
-    if (item.openShop) {
-      const queryShopModule = normalizeShopModuleId(router.query?.module);
-      const selectedShopModule =
-        normalizeShopModuleId(selectedModule?.id) ||
-        normalizeShopModuleId(getCurrentModuleId());
-      // An unrelated query (e.g. module=4, 6, invalid) must not override a valid shopping context.
-      const targetModule = queryShopModule || selectedShopModule || "2";
-
-      router.push({ pathname: "/home", query: { module: targetModule } });
+    if (item.openMarketplace) {
+      router.push(getMarketplaceHref(router.query?.module, selectedModule?.id || getCurrentModuleId()));
       return;
     }
     if (item.openProfile) {

@@ -50,17 +50,12 @@ export async function middleware(request) {
     }
   }
 
-  // Get module & location flags from cookies (set on client)
+  // Read the saved module for catalogue routes.
   const moduleFromCookie = request.cookies.get("selectedModule")?.value;
-  const hasLocation = request.cookies.get("aduanefie_location_set")?.value === "1";
 
-  // First-time visitors (no location selected yet) land on /welcome to pick
-  // their location & module and explore platform programs. Returning visitors
-  // who already selected a location go straight into the live marketplace (/home).
-  if (pathname === "/") {
-    // Serve root page directly without redirect
-    return NextResponse.next();
-  }
+  // pages/index selects the saved/default shopping market. /welcome remains
+  // a separate introduction; preview access is still checked above.
+  if (pathname === "/") return NextResponse.next();
 
   // Check if request already has module/module_id param
   const hasModuleParam =
