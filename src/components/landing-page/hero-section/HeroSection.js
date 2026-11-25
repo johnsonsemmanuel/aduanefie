@@ -22,35 +22,11 @@ const DynamicModuleSelection = dynamic(() =>
 const HeroSection = ({ landingPageDataheroSection }) => {
   const theme = useTheme();
   const isXSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  const [currentLocation, setCurrentLocation] = useState(null);
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      setCurrentLocation(window.localStorage.getItem("location"));
-    }
-  }, []);
-
-
-  const calculateTopMargin = () => {
-    if (currentLocation) {
-      return {
-        xs: "4rem",
-        sm: "5rem",
-        md: "7rem",
-      };
-    } else {
-      return {
-        xs: "4rem",
-        sm: "5rem",
-        md: "5rem",
-      };
-    }
-  };
-
   return (
     <CustomContainer>
       <CustomBoxFullWidth
         sx={{
-          marginTop: calculateTopMargin(),
+          marginTop: { xs: 2, sm: 3, md: 4 },
           borderRadius: "20px",
           position: "relative",
           backgroundColor: theme.palette.primary.lite,

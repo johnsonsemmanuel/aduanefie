@@ -21,7 +21,7 @@ export const LandingLayout = ({ children, configData, landingPageData }) => {
   return (
     <MainLayoutRoot justifyContent="space-between">
       <header>
-        <HeaderComponent configData={configData} />
+        <HeaderComponent configData={configData} position="static" />
       </header>
       {children}
       <footer>

@@ -8,7 +8,7 @@ import useGetZoneId from "api-manage/hooks/react-query/google-api/useGetZone";
 import { useEffect, useState } from "react";
 import { MOBILE_LAYOUT_MEDIA_QUERY } from "utils/breakpoints";
 
-const HeaderComponent = ({ configData: propConfigData }) => {
+const HeaderComponent = ({ configData: propConfigData, position = "fixed" }) => {
   const { configData: reduxConfigData } = useSelector((state) => state.configData);
   const configData =
     propConfigData && Object.keys(propConfigData).length > 0
@@ -38,7 +38,7 @@ const HeaderComponent = ({ configData: propConfigData }) => {
   }, [zoneData]);
 
   return (
-    <AppBarStyle scrolling={false} isSmall={isSmall}>
+    <AppBarStyle position={position} scrolling={false} isSmall={isSmall}>
       <Box sx={{ width: "100%" }}>
         <NoSsr>
           <NewNavBar configData={configData} />
